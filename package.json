@@ -4,6 +4,10 @@
   "main": "index.js",
   "repository": "https://github.com/brandontranle/fit-bit-application",
   "license": "MIT",
+  "scripts": {
+    "tsc": "tsc",
+    "start": "node build/index.js"
+  },
   "dependencies": {
     "@types/express": "^4.17.21",
     "connect-mongo": "^5.1.0",

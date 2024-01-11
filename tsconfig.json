@@ -1,14 +1,12 @@
 {
   "compilerOptions": {
-    "lib": [
-      "EsNext",
-      "DOM"
-    ],
-    "outDir": "lib",
+    "module": "commonjs",
+    "outDir": "build",
     "removeComments": true,
     "target": "ES6",
     "esModuleInterop": true,
     "moduleResolution": "node",
+    "preserveConstEnums": true,
     "paths": {},
     "sourceMap": true,
     "sourceRoot": "/",
