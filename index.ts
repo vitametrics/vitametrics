@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import crypto from 'crypto';
 import CodeVerifier from './models/CodeVerifier';
 import User from './models/User';
+import fetchAndStoreData from './util/fetchData';
 
 dotenv.config();
 
@@ -24,7 +25,7 @@ app.get('/auth', async (_req: Request, res: Response) => {
     try {
         await new CodeVerifier({ value: codeVerifier}).save();
 
-        const authUrl = `https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=${process.env.FITBIT_CLIENT_ID}&scope=activity%20nutrition%20heartrate%20profile%20sleep&redirect_uri=${process.env.REDIRECT_URI}&code_challenge=${codeChallenge}&code_challenge_method=S256`;
+        const authUrl = `https://www.fitbit.com/oauth2/authorize?client_id=${process.env.FITBIT_CLIENT_ID}&response_type=code&code_challenge=${codeChallenge}&code_challenge_method=S256&scope=activity%20heartrate%20location%20nutrition%20oxygen_saturation%20respiratory_rate%20settings%20sleep%20social%20temperature%20weight%20profile&redirect_uri=${process.env.REDIRECT_URI}`;
 
 
         res.redirect(authUrl);
@@ -40,20 +41,22 @@ app.get('/callback', async (req: Request, res: Response) => {
     try {
         const verifier = await CodeVerifier.findOne().sort({createdAt: -1}).limit(1);
         const codeVerifier = verifier?.value;
+        // cleanup verifier from db
+        await CodeVerifier.findOneAndDelete(verifier?._id);
 
-        const tokenResponse = await axios.post('https://api.fitbit.com/oauth2/token', {
-            clientId: process.env.FITBIT_CLIENT_ID,
-            grantType: 'authorization_code',
-            code: code,
-            redirectUri: process.env.REDIRECT_URI,
-            codeVerifier: codeVerifier,
-        }, {
+        const params = new URLSearchParams();
+        params.append('client_id', process.env.FITBIT_CLIENT_ID as string);
+        params.append('grant_type', 'authorization_code');
+        params.append('code', code);
+        params.append('redirect_uri', process.env.REDIRECT_URI as string);
+        params.append('code_verifier', codeVerifier as string);
+
+        const tokenResponse = await axios.post('https://api.fitbit.com/oauth2/token', params, {
             headers: {
                 'Authorization': `Basic ${Buffer.from(`${process.env.FITBIT_CLIENT_ID}:${process.env.FITBIT_CLIENT_SECRET}`).toString('base64')}`,
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         });
-
         const accessToken = tokenResponse.data.access_token;
 
         const profileResponse = await axios.get('https://api.fitbit.com/1/user/-/profile.json', {
@@ -61,8 +64,26 @@ app.get('/callback', async (req: Request, res: Response) => {
         });
 
         const fitbitUserID = profileResponse.data.user.encodedId;
+        const refreshToken = tokenResponse.data.refresh_token;
 
-        await User.findOneAndUpdate({userId: fitbitUserID});
+        await User.findOneAndUpdate(
+            {userId: fitbitUserID},
+            {
+                userId: fitbitUserID,
+                fitbitAccessToken: accessToken,
+                fitbitRefreshToken: refreshToken,
+                heart_rate: [],
+                location: [],
+                nutrition: [],
+                oxygen_saturation: [],
+                respiratory_rate: [],
+                temperature: [],
+                weight: []
+            },
+            {upsert: true, new: true}
+        );
+
+        await fetchAndStoreData(fitbitUserID, accessToken);
 
         res.send(`User ${fitbitUserID} saved/updated with access token: ${accessToken}.`);
     } catch(err) {
@@ -72,6 +93,6 @@ app.get('/callback', async (req: Request, res: Response) => {
 
 });
 
-app.listen(3000, () => {
-    console.log('Listening on port 3000');
+app.listen(7970, () => {
+    console.log('Listening on port 7970');
 })
