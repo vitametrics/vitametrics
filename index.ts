@@ -97,11 +97,16 @@ app.get('/callback', async (req: Request, res: Response) => {
 // TODO: Test this
 app.get('/download-data/:userId', async (req: Request, res: Response) => {
     try {
-        const userId = req.params.userId;
+        const userId = req.params;
         const user = await User.findOne({userId}).lean();
+        const accessToken = req.headers.authorization?.split(' ')[1];
 
         if (!user) {
             return res.status(404).json({msg: 'User not found'});
+        }
+
+        if (user.fitbitAccessToken !== accessToken) {
+            return res.status(403).send('Unauthorized access');
         }
 
         const fields = ['userId', 'heart_rate', 'location', 'nutrition', 'oxygen_saturation', 'respiratory_rate', 'temperature', 'weight'];
