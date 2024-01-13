@@ -6,6 +6,7 @@ import crypto from 'crypto';
 import CodeVerifier from './models/CodeVerifier';
 import User from './models/User';
 import fetchAndStoreData from './util/fetchData';
+import { Parser } from 'json2csv';
 
 dotenv.config();
 
@@ -91,6 +92,33 @@ app.get('/callback', async (req: Request, res: Response) => {
         res.status(500).send('Internal Server Error');
     }
 
+});
+
+// TODO: Test this
+app.get('/download-data/:userId', async (req: Request, res: Response) => {
+    try {
+        const userId = req.params.userId;
+        const user = await User.findOne({userId}).lean();
+
+        if (!user) {
+            return res.status(404).json({msg: 'User not found'});
+        }
+
+        const fields = ['userId', 'heart_rate', 'location', 'nutrition', 'oxygen_saturation', 'respiratory_rate', 'temperature', 'weight'];
+        const json2csvParser = new Parser({ fields });
+        const csvData = json2csvParser.parse(user);
+
+        res.setHeader('Content-disposition', 'attachment; filename=user-data.csv');
+        res.set('Content-Type', 'text/csv');
+
+        res.status(200).send(csvData);
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({msg: 'Internal Server Error'});
+    }
+
+    return res.status(500).json({msg: 'Internal Server Error'});
 });
 
 app.listen(7970, () => {

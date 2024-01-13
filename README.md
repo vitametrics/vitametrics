@@ -4,7 +4,7 @@ A fitbit web application made to parse data from fitbit's WEB api
 
 
 ## Requirements
-Before starting, fit-bit-application requires the following to run:
+Before starting, fit-bit-application requires either of the following to run:
 - [Node.js](https://nodejs.org/)
 - [Yarn](https://formulae.brew.sh/formula/yarn)
 
