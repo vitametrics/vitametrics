@@ -97,7 +97,7 @@ app.get('/callback', async (req: Request, res: Response) => {
 // TODO: Test this
 app.get('/download-data/:userId', async (req: Request, res: Response) => {
     try {
-        const userId = req.params;
+        const userId = req.params.userId;
         const user = await User.findOne({userId}).lean();
         const accessToken = req.headers.authorization?.split(' ')[1];
 
