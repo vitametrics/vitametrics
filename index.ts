@@ -1,9 +1,7 @@
 import express, {Request, Response} from 'express';
 import mongoose from 'mongoose';
-import MongoStore from 'connect-mongo';
 import axios from 'axios';
 import dotenv from 'dotenv';
-import session from 'express-session';
 import passport from 'passport';
 import passportConfig from './util/passport-config';
 import cors from 'cors';
@@ -29,24 +27,8 @@ app.use(cors({
 	credentials: true
 }));
 
-let sessionStore;
-
-if (process.env.NODE_ENV === 'production') {
-    sessionStore = MongoStore.create({mongoUrl: DB_URI});
-} else {
-    sessionStore = new session.MemoryStore();
-}
-
-app.use(session({
-    secret: process.env.JWT_SECRET as string,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {secure: true},
-    store: sessionStore
-}));
 app.set('trust proxy', 1);
 app.use(passport.initialize());
-app.use(passport.session());
 // testing auth route
 app.use('/user', userRoute);
 app.use('/login', loginRoute(passport));
