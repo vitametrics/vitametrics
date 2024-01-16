@@ -2,8 +2,14 @@ import mongoose, { Document } from 'mongoose';
 
 interface IUser extends Document {
     userId: string;
+    email: string;
+    password: string;
     fitbitAccessToken: string;
     fitbitRefreshToken: string;
+    fullName: string;
+    age: number;
+    languageLocale: string;
+    distanceUnit: string;
     heart_rate: Array<number>;
     location: Array<number>;
     nutrition: Array<any>;
@@ -15,8 +21,14 @@ interface IUser extends Document {
 
 const userSchema = new mongoose.Schema({
     userId: String,
+    email: String,
+    password: String,
     fitbitAccessToken: String,
     fitbitRefreshToken: String,
+    fullName: String,
+    age: Number,
+    languageLocale: String,
+    distanceUnit: String,
     heart_rate: Array,
     location: Array,
     nutrition: Array,

@@ -71,8 +71,14 @@ app.get('/callback', async (req: Request, res: Response) => {
             {userId: fitbitUserID},
             {
                 userId: fitbitUserID,
+                email: '',
+                password: '',
                 fitbitAccessToken: accessToken,
                 fitbitRefreshToken: refreshToken,
+                fullName: profileResponse.data.user.fullName,
+                age: profileResponse.data.user.age,
+                languageLocale: profileResponse.data.user.languageLocale,
+                distanceUnit: profileResponse.data.user.distanceUnit,
                 heart_rate: [],
                 location: [],
                 nutrition: [],
@@ -99,7 +105,7 @@ app.get('/download-data/:userId', async (req: Request, res: Response) => {
     try {
         const userId = req.params.userId;
         const user = await User.findOne({userId}).lean();
-        const accessToken = req.headers.authorization?.split(' ')[1];
+        const accessToken = req.headers.authorization?.split(' ')[1]?.slice(0,-1);
 
         if (!user) {
             return res.status(404).json({msg: 'User not found'});
