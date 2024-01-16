@@ -9,16 +9,15 @@ router.use(express.json());
 
 router.post('/register', async(req: Request, res: Response) => {
 
-    const userId = req.params.userId;
     const accessToken = req.headers.authorization?.split(' ')[1]?.slice(0,-1);
-    const {email, password} = req.body;
+    const {userId, email, password} = req.body;
 
     if (!email || !password) {
         return res.status(400).json({ msg: 'Please enter all fields'});
     } else {
 
         try {
-            const user = await User.findOne({userId}).lean();
+            const user = await User.findOne({userId});
 
             if (!user) {
                 return res.status(404).json({msg: 'User does not exist'});
