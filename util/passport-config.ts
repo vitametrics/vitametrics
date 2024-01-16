@@ -17,8 +17,10 @@ const passportConfig = (passport: passport.Authenticator): Router => {
         try {
             let user = null;
             if (login.includes('@')) {
-                user = await User.findOne({email: login}).lean();
-            } 
+                user = await User.findOne({email: login});
+            } else {
+                return done(null, false, { message: 'Invalid credentials'});
+            }
 
             if (!user) {
                 return done(null, false, { message: 'Invalid credentials' });
