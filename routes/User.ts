@@ -6,12 +6,16 @@ import { Parser } from 'json2csv';
 
 const router = express.Router();
 
+router.use(express.json());
+
 /**
  * @swagger
  * /register:
  *   post:
  *     summary: Register a new user or update an existing user's details
  *     tags: [User Management]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -35,33 +39,16 @@ const router = express.Router();
  *     responses:
  *       200:
  *         description: User registered or updated successfully. Returns JWT token and user details.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 token:
- *                   type: string
- *                   description: JWT token for authentication.
- *                 user:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                     email:
- *                       type: string
  *       400:
  *         description: Bad request, missing required fields.
  *       403:
- *         description: Unauthorized access, token mismatch.
+ *         description: Unauthorized access. Requires valid Fitbit OAuth2 token.
  *       404:
  *         description: User does not exist.
  *       500:
  *         description: Internal server error.
  */
 
-
-router.use(express.json());
 
 router.post('/register', async(req: Request, res: Response) => {
 
@@ -112,34 +99,33 @@ router.post('/register', async(req: Request, res: Response) => {
     return res.status(500);
 });
 
-    /**
-     * @swagger
-     * /download-data/{userId}:
-     *   get:
-     *     summary: Downloads user data in CSV format
-     *     tags: [Data Management]
-     *     parameters:
-     *       - in: path
-     *         name: userId
-     *         required: true
-     *         schema:
-     *           type: string
-     *         description: The user ID
-     *     responses:
-     *       200:
-     *         description: Returns a CSV file containing the user's data
-     *         content:
-     *           text/csv:
-     *             schema:
-     *               type: string
-     *               description: CSV formatted data
-     *       403:
-     *         description: Unauthorized access (invalid or no access token)
-     *       404:
-     *         description: User not found
-     *       500:
-     *         description: Internal Server Error
-     */
+/**
+ * @swagger
+ * /download-data/{userId}:
+ *   get:
+ *     summary: Downloads user data in CSV format
+ *     tags: [Data Management]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The user ID
+ *     responses:
+ *       200:
+ *         description: Returns a CSV file containing the user's data
+ *       403:
+ *         description: Unauthorized access. Requires valid Fitbit OAuth2 token.
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal Server Error
+ */
+
+
 router.get('/download-data/:userId', async (req: Request, res: Response) => {
     try {
         const userId = req.params.userId;

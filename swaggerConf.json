@@ -11,7 +11,17 @@
                 "url": "https://fitbit.seancornell.io/",
                 "description": "Development server"
             }
-        ]
+        ],
+        "components": {
+            "securitySchemes": {
+                "bearerAuth": {
+                    "type": "http",
+                    "scheme": "bearer",
+                    "bearerFormat": "JWT",
+                    "description": "Enter the Fitbit OAuth2 token"
+                }
+            }
+        }
     },
     "apis": ["./routes/*.ts"]
   }
