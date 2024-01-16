@@ -144,7 +144,7 @@ router.get('/download-data/:userId', async (req: Request, res: Response) => {
     try {
         const userId = req.params.userId;
         const user = await User.findOne({userId}).lean();
-        const accessToken = req.headers.authorization?.split(' ')[1]?.slice(0,-1);
+        const accessToken = req.headers.authorization?.split(' ')[1];
 
         if (!user) {
             return res.status(404).json({msg: 'User not found'});
