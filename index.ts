@@ -48,7 +48,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 // testing auth route
 app.use('/user', userRoute);
-app.use('/login', loginRoute());
+app.use('/login', loginRoute(passport));
 
 mongoose.connect(DB_URI)
     .then(() => console.log('Connected to database'))
