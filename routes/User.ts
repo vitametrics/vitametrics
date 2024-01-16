@@ -10,7 +10,7 @@ router.use(express.json());
 
 /**
  * @swagger
- * /register:
+ * /user/register:
  *   post:
  *     summary: Register a new user or update an existing user's details
  *     tags: [User Management]
@@ -101,7 +101,7 @@ router.post('/register', async(req: Request, res: Response) => {
 
 /**
  * @swagger
- * /download-data/{userId}:
+ * /user/download-data/{userId}:
  *   get:
  *     summary: Downloads user data in CSV format
  *     tags: [Data Management]
