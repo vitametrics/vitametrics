@@ -6,7 +6,10 @@
   "license": "MIT",
   "scripts": {
     "tsc": "tsc",
-    "start": "node build/index.js"
+    "start": "node build/index.js",
+    "build": "tsc && node build/index.js",
+    "dev": "nodemon --exec ts-node index.ts",
+    "docs": "swagger-jsdoc -d swaggerConf.json routes/*.ts"
   },
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -19,6 +22,8 @@
     "@types/jsonwebtoken": "^9.0.5",
     "@types/passport": "^1.0.16",
     "@types/passport-local": "^1.0.38",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.6",
     "axios": "^1.6.5",
     "bcryptjs": "^2.4.3",
     "connect-mongo": "^5.1.0",
@@ -31,8 +36,12 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.0.4",
     "morgan": "^1.10.0",
+    "nodemon": "^3.0.3",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   }
 }

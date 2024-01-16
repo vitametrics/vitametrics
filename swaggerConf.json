@@ -1,0 +1,18 @@
+{
+    "definition": {
+        "openapi": "3.0.0",
+        "info": {
+            "title": "physiobit API",
+            "version": "1.0.0",
+            "description": "physiobit API Documentation"
+        },
+        "servers": [
+            {
+                "url": "http://localhost:7970",
+                "description": "Development server"
+            }
+        ]
+    },
+    "apis": ["./routes/*.ts"]
+  }
+  
