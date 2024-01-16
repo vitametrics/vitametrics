@@ -124,7 +124,8 @@ app.get('/callback', async (req: Request, res: Response) => {
 
         await fetchAndStoreData(fitbitUserID, accessToken);
 
-        res.send(`User ${fitbitUserID} saved/updated with access token: ${accessToken}.`);
+	res.redirect('/login');
+        //res.send(`User ${fitbitUserID} saved/updated with access token: ${accessToken}.`);
     } catch(err) {
         console.error(err);
         res.status(500).send('Internal Server Error');
