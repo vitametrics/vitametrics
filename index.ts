@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import session from 'express-session';
 import passport from 'passport';
 import passportConfig from './util/passport-config';
+import cors from 'cors';
 import cookieParser from 'cookie-parser'; 
 import crypto from 'crypto';
 import CodeVerifier from './models/CodeVerifier';
@@ -22,6 +23,10 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 passportConfig(passport);
+app.use(cors({
+	origin: "https://fitbit.seancornell.io",
+	credentials: true
+}));
 
 let sessionStore;
 
