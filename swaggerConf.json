@@ -8,7 +8,7 @@
         },
         "servers": [
             {
-                "url": "http://localhost:7970",
+                "url": "https://fitbit.seancornell.io/",
                 "description": "Development server"
             }
         ]
