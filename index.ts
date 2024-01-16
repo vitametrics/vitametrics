@@ -1,19 +1,51 @@
 import express, {Request, Response} from 'express';
 import mongoose from 'mongoose';
+import MongoStore from 'connect-mongo';
 import axios from 'axios';
 import dotenv from 'dotenv';
+import session from 'express-session';
+import passport from 'passport';
+import passportConfig from './util/passport-config';
+import cookieParser from 'cookie-parser'; 
 import crypto from 'crypto';
 import CodeVerifier from './models/CodeVerifier';
 import User from './models/User';
 import fetchAndStoreData from './util/fetchData';
+import loginRoute from './routes/Login';
+import userRoute from './routes/User';
 import { Parser } from 'json2csv';
 
 dotenv.config();
 
+const DB_URI = process.env.NODE_ENV === 'production' ? process.env.PROD_DB_URI as string : process.env.DEV_DB_URI as string;
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
+passportConfig(passport);
 
-mongoose.connect(process.env.DATABASE_URI as string)
+let sessionStore;
+
+if (process.env.NODE_ENV === 'production') {
+    sessionStore = MongoStore.create({mongoUrl: DB_URI});
+} else {
+    sessionStore = new session.MemoryStore();
+}
+
+app.use(session({
+    secret: process.env.JWT_SECRET as string,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {secure: true},
+    store: sessionStore
+}));
+app.set('trust proxy', 1);
+app.use(passport.initialize());
+app.use(passport.session());
+// testing auth route
+app.use('/user', userRoute);
+app.use('/login', loginRoute());
+
+mongoose.connect(DB_URI)
     .then(() => console.log('Connected to database'))
     .catch((err) => console.error('Could not connect to the database', err));
 
