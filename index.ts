@@ -27,7 +27,7 @@ app.use(cors({
 app.set('trust proxy', 1);
 app.use(passport.initialize());
 // testing auth route
-app.use('/auth', authRoute);
+app.use('/', authRoute);
 app.use('/user', userRoute);
 app.use('/login', loginRoute(passport));
 app.use('/logout', logoutRoute);
