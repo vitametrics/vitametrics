@@ -127,7 +127,7 @@ app.get('/download-data/:userId', async (req: Request, res: Response) => {
         return res.status(500).json({msg: 'Internal Server Error'});
     }
 
-    return res.status(500).json({msg: 'Internal Server Error'});
+    return res.status(500);
 });
 
 app.listen(7970, () => {

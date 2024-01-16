@@ -27,3 +27,11 @@ Before starting, fit-bit-application requires either of the following to run:
 ```bash
   yarn start
 ```
+
+
+## TODO:
+- [X] OAuth2 Verification
+- [X] OAuth2 Token Refreshing
+- [X] User Data Download
+- [] Fetch complete list of user data
+- [] User account creation
