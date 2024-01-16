@@ -13,6 +13,7 @@ import CodeVerifier from './models/CodeVerifier';
 import User from './models/User';
 import fetchAndStoreData from './util/fetchData';
 import loginRoute from './routes/Login';
+import logoutRoute from './routes/Logout';
 import userRoute from './routes/User';
 import { Parser } from 'json2csv';
 
@@ -49,6 +50,8 @@ app.use(passport.session());
 // testing auth route
 app.use('/user', userRoute);
 app.use('/login', loginRoute(passport));
+app.use('/logout', logoutRoute);
+
 
 mongoose.connect(DB_URI)
     .then(() => console.log('Connected to database'))

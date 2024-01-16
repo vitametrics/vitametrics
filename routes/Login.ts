@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 const loginRoute = (passport: PassportStatic): Router => {
     const router = express.Router();
 
-    router.post('/login', (req: Request, res: Response, next: NextFunction) => {
+    router.post('/', (req: Request, res: Response, next: NextFunction) => {
         passport.authenticate('local', (err: Error, user: IUser | false, info : { msg: string} | any) => {
             if (err) {
                 return next(err);
@@ -38,20 +38,6 @@ const loginRoute = (passport: PassportStatic): Router => {
             );
         })(req, res, next);
     });
-
-    router.get('/logout', (req: Request, res: Response) => {
-		req.session.destroy(err => {
-			if(err) {
-				if (process.env.NODE_ENV === 'development') {
-					console.error('Error destroying session:', err);
-					return res.json({ success: false, message: 'Error logging out' });
-				}
-				return res.json({ success: false, message: 'An error occured.' });
-			} 
-			res.clearCookie('token');
-			return res.json({ success: true });
-		});
-	});
 
     return router;
 }

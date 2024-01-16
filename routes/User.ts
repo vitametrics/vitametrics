@@ -9,7 +9,7 @@ router.use(express.json());
 
 router.post('/register', async(req: Request, res: Response) => {
 
-    const accessToken = req.headers.authorization?.split(' ')[1]?.slice(0,-1);
+    const accessToken = req.headers.authorization?.split(' ')[1];
     const {userId, email, password} = req.body;
 
     if (!email || !password) {
