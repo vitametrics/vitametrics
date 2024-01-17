@@ -3,6 +3,8 @@ import User from '../models/User';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { Parser } from 'json2csv';
+import verifyToken from '../middleware/verifyToken';
+import { IUser } from '../models/User';
 
 const router = express.Router();
 
@@ -155,4 +157,31 @@ router.get('/download-data/:userId', async (req: Request, res: Response) => {
     return res.status(500);
 });
 
+
+router.get('/info/:userId', verifyToken, async (req: Request, res: Response) => {
+    try {
+        const userId = req.params.userId;
+
+        const userFromToken = req.user as IUser;
+
+        if (userFromToken && userFromToken.userId !== userId) {
+            return res.status(403).json({ msg: 'Unauthorized access' });
+        }
+
+        const user = await User.findById(userId).lean();
+
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
+        const { email, age, languageLocale, distanceUnit, heart_rate, fitbitAccessToken, fitbitRefreshToken, nutrition, weight, ...userData } = user;
+
+        res.json(userData);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ msg: 'Internal Server Error' });
+    }
+
+    return res.status(500);
+});
 export default router;

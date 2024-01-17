@@ -75,6 +75,12 @@ const loginRoute = (passport: PassportStatic): Router => {
                         return res.status(500).json({msg: 'Internal Server Error'});
                     }
 
+                    res.cookie('token', token, {
+                        httpOnly: true,
+                        secure: process.env.NODE_ENV === 'production',
+                        maxAge: 3600000
+                    });
+
                     return res.json({
                         token,
                         user: {
