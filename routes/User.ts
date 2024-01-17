@@ -86,8 +86,9 @@ router.post('/register', async(req: Request, res: Response) => {
                             email: updatedUser.email,
                             // TODO: return data here
                         }
-                    })
-
+                    });
+                    
+                    return;
                 }
             }
 
@@ -95,10 +96,7 @@ router.post('/register', async(req: Request, res: Response) => {
             console.error(err);
             return res.status(500).json({msg: 'Internal Server Error'});
         }
-
     }
-
-    return res.status(500);
 });
 
 /**
@@ -147,14 +145,13 @@ router.get('/download-data/:userId', async (req: Request, res: Response) => {
             res.set('Content-Type', 'text/csv');
 
             res.status(200).send(csvData);
-        }
 
+            return;
+        }
     } catch (err) {
         console.error(err);
         return res.status(500).json({msg: 'Internal Server Error'});
     }
-
-    return res.status(500);
 });
 
 
@@ -177,11 +174,10 @@ router.get('/info/:userId', verifyToken, async (req: Request, res: Response) => 
         const { email, age, languageLocale, distanceUnit, heart_rate, fitbitAccessToken, fitbitRefreshToken, nutrition, weight, ...userData } = user;
 
         res.json(userData);
+        return;
     } catch (err) {
         console.error(err);
         return res.status(500).json({ msg: 'Internal Server Error' });
     }
-
-    return res.status(500);
 });
 export default router;
