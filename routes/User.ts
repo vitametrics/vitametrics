@@ -79,7 +79,7 @@ router.post('/register', async(req: Request, res: Response) => {
 
                     const token = jwt.sign({id: updatedUser._id}, process.env.JWT_SECRET as string, {expiresIn: 3600});
                     
-                    res.json({
+                    return res.json({
                         token,
                         user: {
                             id: updatedUser.userId,
@@ -87,8 +87,6 @@ router.post('/register', async(req: Request, res: Response) => {
                             // TODO: return data here
                         }
                     });
-                    
-                    return;
                 }
             }
 
@@ -144,9 +142,7 @@ router.get('/download-data/:userId', async (req: Request, res: Response) => {
             res.setHeader('Content-disposition', 'attachment; filename=user-data.csv');
             res.set('Content-Type', 'text/csv');
 
-            res.status(200).send(csvData);
-
-            return;
+            return res.status(200).send(csvData);
         }
     } catch (err) {
         console.error(err);
@@ -154,6 +150,63 @@ router.get('/download-data/:userId', async (req: Request, res: Response) => {
     }
 });
 
+/**
+ * @swagger
+ * /user/info/{userId}:
+ *   get:
+ *     summary: Retrieve user information
+ *     tags: [User Management]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the user to retrieve information for
+ *     responses:
+ *       200:
+ *         description: User information retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 email:
+ *                   type: string
+ *                   description: Email address of the user
+ *                 age:
+ *                   type: integer
+ *                   description: Age of the user
+ *                 languageLocale:
+ *                   type: string
+ *                   description: Language locale of the user
+ *                 distanceUnit:
+ *                   type: string
+ *                   description: Preferred distance unit of the user
+ *                 heart_rate:
+ *                   type: array
+ *                   items:
+ *                     type: number
+ *                   description: Array of heart rate data
+ *                 nutrition:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                   description: Array of nutrition data
+ *                 weight:
+ *                   type: array
+ *                   items:
+ *                     type: number
+ *                   description: Array of weight data
+ *       403:
+ *         description: Unauthorized access (invalid or missing JWT token)
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal Server Error
+ */
 
 router.get('/info/:userId', verifyToken, async (req: Request, res: Response) => {
     try {
@@ -173,8 +226,7 @@ router.get('/info/:userId', verifyToken, async (req: Request, res: Response) => 
 
         const { email, age, languageLocale, distanceUnit, heart_rate, fitbitAccessToken, fitbitRefreshToken, nutrition, weight, ...userData } = user;
 
-        res.json(userData);
-        return;
+        return res.json(userData);
     } catch (err) {
         console.error(err);
         return res.status(500).json({ msg: 'Internal Server Error' });
