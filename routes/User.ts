@@ -208,6 +208,11 @@ router.get('/download-data/:userId', async (req: Request, res: Response) => {
  *         description: Internal Server Error
  */
 
+/*
+* TODO: add some sort of ownership for accounts. this endpoint allows for the querying of multiple accounts
+* if users have permissions to view other user accounts
+*/
+
 router.get('/info/:userId', verifyToken, async (req: Request, res: Response) => {
     try {
         const userId = req.params.userId;
