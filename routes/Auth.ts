@@ -90,6 +90,9 @@ router.get('/callback', async (req: Request, res: Response) => {
         const refreshToken = tokenResponse.data.refresh_token;
 
         const token = req.headers.authorization?.split(' ')[1];
+        if (!token) {
+            return res.status(403).send('Unauthorized access - No token');
+        }
         const decodedToken = jwt.verify(token as string, process.env.JWT_SECRET as string) as JwtPayload;
         const userEmail = decodedToken.email;
 
