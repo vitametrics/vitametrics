@@ -1,30 +1,44 @@
 import axios from 'axios';
-import User  from '../models/User';
+import Device from '../models/Device';
 
 
-async function fetchAndStoreData(userId: String, accessToken: String) {
+async function fetchAndStoreData(userId: String, accessToken: String, timePeriod: String) {
     try {
-        const heartRateResponse = await axios.get(`https://api.fitbit.com/1/user/${userId}/activities.json`, {
-            headers: {'Authorization': `Bearer ${accessToken}`}
-        });
+        const devices = await Device.find({userId});
 
-        const nutritionResponse = await axios.get(`https://api.fitbit.com/1/user/${userId}/foods/log/date/today.json`, {
-            headers: {'Authorization': `Bearer ${accessToken}`}
-        });
+        for (const device of devices) {
+            let heartRateEndpoint = `https://api.fitbit.com/1/user/${userId}/activities/heart/date/today/1d`;
+            if (timePeriod === 'hour') {
+                heartRateEndpoint += '/1sec';
+            } else if (timePeriod === 'minute-wide' || timePeriod === 'minute-narrow') {
+                heartRateEndpoint += '/1min';
+            }
+            heartRateEndpoint += '.json';
 
-        const weightResponse = await axios.get(`https://api.fitbit.com/1/user/${userId}/body/log/weight/date/today.json`, {
-            headers: {'Authorization': `Bearer ${accessToken}`}
-        });
+            const heartRateResponse = await axios.get(heartRateEndpoint, {
+                headers: {'Authorization': `Bearer ${accessToken}`}
+            });
 
-        await User.findOneAndUpdate(
-            {userId},
-            { 
-                heart_rate: heartRateResponse.data,
-                nutrition: nutritionResponse.data,
-                weight: weightResponse.data,
-            },
-            {new: true}
-        )
+            let sleepEndpoint = `https://api.fitbit.com/1.2/user/${userId}/sleep/date/today`;
+            if (timePeriod === 'minute-wide' || timePeriod === 'minute-narrow') {
+                sleepEndpoint += '/1min';
+            }
+            sleepEndpoint += '.json';
+
+            const sleepResponse = await axios.get(sleepEndpoint, {
+                headers: {'Authorization': `Bearer ${accessToken}`}
+            });
+
+            await Device.findOneAndUpdate(
+                { _id: device._id },
+                {
+                    heartRateData: heartRateResponse.data['activities-heart'],
+                    sleepData: sleepResponse.data.sleep,
+                },
+                { new: true }
+            );
+        }
+
     } catch (err) {
         console.error("Error fetching heart rate data: ", err);
     }
