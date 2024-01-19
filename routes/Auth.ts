@@ -3,7 +3,7 @@ import axios from 'axios';
 import crypto from 'crypto';
 import CodeVerifier from '../models/CodeVerifier';
 import User from '../models/User';
-import fetchAndStoreData from '../util/fetchData';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 const router = express.Router();
 
@@ -89,33 +89,23 @@ router.get('/callback', async (req: Request, res: Response) => {
         const fitbitUserID = profileResponse.data.user.encodedId;
         const refreshToken = tokenResponse.data.refresh_token;
 
+        const token = req.headers.authorization?.split(' ')[1];
+        const decodedToken = jwt.verify(token as string, process.env.JWT_SECRET as string) as JwtPayload;
+        const userEmail = decodedToken.email;
+
         await User.findOneAndUpdate(
-            {userId: fitbitUserID},
+            {email: userEmail},
             {
                 userId: fitbitUserID,
-                email: '',
-                password: '',
                 fitbitAccessToken: accessToken,
                 fitbitRefreshToken: refreshToken,
-                fullName: profileResponse.data.user.fullName,
-                age: profileResponse.data.user.age,
                 languageLocale: profileResponse.data.user.languageLocale,
                 distanceUnit: profileResponse.data.user.distanceUnit,
-                heart_rate: [],
-                location: [],
-                nutrition: [],
-                oxygen_saturation: [],
-                respiratory_rate: [],
-                temperature: [],
-                weight: []
             },
             {upsert: true, new: true}
         );
-
-        await fetchAndStoreData(fitbitUserID, accessToken);
-
-	res.redirect('/login');
-        //res.send(`User ${fitbitUserID} saved/updated with access token: ${accessToken}.`);
+        // this should not handle redirects. fine for now i guess.
+	    res.redirect('/dashboard');
     } catch(err) {
         console.error(err);
         res.status(500).send('Internal Server Error');
