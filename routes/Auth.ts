@@ -114,6 +114,8 @@ router.get('/callback', async (req: Request, res: Response) => {
         res.status(500).send('Internal Server Error');
     }
 
+    return;
+
 });
 
 export default router;
