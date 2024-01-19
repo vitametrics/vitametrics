@@ -1,7 +1,6 @@
 import express from 'express';
-import cookieParser from 'cookie-parser';
+import { commonMiddlewares } from './middleware/common';
 import passport from 'passport';
-import cors from 'cors';
 import userRoute from './routes/User';
 import logoutRoute from './routes/Logout';
 import swaggerUi from 'swagger-ui-express';
@@ -9,18 +8,11 @@ import swaggerSpec from './util/swaggerSpec';
 import passportConfig from './util/passport-config';
 import authRoute from './routes/Auth';
 import loginRoute from './routes/Login';
-import { connectDB } from './config';
+import { connectDB } from './middleware/config';
 
 const app = express();
-app.use(express.json());
-app.use(cookieParser());
+commonMiddlewares(app);
 passportConfig(passport);
-app.use(cors({
-    origin: "https://fitbit.seancornell.io",
-    credentials: true
-}));
-
-app.set('trust proxy', 1);
 app.use(passport.initialize());
 // testing auth route
 app.use('/', authRoute);

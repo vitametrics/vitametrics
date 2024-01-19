@@ -12,7 +12,7 @@ const passportConfig = (passport: passport.Authenticator): Router => {
 
     router.use(express.json());
 
-    passport.use(new LocalStrategy({ usernameField: 'login' }, 
+    passport.use(new LocalStrategy({ usernameField: 'email' }, 
     async (login: string, password: string, done: PassportVerifyCallback) => {
         try {
             let user = null;
