@@ -8,6 +8,7 @@ import swaggerSpec from './util/swaggerSpec';
 import passportConfig from './util/passport-config';
 import authRoute from './routes/Auth';
 import loginRoute from './routes/Login';
+import adminRoute from './routes/Admin';
 import registerRoute from './routes/Register';
 import { connectDB } from './middleware/config';
 
@@ -17,6 +18,7 @@ passportConfig(passport);
 app.use(passport.initialize());
 // testing auth route
 app.use('/', authRoute);
+app.use('/admin', adminRoute);
 app.use('/user', userRoute);
 app.use('/register', registerRoute);
 app.use('/login', loginRoute(passport));

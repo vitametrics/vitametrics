@@ -33,6 +33,6 @@ router.post('/create-invite', async (req: Request, res: Response) => {
         return res.status(500).json({msg: 'Internal Server Error'});
     }
 
-    
-
 });
+
+export default router;
