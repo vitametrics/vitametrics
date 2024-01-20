@@ -32,6 +32,15 @@ router.post('/', async (req: Request, res: Response) => {
             return res.status(400).json({msg: 'Invalid invite code'});
         }
 
+        if (!validInviteCode.isActive) {
+            return res.status(400).json({msg: 'Invite code has already been used for this email'});
+        } else if (!validInviteCode.emails.includes(email)) {
+            return res.status(400).json({msg: 'Invalid invite code'});
+        } else if (validInviteCode.emails.find(email)?.used == true) {
+            return res.status(400).json({msg: 'Invite code has already been used for this email'});
+        }
+
+
         const newUser = new User({
             userId: '',
             email: email,
