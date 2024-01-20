@@ -7,24 +7,23 @@ const router = express.Router();
 router.post('/create-invite', async (req: Request, res: Response) => {
 
     const token = req.headers['x-access-token'];
-    const { email } = req.body;
+    const { emails } = req.body;
     
     if (token !== process.env.ADMIN_TOKEN) {
         return res.status(401).json({ msg: 'Unauthorized' });
     }
 
-    if (!email) {
-        return res.status(400).json({ msg: 'Email required' });
+    if (!emails || !Array.isArray(emails) || emails.length == 0) {
+        return res.status(400).json({ msg: 'Emails required' });
     }
 
-    const newInviteCode = crypto.randomBytes(20).toString('hex');
+    const newInviteCode = crypto.randomBytes(32).toString('hex');
 
     try {
         const invite = new Invite({
-            code: newInviteCode
+            code: newInviteCode,
+            emails: emails.map(email => ({email, used: false}))
         });
-
-        invite.emails.push({email: email, used: false});
 
         await invite.save();
 
