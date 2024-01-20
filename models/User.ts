@@ -8,6 +8,7 @@ export interface IUser extends Document {
     fitbitRefreshToken: string;
     languageLocale: string;
     distanceUnit: string;
+    inviteCode: string;
 };
 
 const userSchema = new mongoose.Schema({
@@ -16,7 +17,8 @@ const userSchema = new mongoose.Schema({
     password: String,
     fitbitAccessToken: String,
     languageLocale: String,
-    distanceUnit: String
+    distanceUnit: String,
+    inviteCode: String
 });
 
 const User = mongoose.model<IUser>('User', userSchema);

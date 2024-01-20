@@ -2,9 +2,7 @@ import express, {Request, Response} from 'express';
 import { Parser } from 'json2csv';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import User from '../models/User';
-import bcrypt from 'bcryptjs';
 import Device from '../models/Device';
-import verifyAdmin from '../middleware/verifyAdmin';
 import verifyToken from '../middleware/verifyToken';
 import fetchAndStoreData from '../util/fetchData';
 
@@ -14,39 +12,6 @@ interface CustomRequest extends Request {
     userId: string; // Add userId property
 }
 
-router.post('/create-user', verifyAdmin, async (req: Request, res: Response) => {
-
-    try {
-        console.log(req.body);
-        const { email, password } = req.body;
-
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ msg: 'Email already in use' });
-        }
-
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
-        const newUser = new User({
-            userId: '',
-            email: email,
-            password: hashedPassword,
-            fitbitAccessToken: '',
-            fitbitRefreshToken: '',
-            languageLocale: '',
-            distanceUnit: ''
-        });
-
-        await newUser.save();
-
-        return res.status(201).json({ msg: 'User account created successfully!'});
-
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({msg: 'Internal Server Error'});
-    }
-});
 
 /**
  * @swagger

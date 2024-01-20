@@ -8,8 +8,8 @@ import swaggerSpec from './util/swaggerSpec';
 import passportConfig from './util/passport-config';
 import authRoute from './routes/Auth';
 import loginRoute from './routes/Login';
+import registerRoute from './routes/Register';
 import { connectDB } from './middleware/config';
-import { regenerateToken } from './util/adminTokenManager';
 
 const app = express();
 commonMiddlewares(app);
@@ -18,11 +18,10 @@ app.use(passport.initialize());
 // testing auth route
 app.use('/', authRoute);
 app.use('/user', userRoute);
+app.use('/register', registerRoute);
 app.use('/login', loginRoute(passport));
 app.use('/logout', logoutRoute);
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-regenerateToken();
 
 connectDB();
 app.listen(7970, () => {
