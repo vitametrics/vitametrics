@@ -21,9 +21,10 @@ router.post('/create-invite', async (req: Request, res: Response) => {
 
     try {
         const invite = new Invite({
-            code: newInviteCode,
-            email: email
+            code: newInviteCode
         });
+
+        invite.emails.push({email: email, used: false});
 
         await invite.save();
 
