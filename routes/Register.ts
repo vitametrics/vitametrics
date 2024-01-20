@@ -26,9 +26,9 @@ router.post('/', async (req: Request, res: Response) => {
             }
         }
 
-        const userWithInviteCode = await Invite.findOne({inviteCode});
+        const validInviteCode = await Invite.findOne({inviteCode});
 
-        if (!userWithInviteCode) {
+        if (!validInviteCode) {
             return res.status(400).json({msg: 'Invalid invite code'});
         }
 
@@ -40,6 +40,11 @@ router.post('/', async (req: Request, res: Response) => {
             languageLocale: 'en-US',
             distanceUnit: 'en-US'
         });
+
+        validInviteCode.usageCount += 1;
+        validInviteCode.isActive = false;
+        
+        await validInviteCode.save();
 
         bcrypt.genSalt(10, (err: Error, salt: string) => {
             if (err) throw err;
