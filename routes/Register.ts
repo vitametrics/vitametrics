@@ -53,6 +53,7 @@ router.post('/', async (req: Request, res: Response) => {
 
         validInviteCode.usageCount += 1;
         validInviteCode.isActive = false;
+        validInviteCode.emails.find(e => e.email === email)!.used = true;
         
         await validInviteCode.save();
 
