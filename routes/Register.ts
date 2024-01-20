@@ -26,11 +26,12 @@ router.post('/', async (req: Request, res: Response) => {
             }
         }
 
-        const validInviteCode = await Invite.findOne({inviteCode});
+        const validInviteCode = await Invite.findOne({code: inviteCode});
 
         if (!validInviteCode) {
             return res.status(400).json({msg: 'Invalid invite code'});
         }
+	
 
         if (!validInviteCode.isActive) {
             return res.status(400).json({msg: 'Invite code has already been used for this email'});
