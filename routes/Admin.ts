@@ -17,7 +17,7 @@ router.post('/create-invite', async (req: Request, res: Response) => {
         return res.status(400).json({ msg: 'Emails required' });
     }
 
-    const newInviteCode = crypto.randomBytes(32).toString('hex');
+    const newInviteCode = crypto.randomBytes(15).toString('hex');
 
     try {
         const invite = new Invite({
