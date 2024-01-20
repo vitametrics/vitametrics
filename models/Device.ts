@@ -14,6 +14,7 @@ const deviceSchema = new mongoose.Schema({
     heartRateData: [{ date: Date, value: Number }],
     sleepData: [{ date: Date, duration: Number, quality: String }],
     nutritionData: [{ date: Date, value: Number }],
+    lastSyncDate: [{date: Date}]
 });
 
 const Device = mongoose.model('Device', deviceSchema);

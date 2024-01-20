@@ -9,6 +9,7 @@ import passportConfig from './util/passport-config';
 import authRoute from './routes/Auth';
 import loginRoute from './routes/Login';
 import { connectDB } from './middleware/config';
+import { regenerateToken } from './util/adminTokenManager';
 
 const app = express();
 commonMiddlewares(app);
@@ -20,6 +21,8 @@ app.use('/user', userRoute);
 app.use('/login', loginRoute(passport));
 app.use('/logout', logoutRoute);
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+regenerateToken();
 
 connectDB();
 app.listen(7970, () => {
