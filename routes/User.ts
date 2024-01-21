@@ -1,6 +1,5 @@
 import express, {Request, Response} from 'express';
 import { Parser } from 'json2csv';
-import jwt, { JwtPayload } from 'jsonwebtoken';
 import User from '../models/User';
 import Device from '../models/Device';
 import verifyToken from '../middleware/verifyToken';
@@ -109,17 +108,12 @@ router.post('/sync-data/:deviceId', verifyToken, async (req: CustomRequest, res:
  */
 
 
-router.get('/download-data/:deviceId', async (req: Request, res: Response) => {
+router.get('/download-data/:deviceId', verifyToken, async (req: CustomRequest, res: Response) => {
     try {
+
+        const userId = req.userId;
+
         const deviceId = req.params.deviceId;
-        const token = req.headers.authorization?.split(' ')[1];
-
-        if (!token) {
-            return res.status(403).send({msg: 'Unauthorized access - No token'});
-        }
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
-        const userId = decoded.id;
 
         const device = await Device.findOne({ deviceId, userId}).lean();
 
