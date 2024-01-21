@@ -44,3 +44,4 @@ To start the application, run:
 - [X] User Login/Account Creation (admin only)
 - [ ] Fetch Fitbit OAuth2 Token for users (testing)
 - [ ] Data aggregation/download (testing)
+- [X] [Hardened Cookies](https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html#token-sidejacking)

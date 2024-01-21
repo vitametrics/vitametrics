@@ -67,8 +67,10 @@ const loginRoute = (passport: PassportStatic): Router => {
                 return res.status(401).json(info);
             }
 
+            let userId = user.userId || user.inviteCode;
+
             jwt.sign(
-                { id: user.userId },
+                { id: userId },
                 process.env.JWT_SECRET as string,
                 { expiresIn: '1h' },
                 async (err: Error, token: string) => {
