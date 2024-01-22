@@ -29,7 +29,7 @@ const Navbar = () => {
     <nav className="bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700">
       <div className="flex flex-row w-full bg-[#3F3E43] h-20 sticky top-0 flex-wrap items-center justify-between mx-auto p-4">
         <a
-          href="#"
+          href="/"
           className="flex items-center space-x-3 rtl:space-x-rev  erse"
         >
           <img
@@ -76,12 +76,12 @@ const Navbar = () => {
             >
               <ul className="flex flex-col font-medium p-4 md:p-0">
                 <li>
-                  <a href="#" className="block py-2 px-3">
+                  <a href="/" className="block py-2 px-3">
                     Home
                   </a>
                 </li>
                 <li>
-                  <a href="#steps" className="block py-2 px-3">
+                  <a href="/home#steps" className="block py-2 px-3">
                     How it works
                   </a>
                 </li>
@@ -103,7 +103,7 @@ const Navbar = () => {
             <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-transparent md:dark:bg-transparent">
               <li>
                 <a
-                  href="#home"
+                  href="/"
                   className="block py-2 px-3 text-lg text-white bg-transparent rounded md:bg-transparent md:text-white md:p-0 dark:text-white md:dark:text-white"
                   aria-current="page"
                 >
