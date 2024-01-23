@@ -1,7 +1,7 @@
 import express, {Request, Response} from 'express';
 import User from '../models/User';
 import Invite from '../models/Invite';
-import bcrypt from 'bcryptjs';
+import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
 
 const router = express.Router();
@@ -41,7 +41,6 @@ router.post('/', async (req: Request, res: Response) => {
             return res.status(400).json({msg: 'Invite code has already been used for this email'});
         }
 
-
         const newUser = new User({
             userId: '',
             email: email,
@@ -57,41 +56,43 @@ router.post('/', async (req: Request, res: Response) => {
         
         await validInviteCode.save();
 
-        bcrypt.genSalt(10, (err: Error, salt: string) => {
-            if (err) throw err;
+        try {
 
-            bcrypt.hash(password, salt, async (err: Error, hash: string) => {
-                if (err) throw err;
+            const hashedPassword = await argon2.hash(password);
+            newUser.password = hashedPassword;
 
-                newUser.password = hash;
+            await newUser.save()
+                .then(user => {
+                    jwt.sign(
+                        {id: user.userId || user.email},
+                        process.env.JWT_SECRET as string,
+                        {expiresIn: '1h'},
+                        (err, token) => {
+                            if (err) throw err;
 
-                await newUser.save()
-                    .then(user => {
-                        jwt.sign(
-                            {id: user.userId},
-                            process.env.JWT_SECRET as string,
-                            {expiresIn: '1h'},
-                            (err, token) => {
-                                if (err) throw err;
+                            res.json({
+                                token,
+                                user: {
+                                    id: user.userId,
+                                    email: user.email,
+                                    languageLocale: user.languageLocale,
+                                    distanceUnit: user.distanceUnit
+                                }
+                            });
+                        }
+                    )
+                });
 
-                                res.json({
-                                    token,
-                                    user: {
-                                        id: user.userId,
-                                        email: user.email,
-                                        languageLocale: user.languageLocale,
-                                        distanceUnit: user.distanceUnit
-                                    }
-                                });
-                            }
-                        )
-                    });
-            });
-        })
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({msg: 'Internal Server Error'});
+        }
+
+
 
     } catch (err) {
         console.error(err);
-        res.status(500).json({msg: 'Server error'});
+        res.status(500).json({msg: 'Internal Server Error'});
     }
 
     return;

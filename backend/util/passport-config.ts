@@ -2,7 +2,7 @@ import express, { Router } from 'express';
 import passport from 'passport';
 import { Strategy as LocalStrategy} from 'passport-local';
 import User from '../models/User';
-import bcrypt from 'bcryptjs';
+import argon2 from 'argon2';
 
 type PassportVerifyCallback = (error: any, user?: any, info?: any) => void;
 
@@ -26,7 +26,7 @@ const passportConfig = (passport: passport.Authenticator): Router => {
                 return done(null, false, { message: 'Invalid credentials' });
             }
 
-            const isMatch = await bcrypt.compare(password, user.password);
+            const isMatch = await argon2.verify(user.password, password);
             if (!isMatch) {
                 return done(null, false, { message: 'Invalid credentials' });
             }
