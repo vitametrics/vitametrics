@@ -1,5 +1,6 @@
 import express from 'express';
 import { commonMiddlewares } from './middleware/common';
+import dotenv from 'dotenv';
 import passport from 'passport';
 import userRoute from './routes/User';
 import logoutRoute from './routes/Logout';
@@ -11,6 +12,8 @@ import loginRoute from './routes/Login';
 import adminRoute from './routes/Admin';
 import registerRoute from './routes/Register';
 import { connectDB } from './middleware/config';
+
+dotenv.config({ path: '/.env' });
 
 const app = express();
 commonMiddlewares(app);
@@ -26,6 +29,7 @@ app.use('/logout', logoutRoute);
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 connectDB();
-app.listen(parseInt(process.env.PORT as string) || 3000, () => {
-    console.log('Listening on port 7970');
+
+app.listen(process.env.PORT || 3000, () => {
+    console.log('Listening on port', process.env.PORT || 3000);
 })
