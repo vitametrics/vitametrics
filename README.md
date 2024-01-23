@@ -1,7 +1,1 @@
-## Physiobit
-
-```
-npm install
-npm run dev
-```
-
+### WIP

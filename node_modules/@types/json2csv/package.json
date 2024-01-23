@@ -1,0 +1,42 @@
+{
+    "name": "@types/json2csv",
+    "version": "5.0.7",
+    "description": "TypeScript definitions for json2csv",
+    "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/json2csv",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Juanjo Diaz",
+            "githubUsername": "juanjoDiaz",
+            "url": "https://github.com/juanjoDiaz"
+        },
+        {
+            "name": "Daniel Gooß",
+            "githubUsername": "dangoo",
+            "url": "https://github.com/dangoo"
+        },
+        {
+            "name": "Denis Yilmaz",
+            "githubUsername": "denisyilmaz",
+            "url": "https://github.com/denisyilmaz"
+        },
+        {
+            "name": "Piotr Błażejewicz",
+            "githubUsername": "peterblazejewicz",
+            "url": "https://github.com/peterblazejewicz"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/json2csv"
+    },
+    "scripts": {},
+    "dependencies": {
+        "@types/node": "*"
+    },
+    "typesPublisherContentHash": "5302aa6ec23f30b1896fa24bebc11b8e7ab7e1b335ba483c7ebc14b79dd2d1cf",
+    "typeScriptVersion": "4.5"
+}
