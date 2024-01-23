@@ -4,30 +4,7 @@ Physiobit is a web application designed to help users collect, view, analyze, an
 
 ## Installation
 
-To install Physiobit on your local machine, you will either need [yarn](https://classic.yarnpkg.com/lang/en/docs/install/) or [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
-
-Once installed, run the following commands:
-```bash
-git clone https://github.com/brandontranle/physiobit
-cd physiobit
-npm install
-npm run build
-```
-
-This will install the necessary dependencies for the front end and build the project. The code will be generated in dist inside the physiobit folder.
-
-To set up the API, run the following commands.
-```bash
-cd backend
-npm install
-npm run build
-```
-
-This will build the API. You then may want to move the built files to another location. For example:
-```bash
-mv dist /var/www/my-frontend-folder
-mv backend/build /var/www/my-api-folder
-```
+To install and configure Physiobit on your local machine, read [INSTALL.md](INSTALL.md)
 
 ## Configuration
 

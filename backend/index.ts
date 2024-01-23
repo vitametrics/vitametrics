@@ -26,6 +26,6 @@ app.use('/logout', logoutRoute);
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 connectDB();
-app.listen(7970, () => {
+app.listen(parseInt(process.env.PORT as string) || 3000, () => {
     console.log('Listening on port 7970');
 })
