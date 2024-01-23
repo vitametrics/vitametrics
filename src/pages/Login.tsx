@@ -17,10 +17,12 @@ const Login = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post("", {
+      const response = await axios.post("https://physiobit.seancornell.io/api/login", {
         email: email,
         password: password,
       });
+
+      console.log(response.data);
 
       if (response.data.token) {
         setAuthenticated(true);
@@ -52,7 +54,7 @@ const Login = () => {
             />
             <input
               className="p-[10px] mt-5 w-72 bg-[#e7e6e6] border-[#e7e6e6]  rounded-lg"
-              type="text"
+              type="password"
               placeholder="Password"
               onChange={(e) => setPassword(e.target.value)}
             />
