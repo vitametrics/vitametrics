@@ -1,5 +1,5 @@
 import axios from 'axios';
-import User from '../../models/User';
+import User from '../models/User';
 
 async function refreshToken(userId: string) {
     const user = await User.findOne({userId});

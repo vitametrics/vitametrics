@@ -6,7 +6,7 @@ export const commonMiddlewares = (app: express.Application) => {
   app.use(express.json());
   app.use(cookieParser());
   app.use(cors({
-    origin: "https://physiobit.seancornell.io",
+    origin: process.env.BASE_URL as string,
     credentials: true
   }));
   app.set('trust proxy', 1);

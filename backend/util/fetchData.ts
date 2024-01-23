@@ -1,5 +1,5 @@
 import axios from 'axios';
-import Device from '../../models/Device';
+import Device from '../models/Device';
 
 
 async function fetchAndStoreData(userId: string, accessToken: string, deviceId: string) {
