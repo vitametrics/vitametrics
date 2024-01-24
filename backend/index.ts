@@ -4,8 +4,6 @@ import dotenv from 'dotenv';
 import passport from 'passport';
 import userRoute from './routes/User';
 import logoutRoute from './routes/Logout';
-import swaggerUi from 'swagger-ui-express';
-import swaggerSpec from './util/swaggerSpec';
 import passportConfig from './util/passport-config';
 import authRoute from './routes/Auth';
 import loginRoute from './routes/Login';
@@ -26,7 +24,6 @@ app.use('/user', userRoute);
 app.use('/register', registerRoute);
 app.use('/login', loginRoute(passport));
 app.use('/logout', logoutRoute);
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 connectDB();
 
