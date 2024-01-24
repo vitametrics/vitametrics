@@ -7,8 +7,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node build/index.js",
-    "dev": "nodemon --exec ts-node index.ts",
-    "docs": "swagger-jsdoc -d swaggerConf.json routes/*.ts"
+    "dev": "nodemon --exec ts-node index.ts"
   },
   "dependencies": {
     "@types/cookie-parser": "^1.4.6",
