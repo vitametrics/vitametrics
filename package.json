@@ -1,34 +1,26 @@
 {
-  "name": "physiobit",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "axios": "^1.6.5",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^5.3.3"
-  },
-  "devDependencies": {
-    "@types/react": "^18.2.43",
-    "@types/react-dom": "^18.2.17",
-    "@types/react-router-dom": "^5.3.3",
-    "@typescript-eslint/eslint-plugin": "^6.14.0",
-    "@typescript-eslint/parser": "^6.14.0",
-    "@vitejs/plugin-react": "^4.2.1",
-    "eslint": "^8.55.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.5",
-    "prettier": "^3.2.2",
-    "prettier-plugin-tailwindcss": "^0.5.11",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5.2.2",
-    "vite": "^5.0.8"
-  }
+    "name": "physiobit",
+    "private": true,
+    "version": "1.0.0",
+    "scripts": {
+        "install-all": "npm install && npm run install-frontend && npm run install-backend",
+        "install-frontend": "cd frontend && npm install",
+        "install-backend": "cd backend && npm install",
+        "build": "npm run build-frontend && npm run build-backend",
+        "build-frontend": "npm run build --workspace=frontend",
+        "build-backend": "npm run build --workspace=backend",
+        "start": "concurrently \"npm run start-frontend\" \"npm run start-backend\"",
+        "start-frontend": "cd frontend && npm run preview",
+        "start-backend": "cd backend && npm start",
+        "dev": "concurrently \"npm run dev-frontend\" \"npm run dev-backend\"",
+        "dev-frontend": "cd frontend && npm run dev",
+        "dev-backend": "cd backend && npm run dev"
+    },
+    "workspaces": [
+        "frontend",
+        "backend"
+    ],
+    "devDependencies": {
+        "concurrently": "^8.2.2"
+    }
 }

@@ -9,34 +9,22 @@ cd physiobit
 npm install
 ```
 
-This will install the necessary dependencies for the front end.
-
-To set up the API, run the following commands.
-```bash
-cd backend
-npm install
-```
+This will install the dependencies required to run Physiobit
 
 Once you have completed these steps, read [CONFIG.md](CONFIG.md)
 
 Now that you've configured Physiobit, you're ready to build the application.
 
-To build Physiobit, run the following commands:
+To build Physiobit, run the following command:
 ```bash
-cd /path/to/physiobit
-npm run build
-```
-To build the API, run these commands:
-```bash
-cd /path/to/physiobit/backend
 npm run build
 ```
 
 This will build both the frontend and backend. You may want to move
 these folders to a different directory. For example:
 ```bash
-mv /path/to/physiobit/dist /var/www/physiobit-frontend
-mv /path/to/physiobit/backend/build /var/www/physiobit-backend
+mv backend/build /var/www/physiobit-api
+mv frontend/dist /var/www/physiobit-frontend
 ```
 
 To serve Physiobit, you can use something like [pm2](https://pm2.keymetrics.io/docs/usage/quick-start/):

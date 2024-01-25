@@ -11,7 +11,7 @@ import adminRoute from './routes/Admin';
 import registerRoute from './routes/Register';
 import { connectDB } from './middleware/config';
 
-dotenv.config({ path: '/.env' });
+dotenv.config({ path: '../.env' });
 
 const app = express();
 commonMiddlewares(app);
