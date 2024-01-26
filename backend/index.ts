@@ -10,6 +10,10 @@ import loginRoute from './routes/Login';
 import adminRoute from './routes/Admin';
 import registerRoute from './routes/Register';
 import { connectDB } from './middleware/config';
+import sgMail from '@sendgrid/mail';
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
+
 
 dotenv.config({ path: '../.env' });
 
