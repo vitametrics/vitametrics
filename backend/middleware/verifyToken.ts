@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import {IUser} from '../models/User';
 import jwt from 'jsonwebtoken';
 
 const verifyToken = (req: Request, res: Response, next: NextFunction): void => {
@@ -10,7 +11,7 @@ const verifyToken = (req: Request, res: Response, next: NextFunction): void => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as IUser;
     req.user = decoded;
     next();
   } catch (err) {
