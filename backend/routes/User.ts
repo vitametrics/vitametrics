@@ -1,6 +1,6 @@
 import express, {Request, Response} from 'express';
 import { Parser } from 'json2csv';
-import User from '../models/User';
+import Organization from '../models/Organization';
 import Device from '../models/Device';
 import verifyToken from '../middleware/verifyToken';
 import fetchAndStoreData from '../util/fetchData';
@@ -11,67 +11,37 @@ interface CustomRequest extends Request {
     userId: string; // Add userId property
 }
 
-
-/**
- * @swagger
- * /user/sync-data/{deviceId}:
- *   post:
- *     summary: Sync Fitbit data for a specific device to the user account
- *     tags: [User Management]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: deviceId
- *         required: true
- *         schema:
- *           type: string
- *         description: The device ID
- *     responses:
- *       200:
- *         description: Fitbit data for the specific device synced successfully
- *       400:
- *         description: User does not have a Fitbit access token or failed to refresh token
- *       403:
- *         description: Unauthorized access. Requires valid JWT token.
- *       404:
- *         description: Device not found or access denied
- *       500:
- *         description: Internal Server Error
- */
 router.post('/sync-data/:deviceId', verifyToken, async (req: CustomRequest, res: Response) => {
     try {
         const userId = req.userId;
 
         const deviceId = req.params.deviceId;
 
-        const user = await User.findOne({ userId });
+        const organization = await Organization.findOne({ members: { $elemMatch: { _id: userId } } });
 
-        if (!user) {
-            return res.status(404).json({msg: 'User not found'});
+        if (!organization) {
+            return res.status(404).json({msg: 'Organization not found'});
+        } else if (!organization.fitbitAccessToken) {
+            return res.status(400).json({msg: 'Organization does not have a Fitbit access token'});
         }
 
-        if (!user.fitbitAccessToken) {
-            return res.status(400).json({msg: 'User does not have a Fitbit access token'});
-        }
+        const orgId = organization.orgId;
 
-        const device = await Device.findOne({userId, deviceId});
+        const device = await Device.findOne({deviceId, orgId});
 
         if (!device) {
             return res.status(404).json({msg: 'Device not found or access denied'});
         }
 
         try {
-            await fetchAndStoreData(userId, user.fitbitAccessToken, 'day');
+            await fetchAndStoreData(orgId, organization.userId, organization.fitbitAccessToken, 'day');
         } catch (err) {
             if (err.message === 'Token refresh failed') {
                 // If token refresh fails, return an error response
                 return res.status(400).json({ msg: 'Failed to refresh Fitbit access token' });
             }
         }
-
-        await fetchAndStoreData(userId, user.fitbitAccessToken, 'day');
-
+        
         return res.status(200).json({msg: 'Fitbit data synced successfully'});
         
     } catch (err) {
@@ -81,41 +51,26 @@ router.post('/sync-data/:deviceId', verifyToken, async (req: CustomRequest, res:
 });
 
 
-/**
- * @swagger
- * /user/download-data/{deviceId}:
- *   get:
- *     summary: Downloads specific device data in CSV format
- *     tags: [Data Management]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: deviceId
- *         required: true
- *         schema:
- *           type: string
- *         description: The device ID
- *     responses:
- *       200:
- *         description: Returns a CSV file containing the device's data
- *       403:
- *         description: Unauthorized access. Requires valid JWT token.
- *       404:
- *         description: Device not found or access denied
- *       500:
- *         description: Internal Server Error
- */
-
-
 router.get('/download-data/:deviceId', verifyToken, async (req: CustomRequest, res: Response) => {
     try {
+
+        // this should use tokens in the future...
 
         const userId = req.userId;
 
         const deviceId = req.params.deviceId;
 
-        const device = await Device.findOne({ deviceId, userId}).lean();
+        const organization = await Organization.findOne({ members: { $elemMatch: { _id: userId } } });
+
+        if (!organization) {
+            return res.status(404).json({msg: 'Organization not found'});
+        } else if (!organization.fitbitAccessToken) {
+            return res.status(400).json({msg: 'Organization does not have a Fitbit access token'});
+        }
+
+        const orgId = organization.orgId;
+
+        const device = await Device.findOne({ deviceId, orgId}).lean();
 
         if (!device) {
             return res.status(404).json({msg: 'Device not found or access denied'});

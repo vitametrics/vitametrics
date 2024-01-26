@@ -3,6 +3,7 @@ import User from '../models/User';
 import Invite from '../models/Invite';
 import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 
 const router = express.Router();
 
@@ -17,7 +18,6 @@ router.post('/', async (req: Request, res: Response) => {
     }
 
     try {
-
         const user = await User.findOne({email});
 
         if (user) {
@@ -30,66 +30,56 @@ router.post('/', async (req: Request, res: Response) => {
 
         if (!validInviteCode) {
             return res.status(400).json({msg: 'Invalid invite code'});
-        }
-	
-
-        if (!validInviteCode.isActive) {
+        } else if (!validInviteCode.isActive) {
             return res.status(400).json({msg: 'Invite code is no longer valid'});
-        } else if (!validInviteCode.emails.some(inviteObj => inviteObj.email === email)) {
-            return res.status(400).json({msg: 'Invalid invite code'});
-        } else if (validInviteCode.emails.find(e => e.email === email)?.used) {
-            return res.status(400).json({msg: 'Invite code has already been used for this email'});
         }
 
-        const newUser = new User({
-            userId: '',
-            email: email,
-            password: '',
-            fitbitAccessToken: '',
-            languageLocale: 'en-US',
-            distanceUnit: 'en-US'
-        });
+        validInviteCode.usageCount++;
+        if (validInviteCode.usageCount >= validInviteCode.maxUses) {
+            validInviteCode.isActive = false;
+        }
 
-        validInviteCode.usageCount += 1;
-        validInviteCode.isActive = false;
-        validInviteCode.emails.find(e => e.email === email)!.used = true;
-        
         await validInviteCode.save();
 
-        try {
-
-            const hashedPassword = await argon2.hash(password);
-            newUser.password = hashedPassword;
-
-            await newUser.save()
-                .then(user => {
-                    jwt.sign(
-                        {id: user.userId || user.email},
-                        process.env.JWT_SECRET as string,
-                        {expiresIn: '1h'},
-                        (err, token) => {
-                            if (err) throw err;
-
-                            res.json({
-                                token,
-                                user: {
-                                    id: user.userId,
-                                    email: user.email,
-                                    languageLocale: user.languageLocale,
-                                    distanceUnit: user.distanceUnit
-                                }
-                            });
-                        }
-                    )
-                });
-
-        } catch (err) {
-            console.error(err);
-            return res.status(500).json({msg: 'Internal Server Error'});
+        if (!validInviteCode.isActive) {
+            return res.status(400).json({msg: 'Invite code has reached its maximum usage limit'});
         }
 
+        const hashedPassword = await argon2.hash(password);
 
+        const newUser = new User({
+            userId: crypto.randomBytes(16).toString('hex'),
+            email: email,
+            password: '',
+            languageLocale: 'en-US',
+            distanceUnit: 'en-US',
+            orgId: validInviteCode.orgId
+        });
 
+        newUser.password = hashedPassword;
+
+        await newUser.save()
+            .then(user => {
+                jwt.sign(
+                    {id: user.userId},
+                    process.env.JWT_SECRET as string,
+                    {expiresIn: '1h'},
+                    (err, token) => {
+                        if (err) throw err;
+
+                        res.json({
+                            token,
+                            user: {
+                                id: user.userId,
+                                email: user.email,
+                                languageLocale: user.languageLocale,
+                                distanceUnit: user.distanceUnit,
+                                orgId: user.orgId
+                            }
+                        });
+                    }
+                )
+            });
     } catch (err) {
         console.error(err);
         res.status(500).json({msg: 'Internal Server Error'});

@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import axios from 'axios';
 import crypto from 'crypto';
 import CodeVerifier from '../models/CodeVerifier';
-import User from '../models/User';
+import Organization from '../models/Organization';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
 const router = express.Router();
@@ -80,6 +80,7 @@ router.get('/callback', async (req: Request, res: Response) => {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         });
+
         const accessToken = tokenResponse.data.access_token;
 
         const profileResponse = await axios.get('https://api.fitbit.com/1/user/-/profile.json', {
@@ -87,6 +88,7 @@ router.get('/callback', async (req: Request, res: Response) => {
         });
 
         const fitbitUserID = profileResponse.data.user.encodedId;
+
         const refreshToken = tokenResponse.data.refresh_token;
 
         const token = req.headers.authorization?.split(' ')[1];
@@ -94,18 +96,13 @@ router.get('/callback', async (req: Request, res: Response) => {
             return res.status(403).send('Unauthorized access - No token');
         }
         const decodedToken = jwt.verify(token as string, process.env.JWT_SECRET as string) as JwtPayload;
-        const userEmail = decodedToken.email;
 
-        await User.findOneAndUpdate(
-            {email: userEmail},
+        await Organization.findOneAndUpdate({ownerId: decodedToken.user.id},
             {
                 userId: fitbitUserID,
                 fitbitAccessToken: accessToken,
-                fitbitRefreshToken: refreshToken,
-                languageLocale: profileResponse.data.user.languageLocale,
-                distanceUnit: profileResponse.data.user.distanceUnit,
-            },
-            {upsert: true, new: true}
+                fitbitRefreshToken: refreshToken
+            }
         );
         // this should not handle redirects. fine for now i guess.
 	    res.redirect('/dashboard');
