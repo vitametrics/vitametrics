@@ -11,7 +11,7 @@ export interface IInvite extends Document {
 const inviteCodeSchema = new mongoose.Schema({
     code: { type: String, required: true, unique: true },
     usageCount: { type: Number, default: 0, required: true }, // check usage count for invite codes
-    maxUses: { type: Number, default: 10, required: true},
+    maxUses: { type: Number, default: 11, required: true}, // must be 11 to include org owner (fix in future)
     isActive: { type: Boolean, default: true }, // allow for revoking of invites
     orgId: { type: String, required: true}
 }, { timestamps: true });
