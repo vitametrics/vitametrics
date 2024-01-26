@@ -1,6 +1,7 @@
 import express from 'express';
-import { commonMiddlewares } from './middleware/common';
 import dotenv from 'dotenv';
+dotenv.config({ path: '../.env' });
+import { commonMiddlewares } from './middleware/common';
 import passport from 'passport';
 import userRoute from './routes/User';
 import logoutRoute from './routes/Logout';
@@ -13,9 +14,6 @@ import { connectDB } from './middleware/config';
 import sgMail from '@sendgrid/mail';
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
-
-
-dotenv.config({ path: '../.env' });
 
 const app = express();
 commonMiddlewares(app);
