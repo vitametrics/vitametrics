@@ -1,1 +1,0 @@
-import{j as s}from"./index-27ugBbLf.js";const t=({q:e,a:r})=>s.jsxs("div",{children:[s.jsxs("p",{children:[" ",e," "]}),s.jsxs("p",{children:[" ",r]})]}),d=()=>s.jsxs("div",{className:"h-screen",children:[s.jsx("p",{children:" Hello, World! from the FAQs"}),s.jsx(t,{q:"What is the weather today?",a:"70 degrees"})]});export{d as default};
