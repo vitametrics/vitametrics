@@ -4,16 +4,21 @@ import Organization from '../models/Organization';
 import Device from '../models/Device';
 import verifyToken from '../middleware/verifyToken';
 import fetchAndStoreData from '../util/fetchData';
+import { IUser } from '../models/User';
 
 const router = express.Router();
 
 interface CustomRequest extends Request {
-    userId: string; // Add userId property
+    user: IUser
 }
 
 router.post('/sync-data/:deviceId', verifyToken, async (req: CustomRequest, res: Response) => {
     try {
-        const userId = req.userId;
+        const userId = req.user ? req.user.userId : null;
+
+        if (!userId) {
+            return res.status(401).json({msg: 'Unauthorized'});
+        }
 
         const deviceId = req.params.deviceId;
 
@@ -56,7 +61,11 @@ router.get('/download-data/:deviceId', verifyToken, async (req: CustomRequest, r
 
         // this should use tokens in the future...
 
-        const userId = req.userId;
+        const userId = req.user ? req.user.userId : null;
+
+        if (!userId) {
+            return res.status(401).json({msg: 'Unauthorized'});
+        }
 
         const deviceId = req.params.deviceId;
 
