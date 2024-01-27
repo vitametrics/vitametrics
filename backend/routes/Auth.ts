@@ -4,6 +4,7 @@ import crypto from 'crypto';
 import CodeVerifier from '../models/CodeVerifier';
 import Organization from '../models/Organization';
 import { IUser } from '../models/User';
+import verifySession from '../middleware/verifySession';
 
 const router = express.Router();
 
@@ -25,12 +26,9 @@ router.get('/auth', async (_req: Request, res: Response) => {
 
 });
 
-router.get('/callback', async (req: Request, res: Response) => {
+router.get('/callback', verifySession, async (req: Request, res: Response) => {
     const code = req.query.code as string;
-
-    if (!req.isAuthenticated() || !req.user) {
-        return res.status(403).send('Unauthorized access - User not logged in');
-    }
+    const userId = (req.user as IUser).userId;
     
     try {
         const verifier = await CodeVerifier.findOne().sort({createdAt: -1}).limit(1);
@@ -62,16 +60,15 @@ router.get('/callback', async (req: Request, res: Response) => {
 
         const refreshToken = tokenResponse.data.refresh_token;
 
-        const userId = (req.user as IUser).userId;
+        // console.log("fitbit userid: ", fitbitUserID);
+        // console.log("fitbit access token: ", accessToken);
+        // console.log("fitbit refresh token: ", refreshToken);
 
-
-        await Organization.findOneAndUpdate({ownerId: userId},
-            {
-                userId: fitbitUserID,
-                fitbitAccessToken: accessToken,
-                fitbitRefreshToken: refreshToken
-            }
-        );
+        await Organization.findOneAndUpdate({ ownerId: userId }, {
+            userId: fitbitUserID,
+            fitbitAccessToken: accessToken,
+            fitbitRefreshToken: refreshToken
+        });
         // this should not handle redirects. fine for now i guess.
 	    res.redirect('/dashboard');
     } catch(err) {
