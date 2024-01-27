@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
 
 export const commonMiddlewares = (app: express.Application) => {
   app.use(express.json());
@@ -11,5 +13,12 @@ export const commonMiddlewares = (app: express.Application) => {
       credentials: true
     }));
   }
+  app.use(session({
+    secret: process.env.SESSION_SECRET as string, 
+    resave: false,
+    saveUninitialized: true,
+    store: MongoStore.create({ mongoUrl: process.env.PROD_DB_URI as string }),
+    cookie: { secure: process.env.NODE_ENV as string === 'production' }
+  }));
   app.set('trust proxy', 1);
 };

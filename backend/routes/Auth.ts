@@ -3,22 +3,9 @@ import axios from 'axios';
 import crypto from 'crypto';
 import CodeVerifier from '../models/CodeVerifier';
 import Organization from '../models/Organization';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import { IUser } from '../models/User';
 
 const router = express.Router();
-
-/**
- * @swagger
- * /auth:
- *   get:
- *     summary: Initiates OAuth2 authentication with Fitbit
- *     tags: [Authentication]
- *     responses:
- *       302:
- *         description: Redirects to the Fitbit OAuth2 authorization page.
- *       500:
- *         description: Internal Server Error
- */
 
 router.get('/auth', async (_req: Request, res: Response) => {
     const codeVerifier = crypto.randomBytes(32).toString('hex');
@@ -38,28 +25,12 @@ router.get('/auth', async (_req: Request, res: Response) => {
 
 });
 
-/**
- * @swagger
- * /callback:
- *   get:
- *     summary: Callback endpoint for Fitbit OAuth2 response
- *     tags: [Authentication]
- *     parameters:
- *       - in: query
- *         name: code
- *         required: true
- *         schema:
- *           type: string
- *         description: Authorization code provided by Fitbit
- *     responses:
- *       200:
- *         description: User data processed successfully, redirected to login.
- *       500:
- *         description: Internal Server Error
- */
-
 router.get('/callback', async (req: Request, res: Response) => {
     const code = req.query.code as string;
+
+    if (!req.isAuthenticated() || !req.user) {
+        return res.status(403).send('Unauthorized access - User not logged in');
+    }
     
     try {
         const verifier = await CodeVerifier.findOne().sort({createdAt: -1}).limit(1);
@@ -91,13 +62,10 @@ router.get('/callback', async (req: Request, res: Response) => {
 
         const refreshToken = tokenResponse.data.refresh_token;
 
-        const token = req.headers.authorization?.split(' ')[1];
-        if (!token) {
-            return res.status(403).send('Unauthorized access - No token');
-        }
-        const decodedToken = jwt.verify(token as string, process.env.JWT_SECRET as string) as JwtPayload;
+        const userId = (req.user as IUser).userId;
 
-        await Organization.findOneAndUpdate({ownerId: decodedToken.user.id},
+
+        await Organization.findOneAndUpdate({ownerId: userId},
             {
                 userId: fitbitUserID,
                 fitbitAccessToken: accessToken,
