@@ -19,6 +19,7 @@ const app = express();
 commonMiddlewares(app);
 passportConfig(passport);
 app.use(passport.initialize());
+app.use(passport.session());
 // testing auth route
 app.use('/', authRoute);
 app.use('/admin', adminRoute);
