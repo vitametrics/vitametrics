@@ -44,6 +44,7 @@ router.post('/create-org', async (req: Request, res: Response) => {
         const newOrganization = new Organization({
             orgName,
             orgId: newOrgId,
+            ownerId: newUserId,
             ownerName,
             ownerEmail        
         });
