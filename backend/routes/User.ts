@@ -5,10 +5,11 @@ import Device from '../models/Device';
 import fetchAndStoreData from '../util/fetchData';
 import { IUser } from '../models/User';
 import verifySession from '../middleware/verifySession';
+import refreshToken from '../middleware/refreshFitbitToken';
 
 const router = express.Router();
 
-router.post('/sync-data/:deviceId', verifySession, async (req: Request, res: Response) => {
+router.post('/sync-data/:deviceId', verifySession, refreshToken, async (req: Request, res: Response) => {
     try {
         const user: IUser = req.user as IUser;
 
@@ -53,7 +54,7 @@ router.post('/sync-data/:deviceId', verifySession, async (req: Request, res: Res
 });
 
 
-router.get('/download-data/:deviceId', verifySession, async (req: Request, res: Response) => {
+router.get('/download-data/:deviceId', verifySession, refreshToken, async (req: Request, res: Response) => {
     
     const user: IUser = req.user as IUser;
 
