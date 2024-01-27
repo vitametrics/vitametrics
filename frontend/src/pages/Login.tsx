@@ -20,7 +20,7 @@ const Login = () => {
       const response = await axios.post("https://physiobit.seancornell.io/api/login", {
         email: email,
         password: password,
-      });
+      },{ withCredentials: true });
 
       console.log(response.data);
 
