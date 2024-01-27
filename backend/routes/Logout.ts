@@ -11,7 +11,7 @@ router.get('/', (req: Request, res: Response) => {
             if (err) {
                 return res.status(500).json({ success: false, message: 'Error destroying session' });
             }
-            res.clearCookie('token');
+            res.clearCookie('connect.sid');
             return res.json({ success: true, message: 'Successfully logged out' });
         });
         return null;
