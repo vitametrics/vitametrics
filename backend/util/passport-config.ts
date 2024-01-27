@@ -38,10 +38,14 @@ const passportConfig = (passport: passport.Authenticator): Router => {
         done(null, user.userId);
     });
 
-    passport.deserializeUser((id, done) => {
-        User.findById(id, (err: Error, user: IUser) => {
-            done(err, user);
-        });
+    passport.deserializeUser(async (id, done) => {
+        try {
+            const user = await User.findOne({ userId: id });
+            done(null, user);
+        } catch (err) {
+            console.error(err);
+            done(err, null);
+        }
     });
 
     return router;
