@@ -1,6 +1,7 @@
 import express, {Request, Response} from 'express';
 import User from '../models/User';
 import Invite from '../models/Invite';
+import Organization from '../models/Organization';
 import argon2 from 'argon2';
 import crypto from 'crypto';
 
@@ -33,16 +34,18 @@ router.post('/', async (req: Request, res: Response) => {
             return res.status(400).json({msg: 'Invite code is no longer valid'});
         }
 
+        // check that invite code is actually registered to an organization
+        const organization = await Organization.findOne({ orgId: validInviteCode.orgId });
+        if (!organization) {
+            return res.status(400).json({ msg: 'Invalid invite code' });
+        }
+
         validInviteCode.usageCount++;
         if (validInviteCode.usageCount >= validInviteCode.maxUses) {
             validInviteCode.isActive = false;
         }
 
         await validInviteCode.save();
-
-        if (!validInviteCode.isActive) {
-            return res.status(400).json({msg: 'Invite code has reached its maximum usage limit'});
-        }
 
         const hashedPassword = await argon2.hash(password);
 
@@ -58,6 +61,13 @@ router.post('/', async (req: Request, res: Response) => {
         newUser.password = hashedPassword;
 
         await newUser.save();
+
+        if (validInviteCode.orgId) {
+            await Organization.updateOne(
+                { orgId: validInviteCode.orgId },
+                { $addToSet: { members: newUser._id } }
+            );
+        }
 
         req.logIn(newUser, (err: Error) => {
             if (err) {

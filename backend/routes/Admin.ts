@@ -64,16 +64,15 @@ router.post('/create-org', async (req: Request, res: Response) => {
 });
 
 router.post('/create-invite', async (req: Request, res: Response) => {
-
     const token = req.headers['x-access-token'];
-    const { emails } = req.body;
-    
+    const { orgId } = req.body;
+
     if (token !== process.env.ADMIN_TOKEN) {
         return res.status(401).json({ msg: 'Unauthorized' });
     }
 
-    if (!emails || !Array.isArray(emails) || emails.length == 0) {
-        return res.status(400).json({ msg: 'Emails required' });
+    if (!orgId) {
+        return res.status(400).json({ msg: 'Organization ID required' });
     }
 
     const newInviteCode = crypto.randomBytes(15).toString('hex');
@@ -81,17 +80,25 @@ router.post('/create-invite', async (req: Request, res: Response) => {
     try {
         const invite = new Invite({
             code: newInviteCode,
-            emails: emails.map(email => ({email, used: false}))
+            usageCount: 0,
+            maxUses: 1,
+            isActive: true,
+            orgId: orgId
         });
 
-        await invite.save();
+        const savedInvite = await invite.save();
 
-        return res.json({inviteCode: newInviteCode});
+        // add invite code to corresponding organization
+        await Organization.updateOne(
+            { orgId: orgId },
+            { $addToSet: { inviteCode: savedInvite._id } } // add invite id to organization
+        );
+
+        return res.json({ inviteCode: newInviteCode });
     } catch (err) {
         console.error(err);
-        return res.status(500).json({msg: 'Internal Server Error'});
+        return res.status(500).json({ msg: 'Internal Server Error' });
     }
-
 });
 
 export default router;
