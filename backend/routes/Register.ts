@@ -34,12 +34,6 @@ router.post('/', async (req: Request, res: Response) => {
             return res.status(400).json({msg: 'Invite code is no longer valid'});
         }
 
-        // check that invite code is actually registered to an organization
-        const organization = await Organization.findOne({ orgId: validInviteCode.orgId });
-        if (!organization) {
-            return res.status(400).json({ msg: 'Invalid invite code' });
-        }
-
         validInviteCode.usageCount++;
         if (validInviteCode.usageCount >= validInviteCode.maxUses) {
             validInviteCode.isActive = false;
