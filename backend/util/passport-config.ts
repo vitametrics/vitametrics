@@ -3,7 +3,7 @@ import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import User from '../models/User';
 import argon2 from 'argon2';
-import { IUser } from '../models/User'; // Import your IUser interface if it's defined in a separate file
+import { IUser } from '../models/User';
 
 type PassportVerifyCallback = (error: any, user?: any, info?: any) => void;
 
@@ -12,7 +12,6 @@ const passportConfig = (passport: passport.Authenticator): Router => {
 
     router.use(express.json());
 
-    // Local Strategy for username and password
     passport.use(new LocalStrategy({ usernameField: 'email' }, 
         async (email: string, password: string, done: PassportVerifyCallback) => {
             try {
