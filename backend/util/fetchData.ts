@@ -21,6 +21,7 @@ async function fetchAndStoreData(orgId: string, orgUserId: string, accessToken: 
             {
                 heartRateData: heartRateResponse.data['activities-heart'],
                 sleepData: sleepResponse.data.sleep,
+                lastSyncDate: new Date()
             },
             { new: true }
         );
