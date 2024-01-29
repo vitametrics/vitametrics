@@ -10,6 +10,7 @@ import authRoute from './routes/Auth';
 import loginRoute from './routes/Login';
 import adminRoute from './routes/Admin';
 import registerRoute from './routes/Register';
+import contactRoute from './routes/Contact';
 import { connectDB } from './middleware/config';
 import sgMail from '@sendgrid/mail';
 
@@ -20,13 +21,14 @@ commonMiddlewares(app);
 passportConfig(passport);
 app.use(passport.initialize());
 app.use(passport.session());
-// testing auth route
+// TODO: Change to /auth
 app.use('/', authRoute);
 app.use('/admin', adminRoute);
 app.use('/user', userRoute);
 app.use('/register', registerRoute);
 app.use('/login', loginRoute(passport));
 app.use('/logout', logoutRoute);
+app.use('/contact', contactRoute);
 
 connectDB();
 
