@@ -94,7 +94,7 @@ const Contact = () => {
             />
             <Editor
               apiKey="4e60st8alywzg4ld3g5kvbfr8jtu13azwxr2h5n4olv9m7lv"
-              onInit={(evt, editor) => (editorRef.current = editor)}
+              onInit={(_evt, editor) => (editorRef.current = editor)}
               onChange={() => logMsg()}
               initialValue="<p></p>"
               init={{

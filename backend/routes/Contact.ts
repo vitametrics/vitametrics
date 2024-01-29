@@ -3,8 +3,6 @@ import rateLimit from 'express-rate-limit';
 import sgMail from '@sendgrid/mail';
 import validator from 'validator';
 
-
-
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
 
 const router = express.Router();
@@ -34,8 +32,6 @@ router.post('/', contactRateLimit, async(req: Request, res: Response) => {
 
     const sanitizedEmail = validator.escape(email);
     const sanitizedOrgName = validator.escape(organizationName);
-   
-
 
     const msg = {
         to: process.env.ADMIN_EMAIL as string,
