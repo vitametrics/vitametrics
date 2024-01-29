@@ -594,6 +594,10 @@ video {
   margin-bottom: 50px;
 }
 
+.mb-auto {
+  margin-bottom: auto;
+}
+
 .me-4 {
   margin-inline-end: 1rem;
 }
@@ -622,6 +626,10 @@ video {
   margin-top: 0.25rem;
 }
 
+.mt-3 {
+  margin-top: 0.75rem;
+}
+
 .mt-4 {
   margin-top: 1rem;
 }
@@ -646,12 +654,20 @@ video {
   display: inline-flex;
 }
 
+.table {
+  display: table;
+}
+
 .hidden {
   display: none;
 }
 
 .h-10 {
   height: 2.5rem;
+}
+
+.h-16 {
+  height: 4rem;
 }
 
 .h-20 {
@@ -828,9 +844,9 @@ video {
   border-width: 1px;
 }
 
-.border-\[\#e7e6e6\] {
+.border-\[\#6d6c6c\] {
   --tw-border-opacity: 1;
-  border-color: rgb(231 230 230 / var(--tw-border-opacity));
+  border-color: rgb(109 108 108 / var(--tw-border-opacity));
 }
 
 .border-gray-100 {
@@ -873,19 +889,14 @@ video {
   background-color: rgb(186 103 103 / var(--tw-bg-opacity));
 }
 
-.bg-\[\#e7e6e6\] {
+.bg-\[\#d2d1d1\] {
   --tw-bg-opacity: 1;
-  background-color: rgb(231 230 230 / var(--tw-bg-opacity));
+  background-color: rgb(210 209 209 / var(--tw-bg-opacity));
 }
 
 .bg-gray-50 {
   --tw-bg-opacity: 1;
   background-color: rgb(249 250 251 / var(--tw-bg-opacity));
-}
-
-.bg-slate-50 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(248 250 252 / var(--tw-bg-opacity));
 }
 
 .bg-transparent {
@@ -895,21 +906,6 @@ video {
 .bg-white {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-}
-
-.bg-gray-400 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(156 163 175 / var(--tw-bg-opacity));
-}
-
-.bg-gray-300 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(209 213 219 / var(--tw-bg-opacity));
-}
-
-.bg-gray-200 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(229 231 235 / var(--tw-bg-opacity));
 }
 
 .p-0 {
@@ -1040,6 +1036,20 @@ video {
   font-weight: 600;
 }
 
+.italic {
+  font-style: italic;
+}
+
+.text-\[\#696969\] {
+  --tw-text-opacity: 1;
+  color: rgb(105 105 105 / var(--tw-text-opacity));
+}
+
+.text-\[\#763535\] {
+  --tw-text-opacity: 1;
+  color: rgb(118 53 53 / var(--tw-text-opacity));
+}
+
 .text-\[\#BA6767\] {
   --tw-text-opacity: 1;
   color: rgb(186 103 103 / var(--tw-text-opacity));
@@ -1078,6 +1088,11 @@ video {
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.text-\[\#4d2020\] {
+  --tw-text-opacity: 1;
+  color: rgb(77 32 32 / var(--tw-text-opacity));
 }
 
 html {
@@ -1146,6 +1161,14 @@ html {
 
   .sm\:mr-0 {
     margin-right: 0px;
+  }
+
+  .sm\:mt-10 {
+    margin-top: 2.5rem;
+  }
+
+  .sm\:mb-auto {
+    margin-bottom: auto;
   }
 
   .sm\:flex {

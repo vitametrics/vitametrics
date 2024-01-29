@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import logo from "../assets/images/logo.png";
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -32,11 +33,7 @@ const Navbar = () => {
           href="/"
           className="flex items-center space-x-3 rtl:space-x-rev  erse"
         >
-          <img
-            src="https://flowbite.com/docs/images/logo.svg"
-            className="h-8"
-            alt="Flowbite Logo"
-          />
+          <img src={logo} className="h-8" alt="Physiobit Logo" />
           <span className="self-center text-2xl font-bold whitespace-nowrap dark:text-white ">
             Physiobit
           </span>

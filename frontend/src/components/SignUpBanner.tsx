@@ -8,10 +8,12 @@ const SignUpBanner = () => {
         <h3 className="text-5xl  text-[#ffffff] font-bold mb-5 sm:text-center text-center">
           Doing Research?
         </h3>
-        <button className="bg-[#BA6767] font-bold text-3xl text-white px-10 py-3 rounded-md">
-          {" "}
-          Sign Up Now!
-        </button>
+        <a href="/contact">
+          <button className="bg-[#BA6767] font-bold text-3xl text-white px-10 py-3 rounded-md">
+            {" "}
+            Sign Up Now!
+          </button>
+        </a>
       </div>
     </section>
   );

@@ -22,5 +22,8 @@
     ],
     "devDependencies": {
         "concurrently": "^8.2.2"
+    },
+    "dependencies": {
+        "@tinymce/tinymce-react": "^4.3.2"
     }
 }
