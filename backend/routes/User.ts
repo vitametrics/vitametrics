@@ -1,6 +1,6 @@
-import express, {Request, Response} from 'express';
+import express, {Response} from 'express';
 import { Parser } from 'json2csv';
-import Organization, { IOrganization } from '../models/Organization';
+import { IOrganization } from '../models/Organization';
 import Device from '../models/Device';
 import fetchAndStoreData from '../util/fetchData';
 import verifySession from '../middleware/verifySession';
