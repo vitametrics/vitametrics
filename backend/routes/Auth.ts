@@ -3,22 +3,11 @@ import axios from 'axios';
 import crypto from 'crypto';
 import CodeVerifier from '../models/CodeVerifier';
 import Organization from '../models/Organization';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import { IUser } from '../models/User';
+import verifySession from '../middleware/verifySession';
+import fetchAndStoreDevices from '../util/fetchDevices';
 
 const router = express.Router();
-
-/**
- * @swagger
- * /auth:
- *   get:
- *     summary: Initiates OAuth2 authentication with Fitbit
- *     tags: [Authentication]
- *     responses:
- *       302:
- *         description: Redirects to the Fitbit OAuth2 authorization page.
- *       500:
- *         description: Internal Server Error
- */
 
 router.get('/auth', async (_req: Request, res: Response) => {
     const codeVerifier = crypto.randomBytes(32).toString('hex');
@@ -38,28 +27,9 @@ router.get('/auth', async (_req: Request, res: Response) => {
 
 });
 
-/**
- * @swagger
- * /callback:
- *   get:
- *     summary: Callback endpoint for Fitbit OAuth2 response
- *     tags: [Authentication]
- *     parameters:
- *       - in: query
- *         name: code
- *         required: true
- *         schema:
- *           type: string
- *         description: Authorization code provided by Fitbit
- *     responses:
- *       200:
- *         description: User data processed successfully, redirected to login.
- *       500:
- *         description: Internal Server Error
- */
-
-router.get('/callback', async (req: Request, res: Response) => {
+router.get('/callback', verifySession, async (req: Request, res: Response) => {
     const code = req.query.code as string;
+    const userId = (req.user as IUser).userId;
     
     try {
         const verifier = await CodeVerifier.findOne().sort({createdAt: -1}).limit(1);
@@ -91,21 +61,29 @@ router.get('/callback', async (req: Request, res: Response) => {
 
         const refreshToken = tokenResponse.data.refresh_token;
 
-        const token = req.headers.authorization?.split(' ')[1];
-        if (!token) {
-            return res.status(403).send('Unauthorized access - No token');
-        }
-        const decodedToken = jwt.verify(token as string, process.env.JWT_SECRET as string) as JwtPayload;
+        // console.log("fitbit userid: ", fitbitUserID);
+        // console.log("fitbit access token: ", accessToken);
+        // console.log("fitbit refresh token: ", refreshToken);
 
-        await Organization.findOneAndUpdate({ownerId: decodedToken.user.id},
-            {
-                userId: fitbitUserID,
-                fitbitAccessToken: accessToken,
-                fitbitRefreshToken: refreshToken
-            }
-        );
+
+        const organization = await Organization.findOne({ ownerId: userId });
+
+        if (!organization) {
+            console.error('Organization not found');
+            return res.status(404).send('Organization not found');
+        }
+
+        organization.userId = fitbitUserID;
+        organization.fitbitAccessToken = accessToken;
+        organization.fitbitRefreshToken = refreshToken;
+
+        await organization.save();
+
+        const orgId = organization.ownerId;
+
+        await fetchAndStoreDevices(fitbitUserID, accessToken, orgId);
         // this should not handle redirects. fine for now i guess.
-	    res.redirect('/dashboard');
+	    return res.redirect('/dashboard');
     } catch(err) {
         console.error(err);
         res.status(500).send('Internal Server Error');

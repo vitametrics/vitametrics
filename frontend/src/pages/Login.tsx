@@ -22,7 +22,7 @@ const Login = () => {
       const response = await axios.post("http://localhost:7970/login", {
         email: email,
         password: password,
-      });
+      },{ withCredentials: true });
 
       console.log(response.data);
 

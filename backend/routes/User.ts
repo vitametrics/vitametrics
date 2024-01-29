@@ -1,81 +1,56 @@
-import express, {Request, Response} from 'express';
+import express, {Response} from 'express';
 import { Parser } from 'json2csv';
-import Organization from '../models/Organization';
+import { IOrganization } from '../models/Organization';
 import Device from '../models/Device';
-import verifyToken from '../middleware/verifyToken';
 import fetchAndStoreData from '../util/fetchData';
-import { IUser } from '../models/User';
+import verifySession from '../middleware/verifySession';
+import refreshToken from '../middleware/refreshFitbitToken';
+import checkOrgMembership from '../middleware/checkOrg';
+import { CustomReq } from '../util/customReq';
 
 const router = express.Router();
 
-interface CustomRequest extends Request {
-    user: IUser
-}
-
-router.post('/sync-data/:deviceId', verifyToken, async (req: CustomRequest, res: Response) => {
+router.post('/sync-data/:deviceId', verifySession, checkOrgMembership, refreshToken, async (req: CustomReq, res: Response) => {
     try {
-        const userId = req.user ? req.user.userId : null;
-
-        if (!userId) {
-            return res.status(401).json({msg: 'Unauthorized'});
-        }
-
-        const deviceId = req.params.deviceId;
-
-        const organization = await Organization.findOne({ members: { $elemMatch: { _id: userId } } });
-
-        if (!organization) {
-            return res.status(404).json({msg: 'Organization not found'});
-        } else if (!organization.fitbitAccessToken) {
-            return res.status(400).json({msg: 'Organization does not have a Fitbit access token'});
-        }
-
-        const orgId = organization.orgId;
-
-        const device = await Device.findOne({deviceId, orgId});
-
-        if (!device) {
-            return res.status(404).json({msg: 'Device not found or access denied'});
-        }
+        const organization: IOrganization = req.organization as IOrganization;
 
         try {
-            await fetchAndStoreData(orgId, organization.userId, organization.fitbitAccessToken, 'day');
-        } catch (err) {
-            if (err.message === 'Token refresh failed') {
-                // If token refresh fails, return an error response
+            const deviceId = req.params.deviceId;
+
+            const orgId = organization.orgId;
+
+            const device = await Device.findOne({deviceId, orgId});
+
+            if (!device) {
+                return res.status(404).json({msg: 'Device not found or access denied'});
+            }
+
+            try {
+                await fetchAndStoreData(orgId, organization.userId, organization.fitbitAccessToken, 'day');
+            } catch (err) {
                 return res.status(400).json({ msg: 'Failed to refresh Fitbit access token' });
             }
+            
+            return res.status(200).json({msg: 'Fitbit data synced successfully'});
+            
+            } catch (err) {
+                console.error(err);
+                return res.status(500).json({msg: 'Internal Server Error'});
+            }
+
+
+        } catch (err) {
+            return res.status(500).json({msg: 'Internal server error'});
         }
-        
-        return res.status(200).json({msg: 'Fitbit data synced successfully'});
-        
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({msg: 'Internal Server Error'});
-    }
 });
 
 
-router.get('/download-data/:deviceId', verifyToken, async (req: CustomRequest, res: Response) => {
+router.get('/download-data/:deviceId', verifySession, checkOrgMembership, refreshToken, async (req: CustomReq, res: Response) => {
+    
+    const organization: IOrganization = req.organization as IOrganization;
+
     try {
-
-        // this should use tokens in the future...
-
-        const userId = req.user ? req.user.userId : null;
-
-        if (!userId) {
-            return res.status(401).json({msg: 'Unauthorized'});
-        }
-
         const deviceId = req.params.deviceId;
-
-        const organization = await Organization.findOne({ members: { $elemMatch: { _id: userId } } });
-
-        if (!organization) {
-            return res.status(404).json({msg: 'Organization not found'});
-        } else if (!organization.fitbitAccessToken) {
-            return res.status(400).json({msg: 'Organization does not have a Fitbit access token'});
-        }
 
         const orgId = organization.orgId;
 

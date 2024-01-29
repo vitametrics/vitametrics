@@ -15,14 +15,14 @@ export interface IOrganization extends Document {
 };
 
 const organizationSchema = new mongoose.Schema({
-    orgId: String,
-    orgName: String,
-    userId: String, // fitbit user id
-    ownerId: String,
-    ownerName: String,
-    ownerEmail: String,
-    fitbitAccessToken: String,
-    fitbitRefreshToken: String,
+    orgId: {type: String, default: ""},
+    orgName: {type: String, default: ""},
+    userId: {type: String, default: ""}, // fitbit user id
+    ownerId: {type: String, default: ""},
+    ownerName: {type: String, default: ""},
+    ownerEmail: {type: String, default: ""},
+    fitbitAccessToken: {type: String, default: ""},
+    fitbitRefreshToken: {type: String, default: ""},
     inviteCode: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Invite' }],
     members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     devices: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Device' }]

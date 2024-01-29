@@ -1,8 +1,8 @@
 import express, {Request, Response} from 'express';
 import User from '../models/User';
 import Invite from '../models/Invite';
+import Organization from '../models/Organization';
 import argon2 from 'argon2';
-import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 
 const router = express.Router();
@@ -41,10 +41,6 @@ router.post('/', async (req: Request, res: Response) => {
 
         await validInviteCode.save();
 
-        if (!validInviteCode.isActive) {
-            return res.status(400).json({msg: 'Invite code has reached its maximum usage limit'});
-        }
-
         const hashedPassword = await argon2.hash(password);
 
         const newUser = new User({
@@ -58,28 +54,31 @@ router.post('/', async (req: Request, res: Response) => {
 
         newUser.password = hashedPassword;
 
-        await newUser.save()
-            .then(user => {
-                jwt.sign(
-                    {id: user.userId},
-                    process.env.JWT_SECRET as string,
-                    {expiresIn: '1h'},
-                    (err, token) => {
-                        if (err) throw err;
+        await newUser.save();
 
-                        res.json({
-                            token,
-                            user: {
-                                id: user.userId,
-                                email: user.email,
-                                languageLocale: user.languageLocale,
-                                distanceUnit: user.distanceUnit,
-                                orgId: user.orgId
-                            }
-                        });
-                    }
-                )
+        if (validInviteCode.orgId) {
+            await Organization.updateOne(
+                { orgId: validInviteCode.orgId },
+                { $addToSet: { members: newUser._id } }
+            );
+        }
+
+        req.logIn(newUser, (err: Error) => {
+            if (err) {
+                return res.status(500).json({ msg: 'Error during session creation' });
+            }
+
+            return res.json({
+                user: {
+                    id: newUser.userId,
+                    email: newUser.email,
+                    languageLocale: newUser.languageLocale,
+                    distanceUnit: newUser.distanceUnit,
+                    orgId: newUser.orgId
+                },
+                msg: 'Registered successfully'
             });
+        });
     } catch (err) {
         console.error(err);
         res.status(500).json({msg: 'Internal Server Error'});

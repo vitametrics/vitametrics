@@ -1,21 +1,27 @@
 import axios from 'axios';
 import Device from '../models/Device';
+import Organization from '../models/Organization';
 
-async function fetchAndStoreDevices(userId: String, accessToken: String) {
-
+async function fetchAndStoreDevices(userId: string, accessToken: string, orgId: string) {
+    
     const deviceResponse = await axios.get(`https://api.fitbit.com/1/user/${userId}/devices.json`, {
         headers: {'Authorization': `Bearer ${accessToken}`}
     });
 
     for (const deviceData of deviceResponse.data) {
-        await Device.findOneAndUpdate(
-            {deviceId: deviceData.id, userId: userId},
-            {
+        const updatedDevice = await Device.findOneAndUpdate(
+            { deviceId: deviceData.id },
+            { 
                 deviceType: deviceData.type,
-                userFullName: 'N/A'
+                lastSyncDate: deviceData.lastSyncTime ? new Date(deviceData.lastSyncTime) : undefined 
             },
-            { upsert: true, new: true}
-        )
+            { upsert: true, new: true }
+        );
+
+        await Organization.updateOne(
+            { orgId: orgId },
+            { $addToSet: { devices: updatedDevice._id } }
+        );
     }
 }
 
