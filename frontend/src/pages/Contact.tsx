@@ -4,11 +4,13 @@ import { useState, useRef } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { Editor as TinyMCEEditor } from "tinymce";
 import WatchLogo from "../components/Watch";
+import { Turnstile } from "@marsidev/react-turnstile";
 
 const Contact = () => {
   const [message, setMessage] = useState("");
-  const [subject, setSubject] = useState("");
+  const [organizationName, setOrganizationName] = useState("");
   const [email, setEmail] = useState("");
+  const [showStatus, setShowStatus] = useState("");
 
   const editorRef = useRef<TinyMCEEditor | null>(null);
 
@@ -19,21 +21,37 @@ const Contact = () => {
   };
 
   const handleContactMessage = async () => {
+    if (!organizationName || !email || !message) {
+      console.log("Please fill out all fields");
+      setShowStatus("Please fill out all fields");
+      return;
+    }
+
+    const emailRegex = /\S+@\S+\.\S+/;
+    if (!emailRegex.test(email)) {
+      console.log("Please enter a valid email");
+      setShowStatus("Please enter a valid email");
+      return;
+    }
+
+    setShowStatus("");
+
     try {
-      const response = await axios.post("https://localhost:7970/api/contact", {
+      const response = await axios.post("http://localhost:7970/contact", {
         email: email,
-        subject: subject,
-        message: message,
+        organizationName: organizationName,
+        msgBody: message,
       });
 
       if (response.status === 200) {
-        // Message sent successfully
+        setShowStatus("Success");
         console.log("Message sent successfully");
       } else {
-        // Handle other response statuses
+        setShowStatus(response.data.msg);
         console.log("Error sending message");
       }
     } catch (error) {
+      setShowStatus("Error sending message");
       console.log("Error sending message");
     }
   };
@@ -55,17 +73,24 @@ const Contact = () => {
             <h1 className="text-4xl font-bold text-black text-center w-full">
               Getting Started
             </h1>
+            {showStatus != "Success" ? (
+              <div className="text-red-500 mt-5">{showStatus}</div>
+            ) : (
+              <div className="text-green-300 mt-5">{showStatus}</div>
+            )}
             <input
               className="p-[10px] mt-5 w-72 bg-[#d2d1d1] text-black  rounded-lg border-[#6d6c6c]"
               type="text"
               placeholder="Email"
+              required={true}
               onChange={(e) => setEmail(e.target.value)}
             />
             <input
               className="p-[10px] mt-5 w-72 bg-[#d2d1d1] text-black  rounded-lg border-[#6d6c6c] mb-5"
               type="text"
-              placeholder="Subject"
-              onChange={(e) => setSubject(e.target.value)}
+              placeholder="Organization Name"
+              required={true}
+              onChange={(e) => setOrganizationName(e.target.value)}
             />
             <Editor
               apiKey="4e60st8alywzg4ld3g5kvbfr8jtu13azwxr2h5n4olv9m7lv"
@@ -109,6 +134,7 @@ const Contact = () => {
                   "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
               }}
             />{" "}
+            <Turnstile siteKey="" /> {/* for sean */}
             <button
               onClick={handleContactMessage}
               className="p-[10px] mt-5 bg-[#BA6767] w-72 rounded-lg cursor-pointer font-bold text-white sm:mb-auto"

@@ -21,9 +21,11 @@
         "backend"
     ],
     "devDependencies": {
+        "@types/node": "^20.11.10",
         "concurrently": "^8.2.2"
     },
     "dependencies": {
+        "@marsidev/react-turnstile": "^0.4.1",
         "@tinymce/tinymce-react": "^4.3.2"
     }
 }

@@ -68,18 +68,13 @@ const Navbar = () => {
             <div
               className={`${
                 isDropdownOpen ? "block" : "hidden"
-              } w-full md:hidden mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700`}
+              } w-full md:hidden mt-4 border border-gray-100 text-white rounded-lg bg-[#1F1C23] md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-[#1F1C23] md:dark:bg-[#1F1C23] dark:border-[#1F1C23]`}
               id="navbar-dropdown"
             >
               <ul className="flex flex-col font-medium p-4 md:p-0">
                 <li>
                   <a href="/" className="block py-2 px-3">
                     Home
-                  </a>
-                </li>
-                <li>
-                  <a href="/home#steps" className="block py-2 px-3">
-                    How it works
                   </a>
                 </li>
                 <li>
@@ -90,6 +85,11 @@ const Navbar = () => {
                 <li>
                   <a href="/login" className="block py-2 px-3">
                     Login
+                  </a>
+                </li>
+                <li>
+                  <a href="/contact" className="block py-2 px-3">
+                    Contact
                   </a>
                 </li>
               </ul>
@@ -107,14 +107,7 @@ const Navbar = () => {
                   Home
                 </a>
               </li>
-              <li>
-                <a
-                  href="#steps"
-                  className="block py-2 px-3 text-lg text-gray-900 rounded hover:text-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-500 md:p-0 dark:text-white md:dark:hover:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-                >
-                  How it works
-                </a>
-              </li>
+
               <li>
                 <a
                   href="/FAQs"
@@ -130,6 +123,14 @@ const Navbar = () => {
                   className="block py-2 px-3 text-lg text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0 dark:text-white md:dark:hover:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
                 >
                   Login
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/contact"
+                  className="block py-2 px-3 text-lg text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0 dark:text-white md:dark:hover:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                >
+                  Contact
                 </a>
               </li>
             </ul>

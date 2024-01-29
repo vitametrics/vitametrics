@@ -33,7 +33,7 @@ const Login = () => {
         <div className="flex flex-row sm:flex-col-reverse sm:h-screen">
           <div className="flex flex-col items-center justify-center bg-[#BA6767] w-[500px] h-[600px] rounded-tl-2xl rounded-bl-2xl sm:hidden p-20">
             <WatchLogo />
-            <h2 className="font-bold text-5xl text-white">Welcome</h2>
+            <h2 className="font-bold text-5xl text-[#4d2020]">Register</h2>
             <h4 className="font-bold text-2xl text-gray-300 mt-3 text-center">
               Your next destination for research and analysis
             </h4>
@@ -67,10 +67,10 @@ const Login = () => {
             >
               Register
             </button>
-            <a href="/login">
+            <a href="/contact">
               <p className="mt-5 text-[#696969]">
                 {" "}
-                Already have an account? Login
+                Need an account? Contact us!
               </p>
             </a>
           </div>
