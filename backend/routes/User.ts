@@ -1,28 +1,21 @@
 import express, {Request, Response} from 'express';
 import { Parser } from 'json2csv';
-import Organization from '../models/Organization';
+import Organization, { IOrganization } from '../models/Organization';
 import Device from '../models/Device';
 import fetchAndStoreData from '../util/fetchData';
-import { IUser } from '../models/User';
 import verifySession from '../middleware/verifySession';
 import refreshToken from '../middleware/refreshFitbitToken';
+import checkOrgMembership from '../middleware/checkOrg';
+import { CustomReq } from '../util/customReq';
 
 const router = express.Router();
 
-router.post('/sync-data/:deviceId', verifySession, refreshToken, async (req: Request, res: Response) => {
+router.post('/sync-data/:deviceId', verifySession, checkOrgMembership, refreshToken, async (req: CustomReq, res: Response) => {
     try {
-        const user: IUser = req.user as IUser;
+        const organization: IOrganization = req.organization as IOrganization;
 
         try {
             const deviceId = req.params.deviceId;
-
-            const organization = await Organization.findOne({ members: { $elemMatch: { _id: user.userId } } });
-
-            if (!organization) {
-                return res.status(404).json({msg: 'Organization not found'});
-            } else if (!organization.fitbitAccessToken) {
-                return res.status(400).json({msg: 'Organization does not have a Fitbit access token'});
-            }
 
             const orgId = organization.orgId;
 
@@ -35,9 +28,7 @@ router.post('/sync-data/:deviceId', verifySession, refreshToken, async (req: Req
             try {
                 await fetchAndStoreData(orgId, organization.userId, organization.fitbitAccessToken, 'day');
             } catch (err) {
-                if (err.message === 'Token refresh failed') { // need to do checks for token refresh in fetchData.ts
-                    return res.status(400).json({ msg: 'Failed to refresh Fitbit access token' });
-                }
+                return res.status(400).json({ msg: 'Failed to refresh Fitbit access token' });
             }
             
             return res.status(200).json({msg: 'Fitbit data synced successfully'});
@@ -54,20 +45,12 @@ router.post('/sync-data/:deviceId', verifySession, refreshToken, async (req: Req
 });
 
 
-router.get('/download-data/:deviceId', verifySession, refreshToken, async (req: Request, res: Response) => {
+router.get('/download-data/:deviceId', verifySession, checkOrgMembership, refreshToken, async (req: CustomReq, res: Response) => {
     
-    const user: IUser = req.user as IUser;
+    const organization: IOrganization = req.organization as IOrganization;
 
     try {
         const deviceId = req.params.deviceId;
-
-        const organization = await Organization.findOne({ members: { $elemMatch: { _id: user.userId } } });
-
-        if (!organization) {
-            return res.status(404).json({msg: 'Organization not found'});
-        } else if (!organization.fitbitAccessToken) {
-            return res.status(400).json({msg: 'Organization does not have a Fitbit access token'});
-        }
 
         const orgId = organization.orgId;
 

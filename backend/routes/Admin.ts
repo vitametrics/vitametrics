@@ -36,7 +36,7 @@ router.post('/create-org', async (req: Request, res: Response) => {
             password: await argon2.hash(tempPassword), // randomly generated password to be emailed to user
             languageLocale: 'en-US',
             distanceUnit: 'en-US',
-            orgId: newOrgId,
+            orgId: newOrgId
         });
 
         await newUser.save();
@@ -46,7 +46,7 @@ router.post('/create-org', async (req: Request, res: Response) => {
             orgId: newOrgId,
             ownerId: newUserId,
             ownerName,
-            ownerEmail        
+            ownerEmail,
         });
 
         await newOrganization.save();
