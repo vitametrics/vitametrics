@@ -6,17 +6,12 @@ import { Editor as TinyMCEEditor } from "tinymce";
 import WatchLogo from "../components/Watch";
 import { Turnstile } from "@marsidev/react-turnstile";
 
-// putting these here for now so I can test the captcha
-interface TurnstileInstance {
-  getResponseToken: () => string | undefined;
-}
-
 const Contact = () => {
   const [message, setMessage] = useState("");
   const [organizationName, setOrganizationName] = useState("");
   const [email, setEmail] = useState("");
   const [showStatus, setShowStatus] = useState("");
-  const turnstileRef = useRef<TurnstileInstance>(null);
+  const [token, setToken] = useState<string | undefined>();
 
   const editorRef = useRef<TinyMCEEditor | null>(null);
 
@@ -43,17 +38,18 @@ const Contact = () => {
 
     setShowStatus("");
 
-    const token = turnstileRef.current?.getResponseToken();
     if (!token) {
-      setShowStatus("Please complete the captcha");
+      setShowStatus("Please complete captcha verification!");
       return;
     }
 
+
     try {
-      const response = await axios.post("http://localhost:7970/contact", {
+      const response = await axios.post("https://physiobit.seancornell.io/api/contact", {
         email: email,
         organizationName: organizationName,
         msgBody: message,
+        "cf-turnstile-response": token
       });
 
       if (response.status === 200) {
@@ -147,9 +143,7 @@ const Contact = () => {
                   "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
               }}
             />{" "}
-            <Turnstile
-            siteKey='0x4AAAAAAAQ0Qk1HHciMTLH0'
-            /> {/* for sean (ty)*/}
+            <Turnstile siteKey='0x4AAAAAAAQ0Qk1HHciMTLH0' onSuccess={setToken}/> {/* for sean (ty)*/}
             <button
               onClick={handleContactMessage}
               className="p-[10px] mt-5 bg-[#BA6767] w-72 rounded-lg cursor-pointer font-bold text-white sm:mb-auto"
