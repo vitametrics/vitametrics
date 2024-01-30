@@ -134,7 +134,7 @@ const Contact = () => {
                   "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
               }}
             />{" "}
-            <Turnstile siteKey={process.env.TURNSTILE_SITE_KEY as string} /> {/* for sean (ty)*/}
+            <Turnstile siteKey='0x4AAAAAAAQ0Qk1HHciMTLH0' /> {/* for sean (ty)*/}
             <button
               onClick={handleContactMessage}
               className="p-[10px] mt-5 bg-[#BA6767] w-72 rounded-lg cursor-pointer font-bold text-white sm:mb-auto"
