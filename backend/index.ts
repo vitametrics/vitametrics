@@ -13,6 +13,7 @@ import registerRoute from './routes/Register';
 import contactRoute from './routes/Contact';
 import { connectDB } from './middleware/config';
 import sgMail from '@sendgrid/mail';
+import turnstileRoute from './routes/Turnstile';
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
 
@@ -29,6 +30,7 @@ app.use('/register', registerRoute);
 app.use('/login', loginRoute(passport));
 app.use('/logout', logoutRoute);
 app.use('/contact', contactRoute);
+app.use('/verify', turnstileRoute);
 
 connectDB();
 
