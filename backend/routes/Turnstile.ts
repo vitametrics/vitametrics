@@ -17,7 +17,14 @@ router.post('/verify', async (req: Request, res: Response) => {
 
     const outcome = await result.json();
 
-    res.send(outcome);
+    if (!outcome.success) {
+        res.status(403).json({"success": false, "msg": "Captcha Verification Failed"});
+        return;
+    } else if (outcome.success) {
+        return res.status(200).json({"success": true});
+    }
+    
+    return res.status(500).json({"msg": "Internal Server Error"});
 }); 
 
 export default router;
