@@ -79,7 +79,7 @@ const Contact = () => {
               organization account from us!
             </h4>
           </div>
-          <div className="flex flex-col items-center justify-center bg-white w-[500px] h-[600px] p-5 rounded-tr-2xl rounded-br-2xl  sm:w-screen sm:rounded-none sm:h-full sm:p-5 ">
+          <div className="flex flex-col items-center justify-center bg-[#F9F6EE] w-[500px] h-[600px] p-5 rounded-tr-2xl rounded-br-2xl  sm:w-screen sm:rounded-none sm:h-full sm:p-5 ">
             <h1 className="text-4xl font-bold text-black text-center w-full mt-0">
               Getting Started
             </h1>

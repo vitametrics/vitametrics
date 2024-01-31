@@ -7,18 +7,31 @@ import logo from "../assets/images/logo.png";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [message, setMessage] = useState("");
   const [inviteCode, setInviteCode] = useState("");
   //todos
   //if the user is already authenticated --> send them back to the dashboard
   //if the user is not authenticated --> send them to the login page
 
   const handleRegister = async () => {
+    if (password != confirmPassword) {
+      console.log("Passwords do not match");
+      setMessage("Passwords do not match");
+      return;
+    }
+
     try {
       const response = await axios.post("https://localhost:7970/api/register", {
         email: email,
         password: password,
         inviteCode: inviteCode,
       });
+
+      if (response.status === 200) {
+        setMessage("Success");
+        console.log("Message sent successfully");
+      }
 
       console.log(response.data);
     } catch (error) {
@@ -42,6 +55,11 @@ const Login = () => {
             <img src={logo} className="h-16 mb-5" alt="Physiobit Logo" />
 
             <h2 className="font-bold text-4xl w-72 text-center"> Register </h2>
+            {message != "Success" ? (
+              <p className="text-red-500 mt-5 font-bold">{message}</p>
+            ) : (
+              <p className="text-green-500 mt-5 font-bold">{message}</p>
+            )}
             <input
               className="p-[10px] mt-5 w-72 bg-[#d2d1d1]  text-black rounded-lg"
               type="text"
@@ -53,6 +71,12 @@ const Login = () => {
               type="password"
               placeholder="Password"
               onChange={(e) => setPassword(e.target.value)}
+            />
+            <input
+              className="p-[10px] mt-5 w-72 bg-[#d2d1d1] text-black rounded-lg"
+              type="password"
+              placeholder="Confirm Password"
+              onChange={(e) => setConfirmPassword(e.target.value)}
             />
             <input
               className="p-[10px] mt-5 w-72 bg-[#d2d1d1] text-black  rounded-lg border-[#6d6c6c]"
