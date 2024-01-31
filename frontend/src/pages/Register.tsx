@@ -40,7 +40,7 @@ const Login = () => {
   };
 
   return (
-    <div className="h-screen w-screen">
+    <div className="h-screen w-screen font-ralewayBold">
       <Navbar />
       <div className="flex flex-col justify-center place-items-center p-[4.5rem] sm:p-0">
         <div className="flex flex-row sm:flex-col-reverse sm:h-screen">

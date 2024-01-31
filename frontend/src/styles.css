@@ -34,3 +34,18 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+@font-face {
+  font-family: "Raleway-Regular";
+  src: url("./assets/fonts/Raleway-Regular.ttf");
+}
+
+@font-face {
+  font-family: "Raleway-Bold";
+  src: url("./assets/fonts/Raleway-Bold.ttf");
+}
+
+@font-face {
+  font-family: "Raleway-Semibold";
+  src: url("./assets/fonts/Raleway-SemiBold.ttf");
+}

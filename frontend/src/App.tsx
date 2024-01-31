@@ -7,6 +7,7 @@ const Login = lazy(() => import("./pages/Login"));
 const FAQs = lazy(() => import("./pages/FAQs"));
 const Register = lazy(() => import("./pages/Register"));
 const Contact = lazy(() => import("./pages/Contact"));
+const Otp = lazy(() => import("./pages/OTP"));
 
 const LoadingFallback = () => <div>Loading...</div>;
 
@@ -23,6 +24,7 @@ function App() {
           <Route path="/login" exact component={Login} />
           <Route path="/register" exact component={Register} />
           <Route path="/contact" exact component={Contact} />
+          <Route path="/otp" exact component={Otp} />
         </Switch>
       </Suspense>
     </Router>

@@ -23,6 +23,11 @@ export default {
       "2xl": { min: "1536px" },
       // => @media (min-width: 1536px) { ... }
     },
+    fontFamily: {
+      raleway: ["Raleway-Regular", "sans-serif"],
+      ralewayBold: ["Raleway-Bold", "sans-serif"],
+      ralewaySemibold: ["Raleway-Semibold", "sans-serif"],
+    },
   },
   plugins: [],
 };
