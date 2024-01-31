@@ -22,7 +22,6 @@ const Contact = () => {
   };
 
   const handleContactMessage = async () => {
-
     if (!organizationName || !email || !message) {
       console.log("Please fill out all fields");
       setShowStatus("Please fill out all fields");
@@ -43,14 +42,16 @@ const Contact = () => {
       return;
     }
 
-
     try {
-      const response = await axios.post("https://physiobit.seancornell.io/api/contact", {
-        email: email,
-        organizationName: organizationName,
-        msgBody: message,
-        "cf-turnstile-response": token
-      });
+      const response = await axios.post(
+        "https://physiobit.seancornell.io/api/contact",
+        {
+          email: email,
+          organizationName: organizationName,
+          msgBody: message,
+          "cf-turnstile-response": token,
+        }
+      );
 
       if (response.status === 200) {
         setShowStatus("Success");
@@ -78,8 +79,8 @@ const Contact = () => {
               organization account from us!
             </h4>
           </div>
-          <div className="flex flex-col items-center justify-center bg-white w-[500px] h-[600px] p-10 rounded-tr-2xl rounded-br-2xl  sm:w-screen sm:rounded-none sm:h-full sm:p-5">
-            <h1 className="text-4xl font-bold text-black text-center w-full">
+          <div className="flex flex-col items-center justify-center bg-white w-[500px] h-[600px] p-5 rounded-tr-2xl rounded-br-2xl  sm:w-screen sm:rounded-none sm:h-full sm:p-5 ">
+            <h1 className="text-4xl font-bold text-black text-center w-full mt-0">
               Getting Started
             </h1>
             {showStatus != "Success" ? (
@@ -87,20 +88,22 @@ const Contact = () => {
             ) : (
               <div className="text-green-300 mt-5">{showStatus}</div>
             )}
-            <input
-              className="p-[10px] mt-5 w-72 bg-[#d2d1d1] text-black  rounded-lg border-[#6d6c6c]"
-              type="text"
-              placeholder="Email"
-              required={true}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <input
-              className="p-[10px] mt-5 w-72 bg-[#d2d1d1] text-black  rounded-lg border-[#6d6c6c] mb-5"
-              type="text"
-              placeholder="Organization Name"
-              required={true}
-              onChange={(e) => setOrganizationName(e.target.value)}
-            />
+            <div className="flex flex-row items-center justify-between gap-2">
+              <input
+                className="p-[10px] mt-5 w-full mb-5 bg-[#d2d1d1] text-black  rounded-lg border-[#6d6c6c]"
+                type="text"
+                placeholder="Email"
+                required={true}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <input
+                className="p-[10px] mt-5 w-full bg-[#d2d1d1] text-black  rounded-lg border-[#6d6c6c] mb-5"
+                type="text"
+                placeholder="Organization Name"
+                required={true}
+                onChange={(e) => setOrganizationName(e.target.value)}
+              />
+            </div>
             <Editor
               apiKey="4e60st8alywzg4ld3g5kvbfr8jtu13azwxr2h5n4olv9m7lv"
               onInit={(_evt, editor) => (editorRef.current = editor)}
@@ -109,8 +112,11 @@ const Contact = () => {
               init={{
                 statusbar: false,
                 menubar: false,
-                height: "100%",
-                width: "80%",
+                resize: true,
+                height: 200,
+                min_height: 200,
+                max_height: 200,
+                width: "90%",
                 placeholder: "Enter your message here...",
 
                 plugins: [
@@ -143,10 +149,21 @@ const Contact = () => {
                   "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
               }}
             />{" "}
-            <Turnstile siteKey='0x4AAAAAAAQ0Qk1HHciMTLH0' onSuccess={setToken}/> {/* for sean (ty)*/}
+            <br />
+            <Turnstile
+              style={{
+                width: "100%",
+                justifyContent: "center",
+                placeItems: "center",
+                display: "flex",
+              }}
+              siteKey="0x4AAAAAAAQ0Qk1HHciMTLH0"
+              onSuccess={setToken}
+            />{" "}
+            {/* for sean (ty)*/}
             <button
               onClick={handleContactMessage}
-              className="p-[10px] mt-5 bg-[#BA6767] w-72 rounded-lg cursor-pointer font-bold text-white sm:mb-auto"
+              className="p-[10px] mt-5 bg-[#BA6767] w-[300px] rounded-lg cursor-pointer font-bold text-white sm:mb-auto"
             >
               {" "}
               Submit{" "}
