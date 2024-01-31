@@ -1,0 +1,11 @@
+{
+  "name": "physiobit",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/brandontranle/physiobit",
+  "author": "Sean Cornell <seancornell11@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@sendgrid/mail": "^8.1.0"
+  }
+}
