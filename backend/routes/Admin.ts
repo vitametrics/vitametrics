@@ -34,6 +34,8 @@ router.post('/create-org', async (req: Request, res: Response) => {
             userId: newUserId,
             email: ownerEmail,
             password: await argon2.hash(tempPassword), // randomly generated password to be emailed to user
+            emailVerfToken: crypto.randomBytes(32).toString('hex'),
+            emailVerified: false,
             languageLocale: 'en-US',
             distanceUnit: 'en-US',
             orgId: newOrgId
@@ -54,7 +56,7 @@ router.post('/create-org', async (req: Request, res: Response) => {
         await sendEmail({
             to: ownerEmail,
             subject: 'Your New Organization Account',
-            text: `Your account has been created. Your login is: ${ownerEmail}\nYour password is: ${tempPassword}`,
+            text: `Your account has been created. Your login is: ${ownerEmail}\nYour temporary password is: ${tempPassword}`,
         });
 
         return res.status(201).json({ msg: 'Organization created successfully', organization: newOrganization });

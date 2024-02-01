@@ -4,34 +4,57 @@ import Invite from '../models/Invite';
 import Organization from '../models/Organization';
 import argon2 from 'argon2';
 import crypto from 'crypto';
+import {body, validationResult} from 'express-validator';
 
 const router = express.Router();
 
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', [
+    body('email')
+        .not().isEmpty().withMessage('Please provide an email')
+        .isString().withMessage('Email must be a string')
+        .custom(email => {
+            return User.findOne({email: email}).then(user => {
+                if (user) {
+                   return Promise.reject('Email already is use!');
+                }
+                return true;
+            });
+        }),
+    body('password').not()
+        .isEmpty().withMessage('Password cannot be empty')
+        .isString().withMessage('Password must be a string')
+        .trim().escape(),
+    body('inviteCode')
+        .not().isEmpty().withMessage('Invite code cannot be empty')
+        .isString().withMessage('Invite code must be a string')
+        .trim().escape()
+        .custom(code => {
+            return Invite.findOne({code: code}).then(found => {
+                if (!found) {
+                    return Promise.reject('Invalid invite code!');
+                } else if (!found.isActive) {
+                    return Promise.reject('Invite Code is no longer valid!');
+                }
+                return true;
+            });
+    })
+], async (req: Request, res: Response) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
 
     const { email, password, inviteCode} = req.body;
 
-    console.log(email, password, inviteCode);
-
-    if (!email || !password || !inviteCode) {
-        return res.status(400).json({msg: 'Please enter all fields'});
-    }
-
     try {
-        const user = await User.findOne({email});
-
-        if (user) {
-            if (user.email == email.toString()) {
-                return res.status(400).json({msg: 'User already exists'});
-            }
-        }
 
         const validInviteCode = await Invite.findOne({code: inviteCode});
 
         if (!validInviteCode) {
-            return res.status(400).json({msg: 'Invalid invite code'});
+            return res.status(400).send('Please enter an invite code!');
         } else if (!validInviteCode.isActive) {
-            return res.status(400).json({msg: 'Invite code is no longer valid'});
+            return res.status(400).send('Invite code is no longer active!');
         }
 
         validInviteCode.usageCount++;

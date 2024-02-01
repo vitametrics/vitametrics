@@ -19,7 +19,6 @@ router.get('/auth', async (_req: Request, res: Response) => {
 
         const authUrl = `https://www.fitbit.com/oauth2/authorize?client_id=${process.env.FITBIT_CLIENT_ID}&response_type=code&code_challenge=${codeChallenge}&code_challenge_method=S256&scope=activity%20heartrate%20location%20nutrition%20oxygen_saturation%20respiratory_rate%20settings%20sleep%20social%20temperature%20weight%20profile&redirect_uri=${process.env.REDIRECT_URI}`;
 
-
         res.redirect(authUrl);
     } catch(err) {
         res.status(500).send('Internal Server Error');
@@ -60,11 +59,6 @@ router.get('/callback', verifySession, async (req: Request, res: Response) => {
         const fitbitUserID = profileResponse.data.user.encodedId;
 
         const refreshToken = tokenResponse.data.refresh_token;
-
-        // console.log("fitbit userid: ", fitbitUserID);
-        // console.log("fitbit access token: ", accessToken);
-        // console.log("fitbit refresh token: ", refreshToken);
-
 
         const organization = await Organization.findOne({ ownerId: userId });
 
