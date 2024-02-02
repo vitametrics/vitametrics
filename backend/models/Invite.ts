@@ -1,16 +1,19 @@
 import mongoose from 'mongoose';
 
-const emailSchema = new mongoose.Schema({
-    email: { type: String, required: true },
-    used: { type: Boolean, default: false }
-});
+export interface IInvite extends Document {
+    code: string;
+    usageCount: string;
+    maxUses: string;
+    isActive: string;
+    orgId: string;
+}
 
 const inviteCodeSchema = new mongoose.Schema({
     code: { type: String, required: true, unique: true },
-    expirationDate: { type: Date, default: () => new Date(+new Date() + 30*24*60*60*1000) }, // 30 day expiry for invite codes
     usageCount: { type: Number, default: 0, required: true }, // check usage count for invite codes
+    maxUses: { type: Number, default: 11, required: true}, // must be 11 to include org owner (fix in future)
     isActive: { type: Boolean, default: true }, // allow for revoking of invites
-    emails: [emailSchema]
+    orgId: { type: String, required: true}
 }, { timestamps: true });
 
 const InviteCode = mongoose.model('inviteCodes', inviteCodeSchema);

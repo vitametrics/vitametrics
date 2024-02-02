@@ -10,15 +10,15 @@ To get the Physiobit API running on your local machine, you're going to have to 
 A sample ```.env``` might look like this:
 ```bash
 {
-    NODE_ENV='dev'
-    PORT='7970'
-    PROD_DB_URI='mongodb://192.168.1.101:32770/fitbit-prod'
-    FITBIT_CLIENT_ID='23RMDW'
-    FITBIT_CLIENT_SECRET='1cce030af27a881068f790aa75e7ebbb'
-    BASE_URL='https://physiobit.seancornell.io'
-    REDIRECT_URI='https://physiobit.seancornell.io/api/callback'
-    JWT_SECRET='RR7W48RGSUZ4EEKPEKJHTRPEL9'
-    ADMIN_TOKEN='XUQ4LULL!R6^HJQZ$MA9#AFZY%JNV3GXZYW3'
+    NODE_ENV=''
+    PORT=''
+    PROD_DB_URI=''
+    FITBIT_CLIENT_ID=''
+    FITBIT_CLIENT_SECRET=''
+    BASE_URL=''
+    REDIRECT_URI=''
+    JWT_SECRET=''
+    ADMIN_TOKEN=''
 }
 ```
 ### NODE_ENV

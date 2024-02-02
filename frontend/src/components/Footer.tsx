@@ -1,3 +1,5 @@
+import logo from "../assets/images/logo.png";
+
 const Footer = () => {
   return (
     <footer className="bg-[#1F1C23] dark:bg-[#1F1C23]">
@@ -7,11 +9,7 @@ const Footer = () => {
             href="https://flowbite.com/"
             className="flex items-center  sm:mb-0 space-x-3 rtl:space-x-reverse"
           >
-            <img
-              src="https://flowbite.com/docs/images/logo.svg"
-              className="h-8"
-              alt="Flowbite Logo"
-            />
+            <img src={logo} className="h-8" alt="Physiobit Logo" />
             <div className="flex flex-col">
               <span className=" font-bold text-2xl  whitespace-nowrap text-[#BA6767]">
                 Physiobit{" "}

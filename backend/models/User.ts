@@ -4,21 +4,22 @@ export interface IUser extends Document {
     userId: string;
     email: string;
     password: string;
-    fitbitAccessToken: string;
-    fitbitRefreshToken: string;
+    emailVerfToken: string;
+    emailVerified: boolean;
+    orgId: string;
     languageLocale: string;
     distanceUnit: string;
-    inviteCode: string;
 };
 
 const userSchema = new mongoose.Schema({
-    userId: String,
-    email: String,
-    password: String,
-    fitbitAccessToken: String,
-    languageLocale: String,
-    distanceUnit: String,
-    inviteCode: String
+    userId: {type: String, default: ""},
+    email: {type: String, default: ""},
+    password: {type: String, default: ""},
+    emailVerfToken: {type: String, default: ""},
+    emailVerified: {type: Boolean, default: false},
+    orgId: {type: String, default: ""},
+    languageLocale: {type: String, default: 'en-US'},
+    distanceUnit: {type: String, default: 'en-US'}
 });
 
 const User = mongoose.model<IUser>('User', userSchema);

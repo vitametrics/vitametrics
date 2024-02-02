@@ -1,95 +1,107 @@
 import express, {Request, Response} from 'express';
 import User from '../models/User';
 import Invite from '../models/Invite';
+import Organization from '../models/Organization';
 import argon2 from 'argon2';
-import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
+import {body, validationResult} from 'express-validator';
 
 const router = express.Router();
 
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', [
+    body('email')
+        .not().isEmpty().withMessage('Please provide an email')
+        .isString().withMessage('Email must be a string')
+        .custom(email => {
+            return User.findOne({email: email}).then(user => {
+                if (user) {
+                   return Promise.reject('Email already is use!');
+                }
+                return true;
+            });
+        }),
+    body('password').not()
+        .isEmpty().withMessage('Password cannot be empty')
+        .isString().withMessage('Password must be a string')
+        .trim().escape(),
+    body('inviteCode')
+        .not().isEmpty().withMessage('Invite code cannot be empty')
+        .isString().withMessage('Invite code must be a string')
+        .trim().escape()
+        .custom(code => {
+            return Invite.findOne({code: code}).then(found => {
+                if (!found) {
+                    return Promise.reject('Invalid invite code!');
+                } else if (!found.isActive) {
+                    return Promise.reject('Invite Code is no longer valid!');
+                }
+                return true;
+            });
+    })
+], async (req: Request, res: Response) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
 
     const { email, password, inviteCode} = req.body;
 
-    console.log(email, password, inviteCode);
-
-    if (!email || !password || !inviteCode) {
-        return res.status(400).json({msg: 'Please enter all fields'});
-    }
-
     try {
-
-        const user = await User.findOne({email});
-
-        if (user) {
-            if (user.email == email.toString()) {
-                return res.status(400).json({msg: 'User already exists'});
-            }
-        }
 
         const validInviteCode = await Invite.findOne({code: inviteCode});
 
         if (!validInviteCode) {
-            return res.status(400).json({msg: 'Invalid invite code'});
-        }
-	
-
-        if (!validInviteCode.isActive) {
-            return res.status(400).json({msg: 'Invite code is no longer valid'});
-        } else if (!validInviteCode.emails.some(inviteObj => inviteObj.email === email)) {
-            return res.status(400).json({msg: 'Invalid invite code'});
-        } else if (validInviteCode.emails.find(e => e.email === email)?.used) {
-            return res.status(400).json({msg: 'Invite code has already been used for this email'});
+            return res.status(400).send('Please enter an invite code!');
+        } else if (!validInviteCode.isActive) {
+            return res.status(400).send('Invite code is no longer active!');
         }
 
-        const newUser = new User({
-            userId: '',
-            email: email,
-            password: '',
-            fitbitAccessToken: '',
-            languageLocale: 'en-US',
-            distanceUnit: 'en-US'
-        });
+        validInviteCode.usageCount++;
+        if (validInviteCode.usageCount >= validInviteCode.maxUses) {
+            validInviteCode.isActive = false;
+        }
 
-        validInviteCode.usageCount += 1;
-        validInviteCode.isActive = false;
-        validInviteCode.emails.find(e => e.email === email)!.used = true;
-        
         await validInviteCode.save();
 
-        try {
+        const hashedPassword = await argon2.hash(password);
 
-            const hashedPassword = await argon2.hash(password);
-            newUser.password = hashedPassword;
+        const newUser = new User({
+            userId: crypto.randomBytes(16).toString('hex'),
+            email: email,
+            password: '',
+            languageLocale: 'en-US',
+            distanceUnit: 'en-US',
+            orgId: validInviteCode.orgId
+        });
 
-            await newUser.save()
-                .then(user => {
-                    jwt.sign(
-                        {id: user.userId || user.email},
-                        process.env.JWT_SECRET as string,
-                        {expiresIn: '1h'},
-                        (err, token) => {
-                            if (err) throw err;
+        newUser.password = hashedPassword;
 
-                            res.json({
-                                token,
-                                user: {
-                                    id: user.userId,
-                                    email: user.email,
-                                    languageLocale: user.languageLocale,
-                                    distanceUnit: user.distanceUnit
-                                }
-                            });
-                        }
-                    )
-                });
+        await newUser.save();
 
-        } catch (err) {
-            console.error(err);
-            return res.status(500).json({msg: 'Internal Server Error'});
+        if (validInviteCode.orgId) {
+            await Organization.updateOne(
+                { orgId: validInviteCode.orgId },
+                { $addToSet: { members: newUser._id } }
+            );
         }
 
+        req.logIn(newUser, (err: Error) => {
+            if (err) {
+                return res.status(500).json({ msg: 'Error during session creation' });
+            }
 
-
+            return res.json({
+                user: {
+                    id: newUser.userId,
+                    email: newUser.email,
+                    languageLocale: newUser.languageLocale,
+                    distanceUnit: newUser.distanceUnit,
+                    orgId: newUser.orgId
+                },
+                msg: 'Registered successfully'
+            });
+        });
     } catch (err) {
         console.error(err);
         res.status(500).json({msg: 'Internal Server Error'});

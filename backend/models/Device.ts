@@ -1,14 +1,13 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 export interface IDevice extends Document {
     deviceId: string;
     deviceType: string;
     userFullName: string;
+    lastSyncDate: Date;
 };
 
-
-const deviceSchema = new mongoose.Schema({
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+const devicesSchema = new mongoose.Schema({
     deviceId: String,
     deviceType: String,
     heartRateData: [{ date: Date, value: Number }],
@@ -17,6 +16,7 @@ const deviceSchema = new mongoose.Schema({
     lastSyncDate: [{date: Date}]
 });
 
-const Device = mongoose.model('Device', deviceSchema);
+const deviceSchema = mongoose.model('devices', devicesSchema);
 
-export default Device;
+
+export default deviceSchema;
