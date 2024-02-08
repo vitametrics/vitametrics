@@ -33,7 +33,7 @@ const Login = () => {
       if (response.data) {
         setAuthenticated(true);
         sessionStorage.setItem("userId", response.data.user.id);
-        sessionStorage.setItem("orgId", response.data.org);
+        sessionStorage.setItem("orgId", response.data.user.orgId);
         window.location.href = "/dashboard";
       }
     } catch (error) {
