@@ -18,9 +18,10 @@ export const commonMiddlewares = (app: express.Application) => {
     resave: false,
     saveUninitialized: true,
     store: MongoStore.create({ mongoUrl: process.env.PROD_DB_URI as string }) as any,
-    cookie: { 
-      secure: process.env.NODE_ENV as string === 'production',
-      sameSite: process.env.NODE_ENV as string === "production" ? "none" : "lax"
+    cookie: {
+      secure: false,
+      sameSite: false,
+      httpOnly: true,
     }
   }));
   app.set('trust proxy', 1);
