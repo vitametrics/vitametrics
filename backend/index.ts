@@ -14,10 +14,16 @@ import contactRoute from './routes/Contact';
 import { connectDB } from './middleware/config';
 import sgMail from '@sendgrid/mail';
 import turnstileRoute from './routes/Turnstile';
+import mongoSanitize from 'express-mongo-sanitize';
+import helmet from 'helmet';
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
 
 const app = express();
+app.use(helmet({
+    contentSecurityPolicy: false
+}));
+app.use(mongoSanitize());
 commonMiddlewares(app);
 passportConfig(passport);
 app.use(passport.initialize());
