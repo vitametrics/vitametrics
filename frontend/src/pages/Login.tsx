@@ -1,8 +1,10 @@
 import { useState } from "react";
+
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import WatchLogo from "../components/Watch";
 import logo from "../assets/images/logo.png";
+import Footer from "../components/Footer";
 
 const Login = () => {
   const [authenticated, setAuthenticated] = useState(false);
@@ -42,18 +44,20 @@ const Login = () => {
   };
 
   return (
-    <div className="h-screen w-screen overflow-y-hidden font-ralewayBold">
+    <div className="h-full w-full overflow-y-hidden font-ralewayBold bg-[#d2d8e6] dark:bg-[#1E1D20]">
       <Navbar />
       <div className="flex flex-col justify-center place-items-center p-20 sm:p-0">
         <div className="flex flex-row sm:flex-col-reverse sm:h-screen">
-          <div className="flex flex-col items-center justify-center bg-[#BA6767] w-[500px] h-[600px] rounded-tl-2xl rounded-bl-2xl sm:hidden">
+          <div className="flex flex-col items-center justify-center  bg-[#79a3b7] dark:bg-[#BA6767]  w-[500px] h-[600px] rounded-tl-2xl rounded-bl-2xl sm:hidden">
             <WatchLogo />
-            <h2 className="font-bold text-5xl text-[#4d2020]">Welcome</h2>
+            <h2 className="font-bold text-5xl text-white dark:text-[#4d2020]">
+              Welcome
+            </h2>
             <h4 className="font-bold text-2xl text-gray-300 mt-1">
               Analyze all in one place
             </h4>
           </div>
-          <div className="flex flex-col items-center justify-center bg-white w-[500px] h-[600px]  p-20 rounded-tr-2xl rounded-br-2xl  sm:w-screen sm:rounded-none sm:h-full sm:p-5">
+          <div className="flex flex-col items-center justify-center bg-[#E1E1E1] w-[500px] h-[600px]  p-20 rounded-tr-2xl rounded-br-2xl  sm:w-screen sm:rounded-none sm:h-full sm:p-5">
             <a href="/" className="mb-5 sm:mt-10">
               <img src={logo} className="h-20" alt="Physiobit Logo" />
             </a>
@@ -76,7 +80,7 @@ const Login = () => {
 
             <button
               onClick={handleLogin}
-              className="p-[10px] mt-5 bg-[#BA6767] w-72 rounded-lg cursor-pointer font-bold text-white"
+              className="p-[10px] mt-5 bg-[#373F51] dark:bg-[#BA6767] w-72 rounded-lg cursor-pointer font-bold text-white"
             >
               {" "}
               Login{" "}
@@ -87,6 +91,7 @@ const Login = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

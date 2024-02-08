@@ -11,16 +11,16 @@ const RightText: React.FC<SectionProps> = ({ title }) => {
           {" "}
         </div>
         <div
-          className="w-[750px] bg-[#645B5B] h-[350px] mr-auto rounded-tr-2xl rounded-br-2xl sm:hidden lg:hidden"
+          className="w-[750px] bg-[#79a3b7] dark:bg-[#645B5B] h-[350px] mr-auto rounded-tr-2xl rounded-br-2xl sm:hidden lg:hidden"
           id="square"
         ></div>
       </div>
       <div className="w-[100%] h-full p-20 flex  flex-col box-border min-w-[500px] ">
-        <h1 className="text-4xl text-[#bdbbbb] font-bold mb-5 text-center">
+        <h1 className="text-4xl text-[#5086A2] dark:text-[#bdbbbb] font-bold mb-5 text-center">
           {" "}
           {title}
         </h1>
-        <p className="text-2xl font-bold text-white">
+        <p className="text-2xl font-bold text-[#373F51] dark:text-white">
           {" "}
           Made for research, Physiobit gathers data from real fitbit user
           through their accounts. <br /> <br /> Through continuous logging,
@@ -37,11 +37,11 @@ const LeftText: React.FC<SectionProps> = ({ title }) => {
   return (
     <div className="flex flex-row box-border sm:flex-col">
       <div className="w-[100%] h-full sm:p-10 flex p-20  flex-col box-border min-w-[500px] ">
-        <h1 className="text-4xl text-[#bdbbbb] font-bold mb-5 text-center">
+        <h1 className="text-4xl text-[#5086A2] dark:text-[#bdbbbb] font-bold mb-5 text-center">
           {" "}
           {title}
         </h1>
-        <p className="text-2xl font-bold text-white">
+        <p className="text-2xl font-bold  text-[#373F51] dark:text-white">
           {" "}
           Made for research, Physiobit gathers data from real fitbit user
           through their accounts. <br /> <br /> Through continuous logging,
@@ -56,7 +56,7 @@ const LeftText: React.FC<SectionProps> = ({ title }) => {
           {" "}
         </div>
         <div
-          className="w-[750px] bg-[#645B5B] h-[350px] ml-auto rounded-bl-2xl rounded-tl-2xl sm:hidden lg:hidden"
+          className="w-[750px] bg-[#79a3b7] dark:bg-[#645B5B] h-[350px] ml-auto rounded-bl-2xl rounded-tl-2xl sm:hidden lg:hidden"
           id="square"
         ></div>
       </div>
@@ -70,7 +70,7 @@ const Steps = () => {
       id="#steps"
       className="w-full h-full flex flex-col box-border mb-[100px] "
     >
-      <h3 className="text-5xl text-[#BA6767] font-bold mb-5 text-center">
+      <h3 className="text-5xl text-[#5086A2] dark:text-[#BA6767] font-bold mb-5 text-center">
         Three Easy Steps
       </h3>
       <RightText title="Deploy" />

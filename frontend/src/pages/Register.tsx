@@ -3,6 +3,7 @@ import axios from "axios";
 import Navbar from "../components/Navbar";
 import WatchLogo from "../components/Watch";
 import logo from "../assets/images/logo.png";
+import Footer from "../components/Footer";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -40,13 +41,15 @@ const Login = () => {
   };
 
   return (
-    <div className="h-screen w-screen font-ralewayBold">
+    <div className="h-full w-full font-ralewayBold bg-[#d2d8e6] dark:bg-[#1E1D20] ">
       <Navbar />
       <div className="flex flex-col justify-center place-items-center p-[4.5rem] sm:p-0">
         <div className="flex flex-row sm:flex-col-reverse sm:h-screen">
-          <div className="flex flex-col items-center justify-center bg-[#BA6767] w-[500px] h-[600px] rounded-tl-2xl rounded-bl-2xl sm:hidden p-20">
+          <div className="flex flex-col items-center justify-center bg-[#79a3b7] dark:bg-[#BA6767] w-[500px] h-[600px] rounded-tl-2xl rounded-bl-2xl sm:hidden p-20">
             <WatchLogo />
-            <h2 className="font-bold text-5xl text-[#4d2020]">Register</h2>
+            <h2 className="font-bold text-5xl text-white dark:text-[#4d2020]">
+              Register
+            </h2>
             <h4 className="font-bold text-2xl text-gray-300 mt-3 text-center">
               Your next destination for research and analysis
             </h4>
@@ -87,7 +90,7 @@ const Login = () => {
 
             <button
               onClick={handleRegister}
-              className="p-[10px] mt-5 bg-[#BA6767] w-72 rounded-lg cursor-pointer font-bold text-white"
+              className="p-[10px] mt-5  bg-[#373F51] dark:bg-[#BA6767] w-72 rounded-lg cursor-pointer font-bold text-white"
             >
               Register
             </button>
@@ -100,6 +103,7 @@ const Login = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

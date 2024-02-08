@@ -4,9 +4,20 @@ import logo from "../assets/images/logo1.png";
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [isDarkMode, setIsDarkMode] = useState(
+    localStorage.getItem("darkMode") === "true"
+  );
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const toggleDarkMode = () => {
+    const newDarkMode = !isDarkMode;
+    setIsDarkMode(newDarkMode);
+    localStorage.setItem("darkMode", newDarkMode.toString());
+    //refresh
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -28,7 +39,7 @@ const Navbar = () => {
 
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700">
-      <div className="flex flex-row w-full bg-[#3F3E43] h-20 sticky top-0 flex-wrap items-center justify-between mx-auto p-4">
+      <div className="flex flex-row w-full bg-[#373F51] dark:bg-[#2B2B2C] h-20 sticky top-0 flex-wrap items-center justify-between mx-auto p-4">
         <a
           href="/"
           className="flex items-center space-x-3 rtl:space-x-rev  erse"
@@ -89,16 +100,25 @@ const Navbar = () => {
                     Contact
                   </a>
                 </li>
+                <li>
+                  <label className="switch">
+                    <input type="checkbox" />
+                    <span className="slider"> </span>
+                  </label>
+                </li>
               </ul>
             </div>
           </>
         ) : (
-          <div className="hidden w-full md:block md:w-auto" id="navbar-default">
-            <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-transparent md:dark:bg-transparent">
+          <div
+            className="hidden w-full md:block md:w-auto bg-transparent"
+            id="navbar-default"
+          >
+            <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg  md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 dark:bg-transparent md:dark:bg-transparent">
               <li>
                 <a
                   href="/"
-                  className="block py-2 px-3 text-lg text-white bg-transparent rounded md:bg-transparent md:text-white md:p-0 dark:text-white md:dark:text-white"
+                  className="block py-2 px-3 text-lg text-white hover:text-gray-300 bg-transparent rounded md:bg-transparent  md:p-0  "
                   aria-current="page"
                 >
                   Home
@@ -108,7 +128,7 @@ const Navbar = () => {
               <li>
                 <a
                   href="/FAQs"
-                  className="block py-2 px-3 text-lg text-gray-900 rounded hover:bg-gray-300 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0 dark:text-white md:dark:hover:text-grey-200 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                  className="block py-2 px-3 text-lg text-white rounded hover:text-gray-300 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0  md:dark:hover:text-grey-200 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
                 >
                   FAQs
                 </a>
@@ -117,7 +137,7 @@ const Navbar = () => {
               <li>
                 <a
                   href="/login"
-                  className="block py-2 px-3 text-lg text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0 dark:text-white md:dark:hover:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                  className="block py-2 px-3 text-lg text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0 dark:text-white md:dark:hover:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
                 >
                   Login
                 </a>
@@ -125,10 +145,20 @@ const Navbar = () => {
               <li>
                 <a
                   href="/contact"
-                  className="block py-2 px-3 text-lg text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0 dark:text-white md:dark:hover:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                  className="block py-2 px-3 text-lg text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0 dark:text-white md:dark:hover:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
                 >
                   Contact
                 </a>
+              </li>
+              <li>
+                <label className="switch">
+                  <input
+                    type="checkbox"
+                    checked={isDarkMode}
+                    onChange={toggleDarkMode}
+                  />
+                  <span className="slider"> </span>
+                </label>
               </li>
             </ul>
           </div>

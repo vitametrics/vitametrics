@@ -67,12 +67,12 @@ const Contact = () => {
   };
 
   return (
-    <div className="h-screen w-screen font-ralewayBold">
+    <div className="h-full w-full font-ralewayBold bg-[#d2d8e6] dark:bg-[#1E1D20]">
       <Navbar />
       <div className="flex flex-col justify-center place-items-center p-10 sm:p-0">
         <div className="flex flex-row sm:flex-col-reverse sm:h-full">
-          <div className="flex flex-col items-center justify-center bg-[#BA6767] w-[1000px] h-[650px] rounded-[81px]  p-10">
-            <div className="flex flex-col items-center justify-center bg-[#F9F6EE] w-full h-[600px] p-5 rounded-[45px]  sm:w-screen sm:rounded-none sm:h-full sm:p-5 ">
+          <div className="flex flex-col items-center justify-center bg-[#759eb3] dark:bg-[#BA6767] w-[1000px] h-[650px] rounded-xl  p-5">
+            <div className="flex flex-col items-center justify-center bg-[#F9F6EE] w-full h-full p-5 rounded-3xl  sm:w-screen sm:rounded-none sm:h-full sm:p-5 ">
               <h1 className="text-4xl font-bold text-black text-center w-full mt-0">
                 Contact Us
               </h1>
@@ -156,7 +156,7 @@ const Contact = () => {
               {/* for sean (ty)*/}
               <button
                 onClick={handleContactMessage}
-                className="p-[10px] mt-5 bg-[#BA6767] w-[400px] rounded-lg cursor-pointer font-bold text-white sm:mb-auto"
+                className="p-[10px] mt-5 bg-[#373F51] dark:bg-[#BA6767] w-[400px] rounded-lg cursor-pointer font-bold text-white sm:mb-auto"
               >
                 {" "}
                 Submit{" "}
