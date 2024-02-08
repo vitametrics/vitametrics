@@ -72,7 +72,7 @@ const Contact = () => {
       <div className="flex flex-col justify-center place-items-center p-10 sm:p-0">
         <div className="flex flex-row sm:flex-col-reverse sm:h-full">
           <div className="flex flex-col items-center justify-center bg-[#BA6767] w-[1000px] h-[650px] rounded-[81px]  p-10">
-            <div className="flex flex-col items-center justify-center bg-[#F9F6EE] w-full z-10 h-[600px] p-5 rounded-[45px]  sm:w-screen sm:rounded-none sm:h-full sm:p-5 ">
+            <div className="flex flex-col items-center justify-center bg-[#F9F6EE] w-full h-[600px] p-5 rounded-[45px]  sm:w-screen sm:rounded-none sm:h-full sm:p-5 ">
               <h1 className="text-4xl font-bold text-black text-center w-full mt-0">
                 Contact Us
               </h1>
