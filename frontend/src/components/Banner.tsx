@@ -1,4 +1,4 @@
-import Graph from "../assets/graph";
+import Graph from "../assets/Graph";
 
 const Banner = () => {
   return (
