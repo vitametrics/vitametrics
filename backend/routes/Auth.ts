@@ -29,7 +29,7 @@ router.get('/auth', async (_req: Request, res: Response) => {
 router.get('/callback', verifySession, async (req: Request, res: Response) => {
     const code = req.query.code as string;
     const userId = (req.user as IUser).userId;
-    
+
     try {
         const verifier = await CodeVerifier.findOne().sort({createdAt: -1}).limit(1);
         const codeVerifier = verifier?.value;
