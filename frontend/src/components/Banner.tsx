@@ -4,7 +4,7 @@ const Banner = () => {
   return (
     <section
       id="#home"
-      className="w-full h-full flex flex-row box-border mb-28 sm:flex-col"
+      className="w-full h-full flex flex-row box-border mb-28 sm:flex-col dark:bg-hero-texture"
     >
       <div className="w-[100%] h-full p-20 flex  flex-col box-border min-w-[500px] lg:p-10">
         <h1 className="text-6xl text-[#5086A2] dark:text-[#BA6767] font-bold mb-5 sm:text-center">

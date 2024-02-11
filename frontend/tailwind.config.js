@@ -9,7 +9,12 @@ export default {
   ],
 
   theme: {
-    extend: {},
+    extend: {
+      backgroundImage: {
+        "hero-texture": "url('/src/assets/images/hero-texture.png')",
+      },
+    },
+
     screens: {
       sm: { min: "0", max: "767px" },
       // => @media (min-width: 640px and max-width: 767px) { ... }
