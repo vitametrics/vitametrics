@@ -6,6 +6,7 @@ import Data from "../components/Dashboard-Views/Data";
 import Devices from "../components/Dashboard-Views/Devices";
 import Members from "../components/Dashboard-Views/Members";
 import Settings from "../components/Dashboard-Views/Settings";
+import Footer from "../components/Footer";
 
 const Dashboard = () => {
   const [page, setPage] = useState("Data");
@@ -22,7 +23,7 @@ const Dashboard = () => {
       case "Settings":
         return <Settings />;
       default:
-        return <p>Hello, World! from the Dashboard</p>;
+        return <Data />;
     }
   };
 
@@ -35,6 +36,7 @@ const Dashboard = () => {
         </div>
         <div className="flex w-full h-full">{renderComponent()}</div>
       </div>
+      <Footer />
     </div>
   );
 };

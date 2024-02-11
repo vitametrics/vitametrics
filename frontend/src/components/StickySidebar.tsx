@@ -32,11 +32,11 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage }) => {
   };
 
   return (
-    <div className="w-full h-full bg-[#7AA3B7] dark:bg-[#222223]">
+    <div className="sticky top-0 h-screen bg-[#7AA3B7] dark:bg-[#222223]">
       <ul className="flex flex-col">
         <li
           className={`${
-            currentPage === "Data" ? "bg-[#303030]" : ""
+            currentPage === "Data" ? " bg-[#5086A2] dark:bg-[#303030]" : ""
           } flex-col flex justify-center items-center text-white hover:bg-[#5086A2] dark:hover:bg-[#303030] p-4`}
           onClick={() => handlePageChange("Data")}
         >
@@ -45,7 +45,7 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage }) => {
         </li>
         <li
           className={`${
-            currentPage === "Devices" ? "bg-[#303030]" : ""
+            currentPage === "Devices" ? " bg-[#5086A2] dark:bg-[#303030]" : ""
           } flex-col flex justify-center items-center text-white hover:bg-[#5086A2] dark:hover:bg-[#303030] p-4`}
           onClick={() => handlePageChange("Devices")}
         >
@@ -54,7 +54,7 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage }) => {
         </li>
         <li
           className={`${
-            currentPage === "Members" ? "bg-[#303030]" : ""
+            currentPage === "Members" ? " bg-[#5086A2] dark:bg-[#303030]" : ""
           } flex-col flex justify-center items-center text-white hover:bg-[#5086A2] dark:hover:bg-[#303030] p-4`}
           onClick={() => handlePageChange("Members")}
         >
@@ -63,7 +63,7 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage }) => {
         </li>
         <li
           className={`${
-            currentPage === "Settings" ? "bg-[#303030]" : ""
+            currentPage === "Settings" ? "bg-[#5086A2] dark:bg-[#303030]" : ""
           } flex-col flex justify-center items-center text-white hover:bg-[#5086A2] dark:hover:bg-[#303030] p-4`}
           onClick={() => handlePageChange("Settings")}
         >
