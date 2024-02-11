@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+
 interface SectionProps {
   title: string;
 }
@@ -11,7 +13,7 @@ const RightText: React.FC<SectionProps> = ({ title }) => {
           {" "}
         </div>
         <div
-          className="w-[750px] bg-[#79a3b7] dark:bg-[#645B5B] h-[350px] mr-auto rounded-tr-2xl rounded-br-2xl sm:hidden lg:hidden"
+          className="w-[750px] bg-[#79a3b7] dark:bg-[#151515] h-[350px] mr-auto rounded-tr-2xl rounded-br-2xl sm:hidden lg:hidden"
           id="square"
         ></div>
       </div>
@@ -56,7 +58,7 @@ const LeftText: React.FC<SectionProps> = ({ title }) => {
           {" "}
         </div>
         <div
-          className="w-[750px] bg-[#79a3b7] dark:bg-[#645B5B] h-[350px] ml-auto rounded-bl-2xl rounded-tl-2xl sm:hidden lg:hidden"
+          className="w-[750px] bg-[#79a3b7] dark:bg-[#151515] h-[350px] ml-auto rounded-bl-2xl rounded-tl-2xl sm:hidden lg:hidden"
           id="square"
         ></div>
       </div>
@@ -66,17 +68,19 @@ const LeftText: React.FC<SectionProps> = ({ title }) => {
 
 const Steps = () => {
   return (
-    <section
-      id="#steps"
-      className="w-full h-full flex flex-col box-border mb-[100px] "
-    >
-      <h3 className="text-5xl text-[#5086A2] dark:text-[#BA6767] font-bold mb-5 text-center">
-        Three Easy Steps
-      </h3>
-      <RightText title="Deploy" />
-      <LeftText title="Monitor" />
-      <RightText title="Study" />
-    </section>
+    <Suspense fallback={<div>Loading...</div>}>
+      <section
+        id="#steps"
+        className="w-full h-full flex flex-col box-border mb-[100px] "
+      >
+        <h3 className="text-5xl text-[#5086A2] dark:text-[#BA6767] font-bold mb-5 text-center">
+          Three Easy Steps
+        </h3>
+        <RightText title="Deploy" />
+        <LeftText title="Monitor" />
+        <RightText title="Study" />
+      </section>
+    </Suspense>
   );
 };
 

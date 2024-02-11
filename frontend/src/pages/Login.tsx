@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuth } from "../helpers/AuthContext";
+//import { useHistory } from "react-router-dom";
 
 import axios from "axios";
 import Navbar from "../components/Navbar";
@@ -7,22 +9,31 @@ import logo from "../assets/images/logo.png";
 import Footer from "../components/Footer";
 
 const Login = () => {
-  const [authenticated, setAuthenticated] = useState(false);
+  // const [authenticated, setAuthenticated] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  //const history = useHistory();
+
+  //const history = useHistory();
+
   //todos
   //if the user is already authenticated --> send them back to the dashboard
   //if the user is not authenticated --> send them to the login page
 
-  if (authenticated) {
-    //send them to the dashboard
-    window.location.href = "/dashboard";
-  }
+  const { login } = useAuth();
+
+  // Check if the user is already authenticated
+  useEffect(() => {
+    // Redirect to the dashboard if authenticated
+    console.log("worked!");
+    login();
+    //history.push("/dashboard");
+  });
 
   const handleLogin = async () => {
     try {
       const response = await axios.post(
-        "https://physiobit.org/api/login",
+        "http://localhost:7970/login",
         {
           email: email,
           password: password,
@@ -33,10 +44,11 @@ const Login = () => {
       console.log(response.data);
 
       if (response.data) {
-        setAuthenticated(true);
+        //setAuthenticated(true);
         sessionStorage.setItem("userId", response.data.user.id);
         sessionStorage.setItem("orgId", response.data.user.orgId);
-        window.location.href = "/dashboard";
+        login();
+        //history.push("/dashboard"); // Redirect to the dashboard
       }
     } catch (error) {
       console.log(error);

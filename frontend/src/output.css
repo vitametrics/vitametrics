@@ -750,6 +750,10 @@ video {
   width: 1000px;
 }
 
+.w-\[150px\] {
+  width: 150px;
+}
+
 .w-\[375px\] {
   width: 375px;
 }
@@ -916,6 +920,11 @@ video {
   background-color: rgb(31 28 35 / var(--tw-bg-opacity));
 }
 
+.bg-\[\#303030\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(48 48 48 / var(--tw-bg-opacity));
+}
+
 .bg-\[\#373F51\] {
   --tw-bg-opacity: 1;
   background-color: rgb(55 63 81 / var(--tw-bg-opacity));
@@ -939,6 +948,11 @@ video {
 .bg-\[\#79a3b7\] {
   --tw-bg-opacity: 1;
   background-color: rgb(121 163 183 / var(--tw-bg-opacity));
+}
+
+.bg-\[\#7AA3B7\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(122 163 183 / var(--tw-bg-opacity));
 }
 
 .bg-\[\#BA6767\] {
@@ -1321,6 +1335,11 @@ input:checked + .slider:before {
   transform: translateX(30px);
 }
 
+.hover\:bg-\[\#5086A2\]:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(80 134 162 / var(--tw-bg-opacity));
+}
+
 .hover\:bg-gray-100:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
@@ -1366,6 +1385,11 @@ input:checked + .slider:before {
   border-color: rgb(55 65 81 / var(--tw-border-opacity));
 }
 
+:is(.dark .dark\:bg-\[\#151515\]) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(21 21 21 / var(--tw-bg-opacity));
+}
+
 :is(.dark .dark\:bg-\[\#171619\]) {
   --tw-bg-opacity: 1;
   background-color: rgb(23 22 25 / var(--tw-bg-opacity));
@@ -1389,11 +1413,6 @@ input:checked + .slider:before {
 :is(.dark .dark\:bg-\[\#2B2B2C\]) {
   --tw-bg-opacity: 1;
   background-color: rgb(43 43 44 / var(--tw-bg-opacity));
-}
-
-:is(.dark .dark\:bg-\[\#645B5B\]) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(100 91 91 / var(--tw-bg-opacity));
 }
 
 :is(.dark .dark\:bg-\[\#BA6767\]) {
@@ -1433,6 +1452,11 @@ input:checked + .slider:before {
 :is(.dark .dark\:text-white) {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+:is(.dark .dark\:hover\:bg-\[\#303030\]:hover) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(48 48 48 / var(--tw-bg-opacity));
 }
 
 :is(.dark .dark\:hover\:bg-gray-700:hover) {

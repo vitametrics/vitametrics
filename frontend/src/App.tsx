@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { lazy, Suspense } from "react";
+import { AuthProvider } from "./helpers/AuthContext";
 
 const Home = lazy(() => import("./pages/Home"));
 const Dashboard = lazy(() => import("./pages/UserDashboard"));
@@ -15,21 +16,23 @@ import "./styles.css";
 
 function App() {
   return (
-    <div className="bg-[#E4E4E4] dark:bg-[#1E1D20]">
-      <Router>
-        <Suspense fallback={<LoadingFallback />}>
-          <Switch>
-            <Route path="/" exact component={Home} />
-            <Route path="/dashboard" exact component={Dashboard} />
-            <Route path="/FAQs" exact component={FAQs} />
-            <Route path="/login" exact component={Login} />
-            <Route path="/register" exact component={Register} />
-            <Route path="/contact" exact component={Contact} />
-            <Route path="/otp" exact component={Otp} />
-          </Switch>
-        </Suspense>
-      </Router>
-    </div>
+    <AuthProvider>
+      <div className="bg-[#E4E4E4] dark:bg-[#1E1D20]">
+        <Router>
+          <Suspense fallback={<LoadingFallback />}>
+            <Switch>
+              <Route path="/" exact component={Home} />
+              <Route path="/dashboard" exact component={Dashboard} />
+              <Route path="/FAQs" exact component={FAQs} />
+              <Route path="/login" exact component={Login} />
+              <Route path="/register" exact component={Register} />
+              <Route path="/contact" exact component={Contact} />
+              <Route path="/otp" exact component={Otp} />
+            </Switch>
+          </Suspense>
+        </Router>
+      </div>
+    </AuthProvider>
   );
 }
 

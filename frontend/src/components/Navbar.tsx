@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import logo from "../assets/images/logo1.png";
+import { useAuth } from "../helpers/AuthContext";
+import ProfileIcon from "../assets/ProfileIcon";
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -11,6 +13,12 @@ const Navbar = () => {
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
+
+  const { isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    console.log("IsAuthenticated:", isAuthenticated);
+  }, [isAuthenticated]);
 
   const toggleDarkMode = () => {
     const newDarkMode = !isDarkMode;
@@ -90,11 +98,20 @@ const Navbar = () => {
                     FAQs
                   </a>
                 </li>
-                <li>
-                  <a href="/login" className="block py-2 px-3">
-                    Login
-                  </a>
-                </li>
+                {isAuthenticated ? (
+                  <li>
+                    <a href="/dashboard" className="block py-2 px-3">
+                      Dashboard
+                    </a>
+                  </li>
+                ) : (
+                  <li>
+                    <a href="/login" className="block py-2 px-3">
+                      Login
+                    </a>
+                  </li>
+                )}
+
                 <li>
                   <a href="/contact" className="block py-2 px-3">
                     Contact
@@ -102,7 +119,11 @@ const Navbar = () => {
                 </li>
                 <li>
                   <label className="switch">
-                    <input type="checkbox" />
+                    <input
+                      type="checkbox"
+                      checked={isDarkMode}
+                      onChange={toggleDarkMode}
+                    />
                     <span className="slider"> </span>
                   </label>
                 </li>
@@ -114,7 +135,7 @@ const Navbar = () => {
             className="hidden w-full md:block md:w-auto bg-transparent"
             id="navbar-default"
           >
-            <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg  md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 dark:bg-transparent md:dark:bg-transparent">
+            <ul className="font-medium flex flex-col justify-center items-center p-4 md:p-0 mt-4 border border-gray-100 rounded-lg  md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 dark:bg-transparent md:dark:bg-transparent">
               <li>
                 <a
                   href="/"
@@ -134,22 +155,37 @@ const Navbar = () => {
                 </a>
               </li>
 
-              <li>
-                <a
-                  href="/login"
-                  className="block py-2 px-3 text-lg text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0 dark:text-white md:dark:hover:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-                >
-                  Login
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/contact"
-                  className="block py-2 px-3 text-lg text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0 dark:text-white md:dark:hover:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-                >
-                  Contact
-                </a>
-              </li>
+              {isAuthenticated ? (
+                <li>
+                  <a
+                    href="/dashboard"
+                    className="block py-2 px-3 text-lg text-white rounded hover:text-gray-300 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0  md:dark:hover:text-grey-200 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                  >
+                    <ProfileIcon />
+                  </a>
+                </li>
+              ) : (
+                <>
+                  {" "}
+                  <li>
+                    <a
+                      href="/login"
+                      className="block py-2 px-3 text-lg text-white rounded hover:text-gray-300 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0  md:dark:hover:text-grey-200 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                    >
+                      Login
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="/contact"
+                      className="block py-2 px-3 text-lg text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0 dark:text-white md:dark:hover:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                    >
+                      Contact
+                    </a>
+                  </li>
+                </>
+              )}
+
               <li>
                 <label className="switch">
                   <input
