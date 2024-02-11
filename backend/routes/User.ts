@@ -13,6 +13,21 @@ import { param, query, validationResult } from 'express-validator';
 
 const router = express.Router();
 
+router.get('/auth/status', (req: CustomReq, res: Response) => {
+    if (req.isAuthenticated && req.isAuthenticated()) {
+        return res.json({
+            isAuthenticated: true,
+            user: {
+                id: req.user.userId,
+                email: req.user.email,
+                orgId: req.user.orgId
+            }
+        });
+    } else {
+        return res.json({ isAuthenticated: false });
+    }
+});
+
 router.post('/send-email-verification', verifySession, async (req: CustomReq, res: Response) => {
 
     if (!req.user) {

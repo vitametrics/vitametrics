@@ -17,7 +17,7 @@ export interface IOrganization extends Document {
 const organizationSchema = new mongoose.Schema({
     orgId: {type: String, default: ""},
     orgName: {type: String, default: ""},
-    userId: {type: String, default: ""}, // fitbit user id
+    userId: {type: String, default: ""},
     ownerId: {type: String, default: ""},
     ownerName: {type: String, default: ""},
     ownerEmail: {type: String, default: ""},
