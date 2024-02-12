@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 //import DatePicker from "react-datepicker";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 const Data = () => {
   const [dataType, setDataType] = useState("All");
@@ -9,6 +11,28 @@ const Data = () => {
   // State for date range
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const orgId = sessionStorage.getItem("orgId");
+  const [orgName, setOrgName] = useState("");
+
+  const fetchOrg = async () => {
+    try {
+      const response = await axios.get("http://localhost:7970/user/org/info", {
+        params: {
+          orgId: orgId,
+        },
+      });
+
+      console.log(response.data);
+      setOrgName(response.data.orgName);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  //use effect to fetch org upon load
+  useEffect(() => {
+    fetchOrg();
+  }, []); // Include 'fetchOrg' in the dependency array
 
   //console log the start and end date via useEffect
   useEffect(() => {
@@ -31,7 +55,7 @@ const Data = () => {
   return (
     <div className="w-full h-full flex flex-col p-10 bg-[#FAF9F6] dark:bg-[#1E1D20] dark:bg-hero-texture">
       <h2 className="w-full text-4xl font-ralewayBold text-[#373F51] dark:text-white p-5 pb-0">
-        Overview
+        {orgName} Overview
       </h2>
       <div className="flex flex-row p-5 w-full">
         {/* Data Type Dropdown */}
@@ -69,7 +93,7 @@ const Data = () => {
             </label>
             <DatePicker
               selected={startDate}
-              onChange={(e: React.SetStateAction<null>) => setStartDate(e)}
+              onChange={(e: React.SetStateAction<any>) => setStartDate(e)}
               selectsStart
               startDate={startDate}
               endDate={endDate}
@@ -77,9 +101,7 @@ const Data = () => {
             />
           </div>
 
-          {/* End Date Picker */}
-
-          <div className="">
+          <div>
             <label
               htmlFor="endDate"
               className="block text-sm font-medium  text-[#373F51] dark:text-white"
@@ -88,7 +110,7 @@ const Data = () => {
             </label>
             <DatePicker
               selected={endDate}
-              onChange={(e: React.SetStateAction<null>) => setEndDate(e)}
+              onChange={(e: React.SetStateAction<any>) => setEndDate(e)}
               selectsEnd
               startDate={startDate}
               endDate={endDate}

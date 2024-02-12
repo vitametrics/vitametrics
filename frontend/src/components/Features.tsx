@@ -1,49 +1,122 @@
+import Slider from "react-slick";
+import { useEffect, useState } from "react";
+//import DataIcon from "../assets/DataIcon";
+import TrackingDataIcon from "../assets/TrackingDataIcon";
+import ParticipantTrackingIcon from "../assets/ParticipantTrackingIcon";
+import ExportDataIcon from "../assets/ExportDataIcon";
+import DeviceTrackingIcon from "../assets/DeviceTrackingIcon";
+import OpenSourceIcon from "../assets/OpenSourceIcon";
+import GraphingIcon from "../assets/GraphingIcon";
+import DataCollectionIcon from "../assets/DataCollectionIcon";
+
 const Features = () => {
-  const symbol = ">";
+  const [slidesToShow, setSlidesToShow] = useState(3);
 
-  const featuresList = [
-    "Track HR, GPS and Sleep data",
-    "Easy User Management",
-    "Export data",
-    "Unlimited participant tracking",
-    "Automated Graphing",
-    "Open-souce",
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: slidesToShow,
+    slidesToScroll: 1,
+  };
+
+  useEffect(() => {
+    const handleResize = () => {
+      // Adjust the number of slides based on the screen width
+      setSlidesToShow(window.innerWidth < 768 ? 1 : 3);
+
+      setSlidesToShow(window.innerWidth < 768 ? 1 : 3);
+    };
+
+    // Initial setup
+    handleResize();
+
+    // Listen for window resize events
+    window.addEventListener("resize", handleResize);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  const features = [
+    {
+      title: "Tracking Data",
+      desc: "Track health data not limited to heart rate, oxygen, calories, and more!",
+      img: <TrackingDataIcon />,
+    },
+    {
+      title: "Participants Management",
+      desc: "Host an organization and manage all the members and their devices!",
+      img: <ParticipantTrackingIcon />,
+    },
+    {
+      title: "Export Data",
+      desc: "Easily export collected data for analysis and reporting purposes.",
+      img: <ExportDataIcon />,
+    },
+    {
+      title: "Device Monitoring",
+      desc: "Effortlessly what devices are connected along with their battery levels and more!",
+      img: <DeviceTrackingIcon />,
+    },
+    {
+      title: "Automated Graphing",
+      desc: "Automate the process of creating insightful graphs and visualizations based on collected data.",
+      img: <GraphingIcon />,
+    },
+    {
+      title: "Open-source",
+      desc: "Access and contribute to the source code for a transparent and collaborative platform.",
+      img: <OpenSourceIcon />,
+    },
+    {
+      title: "Limitless Data Collection",
+      desc: "Collect and store data without limitations, ensuring comprehensive tracking and analysis.",
+      img: <DataCollectionIcon />,
+    },
   ];
-
-  const firstThreeFeatures = featuresList.slice(0, 3);
-  const nextThreeFeatures = featuresList.slice(3, 6);
 
   return (
     <section
       id="#features"
-      className="w-full h-full flex flex-col box-border mb-[50px] "
+      className="w-full h-full flex flex-col box-border p-10 justify-center items-center bg-[#afccde] dark:bg-transparent"
     >
-      <h3 className="text-5xl text-[#5086A2] dark:text-[#BA6767] font-bold mb-5 text-center">
-        Features{" "}
+      <link
+        rel="stylesheet"
+        type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css"
+      />
+      <link
+        rel="stylesheet"
+        type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css"
+      />
+      <h3 className="text-5xl text-white dark:text-[#BA6767] font-bold mb-5 text-center">
+        Features
       </h3>
-      <div className="flex flex-row sm:flex-col">
-        <div className="w-[100%] h-full p-10 flex  flex-col box-border min-w-[500px] lg:p-10 text-center">
-          {firstThreeFeatures.map((feature) => (
-            <h3 className="text-5xl text-[#5086A2] dark:text-[#BA6767] font-bold mb-5 text-left">
-              {symbol}{" "}
-              <span className="text-[#373F51] dark:text-white">
-                {" "}
-                {feature}{" "}
-              </span>
-            </h3>
-          ))}
-        </div>
-        <div className="w-[100%] h-full p-10 flex  flex-col box-border min-w-[500px] lg:p-10 text-center">
-          {nextThreeFeatures.map((feature) => (
-            <h3 className="text-5xl text-[#5086A2] dark:text-[#BA6767] font-bold mb-5 text-left">
-              {symbol}{" "}
-              <span className="text-[#373F51] dark:text-white">
-                {" "}
-                {feature}{" "}
-              </span>
-            </h3>
-          ))}
-        </div>
+      <div className="p-10 w-3/4">
+        <Slider {...settings}>
+          {features.map((feature, index) => {
+            return (
+              <div
+                key={index}
+                className="flex flex-col items-center justify-center w-full lg:w-[450px] h-[360px] bg-[#93c6e1] dark:bg-[#0e0d0d] p-5 rounded-xl"
+              >
+                <div className="bg-grey-200 h-[200px] rounded-md mb-5 flex justify-center items-center">
+                  {feature.img}
+                </div>
+                <p className="text-2xl text-[#373F51] dark:text-[#BA6767] text-center">
+                  {feature.title}
+                </p>
+                <p className="text-md text-[#373F51] dark:text-white text-center">
+                  {feature.desc}
+                </p>
+              </div>
+            );
+          })}
+        </Slider>
       </div>
     </section>
   );

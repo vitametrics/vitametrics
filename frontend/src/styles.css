@@ -93,13 +93,25 @@ html {
 }
 
 input:checked + .slider {
-  background-color: #151515;
+  background-color: #1b1b1b;
 }
 
 input:checked + .slider:hover {
-  background-color: #212121;
+  background-color: #2b2a2a;
 }
 
 input:checked + .slider:before {
   transform: translateX(30px);
+}
+
+.slick-slide > div {
+  margin: 0 10px;
+}
+
+.slick-arrow slick-next {
+  color: #000;
+}
+
+:is(.dark .slick-arrow slick-next) {
+  color: #fff;
 }

@@ -8,6 +8,7 @@ import refreshToken from '../middleware/refreshFitbitToken';
 import checkOrgMembership from '../middleware/checkOrg';
 import { CustomReq } from '../util/customReq';
 import User from '../models/User';
+import Organization from "../models/Organization"
 import { sendEmail } from '../util/emailUtil';
 import { param, query, validationResult } from 'express-validator';
 
@@ -26,6 +27,20 @@ router.get('/auth/status', (req: CustomReq, res: Response) => {
     } else {
         return res.json({ isAuthenticated: false });
     }
+});
+
+router.get('/org/info', async (req, res) => {
+    const { orgId } = req.query;
+
+
+    const org = await Organization.findOne({ orgId: orgId });
+
+    if (!org) {
+        return res.status(
+            404).json({ msg: 'Organization not found' });
+    }
+
+    return res.status(200).json(org);
 });
 
 router.post('/send-email-verification', verifySession, async (req: CustomReq, res: Response) => {

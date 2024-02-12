@@ -46,8 +46,8 @@ const Navbar = () => {
   */
 
   return (
-    <nav className="bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700">
-      <div className="flex flex-row w-full bg-[#373F51] dark:bg-[#2B2B2C] h-20 sticky top-0 flex-wrap items-center justify-between mx-auto p-4">
+    <nav className="bg-white border-gray-200 dark:bg-[#171619] dark:border-gray-700">
+      <div className="flex flex-row w-full bg-[#373F51] dark:bg-[#171619] h-20 sticky top-0 flex-wrap items-center justify-between mx-auto p-4">
         <a
           href="/"
           className="flex items-center space-x-3 rtl:space-x-rev  erse"

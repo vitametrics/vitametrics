@@ -37,7 +37,7 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage }) => {
         <li
           className={`${
             currentPage === "Data" ? " bg-[#5086A2] dark:bg-[#303030]" : ""
-          } flex-col flex justify-center items-center text-white hover:bg-[#5086A2] dark:hover:bg-[#303030] p-4`}
+          } flex-col flex justify-center items-center text-white hover:bg-[#5086A2] dark:hover:bg-[#303030] p-4 hover:cursor-pointer`}
           onClick={() => handlePageChange("Data")}
         >
           <DataIcon />
@@ -46,7 +46,7 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage }) => {
         <li
           className={`${
             currentPage === "Devices" ? " bg-[#5086A2] dark:bg-[#303030]" : ""
-          } flex-col flex justify-center items-center text-white hover:bg-[#5086A2] dark:hover:bg-[#303030] p-4`}
+          } flex-col flex justify-center items-center text-white hover:bg-[#5086A2] dark:hover:bg-[#303030] p-4 hover:cursor-pointer`}
           onClick={() => handlePageChange("Devices")}
         >
           <DeviceIcon />
@@ -55,7 +55,7 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage }) => {
         <li
           className={`${
             currentPage === "Members" ? " bg-[#5086A2] dark:bg-[#303030]" : ""
-          } flex-col flex justify-center items-center text-white hover:bg-[#5086A2] dark:hover:bg-[#303030] p-4`}
+          } flex-col flex justify-center items-center text-white hover:bg-[#5086A2] dark:hover:bg-[#303030] p-4 hover:cursor-pointer`}
           onClick={() => handlePageChange("Members")}
         >
           <MembersIcon />
@@ -64,7 +64,7 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage }) => {
         <li
           className={`${
             currentPage === "Settings" ? "bg-[#5086A2] dark:bg-[#303030]" : ""
-          } flex-col flex justify-center items-center text-white hover:bg-[#5086A2] dark:hover:bg-[#303030] p-4`}
+          } flex-col flex justify-center items-center text-white hover:bg-[#5086A2] dark:hover:bg-[#303030] p-4 hover:cursor-pointer`}
           onClick={() => handlePageChange("Settings")}
         >
           <SettingsIcon />
