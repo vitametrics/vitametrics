@@ -49,6 +49,7 @@ router.post('/create-org', async (req: Request, res: Response) => {
             ownerId: newUserId,
             ownerName,
             ownerEmail,
+	    members: [newUser._id] // need to add for org data stuff (i hate how i did this)
         });
 
         await newOrganization.save();

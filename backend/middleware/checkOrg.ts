@@ -1,6 +1,6 @@
 import { Response, NextFunction } from 'express';
-import mongoose from 'mongoose';
 import Organization from '../models/Organization';
+import User from '../models/User';
 import { CustomReq } from '../util/customReq';
 
 const checkOrgMembership = async (req: CustomReq, res: Response, next: NextFunction) => {
@@ -9,14 +9,22 @@ const checkOrgMembership = async (req: CustomReq, res: Response, next: NextFunct
     }
 
     const userId = req.user.userId;
-    const userObjectId = new mongoose.Types.ObjectId(userId);
 
     try {
-        const organization = await Organization.findOne({ members: userObjectId });
+
+        const user = await User.findOne({userId: userId});
+
+	if (!user) {
+	    return res.status(404).json({msg: 'User not found'});
+	}
+
+        const organization = await Organization.findOne({ members: user._id });
 
         if (!organization) {
-            return res.status(403).json({ msg: 'Access denied - User not a member of any organization' });
-        }
+            return res.status(403).json({ msg: 'Organization not found' });
+        } else if (organization.ownerId != userId) {
+            return res.status(403).json({ msg: 'Access denied - User not a member of any organization', data: `user._id: ${user._id}` });
+	}
 
         req.organization = organization;
         return next();
