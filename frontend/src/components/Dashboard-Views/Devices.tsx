@@ -26,10 +26,11 @@ const Devices = () => {
 
   const fetchOrg = async () => {
     try {
-      const response = await axios.get("http://localhost:7970/user/org/info", {
+      const response = await axios.get("https://physiobit.org/api/user/org/info", {
         params: {
           orgId: orgId,
         },
+	withCredentials: true,
       });
 
       console.log(response.data);

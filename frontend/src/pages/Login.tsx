@@ -33,7 +33,7 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:7970/login",
+        "https://physiobit.org/api/login",
         {
           email: email,
           password: password,
