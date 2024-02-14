@@ -9,16 +9,11 @@ import logo from "../assets/images/logo.png";
 import Footer from "../components/Footer";
 
 const Login = () => {
+  const LOGIN_ENDPOINT = import.meta.env.VITE_APP_LOGIN_DEV_ENDPOINT;
+
   // const [authenticated, setAuthenticated] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  //const history = useHistory();
-
-  //const history = useHistory();
-
-  //todos
-  //if the user is already authenticated --> send them back to the dashboard
-  //if the user is not authenticated --> send them to the login page
 
   const { login } = useAuth();
 
@@ -33,7 +28,7 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:7970/login",
+        LOGIN_ENDPOINT,
         {
           email: email,
           password: password,

@@ -11,16 +11,19 @@ import Footer from "../components/Footer";
 import axios from "axios";
 
 const Dashboard = () => {
+  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT;
+
   const [page, setPage] = useState("Data");
   const orgId = sessionStorage.getItem("orgId");
   const [showBackdrop, setShowBackdrop] = useState(false);
 
   const fetchOrg = async () => {
     try {
-      const response = await axios.get("http://localhost:7970/user/org/info", {
+      const response = await axios.get(FETCH_ORG_ENDPOINT, {
         params: {
           orgId: orgId,
         },
+        withCredentials: true,
       });
 
       console.log(response.data);

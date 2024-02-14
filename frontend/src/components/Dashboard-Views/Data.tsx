@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 const Data = () => {
-  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
+  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT;
 
   const [dataType, setDataType] = useState("All");
 
@@ -26,6 +26,7 @@ const Data = () => {
         params: {
           orgId: orgId,
         },
+        withCredentials: true,
       });
 
       console.log(response.data);

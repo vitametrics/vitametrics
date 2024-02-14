@@ -7,6 +7,8 @@ import { Turnstile } from "@marsidev/react-turnstile";
 import Footer from "../components/Footer";
 
 const Contact = () => {
+  const CONTACT_ENDPOINT = import.meta.env.VITE_APP_CONTACT_ENDPOINT;
+
   const [message, setMessage] = useState("");
   const [organizationName, setOrganizationName] = useState("");
   const [email, setEmail] = useState("");
@@ -43,15 +45,12 @@ const Contact = () => {
     }
 
     try {
-      const response = await axios.post(
-        "https://physiobit.seancornell.io/api/contact",
-        {
-          email: email,
-          organizationName: organizationName,
-          msgBody: message,
-          "cf-turnstile-response": token,
-        }
-      );
+      const response = await axios.post(CONTACT_ENDPOINT, {
+        email: email,
+        organizationName: organizationName,
+        msgBody: message,
+        "cf-turnstile-response": token,
+      });
 
       if (response.status === 200) {
         setShowStatus("Success");

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 const Members = () => {
-  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
+  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT;
   const [orgName, setOrgName] = useState("");
   const orgId = sessionStorage.getItem("orgId");
 
@@ -24,6 +24,7 @@ const Members = () => {
         params: {
           orgId: orgId,
         },
+        withCredentials: true,
       });
 
       console.log(response.data);

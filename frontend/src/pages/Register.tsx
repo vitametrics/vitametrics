@@ -11,6 +11,8 @@ const Login = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
   const [inviteCode, setInviteCode] = useState("");
+  const REGISTER_ENDPOINT = import.meta.env.VITE_APP_REGISTER_ENDPOINT;
+
   //todos
   //if the user is already authenticated --> send them back to the dashboard
   //if the user is not authenticated --> send them to the login page
@@ -23,7 +25,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post("https://localhost:7970/api/register", {
+      const response = await axios.post(REGISTER_ENDPOINT, {
         email: email,
         password: password,
         inviteCode: inviteCode,

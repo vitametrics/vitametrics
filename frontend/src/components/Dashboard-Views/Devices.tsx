@@ -4,7 +4,7 @@ import ConnectIcon from "../../assets/ConnectIcon";
 import FiftyPercentIcon from "../../assets/FiftyPercentIcon";
 
 const Devices = () => {
-  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
+  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT;
   const orgId = sessionStorage.getItem("orgId");
   const [devices, setDevices] = useState([
     {
@@ -31,6 +31,7 @@ const Devices = () => {
         params: {
           orgId: orgId,
         },
+        withCredentials: true,
       });
 
       console.log(response.data);

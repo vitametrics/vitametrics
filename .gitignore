@@ -27,6 +27,7 @@ frontend/dist-ssr
 # backend ignore
 backend/build
 .env
+.env.save # for server B)
 
 # Editor directories and files
 .vscode/*

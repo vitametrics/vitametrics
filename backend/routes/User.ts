@@ -29,7 +29,15 @@ router.get('/auth/status', (req: CustomReq, res: Response) => {
     }
 });
 
-router.get('/org/info', async (req, res) => {
+router.get('/org/info', verifySession, checkOrgMembership, [
+    query('orgId').not().isEmpty().withMessage('No orgId provided')
+], async (req: CustomReq, res: Response) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({errors: errors.array()});
+    }
+
     const { orgId } = req.query;
 
 
