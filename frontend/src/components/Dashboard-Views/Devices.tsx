@@ -4,6 +4,7 @@ import ConnectIcon from "../../assets/ConnectIcon";
 import FiftyPercentIcon from "../../assets/FiftyPercentIcon";
 
 const Devices = () => {
+  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
   const orgId = sessionStorage.getItem("orgId");
   const [devices, setDevices] = useState([
     {
@@ -26,7 +27,7 @@ const Devices = () => {
 
   const fetchOrg = async () => {
     try {
-      const response = await axios.get("http://localhost:7970/user/org/info", {
+      const response = await axios.get(FETCH_ORG_ENDPOINT, {
         params: {
           orgId: orgId,
         },

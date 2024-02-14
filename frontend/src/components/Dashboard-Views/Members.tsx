@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 const Members = () => {
+  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
   const [orgName, setOrgName] = useState("");
   const orgId = sessionStorage.getItem("orgId");
 
@@ -19,7 +20,7 @@ const Members = () => {
 
   const fetchOrg = async () => {
     try {
-      const response = await axios.get("http://localhost:7970/user/org/info", {
+      const response = await axios.get(FETCH_ORG_ENDPOINT, {
         params: {
           orgId: orgId,
         },

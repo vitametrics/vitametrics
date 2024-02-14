@@ -6,6 +6,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 const Data = () => {
+  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
+
   const [dataType, setDataType] = useState("All");
 
   // State for date range
@@ -16,7 +18,11 @@ const Data = () => {
 
   const fetchOrg = async () => {
     try {
-      const response = await axios.get("http://localhost:7970/user/org/info", {
+      if (!FETCH_ORG_ENDPOINT) {
+        throw new Error("FETCH_ORG_ENDPOINT is not defined");
+      }
+
+      const response = await axios.get(FETCH_ORG_ENDPOINT, {
         params: {
           orgId: orgId,
         },
