@@ -11,7 +11,7 @@ import Footer from "../components/Footer";
 import axios from "axios";
 
 const Dashboard = () => {
-  //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT; ~ development
+  //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT; //~ development
   const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
 
   const [page, setPage] = useState("Data");

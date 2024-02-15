@@ -10,7 +10,7 @@ import Footer from "../components/Footer";
 
 const Login = () => {
   const LOGIN_ENDPOINT = import.meta.env.VITE_APP_LOGIN_ENDPOINT;
-
+  //const LOGIN_ENDPOINT = import.meta.env.VITE_APP_LOGIN_DEV_ENDPOINT; //~development;
   // const [authenticated, setAuthenticated] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

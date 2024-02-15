@@ -60,7 +60,7 @@ const Members = () => {
             return (
               <div
                 key={index}
-                className="flex flex-row items-center w-[200px] h-[70px] justify-center hover:cursor-pointer  bg-[#93C7E1] dark:bg-[#2E2E2E] rounded-xl p-5"
+                className="flex flex-row items-center h-[70px] justify-center hover:cursor-pointer  bg-[#93C7E1] dark:bg-[#2E2E2E] rounded-xl p-5"
               >
                 <p className="text-xl text-white dark:text-white text-center">
                   {member.email}

@@ -12,6 +12,7 @@ const Login = () => {
   const [message, setMessage] = useState("");
   const [inviteCode, setInviteCode] = useState("");
   const REGISTER_ENDPOINT = import.meta.env.VITE_APP_REGISTER_ENDPOINT;
+  //const REGISTER_ENDPOINT = import.meta.env.VITE_APP_REGISTER_DEV_ENDPOINT; //~development;
 
   //todos
   //if the user is already authenticated --> send them back to the dashboard
