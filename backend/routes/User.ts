@@ -48,8 +48,17 @@ router.get('/org/info', verifySession, checkOrgMembership, [
             404).json({ msg: 'Organization not found' });
     }
 
-    return res.status(200).json(org);
+    const members = await User.find({
+        '_id': { $in: org.members }
+    });
+    
+
+    return res.status(200).json({
+        organization: org, 
+        members: members 
+    });
 });
+
 
 router.post('/send-email-verification', verifySession, async (req: CustomReq, res: Response) => {
 

@@ -2,19 +2,23 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 const Members = () => {
-  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT;
+  //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT;
+  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
   const [orgName, setOrgName] = useState("");
   const orgId = sessionStorage.getItem("orgId");
 
   const [members, setMembers] = useState([
     {
       name: "Brandon Le",
+      email: "bro",
     },
     {
       name: "Sean Cornell",
+      email: "bro",
     },
     {
       name: "Angel Vasquez",
+      email: "bro",
     },
   ]);
 
@@ -30,7 +34,7 @@ const Members = () => {
       console.log(response.data);
       //setDevices(response.data.devices || []);
       setMembers(response.data.members || []);
-      setOrgName(response.data.orgName);
+      setOrgName(response.data.organization.orgName);
     } catch (error) {
       console.log(error);
     }
@@ -59,7 +63,7 @@ const Members = () => {
                 className="flex flex-row items-center w-[200px] h-[70px] justify-center hover:cursor-pointer  bg-[#93C7E1] dark:bg-[#2E2E2E] rounded-xl p-5"
               >
                 <p className="text-xl text-white dark:text-white text-center">
-                  {member.name}
+                  {member.email}
                 </p>
               </div>
             );

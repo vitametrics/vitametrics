@@ -4,7 +4,8 @@ import ConnectIcon from "../../assets/ConnectIcon";
 import FiftyPercentIcon from "../../assets/FiftyPercentIcon";
 
 const Devices = () => {
-  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT;
+  //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT; ~ development
+  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
   const orgId = sessionStorage.getItem("orgId");
   const [devices, setDevices] = useState([
     {
@@ -35,8 +36,8 @@ const Devices = () => {
       });
 
       console.log(response.data);
-      setDevices(response.data.devices || devices);
-      setOrgName(response.data.orgName);
+      setDevices(response.data.organization.devices || devices);
+      setOrgName(response.data.organization.orgName);
     } catch (error) {
       console.log(error);
     }

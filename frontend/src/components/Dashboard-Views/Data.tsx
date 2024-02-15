@@ -6,8 +6,9 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 const Data = () => {
-  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT;
+  //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT; ~ development
 
+  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
   const [dataType, setDataType] = useState("All");
 
   // State for date range
@@ -18,6 +19,7 @@ const Data = () => {
 
   const fetchOrg = async () => {
     try {
+      console.log(FETCH_ORG_ENDPOINT);
       if (!FETCH_ORG_ENDPOINT) {
         throw new Error("FETCH_ORG_ENDPOINT is not defined");
       }
@@ -30,7 +32,7 @@ const Data = () => {
       });
 
       console.log(response.data);
-      setOrgName(response.data.orgName);
+      setOrgName(response.data.organization.orgName);
     } catch (error) {
       console.log(error);
     }

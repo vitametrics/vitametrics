@@ -1,6 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
-dotenv.config({ path: './.env' });
+dotenv.config({ path: '../.env' });
 import { commonMiddlewares } from './middleware/common';
 import passport from 'passport';
 import userRoute from './routes/User';

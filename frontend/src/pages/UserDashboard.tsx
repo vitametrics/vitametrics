@@ -11,10 +11,11 @@ import Footer from "../components/Footer";
 import axios from "axios";
 
 const Dashboard = () => {
-  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT;
+  //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT; ~ development
+  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
 
   const [page, setPage] = useState("Data");
-  const orgId = sessionStorage.getItem("orgId");
+  const orgId = sessionStorage.getItem("userId");
   const [showBackdrop, setShowBackdrop] = useState(false);
 
   const fetchOrg = async () => {
@@ -35,7 +36,7 @@ const Dashboard = () => {
   //use effect to fetch org upon load
   useEffect(() => {
     fetchOrg();
-  }, [page]); // Include 'fetchOrg' in the dependency array
+  }, []); // Include 'fetchOrg' in the dependency array
 
   const renderComponent = () => {
     console.log(page);

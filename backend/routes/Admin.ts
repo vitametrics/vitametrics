@@ -21,10 +21,11 @@ router.post('/create-org', async (req: Request, res: Response) => {
     }
 
     try {
-        // const ownerExists = await User.findOne({userId: ownerId})
-        // if (!ownerExists) {
-        //     return res.status(404).json({ msg: 'Owner not found' });
-        // }
+         const ownerExists = await User.findOne({email: ownerEmail});
+         if (ownerExists) {
+             return res.status(404).json({ msg: 'Organization already exists under this email' });
+         }
+
 
         const newUserId = crypto.randomBytes(16).toString('hex');
         const newOrgId = crypto.randomBytes(16).toString('hex');

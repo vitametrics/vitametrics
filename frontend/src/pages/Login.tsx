@@ -9,7 +9,7 @@ import logo from "../assets/images/logo.png";
 import Footer from "../components/Footer";
 
 const Login = () => {
-  const LOGIN_ENDPOINT = import.meta.env.VITE_APP_LOGIN_DEV_ENDPOINT;
+  const LOGIN_ENDPOINT = import.meta.env.VITE_APP_LOGIN_ENDPOINT;
 
   // const [authenticated, setAuthenticated] = useState(false);
   const [email, setEmail] = useState("");
@@ -17,7 +17,6 @@ const Login = () => {
 
   const { login } = useAuth();
 
-  // Check if the user is already authenticated
   useEffect(() => {
     // Redirect to the dashboard if authenticated
     console.log("worked!");
@@ -27,6 +26,8 @@ const Login = () => {
 
   const handleLogin = async () => {
     try {
+      console.log("Logging in from:", LOGIN_ENDPOINT);
+
       const response = await axios.post(
         LOGIN_ENDPOINT,
         {
