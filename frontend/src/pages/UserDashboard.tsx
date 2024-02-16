@@ -13,14 +13,36 @@ import axios from "axios";
 const Dashboard = () => {
   //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
   const { isAuthenticated } = useAuth();
+
   const OAUTH_ENDPOINT = import.meta.env.VITE_APP_OAUTH_ENDPOINT;
+  //const OAUTH_ENDPOINT = import.meta.env.VITE_APP_OAUTH_DEV_ENDPOINT;
+
+  const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT;
+  //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_DEV_ENDPOINT;
 
   useEffect(() => {
     if (!isAuthenticated) {
-      window.location.href = "/login";
+      authResponse();
     }
-  }),
-    [isAuthenticated];
+  });
+
+  const authResponse = async () => {
+    try {
+      const auth_response = await axios.get(AUTH_ENDPOINT, {
+        withCredentials: true,
+      });
+
+      if (auth_response.data.isAuthenticated === false) {
+        console.log("User is not authenticated");
+        window.location.href = "/login";
+        return;
+      }
+
+      console.log(auth_response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const oAuthLogin = async () => {
     try {
@@ -60,12 +82,18 @@ const Dashboard = () => {
         />
       )}
       <Navbar />
-      <button onClick={oAuthLogin}> </button>
       <div className="flex flex-row">
         <div className="w-[150px]">
           <StickySidebar setPage={setPage} />
         </div>
-        <div className="flex w-full h-full">{renderComponent()}</div>
+        <div className="flex w-full h-full flex-col">
+          <button onClick={oAuthLogin} className="p-2 bg-red">
+            {" "}
+            Authenticate Your Fitbit Account{" "}
+          </button>
+
+          {renderComponent()}
+        </div>
       </div>
       <Footer />
     </div>
