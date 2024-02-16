@@ -14,13 +14,31 @@ const Dashboard = () => {
   //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
   const { isAuthenticated } = useAuth();
   const OAUTH_ENDPOINT = import.meta.env.VITE_APP_OAUTH_ENDPOINT;
+  const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT;
 
   useEffect(() => {
     if (!isAuthenticated) {
-      window.location.href = "/login";
+      authResponse();
     }
-  }),
-    [isAuthenticated];
+  });
+
+  const authResponse = async () => {
+    try {
+      const auth_response = await axios.get(AUTH_ENDPOINT, {
+        withCredentials: true,
+      });
+
+      if (auth_response.data.isAuthenticated === false) {
+        console.log("User is not authenticated");
+        window.location.href = "/login";
+        return;
+      }
+
+      console.log(auth_response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const oAuthLogin = async () => {
     try {
