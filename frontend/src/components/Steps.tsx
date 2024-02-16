@@ -38,7 +38,7 @@ const RightText: React.FC<SectionProps> = ({ title }) => {
   );
 };
 
-const LeftText: React.FC<SectionProps> = ({ title }) => {
+const LeftText: React.FC<SectionProps> = () => {
   return (
     <div className="flex flex-row box-border sm:flex-col">
       <div className="w-[100%] h-full sm:p-10 flex p-20  flex-col box-border min-w-[500px] ">
