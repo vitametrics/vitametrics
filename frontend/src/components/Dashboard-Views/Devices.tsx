@@ -4,10 +4,10 @@ import ConnectIcon from "../../assets/ConnectIcon";
 import FiftyPercentIcon from "../../assets/FiftyPercentIcon";
 
 const Devices = () => {
-  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT; //~development;
-  //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
-  const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_DEV_ENDPOINT; //~development;
-  //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT; ~ production
+  //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT; //~development;
+  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
+  //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_DEV_ENDPOINT; //~development;
+  const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT; //~ production
 
   const [devices, setDevices] = useState([
     {

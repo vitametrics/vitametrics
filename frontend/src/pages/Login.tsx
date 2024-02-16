@@ -9,8 +9,8 @@ import Footer from "../components/Footer";
 import { useAuth } from "../helpers/AuthContext";
 
 const Login = () => {
-  //const LOGIN_ENDPOINT = import.meta.env.VITE_APP_LOGIN_ENDPOINT; //~ production
-  const LOGIN_ENDPOINT = import.meta.env.VITE_APP_LOGIN_DEV_ENDPOINT; //~development;
+  const LOGIN_ENDPOINT = import.meta.env.VITE_APP_LOGIN_ENDPOINT; //~ production
+  //const LOGIN_ENDPOINT = import.meta.env.VITE_APP_LOGIN_DEV_ENDPOINT; //~development;
   // const [authenticated, setAuthenticated] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
