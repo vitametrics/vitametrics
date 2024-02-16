@@ -30,6 +30,12 @@ const Footer = () => {
               >
                 Privacy Policy
               </a>
+              <a
+                href="/TOS"
+                className="hover:underline me-4 md:me-6"
+              >
+                Terms and Service
+              </a>              
             </li>
             <li>
               <a href="/FAQs" className="hover:underline me-4 md:me-6">
