@@ -1,5 +1,6 @@
 const MonitorIcon = () =>
 {
+    return (
     <svg 
     viewBox="-2.4 -2.4 28.80 28.80" 
     fill="#000000">
@@ -26,6 +27,6 @@ const MonitorIcon = () =>
         <path className="cls-1" d="M13.93,1.5V3.41A1.92,1.92,0,0,1,12,5.32H8.2A1.91,1.91,0,0,1,6.3,3.41V1.5Z"></path> 
         </g> 
         </svg>
-
+    );
 };
 export default MonitorIcon;
