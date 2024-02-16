@@ -2,7 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
-import MongoStore from 'connect-mongo';
+import RedisStore from 'connect-redis';
+import {createClient} from 'redis';
 
 export const commonMiddlewares = (app: express.Application) => {
   app.use(express.json());
@@ -13,11 +14,20 @@ export const commonMiddlewares = (app: express.Application) => {
       credentials: true
     }));
   }
+
+  const redisClient = createClient();
+  redisClient.connect().catch(console.error);
+
+  const redisStore = new RedisStore({
+    client: redisClient,
+    prefix: "physiobit:",
+  });
+
   app.use(session({
     secret: process.env.SESSION_SECRET as string, 
     resave: false,
-    saveUninitialized: true,
-    store: MongoStore.create({ mongoUrl: process.env.PROD_DB_URI as string }) as any,
+    saveUninitialized: false,
+    store: redisStore,
     cookie: {
       secure: false,
       sameSite: false,
