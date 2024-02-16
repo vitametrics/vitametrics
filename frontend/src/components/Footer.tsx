@@ -25,7 +25,7 @@ const Footer = () => {
             </li>
             <li>
               <a
-                href="/privacy-policy"
+                href="/PrivacyPolicy"
                 className="hover:underline me-4 md:me-6"
               >
                 Privacy Policy
