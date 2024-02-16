@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "../helpers/AuthContext";
 //import { useHistory } from "react-router-dom";
 
 import axios from "axios";
@@ -7,22 +6,22 @@ import Navbar from "../components/Navbar";
 import WatchLogo from "../components/Watch";
 import logo from "../assets/images/logo.png";
 import Footer from "../components/Footer";
+import { useAuth } from "../helpers/AuthContext";
 
 const Login = () => {
-  const LOGIN_ENDPOINT = import.meta.env.VITE_APP_LOGIN_ENDPOINT;
-  //const LOGIN_ENDPOINT = import.meta.env.VITE_APP_LOGIN_DEV_ENDPOINT; //~development;
+  //const LOGIN_ENDPOINT = import.meta.env.VITE_APP_LOGIN_ENDPOINT; //~ production
+  const LOGIN_ENDPOINT = import.meta.env.VITE_APP_LOGIN_DEV_ENDPOINT; //~development;
   // const [authenticated, setAuthenticated] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
 
   useEffect(() => {
-    // Redirect to the dashboard if authenticated
-    console.log("worked!");
-    login();
-    //history.push("/dashboard");
-  });
+    if (isAuthenticated) {
+      window.location.href = "/dashboard?view=data";
+    }
+  }, [isAuthenticated]);
 
   const handleLogin = async () => {
     try {
@@ -40,11 +39,7 @@ const Login = () => {
       console.log(response.data);
 
       if (response.data) {
-        //setAuthenticated(true);
-        sessionStorage.setItem("userId", response.data.user.id);
-        sessionStorage.setItem("orgId", response.data.user.orgId);
         login();
-        //history.push("/dashboard"); // Redirect to the dashboard
       }
     } catch (error) {
       console.log(error);

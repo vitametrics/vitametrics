@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 const Members = () => {
-  //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT;
-  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
+  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT;
+  //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
   const [orgName, setOrgName] = useState("");
-  const orgId = sessionStorage.getItem("orgId");
+  const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_DEV_ENDPOINT; //~development;
+  //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT; ~ production
 
   const [members, setMembers] = useState([
     {
@@ -24,6 +25,19 @@ const Members = () => {
 
   const fetchOrg = async () => {
     try {
+      const auth_response = await axios.get(AUTH_ENDPOINT, {
+        withCredentials: true,
+      });
+
+      if (auth_response.data.isAuthenticated === false) {
+        console.log("User is not authenticated");
+        return;
+      }
+
+      console.log(auth_response.data);
+
+      const orgId = auth_response.data.user.orgId;
+
       const response = await axios.get(FETCH_ORG_ENDPOINT, {
         params: {
           orgId: orgId,

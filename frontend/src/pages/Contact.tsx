@@ -7,8 +7,8 @@ import { Turnstile } from "@marsidev/react-turnstile";
 import Footer from "../components/Footer";
 
 const Contact = () => {
-  const CONTACT_ENDPOINT = import.meta.env.VITE_APP_CONTACT_ENDPOINT;
-  //const CONTACT_ENDPOINT = import.meta.env.VITE_APP_CONTACT_DEV_ENDPOINT; // ~ development
+  //const CONTACT_ENDPOINT = import.meta.env.VITE_APP_CONTACT_ENDPOINT;
+  const CONTACT_ENDPOINT = import.meta.env.VITE_APP_CONTACT_DEV_ENDPOINT; // ~ development
 
   const [message, setMessage] = useState("");
   const [organizationName, setOrganizationName] = useState("");

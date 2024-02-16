@@ -40,11 +40,6 @@ const Navbar = () => {
     };
   }, []);
 
-  /*todos:
-    -add url to login button
-
-  */
-
   return (
     <nav className="bg-white border-gray-200 dark:bg-[#171619] dark:border-gray-700">
       <div className="flex flex-row w-full bg-[#373F51] dark:bg-[#171619] h-20 sticky top-0 flex-wrap items-center justify-between mx-auto p-4">
@@ -158,7 +153,7 @@ const Navbar = () => {
               {isAuthenticated ? (
                 <li>
                   <a
-                    href="/dashboard"
+                    href="/dashboard?view=data"
                     className="block py-2 px-3 text-lg text-white rounded hover:text-gray-300 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0  md:dark:hover:text-grey-200 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
                   >
                     <ProfileIcon />

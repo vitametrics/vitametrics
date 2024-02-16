@@ -6,23 +6,33 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 const Data = () => {
-  //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT; //~development;
+  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT; //~development;
+  const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_DEV_ENDPOINT; //~development;
+  //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT; ~ production
 
-  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
+  //
+  //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
   const [dataType, setDataType] = useState("All");
 
   // State for date range
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const orgId = sessionStorage.getItem("orgId");
   const [orgName, setOrgName] = useState("");
 
   const fetchOrg = async () => {
     try {
-      console.log(FETCH_ORG_ENDPOINT);
-      if (!FETCH_ORG_ENDPOINT) {
-        throw new Error("FETCH_ORG_ENDPOINT is not defined");
+      const auth_response = await axios.get(AUTH_ENDPOINT, {
+        withCredentials: true,
+      });
+
+      if (auth_response.data.isAuthenticated === false) {
+        console.log("User is not authenticated");
+        return;
       }
+
+      console.log(auth_response.data);
+
+      const orgId = auth_response.data.user.orgId;
 
       const response = await axios.get(FETCH_ORG_ENDPOINT, {
         params: {

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import axios from "axios";
 
 // Create AuthContext
 interface AuthContextProps {
@@ -14,18 +15,20 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const userId = sessionStorage.getItem("userId");
 
-  const login = () => {
-    const userIdExists = sessionStorage.getItem("userId");
+  const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_DEV_ENDPOINT;
+  //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT; ~ production
 
-    console.log(userIdExists);
+  const login = async () => {
+    try {
+      const response = await axios.get(AUTH_ENDPOINT, {
+        withCredentials: true,
+      });
 
-    if (userIdExists) {
-      setIsAuthenticated(true);
-      console.log("Authenticated!");
-      console.log(isAuthenticated);
-      window.location.href = "/dashboard?view=data";
+      console.log(response.data);
+      setIsAuthenticated(response.data.isAuthenticated);
+    } catch (error) {
+      console.log(error);
     }
 
     return;
@@ -36,12 +39,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
-    const userIdExists = sessionStorage.getItem("userId");
-
-    if (userIdExists) {
-      setIsAuthenticated(true);
-    }
-  }, [userId]);
+    login();
+  }, []);
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, login, logout }}>

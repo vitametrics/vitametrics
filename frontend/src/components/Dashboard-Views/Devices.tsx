@@ -4,9 +4,11 @@ import ConnectIcon from "../../assets/ConnectIcon";
 import FiftyPercentIcon from "../../assets/FiftyPercentIcon";
 
 const Devices = () => {
-  //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT; //~development;
-  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
-  const orgId = sessionStorage.getItem("orgId");
+  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT; //~development;
+  //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
+  const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_DEV_ENDPOINT; //~development;
+  //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT; ~ production
+
   const [devices, setDevices] = useState([
     {
       owner: "Brandon Le",
@@ -28,6 +30,19 @@ const Devices = () => {
 
   const fetchOrg = async () => {
     try {
+      const auth_response = await axios.get(AUTH_ENDPOINT, {
+        withCredentials: true,
+      });
+
+      if (auth_response.data.isAuthenticated === false) {
+        console.log("User is not authenticated");
+        return;
+      }
+
+      console.log(auth_response.data);
+
+      const orgId = auth_response.data.user.orgId;
+
       const response = await axios.get(FETCH_ORG_ENDPOINT, {
         params: {
           orgId: orgId,
