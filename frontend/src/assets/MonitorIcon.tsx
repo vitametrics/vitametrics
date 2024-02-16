@@ -15,15 +15,9 @@ const MonitorIcon = () =>
     stroke="#CCCCCC" 
     stroke-width="0.624">
         </g>
-    <g 
-    id="SVGRepo_iconCarrier"> 
-
-
-        style={{,
-        fill:"none", 
-        stroke:"#020202",
-        stroke-miterlimit:"10",
-        stroke-width:"1.91px",}}
+        <g id="SVGRepo_iconCarrier" 
+   style={{ fill: "none", stroke: "#020202", strokeMiterlimit: "10", strokeWidth:"1.91px" }}>
+    </g>
 
         <g id="Beat_rate_report" data-name="Beat rate report"> 
         <path className="cls-1" d="M18.7,17.65V22.5H1.52v-20H6.3v1A1.91,1.91,0,0,0,8.2,5.32H12a1.92,1.92,0,0,0,1.91-1.91v-1H18.7V8.66"></path> 
