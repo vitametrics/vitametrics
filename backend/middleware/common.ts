@@ -2,10 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
-import RedisStore from 'connect-redis';
-import {createClient} from 'redis';
+import MongoStore from 'connect-mongo';
 
-export const commonMiddlewares = (app: express.Application) => {
+export const commonMiddlewares = async (app: express.Application) => {
   app.use(express.json());
   app.use(cookieParser());
   if (process.env.NODE_ENV === 'production') {
@@ -15,22 +14,14 @@ export const commonMiddlewares = (app: express.Application) => {
     }));
   }
 
-  const redisClient = createClient();
-  redisClient.connect().catch(console.error);
-
-  const redisStore = new RedisStore({
-    client: redisClient,
-    prefix: "physiobit:",
-  });
-
   app.use(session({
     secret: process.env.SESSION_SECRET as string, 
     resave: false,
     saveUninitialized: false,
-    store: redisStore,
+    store: MongoStore.create({ mongoUrl: process.env.PROD_DB_URI as string }) as any,
     cookie: {
-      secure: false,
-      sameSite: false,
+      secure: true,
+      sameSite: 'lax',
       httpOnly: true,
     }
   }));
