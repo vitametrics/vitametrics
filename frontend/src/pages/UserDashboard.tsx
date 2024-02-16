@@ -1,15 +1,24 @@
 import Navbar from "../components/Navbar";
 import StickySidebar from "../components/StickySidebar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Data from "../components/Dashboard-Views/Data";
 import Devices from "../components/Dashboard-Views/Devices";
 import Members from "../components/Dashboard-Views/Members";
 import Settings from "../components/Dashboard-Views/Settings";
 import Footer from "../components/Footer";
+import { useAuth } from "../helpers/AuthContext";
 
 const Dashboard = () => {
   //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
+  const { isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      window.location.href = "/login";
+    }
+  }),
+    [isAuthenticated];
 
   const [page, setPage] = useState("Data");
   const [showBackdrop, setShowBackdrop] = useState(false);
