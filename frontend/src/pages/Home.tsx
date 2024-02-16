@@ -5,8 +5,8 @@ const Steps = lazy(() => import("../components/Steps"));
 const Features = lazy(() => import("../components/Features"));
 const SignUpBanner = lazy(() => import("../components/SignUpBanner"));
 const Footer = lazy(() => import("../components/Footer"));
-
 const renderLoader = () => <p>Loading</p>;
+
 
 const Home = () => {
   return (

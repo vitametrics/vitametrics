@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-
+import ResearchIcon from "../assets/ResearchIcon";
 interface SectionProps {
   title: string;
 }
@@ -11,11 +11,12 @@ const RightText: React.FC<SectionProps> = ({ title }) => {
         {/* <img src="" className="h-[300px] absolute t-10 rounded-2xl" />*/}
         <div className="w-[375px] bg-white h-[400px] rounded-2xl absolute t-10 ml-[100px] sm:ml-0 sm:relative sm:justify-self-center sm:w-[100%]">
           {" "}
+          <ResearchIcon/>
         </div>
         <div
-          className="w-[750px] bg-[#79a3b7] dark:bg-[#151515] h-[350px] mr-auto rounded-tr-2xl rounded-br-2xl sm:hidden lg:hidden"
-          id="square"
-        ></div>
+          className="w-[750px] bg-[#79a3b7] dark:bg-[#151515] h-[350px] mr-auto rounded-tr-2xl rounded-br-2xl sm:hidden lg:hidden flex"
+          id="square">
+        </div>
       </div>
       <div className="w-[100%] h-full p-20 flex  flex-col box-border min-w-[500px] ">
         <h1 className="text-4xl text-[#5086A2] dark:text-[#bdbbbb] font-bold mb-5 text-center">
