@@ -14,9 +14,6 @@ const Dashboard = () => {
   //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
   const { isAuthenticated } = useAuth();
 
-  const OAUTH_ENDPOINT = import.meta.env.VITE_APP_OAUTH_ENDPOINT;
-  //const OAUTH_ENDPOINT = import.meta.env.VITE_APP_OAUTH_DEV_ENDPOINT;
-
   const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT;
   //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_DEV_ENDPOINT;
 
@@ -45,16 +42,9 @@ const Dashboard = () => {
   };
 
   const oAuthLogin = async () => {
-    try {
-      const response = await axios.get(OAUTH_ENDPOINT, {
-        withCredentials: true,
-      });
-
-      console.log(response.data);
-    } catch (error) {
-      console.log(error);
-    }
+    window.location.href = "https://physiobit.org/api/auth";
   };
+
   const [page, setPage] = useState("Data");
   const [showBackdrop, setShowBackdrop] = useState(false);
 
