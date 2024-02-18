@@ -23,6 +23,7 @@ const pool = new Pool({
 
 const router = express.Router();
 
+// user session authentication status
 router.get('/auth/status', (req: CustomReq, res: Response) => {
     if (req.isAuthenticated && req.isAuthenticated()) {
         return res.json({
@@ -38,6 +39,7 @@ router.get('/auth/status', (req: CustomReq, res: Response) => {
     }
 });
 
+// get organization info
 router.get('/org/info', verifySession, checkOrgMembership, [
     query('orgId').not().isEmpty().withMessage('No orgId provided')
 ], async (req: CustomReq, res: Response) => {
@@ -68,7 +70,7 @@ router.get('/org/info', verifySession, checkOrgMembership, [
     });
 });
 
-
+// send user verification email
 router.post('/send-email-verification', verifySession, async (req: CustomReq, res: Response) => {
 
     if (!req.user) {
@@ -90,6 +92,7 @@ router.post('/send-email-verification', verifySession, async (req: CustomReq, re
     });
 });
 
+// verify user email 
 router.get('/verify-email', verifySession, [
     query('token').not().isEmpty().withMessage('No token provided')
 ], async (req: CustomReq, res: Response) => {
@@ -122,6 +125,7 @@ router.get('/verify-email', verifySession, [
     }
 });
 
+// fetch devices from timescale
 router.get('/fetch-devices', verifySession, checkOrgMembership, async (req: CustomReq, res: Response) => {
     
     if (!req.organization) {
@@ -149,6 +153,7 @@ router.get('/fetch-devices', verifySession, checkOrgMembership, async (req: Cust
     }
 });
 
+// fetch devices from fitbit
 router.post('/fetch-devices/fitbit', verifySession, checkOrgMembership, refreshToken, async(req: CustomReq, res: Response) => {
 
     if (!req.organization) {
@@ -170,6 +175,7 @@ router.post('/fetch-devices/fitbit', verifySession, checkOrgMembership, refreshT
     }
 });
 
+// sync device data by id with fitbit
 router.post('/sync-data/:deviceId', verifySession, checkOrgMembership, refreshToken, [
     param('deviceId').not().isEmpty().withMessage('Device ID is required'),
     query('startDate').isISO8601().withMessage('Start date is required and must be in YYYY-MM-DD format'),
@@ -203,6 +209,7 @@ router.post('/sync-data/:deviceId', verifySession, checkOrgMembership, refreshTo
     }
 });
 
+// fetch device data from timescale by device id
 router.get('/fetch-device-data/:deviceId', verifySession, checkOrgMembership, refreshToken, [
     param('deviceId').not().isEmpty().withMessage('Device ID is required')
 ], async (req: CustomReq, res: Response) => {
@@ -253,7 +260,7 @@ router.get('/fetch-device-data/:deviceId', verifySession, checkOrgMembership, re
     }
 })
 
-
+// download data from timescale by device id
 router.get('/download-data/:deviceId', verifySession, checkOrgMembership, refreshToken, [
     param('deviceId').not().isEmpty().withMessage('Device ID is required')
 ], async (req: CustomReq, res: Response) => {
