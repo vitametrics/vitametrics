@@ -1,8 +1,8 @@
 import express, {Response} from 'express';
 import { Parser } from 'json2csv';
 import { IOrganization } from '../models/Organization';
-import Device from '../models/Device';
 import fetchAndStoreData from '../util/fetchData';
+import fetchDevices from '../util/fetchDevices';
 import verifySession from '../middleware/verifySession';
 import refreshToken from '../middleware/refreshFitbitToken';
 import checkOrgMembership from '../middleware/checkOrg';
@@ -11,6 +11,15 @@ import User from '../models/User';
 import Organization from "../models/Organization"
 import { sendEmail } from '../util/emailUtil';
 import { param, query, validationResult } from 'express-validator';
+import { Pool } from 'pg';
+
+const pool = new Pool({
+    user: 'postgres',
+    host: '192.168.1.101',
+    database: 'physiobit',
+    password: 'MsWHXSNun4LUaZHT4tTCjdc',
+    port: 5432
+});
 
 const router = express.Router();
 
@@ -111,49 +120,138 @@ router.get('/verify-email', verifySession, [
         console.error(err);
         return res.status(500).json({msg: 'Internal Server Error'});
     }
-})
+});
+
+router.get('/fetch-devices', verifySession, checkOrgMembership, async (req: CustomReq, res: Response) => {
+    
+    if (!req.organization) {
+        return res.status(401).json({msg: 'Unauthorized'});
+    }
+
+    const orgId = req.organization.orgId;
+
+    try {
+
+        const result = await pool.query(`
+            SELECT device_id, device_type, last_sync_date, battery
+            FROM devices
+            WHERE organization_id = $1
+        `, [orgId]);
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ msg: 'No devices found for this organization.' });
+        }
+
+        return res.status(200).json(result.rows);
+    } catch (err) {
+        console.error(`Error fetching devices for organization ${orgId}: `, err);
+        return res.status(500).json({ msg: 'Internal Server Error' });
+    }
+});
+
+router.post('/fetch-devices/fitbit', verifySession, checkOrgMembership, refreshToken, async(req: CustomReq, res: Response) => {
+
+    if (!req.organization) {
+        return res.status(401).json({msg: 'Unauthorized'});
+    }
+
+    try {
+        const orgId = req.organization.orgId;
+        const orgUserId = req.organization.userId;
+        const accessToken = req.organization.fitbitAccessToken;
+
+        await fetchDevices(orgUserId, accessToken, orgId);
+
+        return res.status(200).json({msg: 'Success!'});
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({msg: 'Internal Server Error!'});
+    }
+});
 
 router.post('/sync-data/:deviceId', verifySession, checkOrgMembership, refreshToken, [
-    param('deviceId').not().isEmpty().withMessage('Device ID is required')
+    param('deviceId').not().isEmpty().withMessage('Device ID is required'),
+    query('startDate').isISO8601().withMessage('Start date is required and must be in YYYY-MM-DD format'),
+    query('endDate').isISO8601().withMessage('End date is required and must be in YYYY-MM-DD format')
 ], async (req: CustomReq, res: Response) => {
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({errors: errors.array()});
     }
+
     try {
         const organization: IOrganization = req.organization as IOrganization;
+        const deviceId = req.params.deviceId;
+        const orgId = organization.orgId;
+        const orgUserId = organization.userId;
+        const startDate = req.query.startDate as string;
+        const endDate = req.query.endDate as string;
 
-        try {
-
-            const deviceId = req.params.deviceId;
-
-            const orgId = organization.orgId;
-
-            const device = await Device.findOne({deviceId, orgId});
-
-            if (!device) {
-                return res.status(404).json({msg: 'Device not found or access denied'});
-            }
-
-            try {
-                await fetchAndStoreData(orgId, organization.userId, organization.fitbitAccessToken, 'day');
-            } catch (err) {
-                return res.status(400).json({ msg: 'Failed to refresh Fitbit access token' });
-            }
-            
-            return res.status(200).json({msg: 'Fitbit data synced successfully'});
-            
-            } catch (err) {
-                console.error(err);
-                return res.status(500).json({msg: 'Internal Server Error'});
-            }
-
-
-        } catch (err) {
-            return res.status(500).json({msg: 'Internal server error'});
+        if (!deviceId) {
+            return res.status(500).json({msg: 'Please provide a device Id'});
         }
+
+        await fetchAndStoreData(orgId, orgUserId, organization.fitbitAccessToken, deviceId, startDate, endDate);
+
+        return res.status(200).json({ msg: 'Fitbit data synced successfully' });
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({msg: 'Internal server error'});
+    }
 });
+
+router.get('/fetch-device-data/:deviceId', verifySession, checkOrgMembership, refreshToken, [
+    param('deviceId').not().isEmpty().withMessage('Device ID is required')
+], async (req: CustomReq, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({errors: errors.array()});
+    }
+
+    const { deviceId } = req.params;
+    const startDate = typeof req.query.startDate === 'string' ? req.query.startDate : undefined;
+    const endDate = typeof req.query.endDate === 'string' ? req.query.endDate : undefined;
+    const dataType = typeof req.query.dataType === 'string' ? req.query.dataType : undefined;
+
+    if (!startDate || !endDate) {
+        return res.status(400).json({msg: 'Dates required'});
+    }
+
+    try {
+        let query = '';
+        const queryParams: (string | undefined)[] = [deviceId];
+
+        if (dataType === 'heart_rate') {
+            query = 'SELECT date, resting_hr AS value FROM heart_rate_data WHERE device_id = $1';
+        } else if (dataType === 'steps') {
+            query = 'SELECT date, steps as value FROM steps_data WHERE device_id = $1';
+        } else {
+            return res.status(400).json({msg : 'Invalid or missing data type parameters'});
+        }
+
+        if (startDate && endDate) {
+            query += ' AND date BETWEEN $2 and $3';
+            queryParams.push(startDate, endDate);
+        }
+
+        query += ' ORDER BY date ASC';
+
+        const result = await pool.query(query, queryParams);
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({msg: 'No data found for this device'});
+        }
+
+
+        return res.status(200).json(result.rows);
+    } catch (err) {
+        console.error(`Error fetching device data from TimescaleDB for device ${deviceId}: `, err);
+        return res.status(500).json({msg: 'Internal Server Error'});
+    }
+})
 
 
 router.get('/download-data/:deviceId', verifySession, checkOrgMembership, refreshToken, [
@@ -172,52 +270,45 @@ router.get('/download-data/:deviceId', verifySession, checkOrgMembership, refres
 
         const orgId = organization.orgId;
 
-        const device = await Device.findOne({ deviceId, orgId}).lean();
-
-        if (!device) {
-            return res.status(400).json({msg: 'No device with provided ID'});
+        const orgDeviceId = await Organization.findOne({ orgId, devices: deviceId}).lean();
+        if (!orgDeviceId) {
+            return res.status(404).json({msg: 'Device not found in organization'});
         }
 
-        // process and flatten data
-        let csvRows: any = [];
-        device.heartRateData.forEach(hrData => {
-            csvRows.push({
-                deviceId: device.deviceId,
-                deviceType: device.deviceType,
+        const deviceCheckResult = await pool.query(`SELECT 1 FROM devices WHERE device_id = $1 AND organization_id = $2`);
+        if (deviceCheckResult.rowCount === 0) {
+            return res.status(404).json({msg: 'Something is wrong with your registered device! Please contact support!'});
+        }
+
+        const heartRateResult = await pool.query(`SELECT date, resting_HR FROM heart_rate_data WHERE device_id = $1 AND organization_id = $2 ORDER BY date`, [deviceId, orgId]);
+        const stepsResult = await pool.query(`SELECT date, steps FROM steps_data WHERE device_id = $s ORDER BY date`, [deviceId]);
+
+
+        const csvRows = [
+            ...heartRateResult.rows.map(row => ({
                 dataType: 'Heart Rate',
-                date: hrData.date,
-                value: hrData.value
-            });
-        });
+                date: row.date.toISOString().split('T')[0].replace(/-/g, '/'),
+                HR: row.resting_hr
+            })),
+            ...stepsResult.rows.map(row => ({
+                dataType: 'Steps',
+                date: row.date.toISOString().split('T')[0].replace(/-/g, '/'),
+                Steps: row.steps
+            }))
+        ]
 
-        device.sleepData.forEach(sleepData => {
-            csvRows.push({
-                deviceId: device.deviceId,
-                deviceType: device.deviceType,
-                dataType: 'Sleep',
-                date: sleepData.date,
-                duration: sleepData.duration,
-                quality: sleepData.quality
-            });
-        });
-
-        device.nutritionData.forEach(nutritionData => {
-            csvRows.push({
-                deviceId: device.deviceId,
-                deviceType: device.deviceType,
-                dataType: 'Sleep',
-                date: nutritionData.date,
-                value: nutritionData.value
-            })
-        });
+        // const csvRows = heartRateResult.rows.map(row => ({
+        //     deviceId,
+        //     dataType: 'Heart Rate',
+        //     date: row.date,
+        //     resting_HR: row.value
+        // }));
 
         const parser = new Parser();
         const csvData = parser.parse(csvRows);
 
-
-        res.setHeader('Content-disposition', 'attachment; filename=device-data.csv');
+        res.setHeader('Content-disposition', 'attachment; filename=heart-rate-data.csv');
         res.set('Content-Type', 'text/csv');
-
         return res.status(200).send(csvData);
 
     } catch (err) {

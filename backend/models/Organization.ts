@@ -11,7 +11,7 @@ export interface IOrganization extends Document {
     fitbitRefreshToken: string;
     inviteCode: Types.ObjectId[];
     members: Types.ObjectId[];
-    devices: Types.ObjectId[];
+    devices: Array<String>;
 };
 
 const organizationSchema = new mongoose.Schema({
@@ -25,7 +25,7 @@ const organizationSchema = new mongoose.Schema({
     fitbitRefreshToken: {type: String, default: ""},
     inviteCode: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Invite' }],
     members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    devices: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Device' }]
+    devices: [{ type: String }]
 });
 
 const orgSchema = mongoose.model<IOrganization>('Organizations', organizationSchema);
