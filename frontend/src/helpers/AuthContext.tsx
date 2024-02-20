@@ -4,6 +4,9 @@ import axios from "axios";
 // Create AuthContext
 interface AuthContextProps {
   isAuthenticated: boolean;
+  isAccountLinked: boolean;
+  isOrgOwner: boolean;
+  isEmailVerified: boolean;
   login: () => void;
   logout: () => void;
 }
@@ -15,6 +18,9 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isAccountLinked, setIsAccountLinked] = useState<boolean>(false);
+  const [isOrgOwner, setIsOrgOwner] = useState<boolean>(false);
+  const [isEmailVerified, setIsEmailVerified] = useState<boolean>(false);
 
   const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_DEV_ENDPOINT;
   //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT; //~ production
@@ -27,6 +33,9 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       console.log(response.data);
       setIsAuthenticated(response.data.isAuthenticated);
+      setIsAccountLinked(response.data.user.isAccountLinked);
+      setIsOrgOwner(response.data.user.isOrgOwner);
+      setIsEmailVerified(response.data.user.isEmailVerified);
     } catch (error) {
       console.log(error);
     }
@@ -43,7 +52,16 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        isAccountLinked,
+        isOrgOwner,
+        isEmailVerified,
+        login,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

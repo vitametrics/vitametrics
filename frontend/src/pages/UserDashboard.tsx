@@ -113,7 +113,6 @@ const Dashboard = () => {
         </div>
         <div className="flex w-full h-full flex-col">
           <button onClick={oAuthLogin} className="p-2 bg-red">
-            {" "}
             Authenticate Your Fitbit Account{" "}
           </button>
 

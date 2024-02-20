@@ -54,6 +54,15 @@ const Data: React.FC<DataProps> = ({ devices, orgName }) => {
     fetchOrg();
   }, []); // Include 'fetchOrg' in the dependency array
 */
+
+  /*
+  const downloadData = async () => {
+    //const response =
+    
+
+
+  };*/
+
   //console log the start and end date via useEffect
   useEffect(() => {
     console.log(startDate);
@@ -64,12 +73,6 @@ const Data: React.FC<DataProps> = ({ devices, orgName }) => {
     { value: "All", label: "All" },
     { value: "Heart Rate", label: "Heart Rate" },
     { value: "Sleep", label: "Sleep" },
-    { value: "Nutrition", label: "Nutrition" },
-    { value: "Steps", label: "Steps" },
-    { value: "Calories", label: "Calories" },
-    { value: "Blood Pressure", label: "Blood Pressure" },
-    { value: "Blood Sugar", label: "Blood Sugar" },
-    { value: "Oxygen", label: "Oxygen" },
   ];
 
   return (
