@@ -36,6 +36,9 @@ const Dashboard = () => {
       ? import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT
       : import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT;
 
+  const FETCH_DEVICES_ENDPOINT = import.meta.env
+    .VITE_APP_FETCH_DEVICES_ENDPOINT;
+
   useEffect(() => {
     authResponse();
     fetchOrg();
@@ -53,8 +56,25 @@ const Dashboard = () => {
       console.log(response.data);
       setOrgName(response.data.organization.orgName);
       console.log(response.data);
-      setDevices(response.data.organization.devices);
+      //setDevices(response.data.organization.devices);
       setMembers(response.data.members || []);
+      await fetchDevices();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchDevices = async () => {
+    try {
+      const response = await axios.get(FETCH_DEVICES_ENDPOINT, {
+        params: {
+          orgId: orgId,
+        },
+        withCredentials: true,
+      });
+
+      console.log(response.data);
+      setDevices(response.data);
     } catch (error) {
       console.log(error);
     }

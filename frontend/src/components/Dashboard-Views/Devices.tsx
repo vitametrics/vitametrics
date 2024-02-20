@@ -28,7 +28,12 @@ const Devices: React.FC<DevicesProps> = ({ devices, orgName }) => {
         {devices.length > 0 ? (
           devices.map(
             (
-              device: { owner: string; type: string; status: string },
+              device: {
+                device_id: string;
+                device_type: string;
+                last_sync_date: string;
+                battery_level: number;
+              },
               index: number
             ) => {
               return (
@@ -37,13 +42,16 @@ const Devices: React.FC<DevicesProps> = ({ devices, orgName }) => {
                   className="flex flex-row items-center  w-full h-[70px] bg-[#93C7E1] dark:bg-[#2E2E2E] rounded-xl p-5"
                 >
                   <p className="text-2xl font-bold text-white mr-auto ">
-                    {device.type || ""}
+                    {device.device_type || ""}
                   </p>
                   <h2 className="text-2xl font-bold text-white align flex items-center">
-                    Owner: {device.owner || ""}
+                    ID: {device.device_id || ""}
+                  </h2>
+                  <h2 className="text-2xl font-bold text-white align flex items-center">
+                    Synced: {device.last_sync_date || ""}
                   </h2>
                   <p className="text-2xl font-bold text-white ml-auto flex flex-row gap-3">
-                    {device.status || ""}
+                    {device.battery_level || ""}
                     <FiftyPercentIcon />
                   </p>
                 </div>
