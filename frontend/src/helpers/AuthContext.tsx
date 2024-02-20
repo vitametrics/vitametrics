@@ -22,7 +22,11 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isOrgOwner, setIsOrgOwner] = useState<boolean>(false);
   const [isEmailVerified, setIsEmailVerified] = useState<boolean>(false);
 
-  const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_DEV_ENDPOINT;
+  const AUTH_ENDPOINT =
+    import.meta.env.VITE_APP_NODE_ENV === "production"
+      ? import.meta.env.VITE_APP_AUTH_ENDPOINT
+      : import.meta.env.VITE_APP_AUTH_DEV_ENDPOINT;
+
   //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT; //~ production
 
   const login = async () => {

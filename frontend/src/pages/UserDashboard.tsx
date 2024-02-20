@@ -26,8 +26,15 @@ const Dashboard = () => {
 
   const { login, logout } = useAuth();
 
-  const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_DEV_ENDPOINT;
-  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT;
+  const AUTH_ENDPOINT =
+    import.meta.env.VITE_APP_NODE_ENV === "production"
+      ? import.meta.env.VITE_APP_AUTH_ENDPOINT
+      : import.meta.env.VITE_APP_AUTH_DEV_ENDPOINT;
+
+  const FETCH_ORG_ENDPOINT =
+    import.meta.env.VITE_APP_NODE_ENV === "production"
+      ? import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT
+      : import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT;
 
   useEffect(() => {
     authResponse();
