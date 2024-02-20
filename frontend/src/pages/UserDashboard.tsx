@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Navbar from "../components/Navbar";
 import StickySidebar from "../components/StickySidebar";
 import { useState, useEffect, useCallback } from "react";
@@ -12,16 +13,49 @@ import axios from "axios";
 
 const Dashboard = () => {
   //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
-  const { isAuthenticated } = useAuth();
+  //const { isAuthenticated } = useAuth();
 
-  const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT;
-  //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_DEV_ENDPOINT;
+  const [page, setPage] = useState("Data");
+  const [showBackdrop, setShowBackdrop] = useState(false);
+
+  //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT;
+  const [orgId, setOrgId] = useState("");
+  const [orgName, setOrgName] = useState("");
+  const [devices, setDevices] = useState<any[]>([]); // Initialize devices state with an empty array
+  const [members, setMembers] = useState<any[]>([]);
+
+  const { login, logout } = useAuth();
+
+  const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_DEV_ENDPOINT;
+  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT;
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      authResponse();
+    authResponse();
+    fetchOrg();
+  }, [orgId]);
+
+  const fetchOrg = async () => {
+    try {
+      const response = await axios.get(FETCH_ORG_ENDPOINT, {
+        params: {
+          orgId: orgId,
+        },
+        withCredentials: true,
+      });
+
+      console.log(response.data);
+      setOrgName(response.data.organization.orgName);
+      console.log(response.data);
+      setDevices(
+        response.data.organization.devices || [
+          { owner: "brandon", type: "luxe", status: "50%" },
+        ]
+      );
+      setMembers(response.data.members || []);
+    } catch (error) {
+      console.log(error);
     }
-  });
+  };
 
   const authResponse = async () => {
     try {
@@ -31,9 +65,13 @@ const Dashboard = () => {
 
       if (auth_response.data.isAuthenticated === false) {
         console.log("User is not authenticated");
+        logout();
         window.location.href = "/login";
         return;
       }
+
+      login();
+      setOrgId(auth_response.data.user.orgId);
 
       console.log(auth_response.data);
     } catch (error) {
@@ -45,23 +83,20 @@ const Dashboard = () => {
     window.location.href = "https://physiobit.org/api/auth";
   };
 
-  const [page, setPage] = useState("Data");
-  const [showBackdrop, setShowBackdrop] = useState(false);
-
   const renderComponent = useCallback(() => {
     switch (page) {
       case "Data":
-        return <Data />;
+        return <Data orgName={orgName} devices={devices} />;
       case "Devices":
-        return <Devices />;
+        return <Devices orgName={orgName} devices={devices} />;
       case "Members":
-        return <Members />;
+        return <Members orgName={orgName} members={members} />;
       case "Settings":
         return <Settings />;
       default:
-        return <Data />;
+        return <Data orgName={orgName} devices={devices} />;
     }
-  }, [page]); // Only recompute if `page` changes
+  }, [page, orgId, orgName, devices, members]); // Only recompute if `page` changes
 
   return (
     <div className="h-full font-ralewayBold">

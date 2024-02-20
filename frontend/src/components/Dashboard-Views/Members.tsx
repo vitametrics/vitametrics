@@ -1,13 +1,20 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+//import { useState, useEffect } from "react";
+//import axios from "axios";
 
-const Members = () => {
+interface MembersProps {
+  orgName: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  members: any[];
+}
+
+const Members: React.FC<MembersProps> = ({ orgName, members }) => {
   //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT;
-  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
-  const [orgName, setOrgName] = useState("");
+  // const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
+  //const [orgName, setOrgName] = useState("");
   //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_DEV_ENDPOINT; //~development;
-  const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT; //~production;
+  //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT; //~production;
 
+  /*
   const [members, setMembers] = useState([
     {
       name: "Brandon Le",
@@ -22,7 +29,8 @@ const Members = () => {
       email: "bro",
     },
   ]);
-
+*/
+  /*
   const fetchOrg = async () => {
     try {
       const auth_response = await axios.get(AUTH_ENDPOINT, {
@@ -57,7 +65,7 @@ const Members = () => {
   useEffect(() => {
     fetchOrg();
   }, []);
-
+*/
   return (
     <div className="w-full h-full flex flex-col p-10 bg-[#FAF9F6] dark:bg-[#1E1D20] dark:bg-hero-texture">
       <h2 className="w-full text-4xl font-ralewayBold text-[#373F51] dark:text-white p-5 pb-0">
@@ -70,7 +78,7 @@ const Members = () => {
       </div>
       <div className="flex flex-row flex-wrap gap-5 p-5">
         {members.length > 0 ? (
-          members.map((member, index) => {
+          members.map((member: { email: string }, index: number) => {
             return (
               <div
                 key={index}

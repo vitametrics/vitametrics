@@ -3,13 +3,18 @@
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useState, useEffect } from "react";
-import axios from "axios";
+//import axios from "axios";
 
-const Data = () => {
+interface DataProps {
+  devices: any[];
+  orgName: string;
+}
+
+const Data: React.FC<DataProps> = ({ devices, orgName }) => {
   //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT; //~development;
-  const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
+  //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
   //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_DEV_ENDPOINT; //~development;
-  const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT; //~production;
+  //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT; //~production;
 
   //
   //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
@@ -18,10 +23,11 @@ const Data = () => {
   // State for date range
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [orgName, setOrgName] = useState("");
 
+  /*
   const fetchOrg = async () => {
     try {
+      /*
       const auth_response = await axios.get(AUTH_ENDPOINT, {
         withCredentials: true,
       });
@@ -31,17 +37,11 @@ const Data = () => {
         return;
       }
 
-      console.log(auth_response.data);
+      console.log(auth_response.data);*/
 
-      const orgId = auth_response.data.user.orgId;
+  //const orgId = auth_response.data.user.orgId;
 
-      const response = await axios.get(FETCH_ORG_ENDPOINT, {
-        params: {
-          orgId: orgId,
-        },
-        withCredentials: true,
-      });
-
+  /*
       console.log(response.data);
       setOrgName(response.data.organization.orgName);
     } catch (error) {
@@ -53,7 +53,7 @@ const Data = () => {
   useEffect(() => {
     fetchOrg();
   }, []); // Include 'fetchOrg' in the dependency array
-
+*/
   //console log the start and end date via useEffect
   useEffect(() => {
     console.log(startDate);
@@ -147,11 +147,25 @@ const Data = () => {
         </div>
         <div className="w-full h-[400px] bg-[#5086A2] text-white dark:bg-[#838383] rounded-xl flex flex-col mb-10">
           <h2 className="text-center w-full text-[#1B1B1B] p-5 text-4xl">
-            {" "}
-            Devices{" "}
+            Devices
           </h2>
           <div className="flex justify-center items-center h-full w-full">
-            Insert Devices here.
+            {devices.length > 0 ? (
+              devices.map((device) => {
+                return (
+                  <div
+                    key={device}
+                    className="flex flex-row items-center  w-full h-[70px] bg-[#93C7E1] dark:bg-[#2E2E2E] rounded-xl p-5"
+                  >
+                    <p className="text-2xl font-bold text-white mr-auto ">
+                      {device}
+                    </p>
+                  </div>
+                );
+              })
+            ) : (
+              <> No Devices Found</>
+            )}
           </div>
         </div>
         <button className="p-5 text-2xl rounded-xl w-[250px] bg-[#93C7E1] dark:bg-[#AE6B69] text-white">
