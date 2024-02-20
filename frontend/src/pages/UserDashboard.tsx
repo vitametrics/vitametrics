@@ -65,11 +65,9 @@ const Dashboard = () => {
   };
 
   const fetchDevices = async () => {
+    console.log("fetching devices from " + FETCH_DEVICES_ENDPOINT);
     try {
       const response = await axios.get(FETCH_DEVICES_ENDPOINT, {
-        params: {
-          orgId: orgId,
-        },
         withCredentials: true,
       });
 
