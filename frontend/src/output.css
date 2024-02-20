@@ -1460,6 +1460,16 @@ input:checked + .slider:before {
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
 }
 
+.hover\:bg-\[\#5b3535\]:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(91 53 53 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-\[\#8e5252\]:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(142 82 82 / var(--tw-bg-opacity));
+}
+
 .hover\:text-gray-300:hover {
   --tw-text-opacity: 1;
   color: rgb(209 213 219 / var(--tw-text-opacity));

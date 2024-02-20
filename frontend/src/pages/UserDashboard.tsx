@@ -24,7 +24,7 @@ const Dashboard = () => {
   const [devices, setDevices] = useState<any[]>([]); // Initialize devices state with an empty array
   const [members, setMembers] = useState<any[]>([]);
 
-  const { login, logout } = useAuth();
+  const { login, logout, isAccountLinked } = useAuth();
 
   const AUTH_ENDPOINT =
     import.meta.env.VITE_APP_NODE_ENV === "production"
@@ -53,11 +53,7 @@ const Dashboard = () => {
       console.log(response.data);
       setOrgName(response.data.organization.orgName);
       console.log(response.data);
-      setDevices(
-        response.data.organization.devices || [
-          { owner: "brandon", type: "luxe", status: "50%" },
-        ]
-      );
+      setDevices(response.data.organization.devices);
       setMembers(response.data.members || []);
     } catch (error) {
       console.log(error);
@@ -118,10 +114,17 @@ const Dashboard = () => {
         <div className="w-[150px]">
           <StickySidebar setPage={setPage} />
         </div>
-        <div className="flex w-full h-full flex-col">
-          <button onClick={oAuthLogin} className="p-2 bg-red">
-            Authenticate Your Fitbit Account{" "}
-          </button>
+        <div className="flex w-full h-full flex-col ">
+          {!isAccountLinked ? (
+            <button
+              onClick={oAuthLogin}
+              className="p-2 text-white bg-[#BA6767] hover:bg-[#8e5252]"
+            >
+              Authenticate Your Fitbit Account{" "}
+            </button>
+          ) : (
+            <></>
+          )}
 
           {renderComponent()}
         </div>
