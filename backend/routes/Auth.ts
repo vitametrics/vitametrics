@@ -77,7 +77,7 @@ router.get('/callback', verifySession, async (req: Request, res: Response) => {
 
         await fetchAndStoreDevices(fitbitUserID, accessToken, orgId);
         // this should not handle redirects. fine for now i guess.
-	    return res.status(200).json({success: true});
+	    return res.redirect('/dashboard?view=data');
     } catch(err) {
         console.error(err);
         res.status(500).json({success: false, msg: 'Internal Server Error'});

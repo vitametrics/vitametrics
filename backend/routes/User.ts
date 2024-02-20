@@ -25,13 +25,29 @@ const router = express.Router();
 
 // user session authentication status
 router.get('/auth/status', (req: CustomReq, res: Response) => {
+
     if (req.isAuthenticated && req.isAuthenticated()) {
+
+        let hasFitbitAccountLinked = false;
+        let isOrgOwner = false;
+        const emailVerified = req.user.emailVerified;
+
+        Organization.findOne({orgId: req.user.orgId}).then(found => {
+            if (found && found.fitbitAccessToken !== "" && found.ownerId == req.user.userId) {
+                hasFitbitAccountLinked = true;
+                isOrgOwner = true;
+            }
+        })
+
         return res.json({
             isAuthenticated: true,
             user: {
                 id: req.user.userId,
                 email: req.user.email,
-                orgId: req.user.orgId
+                orgId: req.user.orgId,
+                isEmailVerified: emailVerified,
+                isOrgOwner: isOrgOwner,
+                isAccountLinked: hasFitbitAccountLinked
             }
         });
     } else {
@@ -55,8 +71,7 @@ router.get('/org/info', verifySession, checkOrgMembership, [
     const org = await Organization.findOne({ orgId: orgId });
 
     if (!org) {
-        return res.status(
-            404).json({ msg: 'Organization not found' });
+        return res.status(404).json({ msg: 'Organization not found' });
     }
 
     const members = await User.find({
