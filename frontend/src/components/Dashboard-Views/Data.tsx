@@ -154,18 +154,28 @@ const Data: React.FC<DataProps> = ({ devices, orgName }) => {
           </h2>
           <div className="flex justify-center items-center h-full w-full">
             {devices.length > 0 ? (
-              devices.map((device) => {
-                return (
-                  <div
-                    key={device}
-                    className="flex flex-row items-center  w-full h-[70px] bg-[#93C7E1] dark:bg-[#2E2E2E] rounded-xl p-5"
-                  >
-                    <p className="text-2xl font-bold text-white mr-auto ">
-                      {device}
-                    </p>
-                  </div>
-                );
-              })
+              devices.map(
+                (
+                  device: {
+                    device_id: string;
+                    device_type: string;
+                    last_sync_date: string;
+                    battery_level: number;
+                  },
+                  index: number
+                ) => {
+                  return (
+                    <div
+                      key={index}
+                      className="flex flex-row items-center  w-full h-[70px] bg-[#93C7E1] dark:bg-[#2E2E2E] rounded-xl p-5"
+                    >
+                      <p className="text-2xl font-bold text-white mr-auto ">
+                        {device.device_id}
+                      </p>
+                    </div>
+                  );
+                }
+              )
             ) : (
               <> No Devices Found</>
             )}
