@@ -3,7 +3,15 @@
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useState, useEffect } from "react";
-//import axios from "axios";
+import axios from "axios";
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+interface Device {
+  device_id: string;
+  device_type: string;
+  last_sync_date: string;
+  battery_level: number;
+}
 
 interface DataProps {
   devices: any[];
@@ -11,69 +19,61 @@ interface DataProps {
 }
 
 const Data: React.FC<DataProps> = ({ devices, orgName }) => {
-  //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT; //~development;
-  //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
-  //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_DEV_ENDPOINT; //~development;
-  //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT; //~production;
-
-  //
-  //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
+  const DOWNLOAD_ENDPOINT = import.meta.env.VITE_APP_DOWNLOAD_DATA_ENDPOINT;
   const [dataType, setDataType] = useState("All");
-
-  // State for date range
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [deviceId, setDeviceId] = useState("");
+  const [selectedDevices, setSelectedDevices] = useState<string[]>([]);
 
-  /*
-  const fetchOrg = async () => {
-    try {
-      /*
-      const auth_response = await axios.get(AUTH_ENDPOINT, {
-        withCredentials: true,
-      });
-
-      if (auth_response.data.isAuthenticated === false) {
-        console.log("User is not authenticated");
-        return;
-      }
-
-      console.log(auth_response.data);*/
-
-  //const orgId = auth_response.data.user.orgId;
-
-  /*
-      console.log(response.data);
-      setOrgName(response.data.organization.orgName);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  //use effect to fetch org upon load
-  useEffect(() => {
-    fetchOrg();
-  }, []); // Include 'fetchOrg' in the dependency array
-*/
-
-  /*
-  const downloadData = async () => {
-    //const response =
-    
-
-
-  };*/
-
-  //console log the start and end date via useEffect
   useEffect(() => {
     console.log(startDate);
     console.log(endDate);
   }, [startDate, endDate]);
+
+  const handleDeviceSelectionChange = (
+    deviceId: string,
+    isChecked: boolean
+  ) => {
+    if (isChecked) {
+      // Add the device ID to the selected devices array if not already present
+      setSelectedDevices((prev) => [...prev, deviceId]);
+      setDeviceId(deviceId);
+      console.log(selectedDevices);
+    } else {
+      // Remove the device ID from the selected devices array
+      setSelectedDevices((prev) => prev.filter((id) => id !== deviceId));
+      console.log(selectedDevices);
+    }
+  };
 
   const dataTypeOptions = [
     { value: "All", label: "All" },
     { value: "Heart Rate", label: "Heart Rate" },
     { value: "Sleep", label: "Sleep" },
   ];
+
+  const downloadData = async () => {
+    if (!deviceId) {
+      console.error("Device ID is required");
+      return;
+    }
+
+    const url = `${DOWNLOAD_ENDPOINT}/${deviceId}`;
+
+    try {
+      const response = await axios.get(url, {
+        params: {
+          deviceId: deviceId,
+        },
+        withCredentials: true,
+      });
+
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="w-full h-full flex flex-col p-10 bg-[#FAF9F6] dark:bg-[#1E1D20] dark:bg-hero-texture">
@@ -154,34 +154,38 @@ const Data: React.FC<DataProps> = ({ devices, orgName }) => {
           </h2>
           <div className="flex justify-center items-center h-full w-full">
             {devices.length > 0 ? (
-              devices.map(
-                (
-                  device: {
-                    device_id: string;
-                    device_type: string;
-                    last_sync_date: string;
-                    battery_level: number;
-                  },
-                  index: number
-                ) => {
-                  return (
-                    <div
-                      key={index}
-                      className="flex flex-row items-center  w-full h-[70px] bg-[#93C7E1] dark:bg-[#2E2E2E] rounded-xl p-5"
-                    >
-                      <p className="text-2xl font-bold text-white mr-auto ">
-                        {device.device_id}
-                      </p>
-                    </div>
-                  );
-                }
-              )
+              devices.map((device, index: number) => {
+                return (
+                  <div
+                    key={index}
+                    className="flex flex-row items-center  w-full h-[70px] bg-[#93C7E1] dark:bg-[#2E2E2E] p-5"
+                  >
+                    <input
+                      type="checkbox"
+                      className="mr-3"
+                      onChange={(e) =>
+                        handleDeviceSelectionChange(
+                          device.device_id,
+                          e.target.checked
+                        )
+                      }
+                      checked={selectedDevices.includes(device.device_id)}
+                    />
+                    <p className="text-2xl font-bold text-white mr-auto ">
+                      {device.device_id}
+                    </p>
+                  </div>
+                );
+              })
             ) : (
               <> No Devices Found</>
             )}
           </div>
         </div>
-        <button className="p-5 text-2xl rounded-xl w-[250px] bg-[#93C7E1] dark:bg-[#AE6B69] text-white">
+        <button
+          className="p-5 text-2xl rounded-xl w-[250px] bg-[#93C7E1] dark:bg-[#AE6B69] text-white"
+          onClick={() => downloadData()}
+        >
           Export
         </button>
       </div>
