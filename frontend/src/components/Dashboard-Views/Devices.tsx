@@ -12,6 +12,13 @@ const Devices: React.FC<DevicesProps> = ({ devices, orgName }) => {
   //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
   //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_DEV_ENDPOINT; //~development;
   //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT; //~ production
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
+  };
 
   return (
     <div className="w-full h-full flex flex-col p-10 bg-[#FAF9F6] dark:bg-[#1E1D20] dark:bg-hero-texture">
@@ -48,7 +55,7 @@ const Devices: React.FC<DevicesProps> = ({ devices, orgName }) => {
                     ID: {device.device_id || ""}
                   </h2>
                   <h2 className="text-2xl font-bold text-white align flex items-center">
-                    Synced: {device.last_sync_date || ""}
+                    Synced: {formatDate(device.last_sync_date) || ""}
                   </h2>
                   <p className="text-2xl font-bold text-white ml-auto flex flex-row gap-3">
                     {device.battery_level || ""}

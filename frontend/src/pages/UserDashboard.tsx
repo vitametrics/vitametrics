@@ -91,7 +91,7 @@ const Dashboard = () => {
         return;
       }
 
-      login();
+      await login();
       setOrgId(auth_response.data.user.orgId);
 
       console.log(auth_response.data);
