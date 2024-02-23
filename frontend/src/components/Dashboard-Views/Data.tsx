@@ -21,6 +21,7 @@ interface DataProps {
 const Data: React.FC<DataProps> = ({ devices, orgName }) => {
   const DOWNLOAD_ENDPOINT = import.meta.env.VITE_APP_DOWNLOAD_DATA_ENDPOINT;
   const [dataType, setDataType] = useState("All");
+  //YYYY - MM - DD
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [deviceId, setDeviceId] = useState("");
@@ -63,9 +64,6 @@ const Data: React.FC<DataProps> = ({ devices, orgName }) => {
 
     try {
       const response = await axios.get(url, {
-        params: {
-          deviceId: deviceId,
-        },
         withCredentials: true,
       });
 
