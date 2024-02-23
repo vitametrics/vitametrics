@@ -24,7 +24,7 @@ const pool = new Pool({
 const router = express.Router();
 
 // user session authentication status
-router.get('/auth/status', (req: CustomReq, res: Response) => {
+router.get('/auth/status', async (req: CustomReq, res: Response) => {
 
     if (req.isAuthenticated && req.isAuthenticated()) {
 
@@ -32,7 +32,7 @@ router.get('/auth/status', (req: CustomReq, res: Response) => {
         let isOrgOwner = false;
         const emailVerified = req.user.emailVerified;
 
-        Organization.findOne({ orgId: req.user.orgId }).then(found => {
+        await Organization.findOne({ orgId: req.user.orgId }).then(found => {
             if (found && found.fitbitAccessToken !== "" && found.ownerId == req.user.userId) {
                 hasFitbitAccountLinked = true;
                 isOrgOwner = true;
