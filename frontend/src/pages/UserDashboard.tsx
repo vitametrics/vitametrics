@@ -138,11 +138,12 @@ const Dashboard = () => {
       endDate = Date.now().toString();
     }
 
-    const url = `${FETCH_DEVICE_DATA_ENDPOINT}/${id}`;
+    const url = `${FETCH_DEVICE_DATA_ENDPOINT}/?startDate=${startDate}&endDate=${endDate}&dateType=heart_rate`;
 
     try {
       const response = await axios.get(url, {
         params: {
+          deviceId: id,
           startDate: startDate,
           endDate: endDate,
         },

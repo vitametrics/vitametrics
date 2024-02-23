@@ -4,6 +4,111 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  ChartData,
+  BarElement,
+  LinearScale,
+  Tooltip,
+  CategoryScale,
+  Legend,
+  ChartOptions,
+} from "chart.js/auto";
+ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+
+const BarChart = () => {
+  const [chartData, setChartData] = useState<
+    ChartData<"bar", number[], string>
+  >({
+    labels: ["FitBit 1", "Fitbit 2"],
+    datasets: [],
+  });
+
+  setChartData(chartData);
+
+  const chartOptions: ChartOptions<"bar"> = {
+    scales: {
+      x: {
+        ticks: {
+          color: "#4E4E4E",
+          font: {
+            size: 11,
+            family: "Nunito-Bold",
+          },
+        },
+        grid: {
+          color: "rgba(0, 0, 0, 0.1)",
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: "Total Hours Worked",
+          color: "#4E4E4E",
+          font: {
+            size: 11,
+            family: "Nunito-Bold",
+          },
+
+          padding: {
+            top: 4,
+          },
+        },
+        position: "left",
+        ticks: {
+          color: "#4E4E4E",
+          font: {
+            size: 11,
+            family: "Nunito-Bold",
+          },
+        },
+        grid: {
+          color: "rgba(255, 255, 255, 1)",
+        },
+      },
+    },
+    maintainAspectRatio: false,
+
+    plugins: {
+      legend: {
+        display: false,
+      },
+
+      tooltip: {
+        yAlign: "bottom",
+        backgroundColor: "#818181",
+        bodyColor: "#FFFFFF",
+        bodyFont: {
+          family: "Nunito-Bold",
+          size: 11,
+        },
+        displayColors: false,
+        bodyAlign: "center",
+        mode: "index",
+        enabled: true,
+        intersect: false,
+        bodySpacing: 2,
+        position: "nearest",
+        titleAlign: "center",
+      },
+    },
+
+    elements: {
+      bar: {
+        backgroundColor: "#DBB69B", // Change bar color
+        borderColor: "#D9B9A2", // Change bar border color
+        borderRadius: 10, // Change bar border radius
+      },
+    },
+  };
+
+  return (
+    <div className="w-full h-full p-10">
+      <Bar data={chartData} options={chartOptions} />
+    </div>
+  );
+};
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface Device {
@@ -22,6 +127,8 @@ interface DataProps {
 const Data: React.FC<DataProps> = ({ devices, orgName, fetchDevice }) => {
   const DOWNLOAD_ENDPOINT = import.meta.env.VITE_APP_DOWNLOAD_DATA_ENDPOINT;
   const [dataType, setDataType] = useState("All");
+  //const [graphType, setGraphType] = useState("Bar");
+
   //YYYY - MM - DD
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -51,9 +158,15 @@ const Data: React.FC<DataProps> = ({ devices, orgName, fetchDevice }) => {
 
   const dataTypeOptions = [
     { value: "All", label: "All" },
-    { value: "Heart Rate", label: "Heart Rate" },
-    { value: "Sleep", label: "Sleep" },
+    { value: "heart_rate", label: "Heart Rate" },
+    { value: "sleep", label: "Sleep" },
   ];
+
+  /*
+  const graphTypeOptions = [
+    { value: "bar", label: "Bar" },
+    { value: "line", label: "Line" },
+  ];*/
 
   const downloadData = async () => {
     if (!deviceId) {
@@ -86,7 +199,7 @@ const Data: React.FC<DataProps> = ({ devices, orgName, fetchDevice }) => {
       <h2 className="w-full text-4xl font-ralewayBold text-[#373F51] dark:text-white p-5 pb-0">
         {orgName} Overview
       </h2>
-      <div className="flex flex-row p-5 w-full">
+      <div className="flex flex-row p-5 w-full gap-5">
         {/* Data Type Dropdown */}
         <div className="mr-auto">
           <label
@@ -112,6 +225,7 @@ const Data: React.FC<DataProps> = ({ devices, orgName, fetchDevice }) => {
             ))}
           </select>
         </div>
+
         <div className="flex flex-row w-full gap-5">
           <div className="ml-auto">
             <label
@@ -151,8 +265,7 @@ const Data: React.FC<DataProps> = ({ devices, orgName, fetchDevice }) => {
       </div>
       <div className="p-5 w-full">
         <div className="w-full h-[500px] bg-[#99BBCD] text-white dark:bg-[#2F2D2D] rounded-xl flex justify-center items-center mb-10">
-          {" "}
-          Insert Graph Here.{" "}
+          <BarChart />
         </div>
         <div className="w-full h-[400px] bg-[#5086A2] text-white dark:bg-[#838383] rounded-xl flex flex-col mb-10">
           <h2 className="text-center w-full text-[#1B1B1B] p-5 text-4xl">
