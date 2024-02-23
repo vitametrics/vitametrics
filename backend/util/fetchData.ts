@@ -10,7 +10,7 @@ const pool = new Pool({
 });
 
 
-async function fetchAndStoreData(orgId: string, orgUserId: string, accessToken: string, deviceId: string, startDate: string, endDate: string) {
+async function fetchAndStoreData(orgId: string, orgUserId: string, accessToken: string, deviceId: string, startDate: string | undefined, endDate: string | undefined) {
     try {
         // check if device exists in organization (check that device contains the organization id)
         const deviceRes = await pool.query(

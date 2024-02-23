@@ -73,7 +73,7 @@ router.get('/callback', verifySession, async (req: Request, res: Response) => {
 
         await organization.save();
 
-        const orgId = organization.ownerId;
+        const orgId = organization.orgId;
 
         await fetchAndStoreDevices(fitbitUserID, accessToken, orgId);
         // this should not handle redirects. fine for now i guess.
