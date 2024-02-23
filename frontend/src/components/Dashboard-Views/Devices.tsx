@@ -5,14 +5,9 @@ interface DevicesProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   devices: any[];
   orgName: string;
-  syncDevices: (deviceId: string) => void;
 }
 
-const Devices: React.FC<DevicesProps> = ({ devices, orgName, syncDevices }) => {
-  //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT; //~development;
-  //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
-  //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_DEV_ENDPOINT; //~development;
-  //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT; //~ production
+const Devices: React.FC<DevicesProps> = ({ devices, orgName }) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const month = date.getMonth() + 1;
@@ -62,10 +57,7 @@ const Devices: React.FC<DevicesProps> = ({ devices, orgName, syncDevices }) => {
                     {device.battery_level || ""}
                     <FiftyPercentIcon />
                   </p>
-                  <button onClick={() => syncDevices(device.device_id)}>
-                    {" "}
-                    Sync{" "}
-                  </button>
+                  <button> Sync </button>
                 </div>
               );
             }

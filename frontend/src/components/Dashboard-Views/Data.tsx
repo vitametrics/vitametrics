@@ -4,127 +4,20 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Bar } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  ChartData,
-  BarElement,
-  LinearScale,
-  Tooltip,
-  CategoryScale,
-  Legend,
-  ChartOptions,
-} from "chart.js/auto";
-ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
-
-const BarChart = () => {
-  const [chartData, setChartData] = useState<
-    ChartData<"bar", number[], string>
-  >({
-    labels: ["FitBit 1", "Fitbit 2"],
-    datasets: [],
-  });
-
-  setChartData(chartData);
-
-  const chartOptions: ChartOptions<"bar"> = {
-    scales: {
-      x: {
-        ticks: {
-          color: "#4E4E4E",
-          font: {
-            size: 11,
-            family: "Nunito-Bold",
-          },
-        },
-        grid: {
-          color: "rgba(0, 0, 0, 0.1)",
-        },
-      },
-      y: {
-        title: {
-          display: true,
-          text: "Total Hours Worked",
-          color: "#4E4E4E",
-          font: {
-            size: 11,
-            family: "Nunito-Bold",
-          },
-
-          padding: {
-            top: 4,
-          },
-        },
-        position: "left",
-        ticks: {
-          color: "#4E4E4E",
-          font: {
-            size: 11,
-            family: "Nunito-Bold",
-          },
-        },
-        grid: {
-          color: "rgba(255, 255, 255, 1)",
-        },
-      },
-    },
-    maintainAspectRatio: false,
-
-    plugins: {
-      legend: {
-        display: false,
-      },
-
-      tooltip: {
-        yAlign: "bottom",
-        backgroundColor: "#818181",
-        bodyColor: "#FFFFFF",
-        bodyFont: {
-          family: "Nunito-Bold",
-          size: 11,
-        },
-        displayColors: false,
-        bodyAlign: "center",
-        mode: "index",
-        enabled: true,
-        intersect: false,
-        bodySpacing: 2,
-        position: "nearest",
-        titleAlign: "center",
-      },
-    },
-
-    elements: {
-      bar: {
-        backgroundColor: "#DBB69B", // Change bar color
-        borderColor: "#D9B9A2", // Change bar border color
-        borderRadius: 10, // Change bar border radius
-      },
-    },
-  };
-
-  return (
-    <div className="w-full h-full p-10">
-      <Bar data={chartData} options={chartOptions} />
-    </div>
-  );
-};
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-interface Device {
-  device_id: string;
-  device_type: string;
-  last_sync_date: string;
-  battery_level: number;
-}
 
 interface DataProps {
   devices: any[];
   orgName: string;
   fetchDevice: (id: string, startDate: string, endDate: string) => void;
+  syncDevice: (id: string, start: Date, end: Date) => void;
 }
 
-const Data: React.FC<DataProps> = ({ devices, orgName, fetchDevice }) => {
+const Data: React.FC<DataProps> = ({
+  devices,
+  orgName,
+  fetchDevice,
+  syncDevice,
+}) => {
   const DOWNLOAD_ENDPOINT = import.meta.env.VITE_APP_DOWNLOAD_DATA_ENDPOINT;
   const [dataType, setDataType] = useState("All");
   //const [graphType, setGraphType] = useState("Bar");
@@ -174,14 +67,32 @@ const Data: React.FC<DataProps> = ({ devices, orgName, fetchDevice }) => {
       return;
     }
 
-    const url = `${DOWNLOAD_ENDPOINT}/${deviceId}`;
+    const url = `${DOWNLOAD_ENDPOINT}`;
 
     try {
       const response = await axios.get(url, {
+        params: {
+          deviceId,
+        },
         withCredentials: true,
+        responseType: "blob", // Ensure you get the response as a Blob
       });
 
       console.log(response.data);
+
+      // Create a URL for the blob
+      const downloadURL = window.URL.createObjectURL(
+        new Blob([response.data], { type: "text/csv" })
+      );
+      const link = document.createElement("a");
+      link.href = downloadURL;
+      link.setAttribute("download", "device-data.csv"); // or any other extension
+      document.body.appendChild(link);
+      link.click();
+
+      // Clean up and remove the link
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
     } catch (error) {
       console.log(error);
     }
@@ -264,52 +175,78 @@ const Data: React.FC<DataProps> = ({ devices, orgName, fetchDevice }) => {
         </div>
       </div>
       <div className="p-5 w-full">
-        <div className="w-full h-[500px] bg-[#99BBCD] text-white dark:bg-[#2F2D2D] rounded-xl flex justify-center items-center mb-10">
-          <BarChart />
-        </div>
-        <div className="w-full h-[400px] bg-[#5086A2] text-white dark:bg-[#838383] rounded-xl flex flex-col mb-10">
-          <h2 className="text-center w-full text-[#1B1B1B] p-5 text-4xl">
+        <div className="w-full h-[500px] bg-[#99BBCD] text-white dark:bg-[#2F2D2D] rounded-xl flex justify-center items-center mb-10"></div>
+        <div className="w-full h-[400px] bg-[#5086A2] text-white dark:bg-[#2F2D2D] rounded-xl flex flex-col mb-10">
+          <h2 className="text-center w-full text-white p-5 text-4xl">
             Devices
           </h2>
-          <div className="flex justify-center items-center h-full w-full">
+          <div className="flex flex-row justify-between h-full w-full p-5 gap-5">
             {devices.length > 0 ? (
-              devices.map((device, index: number) => {
-                return (
-                  <div
-                    key={index}
-                    className="flex flex-row items-center  w-full h-[70px] bg-[#93C7E1] dark:bg-[#2E2E2E] p-5"
-                  >
-                    <input
-                      type="checkbox"
-                      className="mr-3"
-                      onChange={(e) =>
-                        handleDeviceSelectionChange(
-                          device.device_id,
-                          e.target.checked
-                        )
-                      }
-                      checked={selectedDevices.includes(device.device_id)}
-                    />
-                    <button
-                      onClick={() =>
-                        fetchDevice(
-                          device.device_id,
-                          startDate || formatDate(new Date()),
-                          endDate || formatDate(new Date())
-                        )
-                      }
+              devices.map(
+                (
+                  device: {
+                    device_id: string;
+                    device_type: string;
+                    last_sync_date: string;
+                    battery_level: number;
+                  },
+                  index: number
+                ) => {
+                  return (
+                    <div
+                      key={index}
+                      className="flex flex-row gap-5 items-center w-full h-[70px] bg-[#93C7E1] dark:bg-[#434040] p-5 rounded-xl"
                     >
-                      {" "}
-                      Fetch{" "}
-                    </button>
-                    <p className="text-2xl font-bold text-white mr-auto ">
-                      {device.device_id}
-                    </p>
-                  </div>
-                );
-              })
+                      <div className="flex flex-row mr-3 items-center justify-center">
+                        <input
+                          type="checkbox"
+                          onChange={(e) =>
+                            handleDeviceSelectionChange(
+                              device.device_id,
+                              e.target.checked
+                            )
+                          }
+                          checked={selectedDevices.includes(device.device_id)}
+                          className="w-9 h-[44px] mr-2  bg-gray-100 checked:accent-[#aae5ff] dark:accent-[#BA6767] border-gray-300 rounded-xl focus:ring-transparent dark:checked:accent-[#BA6767]"
+                        />
+                        <p className="text-2xl font-bold text-white mr-auto ">
+                          {device.device_id}
+                        </p>
+                      </div>
+
+                      <button
+                        className="bg-[#93C7E1] dark:bg-[#BA6767] border-white border-solid dark:border-transparent border-2 p-2 rounded-lg w-[60px] ml-auto"
+                        onClick={() =>
+                          fetchDevice(
+                            device.device_id,
+                            startDate || formatDate(new Date()),
+                            endDate || formatDate(new Date())
+                          )
+                        }
+                      >
+                        Fetch
+                      </button>
+                      <button
+                        className="bg-[#93C7E1] dark:bg-[#BA6767] border-white dark:border-transparent border-solid border-2 p-2 rounded-lg w-[60px]"
+                        onClick={() =>
+                          syncDevice(
+                            device.device_id,
+                            startDate || new Date(),
+                            endDate || new Date()
+                          )
+                        }
+                      >
+                        Sync
+                      </button>
+                    </div>
+                  );
+                }
+              )
             ) : (
-              <> No Devices Found</>
+              <div className="text-center items-center w-full h-full">
+                {" "}
+                No Devices Found
+              </div>
             )}
           </div>
         </div>

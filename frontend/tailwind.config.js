@@ -38,5 +38,5 @@ export default {
       ralewaySemibold: ["Raleway-Semibold", "sans-serif"],
     },
   },
-  plugins: [],
+  plugins: ["@tailwindcss/forms"],
 };
