@@ -5,9 +5,10 @@ interface DevicesProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   devices: any[];
   orgName: string;
+  syncDevices: (deviceId: string) => void;
 }
 
-const Devices: React.FC<DevicesProps> = ({ devices, orgName }) => {
+const Devices: React.FC<DevicesProps> = ({ devices, orgName, syncDevices }) => {
   //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT; //~development;
   //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
   //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_DEV_ENDPOINT; //~development;
@@ -61,6 +62,10 @@ const Devices: React.FC<DevicesProps> = ({ devices, orgName }) => {
                     {device.battery_level || ""}
                     <FiftyPercentIcon />
                   </p>
+                  <button onClick={() => syncDevices(device.device_id)}>
+                    {" "}
+                    Sync{" "}
+                  </button>
                 </div>
               );
             }

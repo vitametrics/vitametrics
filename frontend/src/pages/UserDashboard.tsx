@@ -36,6 +36,11 @@ const Dashboard = () => {
       ? import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT
       : import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT;
 
+  const SYNC_DEVICE_ENDPOINT = import.meta.env.VITE_APP_SYNC_DEVICE_ENDPOINT;
+
+  const FETCH_DEVICE_DATA_ENDPOINT = import.meta.env
+    .VITE_APP_FETCH_DEVICE_DATA_ENDPOINT;
+
   const FETCH_DEVICES_ENDPOINT = import.meta.env
     .VITE_APP_FETCH_DEVICES_ENDPOINT;
 
@@ -104,18 +109,81 @@ const Dashboard = () => {
     window.location.href = "https://physiobit.org/api/auth";
   };
 
+  const syncDevice = async (deviceId: string) => {
+    try {
+      const response = await axios.get(`${SYNC_DEVICE_ENDPOINT}/${deviceId}`, {
+        withCredentials: true,
+      });
+
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchDataById = async (
+    id: string,
+    startDate: string,
+    endDate: string
+  ) => {
+    if (!id) {
+      return console.error("Device ID is required");
+    }
+
+    if (!startDate) {
+      startDate = Date.now().toString();
+    }
+
+    if (!endDate) {
+      endDate = Date.now().toString();
+    }
+
+    const url = `${FETCH_DEVICE_DATA_ENDPOINT}/${id}`;
+
+    try {
+      const response = await axios.get(url, {
+        params: {
+          startDate: startDate,
+          endDate: endDate,
+        },
+        withCredentials: true,
+      });
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const renderComponent = useCallback(() => {
     switch (page) {
       case "Data":
-        return <Data orgName={orgName} devices={devices} />;
+        return (
+          <Data
+            orgName={orgName}
+            devices={devices}
+            fetchDevice={fetchDataById}
+          />
+        );
       case "Devices":
-        return <Devices orgName={orgName} devices={devices} />;
+        return (
+          <Devices
+            orgName={orgName}
+            devices={devices}
+            syncDevices={syncDevice}
+          />
+        );
       case "Members":
         return <Members orgName={orgName} members={members} />;
       case "Settings":
         return <Settings />;
       default:
-        return <Data orgName={orgName} devices={devices} />;
+        return (
+          <Data
+            orgName={orgName}
+            devices={devices}
+            fetchDevice={fetchDataById}
+          />
+        );
     }
   }, [page, orgId, orgName, devices, members]); // Only recompute if `page` changes
 

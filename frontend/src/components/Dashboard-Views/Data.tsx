@@ -16,9 +16,10 @@ interface Device {
 interface DataProps {
   devices: any[];
   orgName: string;
+  fetchDevice: (id: string, startDate: string, endDate: string) => void;
 }
 
-const Data: React.FC<DataProps> = ({ devices, orgName }) => {
+const Data: React.FC<DataProps> = ({ devices, orgName, fetchDevice }) => {
   const DOWNLOAD_ENDPOINT = import.meta.env.VITE_APP_DOWNLOAD_DATA_ENDPOINT;
   const [dataType, setDataType] = useState("All");
   //YYYY - MM - DD
@@ -71,6 +72,13 @@ const Data: React.FC<DataProps> = ({ devices, orgName }) => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const formatDate = (date: Date) => {
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const year = date.getFullYear();
+    return `${year}-${month}-${day}`;
   };
 
   return (
@@ -169,6 +177,18 @@ const Data: React.FC<DataProps> = ({ devices, orgName }) => {
                       }
                       checked={selectedDevices.includes(device.device_id)}
                     />
+                    <button
+                      onClick={() =>
+                        fetchDevice(
+                          device.device_id,
+                          startDate || formatDate(new Date()),
+                          endDate || formatDate(new Date())
+                        )
+                      }
+                    >
+                      {" "}
+                      Fetch{" "}
+                    </button>
                     <p className="text-2xl font-bold text-white mr-auto ">
                       {device.device_id}
                     </p>
