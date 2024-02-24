@@ -5,14 +5,9 @@ interface DevicesProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   devices: any[];
   orgName: string;
-  syncDevices: (deviceId: string) => void;
 }
 
-const Devices: React.FC<DevicesProps> = ({ devices, orgName, syncDevices }) => {
-  //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT; //~development;
-  //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
-  //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_DEV_ENDPOINT; //~development;
-  //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT; //~ production
+const Devices: React.FC<DevicesProps> = ({ devices, orgName }) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const month = date.getMonth() + 1;
@@ -47,12 +42,12 @@ const Devices: React.FC<DevicesProps> = ({ devices, orgName, syncDevices }) => {
               return (
                 <div
                   key={index}
-                  className="flex flex-row items-center  w-full h-[70px] bg-[#93C7E1] dark:bg-[#2E2E2E] rounded-xl p-5"
+                  className="flex flex-row items-center gap-5 w-full h-[70px] bg-[#93C7E1] dark:bg-[#2E2E2E] rounded-xl p-5"
                 >
                   <p className="text-2xl font-bold text-white mr-auto ">
                     {device.device_type || ""}
                   </p>
-                  <h2 className="text-2xl font-bold text-white align flex items-center">
+                  <h2 className="text-2xl font-bold text-white align flex items-center mr-3">
                     ID: {device.device_id || ""}
                   </h2>
                   <h2 className="text-2xl font-bold text-white align flex items-center">
@@ -62,10 +57,6 @@ const Devices: React.FC<DevicesProps> = ({ devices, orgName, syncDevices }) => {
                     {device.battery_level || ""}
                     <FiftyPercentIcon />
                   </p>
-                  <button onClick={() => syncDevices(device.device_id)}>
-                    {" "}
-                    Sync{" "}
-                  </button>
                 </div>
               );
             }

@@ -634,6 +634,10 @@ video {
   margin-right: 0px;
 }
 
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
 .mr-3 {
   margin-right: 0.75rem;
 }
@@ -686,10 +690,6 @@ video {
   display: table;
 }
 
-.grid {
-  display: grid;
-}
-
 .hidden {
   display: none;
 }
@@ -732,6 +732,10 @@ video {
 
 .h-\[400px\] {
   height: 400px;
+}
+
+.h-\[44px\] {
+  height: 44px;
 }
 
 .h-\[450px\] {
@@ -782,6 +786,10 @@ video {
   width: 18rem;
 }
 
+.w-9 {
+  width: 2.25rem;
+}
+
 .w-\[100\%\] {
   width: 100%;
 }
@@ -816,6 +824,10 @@ video {
 
 .w-\[500px\] {
   width: 500px;
+}
+
+.w-\[60px\] {
+  width: 60px;
 }
 
 .w-\[750px\] {
@@ -964,6 +976,14 @@ video {
   border-width: 1px;
 }
 
+.border-2 {
+  border-width: 2px;
+}
+
+.border-solid {
+  border-style: solid;
+}
+
 .border-\[\#6d6c6c\] {
   --tw-border-opacity: 1;
   border-color: rgb(109 108 108 / var(--tw-border-opacity));
@@ -982,6 +1002,11 @@ video {
 .border-gray-300 {
   --tw-border-opacity: 1;
   border-color: rgb(209 213 219 / var(--tw-border-opacity));
+}
+
+.border-white {
+  --tw-border-opacity: 1;
+  border-color: rgb(255 255 255 / var(--tw-border-opacity));
 }
 
 .bg-\[\#1F1C23\] {
@@ -1092,6 +1117,11 @@ video {
 .bg-black {
   --tw-bg-opacity: 1;
   background-color: rgb(0 0 0 / var(--tw-bg-opacity));
+}
+
+.bg-gray-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(243 244 246 / var(--tw-bg-opacity));
 }
 
 .bg-transparent {
@@ -1282,6 +1312,11 @@ video {
   color: rgb(105 105 105 / var(--tw-text-opacity));
 }
 
+.text-\[\#BA6767\] {
+  --tw-text-opacity: 1;
+  color: rgb(186 103 103 / var(--tw-text-opacity));
+}
+
 .text-\[\#FFFF\] {
   color: #FFFF;
 }
@@ -1458,6 +1493,31 @@ input:checked + .slider:before {
   color: #fff;
 }
 
+.checked\:bg-\[\#BA6767\]:checked {
+  --tw-bg-opacity: 1;
+  background-color: rgb(186 103 103 / var(--tw-bg-opacity));
+}
+
+.checked\:accent-\[\#93C7E1\]:checked {
+  accent-color: #93C7E1;
+}
+
+.checked\:accent-\[\#3c4c53\]:checked {
+  accent-color: #3c4c53;
+}
+
+.checked\:accent-\[\#30c1ff\]:checked {
+  accent-color: #30c1ff;
+}
+
+.checked\:accent-\[\#83daff\]:checked {
+  accent-color: #83daff;
+}
+
+.checked\:accent-\[\#aae5ff\]:checked {
+  accent-color: #aae5ff;
+}
+
 .hover\:cursor-pointer:hover {
   cursor: pointer;
 }
@@ -1502,6 +1562,10 @@ input:checked + .slider:before {
   --tw-ring-color: rgb(229 231 235 / var(--tw-ring-opacity));
 }
 
+.focus\:ring-transparent:focus {
+  --tw-ring-color: transparent;
+}
+
 :is(.dark .dark\:border-\[\#1F1C23\]) {
   --tw-border-opacity: 1;
   border-color: rgb(31 28 35 / var(--tw-border-opacity));
@@ -1512,9 +1576,18 @@ input:checked + .slider:before {
   border-color: rgb(229 231 235 / var(--tw-border-opacity));
 }
 
+:is(.dark .dark\:border-gray-600) {
+  --tw-border-opacity: 1;
+  border-color: rgb(75 85 99 / var(--tw-border-opacity));
+}
+
 :is(.dark .dark\:border-gray-700) {
   --tw-border-opacity: 1;
   border-color: rgb(55 65 81 / var(--tw-border-opacity));
+}
+
+:is(.dark .dark\:border-transparent) {
+  border-color: transparent;
 }
 
 :is(.dark .dark\:bg-\[\#0e0d0d\]) {
@@ -1577,8 +1650,33 @@ input:checked + .slider:before {
   background-color: rgb(186 103 103 / var(--tw-bg-opacity));
 }
 
+:is(.dark .dark\:bg-gray-700) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(55 65 81 / var(--tw-bg-opacity));
+}
+
 :is(.dark .dark\:bg-transparent) {
   background-color: transparent;
+}
+
+:is(.dark .dark\:bg-\[\#484848\]) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(72 72 72 / var(--tw-bg-opacity));
+}
+
+:is(.dark .dark\:bg-\[\#aeaeae\]) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(174 174 174 / var(--tw-bg-opacity));
+}
+
+:is(.dark .dark\:bg-\[\#141414\]) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(20 20 20 / var(--tw-bg-opacity));
+}
+
+:is(.dark .dark\:bg-\[\#434040\]) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(67 64 64 / var(--tw-bg-opacity));
 }
 
 :is(.dark .dark\:bg-hero-texture) {
@@ -1608,6 +1706,23 @@ input:checked + .slider:before {
 :is(.dark .dark\:text-white) {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+:is(.dark .dark\:accent-\[\#BA6767\]) {
+  accent-color: #BA6767;
+}
+
+:is(.dark .dark\:ring-offset-gray-800) {
+  --tw-ring-offset-color: #1f2937;
+}
+
+:is(.dark .dark\:checked\:bg-\[\#BA6767\]:checked) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(186 103 103 / var(--tw-bg-opacity));
+}
+
+:is(.dark .dark\:checked\:accent-\[\#BA6767\]:checked) {
+  accent-color: #BA6767;
 }
 
 :is(.dark .dark\:hover\:bg-\[\#303030\]:hover) {

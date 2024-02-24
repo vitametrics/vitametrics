@@ -2,7 +2,7 @@
 import Navbar from "../components/Navbar";
 import StickySidebar from "../components/StickySidebar";
 import { useState, useEffect, useCallback } from "react";
-
+//import {CustomReq} from "../../../backend/util/customReq";
 import Data from "../components/Dashboard-Views/Data";
 import Devices from "../components/Dashboard-Views/Devices";
 import Members from "../components/Dashboard-Views/Members";
@@ -36,13 +36,22 @@ const Dashboard = () => {
       ? import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT
       : import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT;
 
-  const SYNC_DEVICE_ENDPOINT = import.meta.env.VITE_APP_SYNC_DEVICE_ENDPOINT;
+  const SYNC_DEVICE_ENDPOINT =
+    import.meta.env.VITE_APP_NODE_ENV === "production"
+      ? import.meta.env.VITE_APP_SYNC_DEVICE_ENDPOINT
+      : import.meta.env.VITE_APP_SYNC_DEVICE_DEV_ENDPOINT;
 
-  const FETCH_DEVICE_DATA_ENDPOINT = import.meta.env
-    .VITE_APP_FETCH_DEVICE_DATA_ENDPOINT;
+  const FETCH_DEVICE_DATA_ENDPOINT =
+    import.meta.env.VITE_APP_NODE_ENV === "production"
+      ? import.meta.env.VITE_APP_FETCH_DEVICE_DATA_ENDPOINT
+      : import.meta.env.VITE_APP_FETCH_DEVICE_DATA_DEV_ENDPOINT;
 
-  const FETCH_DEVICES_ENDPOINT = import.meta.env
-    .VITE_APP_FETCH_DEVICES_ENDPOINT;
+  const FETCH_DEVICES_ENDPOINT =
+    import.meta.env.VITE_APP_NODE_ENV === "production"
+      ? import.meta.env.VITE_APP_FETCH_DEVICES_ENDPOINT
+      : import.meta.env.VITE_APP_FETCH_DEVICES_DEV_ENDPOINT;
+
+  //predefine a list of devices
 
   useEffect(() => {
     authResponse();
@@ -109,18 +118,6 @@ const Dashboard = () => {
     window.location.href = "https://physiobit.org/api/auth";
   };
 
-  const syncDevice = async (deviceId: string) => {
-    try {
-      const response = await axios.get(`${SYNC_DEVICE_ENDPOINT}/${deviceId}`, {
-        withCredentials: true,
-      });
-
-      console.log(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const fetchDataById = async (
     id: string,
     startDate: string,
@@ -138,18 +135,63 @@ const Dashboard = () => {
       endDate = Date.now().toString();
     }
 
-    const url = `${FETCH_DEVICE_DATA_ENDPOINT}/?startDate=${startDate}&endDate=${endDate}&dateType=heart_rate`;
+    const dataType = "steps";
+
+    const url = `${FETCH_DEVICE_DATA_ENDPOINT}`;
+    console.log(url);
 
     try {
       const response = await axios.get(url, {
         params: {
-          deviceId: id,
-          startDate: startDate,
-          endDate: endDate,
+          id,
+          startDate,
+          endDate,
+          dataType,
         },
         withCredentials: true,
       });
       console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const formatDate = (date: Date) => {
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const year = date.getFullYear();
+    return `${year}-${month < 10 ? "0" + month : month}-${day}`;
+  };
+
+  const syncDevice = async (id: string, start: Date, end: Date) => {
+    if (!id) {
+      return console.error("Device ID is required");
+    }
+
+    if (!start) {
+      //startDate = Date.now().toString();
+    }
+
+    if (!end) {
+      //endDate = formatDate(Date.now().toString());
+    }
+
+    const url = `${SYNC_DEVICE_ENDPOINT}`;
+
+    const startDate = formatDate(start);
+    const endDate = formatDate(end);
+
+    try {
+      const response = await axios.get(url, {
+        params: {
+          id,
+          startDate,
+          endDate,
+        },
+        withCredentials: true,
+      });
+      console.log(response.data);
+      console.log(response);
     } catch (error) {
       console.log(error);
     }
@@ -163,16 +205,11 @@ const Dashboard = () => {
             orgName={orgName}
             devices={devices}
             fetchDevice={fetchDataById}
+            syncDevice={syncDevice}
           />
         );
       case "Devices":
-        return (
-          <Devices
-            orgName={orgName}
-            devices={devices}
-            syncDevices={syncDevice}
-          />
-        );
+        return <Devices orgName={orgName} devices={devices} />;
       case "Members":
         return <Members orgName={orgName} members={members} />;
       case "Settings":
@@ -183,6 +220,7 @@ const Dashboard = () => {
             orgName={orgName}
             devices={devices}
             fetchDevice={fetchDataById}
+            syncDevice={syncDevice}
           />
         );
     }
