@@ -52,9 +52,80 @@ const Dashboard = () => {
       : import.meta.env.VITE_APP_FETCH_DEVICES_DEV_ENDPOINT;
 
   //predefine a list of devices
+  const testDevices = [
+    {
+      device_id: "1234",
+      device_type: "Fitbit",
+      last_sync_date: "2021-10-10",
+      battery_level: 50,
+      steps: [
+        {
+          date: "2024-02-20",
+          value: 10000,
+        },
+        {
+          date: "2024-02-21",
+          value: 10000,
+        },
+        {
+          date: "2024-02-22",
+          value: 10000,
+        },
+      ],
+      heart_rate: [
+        {
+          date: "2024-02-20",
+          value: 100,
+        },
+        {
+          date: "2024-02-21",
+          value: 100,
+        },
+        {
+          date: "2024-02-22",
+          value: 100,
+        },
+      ],
+    },
+    {
+      device_id: "5678",
+      device_type: "Fitbit",
+      last_sync_date: "2021-10-10",
+      battery_level: 50,
+      steps: [
+        {
+          date: "2024-02-20",
+          value: 10000,
+        },
+        {
+          date: "2024-02-21",
+          value: 10000,
+        },
+        {
+          date: "2024-02-22",
+          value: 10000,
+        },
+      ],
+      heart_rate: [
+        {
+          date: "2024-02-20",
+          value: 100,
+        },
+        {
+          date: "2024-02-21",
+          value: 100,
+        },
+        {
+          date: "2024-02-22",
+          value: 100,
+        },
+      ],
+    },
+  ];
 
   useEffect(() => {
     authResponse();
+    setDevices(testDevices);
     fetchOrg();
   }, [orgId]);
 
@@ -88,6 +159,7 @@ const Dashboard = () => {
       console.log(response.data);
       setDevices(response.data);
     } catch (error) {
+      setDevices(testDevices);
       console.log(error);
     }
   };

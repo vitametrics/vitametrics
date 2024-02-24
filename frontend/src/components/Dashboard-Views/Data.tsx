@@ -4,6 +4,9 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
+//import { Chart } from "chart.js";
+//import { Line, Bar } from "react-chartjs-2";
+//import "chart.js/auto"; // Importing auto registration of chart.js
 
 interface DataProps {
   devices: any[];
@@ -28,6 +31,29 @@ const Data: React.FC<DataProps> = ({
   const [deviceId, setDeviceId] = useState("");
   const [selectedDevices, setSelectedDevices] = useState<string[]>([]);
 
+  //const [chartData, setChartData] = useState({});
+
+  /*
+  useEffect(() => {
+    const datasets = selectedDevices
+      .map((deviceId) => {
+        const device = devices.find((d) => d.device_id === deviceId);
+        if (!device) return null; // Skip if device not found
+
+        const label = device.device_id; // Use device ID as label
+        const borderColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`; // Random color for each dataset
+        const data = device.steps.map((step: any) => step.value);
+
+        return { label, data, borderColor, tension: 0.1, fill: false };
+      })
+      .filter((dataset) => dataset !== null); // Filter out null datasets
+
+    setChartData({
+      labels: devices[0]?.steps.map((step: any) => step.date), // Use dates from the first device as labels
+      datasets,
+    });
+  }, [devices, selectedDevices]);*/
+
   useEffect(() => {
     console.log(startDate);
     console.log(endDate);
@@ -37,16 +63,10 @@ const Data: React.FC<DataProps> = ({
     deviceId: string,
     isChecked: boolean
   ) => {
-    if (isChecked) {
-      // Add the device ID to the selected devices array if not already present
-      setSelectedDevices((prev) => [...prev, deviceId]);
-      setDeviceId(deviceId);
-      console.log(selectedDevices);
-    } else {
-      // Remove the device ID from the selected devices array
-      setSelectedDevices((prev) => prev.filter((id) => id !== deviceId));
-      console.log(selectedDevices);
-    }
+    setSelectedDevices((prev) =>
+      isChecked ? [...prev, deviceId] : prev.filter((id) => id !== deviceId)
+    );
+    setDeviceId(deviceId); //for testing
   };
 
   const dataTypeOptions = [
@@ -175,7 +195,13 @@ const Data: React.FC<DataProps> = ({
         </div>
       </div>
       <div className="p-5 w-full">
-        <div className="w-full h-[500px] bg-[#99BBCD] text-white dark:bg-[#2F2D2D] rounded-xl flex justify-center items-center mb-10"></div>
+        <div className="w-full h-[500px] bg-[#99BBCD] text-white dark:bg-[#2F2D2D] rounded-xl flex justify-center items-center mb-10">
+          {/*
+          <Bar
+            data={{ datasets: [], ...chartData }}
+            options={{ responsive: true }}
+            />*/}
+        </div>
         <div className="w-full h-[400px] bg-[#5086A2] text-white dark:bg-[#2F2D2D] rounded-xl flex flex-col mb-10">
           <h2 className="text-center w-full text-white p-5 text-4xl">
             Devices
