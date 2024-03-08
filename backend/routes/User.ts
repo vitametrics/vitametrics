@@ -1,9 +1,8 @@
 import express, { Response } from 'express';
-// import { Parser } from 'json2csv';
+import { Parser } from 'json2csv';
 import { IOrganization } from '../models/Organization';
 import fetchDevices from '../util/fetchDevices';
 import verifySession from '../middleware/verifySession';
-import refreshToken from '../middleware/refreshFitbitToken';
 import checkOrgMembership from '../middleware/checkOrg';
 import { CustomReq } from '../util/customReq';
 import User from '../models/User';
@@ -11,14 +10,15 @@ import Organization from "../models/Organization"
 import { sendEmail } from '../util/emailUtil';
 import { query, validationResult } from 'express-validator';
 import axios from 'axios';
-import { error } from 'console';
+import refreshToken from '../middleware/refreshFitbitToken';
 const router = express.Router();
 
 
+// note: date is YYYY-MM-DD format
 async function fetchIntradayData(userId: string, accessToken: string, dataType: string, date: string) {
     const baseUrl = `https://api.fitbit.com/1/user/${userId}/activities`;
     let url;
-    if (dataType === 'heart_rate') {
+    if (dataType === 'heart') {
         url = `${baseUrl}/heart/date/${date}/1d/1min.json`;
     } else if (dataType === 'steps') {
         url = `${baseUrl}/steps/date/${date}/1d/1min.json`;
@@ -30,10 +30,10 @@ async function fetchIntradayData(userId: string, accessToken: string, dataType: 
         const response = await axios.get(url, {
             headers: {'Authorization': `Bearer ${accessToken}`}
         });
-        console.log(response.data);
+        return response.data['activities-' + dataType + '-intraday'].dataset;
     } catch (err) {
-        console.error('Error fetching data from Fitbit: ', error);
-        throw error;
+        console.error('Error fetching data from Fitbit: ', err);
+        throw err;
     }
 }
 
@@ -168,6 +168,8 @@ router.post('/fetch-devices', verifySession, checkOrgMembership, refreshToken, a
         const orgUserId = req.organization.userId;
         const accessToken = req.organization.fitbitAccessToken;
 
+        console.log(orgUserId, accessToken, orgId);
+
         await fetchDevices(orgUserId, accessToken, orgId);
 
         return res.status(200).json({ msg: 'Success!' });
@@ -206,14 +208,19 @@ router.get('/download-data', verifySession, checkOrgMembership, refreshToken, [
             return res.status(404).json({ msg: 'Device not found in organization' });
         }
 
-        await fetchIntradayData(req.user?.userId, organization.fitbitAccessToken, req.query.dataType as string, req.query.date as string);
+        const data = await fetchIntradayData(req.user.userId, organization.fitbitAccessToken, req.query.dataType as string, req.query.date as string);
 
-        // const parser = new Parser();
-        // const csvData = parser.parse(data);
+        if (data.length === 0) {
+            return res.status(404).json({ msg: 'No data found for this date' });
+        }
+        console.log(data);
 
-        // res.setHeader('Content-disposition', 'attachment; filename=heart-rate-data.csv');
-        // res.set('Content-Type', 'text/csv');
-        return res.status(200);
+        const parser = new Parser();
+        const csvData = parser.parse(data);
+
+        res.setHeader('Content-disposition', 'attachment; filename=heart-rate-data.csv');
+        res.set('Content-Type', 'text/csv');
+        return res.status(200).send(csvData);
 
     } catch (err) {
         console.error(err);
