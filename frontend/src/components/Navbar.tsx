@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import logo from "../assets/images/logo1.png";
 import { useAuth } from "../helpers/AuthContext";
 import ProfileIcon from "../assets/ProfileIcon";
+import logo from "../assets/logo.png";
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -41,8 +41,8 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="bg-white border-gray-200 dark:bg-[#171619] dark:border-gray-700">
-      <div className="flex flex-row w-full bg-[#373F51] dark:bg-[#171619] h-20 sticky top-0 flex-wrap items-center justify-between mx-auto p-4">
+    <nav className="bg-transparent">
+      <div className="flex flex-row w-full bg-transparent h-20  top-0 flex-wrap items-center justify-between mx-auto px-20">
         <a
           href="/"
           className="flex items-center space-x-3 rtl:space-x-rev  erse"
@@ -180,17 +180,6 @@ const Navbar = () => {
                   </li>
                 </>
               )}
-
-              <li>
-                <label className="switch">
-                  <input
-                    type="checkbox"
-                    checked={isDarkMode}
-                    onChange={toggleDarkMode}
-                  />
-                  <span className="slider"> </span>
-                </label>
-              </li>
             </ul>
           </div>
         )}

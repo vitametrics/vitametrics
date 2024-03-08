@@ -20,7 +20,7 @@ import "./styles.css";
 function App() {
   return (
     <AuthProvider>
-      <div className="bg-[#E4E4E4] dark:bg-[#1E1D20]">
+      <div className="bg-dark-gradient">
         <Router>
           <Suspense fallback={<LoadingFallback />}>
             <Switch>
