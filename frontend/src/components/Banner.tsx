@@ -1,31 +1,36 @@
 import Graph from "../assets/Graph";
+import GithubSmallIcon from "../assets/GithubSmallIcon";
 
 const Banner = () => {
   return (
     <section
       id="#home"
-      className="w-full h-full flex flex-row box-border mb-28 sm:flex-col dark:bg-hero-texture"
+      className="w-full h-full flex flex-row box-border mb-28 sm:flex-col bg-dark-gradient font-leagueSpartanBold"
     >
       <div className="w-[100%] h-full p-20 flex  flex-col box-border min-w-[500px] lg:p-10">
-        <h1 className="text-6xl text-[#5086A2] dark:text-[#BA6767] font-bold mb-5 sm:text-center">
-          Physiobit
+        <h1 className="text-6xl text-white font-bold mb-5 sm:text-center">
+          A Better Way
         </h1>
-        <p className="text-3xl font-bold text-[#373F51] dark:text-white">
+        <h2 className="gradient-light-blue font-bold mb-5 sm:text-center text-5xl">
+          to analyze fitness data
+        </h2>
+        <p className="text-4xl font-bold text-[#373F51] dark:text-white">
           {" "}
-          Made for research, Physiobit gathers data from real fitbit user
-          through their accounts. <br /> <br /> Through continuous logging,
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed <br />{" "}
-          <br />
-          do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          Expand your research potential using Fitbit devices and our intuitive
+          dashboard made for researchers like you.
         </p>
+        <div className="flex flex-row gap-5 mt-10">
+          <button className="p-3 text-3xl flex flex-row gap-2 justify-center items-center rounded-xl w-[230px] bg-pink-gradient text-white">
+            Contact
+          </button>
+          <button className="p-3 text-3xl flex flex-row justify-center gap-2 items-center rounded-xl w-[230px] bg-[#D9D9D9] text-black">
+            <GithubSmallIcon />
+            Github
+          </button>
+        </div>
       </div>
       <div className="w-full h-full flex justify-center flex-col min-w-[500px] lg:p-10 sm:p-10 pt-20 pb-20 items-center ">
-        <div
-          className="w-[85%] bg-[#79a3b7] dark:bg-[#BA6767] h-[450px] rounded-xl sm:hidden flex justify-center items-center "
-          id="square"
-        >
-          <Graph />
-        </div>
+        <Graph />
       </div>
     </section>
   );

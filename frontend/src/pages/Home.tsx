@@ -7,11 +7,10 @@ const SignUpBanner = lazy(() => import("../components/SignUpBanner"));
 const Footer = lazy(() => import("../components/Footer"));
 const renderLoader = () => <p>Loading</p>;
 
-
 const Home = () => {
   return (
     <Suspense fallback={renderLoader()}>
-      <div className="h-full w-full dark:bg-[#1E1D20] bg-[#FAF9F6] flex flex-col font-ralewayBold">
+      <div className="h-full w-full bg-dark-gradient flex flex-col font-ralewayBold">
         <Navbar />
         <Banner />
         <Steps />

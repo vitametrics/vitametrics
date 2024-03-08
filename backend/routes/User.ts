@@ -227,7 +227,7 @@ router.get('/fetch-device-data', verifySession, checkOrgMembership, refreshToken
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
-
+    
     const id = typeof req.query.id === 'string' ? req.query.id : undefined;
     const startDate = typeof req.query.startDate === 'string' ? req.query.startDate : undefined;
     const endDate = typeof req.query.endDate === 'string' ? req.query.endDate : undefined;
