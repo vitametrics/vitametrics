@@ -9,11 +9,8 @@ import passportConfig from './util/passport-config';
 import authRoute from './routes/Auth';
 import loginRoute from './routes/Login';
 import adminRoute from './routes/Admin';
-import registerRoute from './routes/Register';
-import contactRoute from './routes/Contact';
 import { connectDB } from './middleware/config';
 import sgMail from '@sendgrid/mail';
-import turnstileRoute from './routes/Turnstile';
 import mongoSanitize from 'express-mongo-sanitize';
 import helmet from 'helmet';
 
@@ -32,11 +29,8 @@ app.use(passport.session());
 app.use('/', authRoute);
 app.use('/admin', adminRoute);
 app.use('/user', userRoute);
-app.use('/register', registerRoute);
 app.use('/login', loginRoute(passport));
 app.use('/logout', logoutRoute);
-app.use('/contact', contactRoute);
-app.use('/verify', turnstileRoute);
 
 connectDB();
 

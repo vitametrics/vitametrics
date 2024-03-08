@@ -5,7 +5,6 @@ import CodeVerifier from '../models/CodeVerifier';
 import Organization from '../models/Organization';
 import { IUser } from '../models/User';
 import verifySession from '../middleware/verifySession';
-import fetchAndStoreDevices from '../util/fetchDevices';
 
 const router = express.Router();
 
@@ -72,10 +71,7 @@ router.get('/callback', verifySession, async (req: Request, res: Response) => {
         organization.fitbitRefreshToken = refreshToken;
 
         await organization.save();
-
-        const orgId = organization.orgId;
-
-        await fetchAndStoreDevices(fitbitUserID, accessToken, orgId);
+        
         // this should not handle redirects. fine for now i guess.
 	    return res.redirect('/dashboard?view=data');
     } catch(err) {
