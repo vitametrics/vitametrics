@@ -20,21 +20,19 @@ const Features = () => {
     slidesToScroll: 1,
   };
 
+  const handleResize = () => {
+    if (window.innerWidth >= 1100) {
+      setSlidesToShow(3);
+    } else if (window.innerWidth >= 768) {
+      setSlidesToShow(2);
+    } else {
+      setSlidesToShow(1);
+    }
+  };
+
   useEffect(() => {
-    const handleResize = () => {
-      // Adjust the number of slides based on the screen width
-      setSlidesToShow(window.innerWidth < 768 ? 1 : 3);
-
-      setSlidesToShow(window.innerWidth < 768 ? 1 : 3);
-    };
-
-    // Initial setup
     handleResize();
-
-    // Listen for window resize events
     window.addEventListener("resize", handleResize);
-
-    // Clean up the event listener on component unmount
     return () => {
       window.removeEventListener("resize", handleResize);
     };
@@ -81,7 +79,7 @@ const Features = () => {
   return (
     <section
       id="#features"
-      className="w-full h-full flex flex-col box-border p-10 justify-center items-center bg-[#afccde] dark:bg-transparent"
+      className="w-full h-full flex flex-col box-border p-10 justify-center items-center bg-[#1A1A1A] font-leagueSpartanBold"
     >
       <link
         rel="stylesheet"
@@ -93,10 +91,10 @@ const Features = () => {
         type="text/css"
         href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css"
       />
-      <h3 className="text-5xl text-white dark:text-[#BA6767] font-bold mb-5 text-center">
-        Features
+      <h3 className="text-5xl gradient-light-blue font-bold mb-5 text-center">
+        What do we offer you?
       </h3>
-      <div className="p-10 w-3/4">
+      <div className="p-10 w-full">
         <Slider {...settings}>
           {features.map((feature, index) => {
             return (
@@ -107,7 +105,7 @@ const Features = () => {
                 <div className="bg-grey-200 h-[200px] rounded-md mb-5 flex justify-center items-center">
                   {feature.img}
                 </div>
-                <p className="text-2xl text-[#373F51] dark:text-[#BA6767] text-center">
+                <p className="text-2xl text-[#373F51] gradient-pink-purple text-center">
                   {feature.title}
                 </p>
                 <p className="text-md text-[#373F51] dark:text-white text-center">

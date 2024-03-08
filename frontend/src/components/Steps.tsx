@@ -1,31 +1,29 @@
 import { Suspense } from "react";
-import ResearchIcon from "../assets/ResearchIcon";
-import MonitorIcon from "../assets/MonitorIcon";
-
+import { motion } from "framer-motion";
+import collect from "../assets/images/collect.webp";
+import analyze from "../assets/images/graph-analyze.png";
+import monitor from "../assets/images/monitor.jpg";
 interface SectionProps {
   title: string;
+  src: string;
 }
 
-const RightText: React.FC<SectionProps> = ({ title }) => {
+const RightText: React.FC<SectionProps> = ({ title, src }) => {
   return (
-    <div className="flex flex-row box-border sm:flex-col-reverse ">
-      <div className="w-[100%] h-full flex justify-center pt-20 pb-10 flex-col sm:p-10">
-        {/* <img src="" className="h-[300px] absolute t-10 rounded-2xl" />*/}
-        <div className="w-[375px] bg-white h-[400px] rounded-2xl absolute t-10 ml-[100px] sm:ml-0 sm:relative sm:justify-self-center sm:w-[100%]">
-          {" "}
-          <ResearchIcon/>
-        </div>
-        <div
-          className="w-[750px] bg-[#79a3b7] dark:bg-[#151515] h-[350px] mr-auto rounded-tr-2xl rounded-br-2xl sm:hidden lg:hidden flex"
-          id="square">
+    <div className="flex flex-row box-border gap-10 sm:flex-col-reverse ">
+      <div className="w-full h-full flex justify-center items-center p-20 flex-col sm:p-10">
+        <div className="w-full bg-white h-[400px] rounded-2xl  sm:ml-0 sm:relative sm:justify-self-center sm:w-[100%]">
+          <img
+            src={src}
+            className="w-full rounded-2xl h-[400px] object-cover sm:mr-0 sm:ml-0 sm:relative sm:justify-self-center"
+          />
         </div>
       </div>
-      <div className="w-[100%] h-full p-20 flex  flex-col box-border min-w-[500px] ">
-        <h1 className="text-4xl text-[#5086A2] dark:text-[#bdbbbb] font-bold mb-5 text-center">
-          {" "}
+      <div className="w-full h-full p-20 flex  flex-col box-border min-w-[500px] ">
+        <h1 className="text-4xl gradient-black-white font-bold mb-5 text-center">
           {title}
         </h1>
-        <p className="text-2xl font-bold text-[#373F51] dark:text-white">
+        <p className="text-2xl font-bold text-[#373F51">
           {" "}
           Made for research, Physiobit gathers data from real fitbit user
           through their accounts. <br /> <br /> Through continuous logging,
@@ -38,14 +36,14 @@ const RightText: React.FC<SectionProps> = ({ title }) => {
   );
 };
 
-const LeftText: React.FC<SectionProps> = () => {
+const LeftText: React.FC<SectionProps> = ({ title, src }) => {
   return (
-    <div className="flex flex-row box-border sm:flex-col">
+    <div className="flex flex-row box-border sm:flex-col gap-10">
       <div className="w-[100%] h-full sm:p-10 flex p-20  flex-col box-border min-w-[500px] ">
-        <h1 className="text-4xl text-[#5086A2] dark:text-[#bdbbbb] font-bold mb-5 text-center">
-          {" "}
+        <h1 className="text-4xl gradient-black-white font-bold mb-5 text-center">
+          {title}
         </h1>
-        <p className="text-2xl font-bold  text-[#373F51] dark:text-white">
+        <p className="text-2xl font-bold  text-[#373F51]">
           {" "}
           Made for research, Physiobit gathers data from real fitbit user
           through their accounts. <br /> <br /> Through continuous logging,
@@ -54,17 +52,12 @@ const LeftText: React.FC<SectionProps> = () => {
           do eiusmod tempor incididunt ut labore et dolore magna aliqua.
         </p>
       </div>
-      <div className="w-[100%] h-full  pt-20 pb-10 flex justify-center flex-col min-w-[500px] sm:p-10">
+      <div className="w-[100%] h-full flex items-center justify-center flex-col  p-20 sm:p-10">
         {/*<img src="" className="h-[300px] absolute t-10 rounded-2xl" />*/}
-        <div className="w-[375px] bg-white h-[400px] rounded-2xl absolute mr-0 ml-[325px] sm:mr-0 sm:ml-0 sm:relative sm:justify-self-center sm:w-[100%]">
-          {" "}
-          <MonitorIcon/>
-
-        </div>
-        <div
-          className="w-[750px] bg-[#79a3b7] dark:bg-[#151515] h-[350px] ml-auto rounded-bl-2xl rounded-tl-2xl sm:hidden lg:hidden"
-          id="square"
-        ></div>
+        <img
+          src={src}
+          className="w-full rounded-2xl h-[400px] object-fill sm:mr-0 sm:ml-0 sm:relative sm:justify-self-center"
+        />
       </div>
     </div>
   );
@@ -73,17 +66,17 @@ const LeftText: React.FC<SectionProps> = () => {
 const Steps = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <section
+      <motion.section
         id="#steps"
-        className="w-full h-full flex flex-col box-border mb-[100px] "
+        className="w-full h-full flex flex-col box-border pb-20 bg-[#EEEEEE] pt-10 font-leagueSpartanBold "
       >
-        <h3 className="text-5xl text-[#5086A2] dark:text-[#BA6767] font-bold mb-5 text-center">
-          Three Easy Steps
+        <h3 className="text-5xl gradient-pink-purple font-bold mb-5 text-center">
+          Research Just Got Easier.{" "}
         </h3>
-        <RightText title="Deploy" />
-        <LeftText title="Monitor" />
-        <RightText title="Study" />
-      </section>
+        <RightText title="Collect" src={collect} />
+        <LeftText title="Monitor" src={monitor} />
+        <RightText title="Analyze" src={analyze} />
+      </motion.section>
     </Suspense>
   );
 };

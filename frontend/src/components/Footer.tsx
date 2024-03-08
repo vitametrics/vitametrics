@@ -1,3 +1,4 @@
+import logo from "../assets/logo.png";
 const Footer = () => {
   return (
     <footer className="bg-[#373F51] dark:bg-[#171619]">
@@ -8,12 +9,9 @@ const Footer = () => {
             className="flex items-center  sm:mb-0 space-x-3 rtl:space-x-reverse"
           >
             <div className="flex flex-col">
-              <span className=" font-bold text-2xl  whitespace-nowrap text-[#5086A2] dark:text-[#BA6767]">
-                Physiobit{" "}
-              </span>
+              <img src={logo} className="w-[200px]" />
               <span className="text-base text-white sm:hidden font-semibold">
                 {" "}
-                Associated with Monterey Peninsula College
               </span>
             </div>
           </a>
@@ -24,18 +22,12 @@ const Footer = () => {
               </a>
             </li>
             <li>
-              <a
-                href="/PrivacyPolicy"
-                className="hover:underline me-4 md:me-6"
-              >
+              <a href="/PrivacyPolicy" className="hover:underline me-4 md:me-6">
                 Privacy Policy
               </a>
-              <a
-                href="/TOS"
-                className="hover:underline me-4 md:me-6"
-              >
+              <a href="/TOS" className="hover:underline me-4 md:me-6">
                 Terms and Service
-              </a>              
+              </a>
             </li>
             <li>
               <a href="/FAQs" className="hover:underline me-4 md:me-6">

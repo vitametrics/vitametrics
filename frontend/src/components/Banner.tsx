@@ -5,9 +5,9 @@ const Banner = () => {
   return (
     <section
       id="#home"
-      className="w-full h-full flex flex-row box-border mb-28 sm:flex-col bg-dark-gradient font-leagueSpartanBold"
+      className="w-full h-full flex flex-row box-border mb-28 mt-10 sm:flex-col bg-dark-gradient font-leagueSpartanBold"
     >
-      <div className="w-[100%] h-full p-20 flex  flex-col box-border min-w-[500px] lg:p-10">
+      <div className="w-[100%] h-full p-20 flex flex-col box-border min-w-[500px] lg:p-10">
         <h1 className="text-6xl text-white font-bold mb-5 sm:text-center">
           A Better Way
         </h1>

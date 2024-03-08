@@ -30,6 +30,7 @@
         "@marsidev/react-turnstile": "^0.4.1",
         "@tinymce/tinymce-react": "^4.3.2",
         "chart.js": "^4.4.1",
+        "framer-motion": "^11.0.8",
         "react-chartjs-2": "^5.2.0",
         "react-datepicker": "^6.1.0",
         "react-slick": "^0.30.1"
