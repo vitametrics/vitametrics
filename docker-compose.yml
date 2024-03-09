@@ -1,6 +1,7 @@
 version: '3.8'
 services:
   frontend:
+    container_name: physiobit-frontend
     build: 
       context: ./frontend
       dockerfile: Dockerfile
@@ -10,6 +11,7 @@ services:
       - physiobit-net
 
   backend:
+    container_name: physiobit-backend
     build:
       context: ./backend
       dockerfile: Dockerfile    
@@ -30,6 +32,7 @@ services:
       - physiobit-net
 
   mongo:
+    container_name: physiobit-mongo
     image: mongo
     environment:
       MONGO_INITDB_ROOT_USERNAME: physiobit
@@ -38,7 +41,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - mongodb_data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     networks:
       - physiobit-net
 
