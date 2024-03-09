@@ -14,7 +14,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile-backend
     ports:
-      "7970:7970"
+     - "7970:7970"
     networks:
       - physiobit-net
 
