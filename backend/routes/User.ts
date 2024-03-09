@@ -1,41 +1,13 @@
-import express, { Response } from 'express';
-import { Parser } from 'json2csv';
-import { IOrganization } from '../models/Organization';
-import fetchDevices from '../util/fetchDevices';
+import express, { Request, Response } from 'express';
+import argon2 from 'argon2';
+import crypto from 'crypto';
 import verifySession from '../middleware/verifySession';
-import checkOrgMembership from '../middleware/checkOrg';
 import { CustomReq } from '../util/customReq';
 import User from '../models/User';
 import Organization from "../models/Organization"
 import { sendEmail } from '../util/emailUtil';
 import { query, validationResult } from 'express-validator';
-import axios from 'axios';
-import refreshToken from '../middleware/refreshFitbitToken';
 const router = express.Router();
-
-
-// note: date is YYYY-MM-DD format
-async function fetchIntradayData(userId: string, accessToken: string, dataType: string, date: string) {
-    const baseUrl = `https://api.fitbit.com/1/user/${userId}/activities`;
-    let url;
-    if (dataType === 'heart') {
-        url = `${baseUrl}/heart/date/${date}/1d/1min.json`;
-    } else if (dataType === 'steps') {
-        url = `${baseUrl}/steps/date/${date}/1d/1min.json`;
-    } else {
-        throw new Error('Invalid data type');
-    }
-
-    try {
-        const response = await axios.get(url, {
-            headers: {'Authorization': `Bearer ${accessToken}`}
-        });
-        return response.data['activities-' + dataType + '-intraday'].dataset;
-    } catch (err) {
-        console.error('Error fetching data from Fitbit: ', err);
-        throw err;
-    }
-}
 
 // user session authentication status
 router.get('/auth/status', async (req: CustomReq, res: Response) => {
@@ -71,34 +43,78 @@ router.get('/auth/status', async (req: CustomReq, res: Response) => {
     }
 });
 
-// get organization info
-router.get('/org/info', verifySession, checkOrgMembership, [
-    query('orgId').not().isEmpty().withMessage('No orgId provided')
-], async (req: CustomReq, res: Response) => {
+// invite resend for user
+router.post('/resend-invite', async(req: Request, res: Response) => {
+    const {email} = req.body;
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+    if (!email) {
+        return res.status(400).json({msg: 'Missing email'});
     }
 
-    const { orgId } = req.query;
+    try {
+        const user = await User.findOne({email: email});
 
+        if (!user) {
+            return res.status(404).json({msg: 'User not found'});
+        }
 
-    const org = await Organization.findOne({ orgId: orgId });
+        if (user.lastInviteSent && Number(new Date()) - Number(user.lastInviteSent) < 3 * 3600000) {
+            return res.status(429).json({msg: 'Invite already sent within the last 3 hours'});
+        }
 
-    if (!org) {
-        return res.status(404).json({ msg: 'Organization not found' });
+        const newPasswordToken = crypto.randomBytes(32).toString('hex');
+        const newTokenExpiry = new Date(Date.now() + 3600000); // 1 hour
+
+        user.setPasswordToken = newPasswordToken;
+        user.passwordTokenExpiry = newTokenExpiry;
+        user.lastInviteSent = new Date();
+
+        await user.save();
+
+        const setPasswordLink = `https://${process.env.BASE_URL}/set-password?token=${newPasswordToken}`;
+    
+        await sendEmail({
+            to: email,
+            subject: 'New Invitation Link',
+            text: `You have been invited again! Please set your password by following this link: ${setPasswordLink}\nThis link will expire in 1 hour.`,
+        });
+
+        return res.status(200).json({msg: 'Invitation link has been resent'});
+    } catch(err) {
+        console.error(err);
+        return res.status(500).json({msg: 'Internal Server Error'});
+    }
+});
+
+// user password setting
+router.post('/set-password', async (req: Request, res: Response) => {
+
+    const {token, password} = req.body;
+
+    if (!token || !password) {
+        return res.status(400).json({msg: 'Missing token or password'});
     }
 
-    const members = await User.find({
-        '_id': { $in: org.members }
-    });
+    try {
+        const user = await User.findOne({
+            setPasswordToken: token,
+            tokenExpiry: {$gte: Date.now()}
+        });
 
+        if (!user) {
+            return res.status(400).json({msg: 'Invalid or expired token'});
+        }
 
-    return res.status(200).json({
-        organization: org,
-        members: members
-    });
+        user.password = await argon2.hash(password);
+        user.setPasswordToken = null;
+        user.passwordTokenExpiry = null;
+        await user.save();
+
+        return res.status(200).json({msg: 'Password has been set successfully'});
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({msg: 'Internal Server Error'});
+    }
 });
 
 // send user verification email
@@ -150,78 +166,6 @@ router.get('/verify-email', verifySession, [
         await user.save();
 
         return res.redirect('/dashboard?verified=true');
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({ msg: 'Internal Server Error' });
-    }
-});
-
-// fetch devices from fitbit
-router.post('/fetch-devices', verifySession, checkOrgMembership, refreshToken, async (req: CustomReq, res: Response) => {
-
-    if (!req.organization) {
-        return res.status(401).json({ msg: 'Unauthorized' });
-    }
-
-    try {
-        const orgId = req.organization.orgId;
-        const orgUserId = req.organization.userId;
-        const accessToken = req.organization.fitbitAccessToken;
-
-        console.log(orgUserId, accessToken, orgId);
-
-        await fetchDevices(orgUserId, accessToken, orgId);
-
-        return res.status(200).json({ msg: 'Success!' });
-
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({ msg: 'Internal Server Error!' });
-    }
-});
-
-// download data from fitbit by device id
-router.get('/download-data', verifySession, checkOrgMembership, refreshToken, [
-    query('deviceId').not().isEmpty().withMessage('Device ID is required'),
-    query('dataType').not().isEmpty().withMessage('You must specify which data to download'),
-    query('date').not().isEmpty().withMessage('You must specify a date')
-], async (req: CustomReq, res: Response) => {
-
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
-
-    if (!req.user) {
-        return res.status(401).json({ msg: 'Unauthorized' });
-    }
-
-    const organization: IOrganization = req.organization as IOrganization;
-
-    try {
-        const deviceId = req.query.deviceId;
-
-        const orgId = organization.orgId;
-
-        const orgDeviceId = await Organization.findOne({ orgId, devices: deviceId }).lean();
-        if (!orgDeviceId) {
-            return res.status(404).json({ msg: 'Device not found in organization' });
-        }
-
-        const data = await fetchIntradayData(req.user.userId, organization.fitbitAccessToken, req.query.dataType as string, req.query.date as string);
-
-        if (data.length === 0) {
-            return res.status(404).json({ msg: 'No data found for this date' });
-        }
-        console.log(data);
-
-        const parser = new Parser();
-        const csvData = parser.parse(data);
-
-        res.setHeader('Content-disposition', 'attachment; filename=heart-rate-data.csv');
-        res.set('Content-Type', 'text/csv');
-        return res.status(200).send(csvData);
-
     } catch (err) {
         console.error(err);
         return res.status(500).json({ msg: 'Internal Server Error' });
