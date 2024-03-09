@@ -3,21 +3,48 @@ services:
   frontend:
     build: 
       context: ./frontend
-      dockerfile: Dockerfile-frontend
+      dockerfile: Dockerfile
     ports:
-      - "5173:80"
+      - "${WEB_PORT}:80"
     networks:
       - physiobit-net
 
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile-backend
+      dockerfile: Dockerfile    
     ports:
-     - "7970:7970"
+      - "${API_PORT}:7970"
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      MONGODB_URI: ${MONGODB_URI} 
+      FITBIT_CLIENT_ID: ${FITBIT_CLIENT_ID}
+      FITBIT_CLIENT_SECRET: ${FITBIT_CLIENT_SECRET}
+      BASE_URL: ${BASE_URL}
+      REDIRECT_URI: ${REDIRECT_URI}
+      SESSION_SECRET: ${SESSION_SECRET}
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY}
+      SENDGRID_FROM: ${SENDGRID_FROM}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+    networks:
+      - physiobit-net
+
+  mongo:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: physiobit
+      MONGO_INITDB_ROOT_PASSWORD: physiobit
+      MONGO_INITDB_DATABASE: physiobit
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
     networks:
       - physiobit-net
 
 networks:
   physiobit-net:
     driver: bridge
+
+volumes:
+  mongodb_data:
