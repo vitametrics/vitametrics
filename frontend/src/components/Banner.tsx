@@ -14,7 +14,7 @@ const Banner = () => {
         <h2 className="gradient-light-blue font-bold mb-5 sm:text-center text-5xl">
           to analyze fitness data
         </h2>
-        <p className="text-4xl font-bold text-[#373F51] dark:text-white">
+        <p className="text-4xl font-bold text-white">
           {" "}
           Expand your research potential using Fitbit devices and our intuitive
           dashboard made for researchers like you.

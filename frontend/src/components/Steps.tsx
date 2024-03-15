@@ -20,7 +20,13 @@ const RightText: React.FC<SectionProps> = ({ title, src }) => {
         </div>
       </div>
       <div className="w-full h-full p-20 flex  flex-col box-border min-w-[500px] ">
-        <h1 className="text-4xl gradient-black-white font-bold mb-5 text-center">
+      <h1 className=" text-4xl font-bold mb-5 text-center"
+          style={{background:"linear-gradient(to right, #000000 20%, #a3a3a3 100%)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          color: "transparent"
+        }}
+          >
           {title}
         </h1>
         <p className="text-2xl font-bold text-[#373F51">
@@ -40,7 +46,13 @@ const LeftText: React.FC<SectionProps> = ({ title, src }) => {
   return (
     <div className="flex flex-row box-border sm:flex-col gap-10">
       <div className="w-[100%] h-full sm:p-10 flex p-20  flex-col box-border min-w-[500px] ">
-        <h1 className="text-4xl gradient-black-white font-bold mb-5 text-center">
+      <h1 className=" text-4xl font-bold mb-5 text-center"
+          style={{background:"linear-gradient(to right, #000000 20%, #a3a3a3 100%)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          color: "transparent"
+        }}
+          >
           {title}
         </h1>
         <p className="text-2xl font-bold  text-[#373F51]">
@@ -70,7 +82,14 @@ const Steps = () => {
         id="#steps"
         className="w-full h-full flex flex-col box-border pb-20 bg-[#EEEEEE] pt-10 font-leagueSpartanBold "
       >
-        <h3 className="text-5xl gradient-pink-purple font-bold mb-5 text-center">
+             <h3 className=" text-5xl font-bold mb-5 text-center"
+          style={{background:"linear-gradient(to right, #C471F5 0%, #FA71CD 100%)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          color: "transparent"
+        }}
+
+          >
           Research Just Got Easier.{" "}
         </h3>
         <RightText title="Collect" src={collect} />
