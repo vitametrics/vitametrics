@@ -188,3 +188,5 @@ router.get('/download-data', verifySession, checkOrgMembership, refreshToken, [
         return res.status(500).json({ msg: 'Internal Server Error' });
     }
 });
+
+export default router;
