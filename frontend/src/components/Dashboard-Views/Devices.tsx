@@ -1,13 +1,9 @@
 import ConnectIcon from "../../assets/ConnectIcon";
 import FiftyPercentIcon from "../../assets/FiftyPercentIcon";
+import { useOrg } from "../../helpers/OrgContext";
 
-interface DevicesProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  devices: any[];
-  orgName: string;
-}
-
-const Devices: React.FC<DevicesProps> = ({ devices, orgName }) => {
+const Devices = () => {
+  const { devices, orgName } = useOrg();
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const month = date.getMonth() + 1;

@@ -1,18 +1,7 @@
-//import { useState, useEffect } from "react";
-//import axios from "axios";
+import { useOrg } from "../../helpers/OrgContext";
 
-interface MembersProps {
-  orgName: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  members: any[];
-}
-
-const Members: React.FC<MembersProps> = ({ orgName, members }) => {
-  //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT;
-  // const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
-  //const [orgName, setOrgName] = useState("");
-  //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_DEV_ENDPOINT; //~development;
-  //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT; //~production;
+const Members = () => {
+  const { orgName, members } = useOrg();
 
   /*
   const [members, setMembers] = useState([
@@ -30,42 +19,7 @@ const Members: React.FC<MembersProps> = ({ orgName, members }) => {
     },
   ]);
 */
-  /*
-  const fetchOrg = async () => {
-    try {
-      const auth_response = await axios.get(AUTH_ENDPOINT, {
-        withCredentials: true,
-      });
 
-      if (auth_response.data.isAuthenticated === false) {
-        console.log("User is not authenticated");
-        return;
-      }
-
-      console.log(auth_response.data);
-
-      const orgId = auth_response.data.user.orgId;
-
-      const response = await axios.get(FETCH_ORG_ENDPOINT, {
-        params: {
-          orgId: orgId,
-        },
-        withCredentials: true,
-      });
-
-      console.log(response.data);
-      //setDevices(response.data.devices || []);
-      setMembers(response.data.members || []);
-      setOrgName(response.data.organization.orgName);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchOrg();
-  }, []);
-*/
   return (
     <div className="w-full h-full flex flex-col p-10 bg-[#FAF9F6] dark:bg-[#1E1D20] dark:bg-hero-texture">
       <h2 className="w-full text-4xl font-ralewayBold text-[#373F51] dark:text-white p-5 pb-0">
