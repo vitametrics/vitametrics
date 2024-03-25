@@ -10,7 +10,7 @@ const renderLoader = () => <p>Loading</p>;
 const Home = () => {
   return (
     <Suspense fallback={renderLoader()}>
-      <div className="h-full w-full bg-dark-gradient flex flex-col font-ralewayBold">
+      <div className="h-full w-full bg-dark-gradient flex flex-col font-leagueSpartanBold">
         <Navbar />
         <Banner />
         <Steps />

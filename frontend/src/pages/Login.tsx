@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import WatchLogo from "../components/Watch";
-import logo from "../assets/images/logo.png";
+import logo from "../assets/images/logo1.png";
 import Footer from "../components/Footer";
 import { useAuth } from "../helpers/AuthContext";
 
@@ -50,15 +50,13 @@ const Login = () => {
   };
 
   return (
-    <div className="h-full w-full overflow-y-hidden font-ralewayBold bg-[#d2d8e6] dark:bg-[#1E1D20]">
+    <div className="h-full w-full overflow-y-hidden font-leagueSpartanBold bg-[#d2d8e6] bg-dark-gradient">
       <Navbar />
       <div className="flex flex-col justify-center place-items-center p-20 sm:p-0">
         <div className="flex flex-row sm:flex-col-reverse sm:h-screen">
-          <div className="flex flex-col items-center justify-center  bg-[#79a3b7] dark:bg-[#BA6767]  w-[500px] h-[600px] rounded-tl-2xl rounded-bl-2xl sm:hidden">
+          <div className="flex flex-col items-center justify-center bg-[#202020]  w-[500px] h-[600px] rounded-tl-2xl rounded-bl-2xl sm:hidden">
             <WatchLogo />
-            <h2 className="font-bold text-5xl text-white dark:text-[#4d2020]">
-              Welcome
-            </h2>
+            <h2 className="font-bold text-5xl text-white">Welcome</h2>
             <h4 className="font-bold text-2xl text-gray-300 mt-1">
               Analyze all in one place
             </h4>
@@ -86,7 +84,7 @@ const Login = () => {
 
             <button
               onClick={handleLogin}
-              className="p-[10px] mt-5 bg-[#373F51] dark:bg-[#BA6767] w-72 rounded-lg cursor-pointer font-bold text-white"
+              className="p-[10px] mt-5 bg-[#202020] w-72 rounded-lg cursor-pointer font-bold text-white"
             >
               {" "}
               Login{" "}

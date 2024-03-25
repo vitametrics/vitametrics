@@ -782,6 +782,10 @@ video {
   width: 150px;
 }
 
+.w-\[200px\] {
+  width: 200px;
+}
+
 .w-\[230px\] {
   width: 230px;
 }
@@ -820,14 +824,6 @@ video {
 
 .w-screen {
   width: 100vw;
-}
-
-.w-\[100px\] {
-  width: 100px;
-}
-
-.w-\[200px\] {
-  width: 200px;
 }
 
 .min-w-\[500px\] {
@@ -898,10 +894,6 @@ video {
 
 .overflow-y-hidden {
   overflow-y: hidden;
-}
-
-.whitespace-nowrap {
-  white-space: nowrap;
 }
 
 .rounded {
@@ -1110,6 +1102,21 @@ video {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
+.bg-\[\#000\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(0 0 0 / var(--tw-bg-opacity));
+}
+
+.bg-\[\#292929\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(41 41 41 / var(--tw-bg-opacity));
+}
+
+.bg-\[\#202020\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(32 32 32 / var(--tw-bg-opacity));
+}
+
 .object-cover {
   -o-object-fit: cover;
      object-fit: cover;
@@ -1218,6 +1225,10 @@ video {
 
 .font-ralewayBold {
   font-family: Raleway-Bold, sans-serif;
+}
+
+.font-leagueSpartan {
+  font-family: LeagueSpartan-Regular, sans-serif;
 }
 
 .text-2xl {
@@ -1667,11 +1678,6 @@ input:checked + .slider:before {
   color: rgb(77 32 32 / var(--tw-text-opacity));
 }
 
-:is(.dark .dark\:text-\[\#BA6767\]) {
-  --tw-text-opacity: 1;
-  color: rgb(186 103 103 / var(--tw-text-opacity));
-}
-
 :is(.dark .dark\:text-gray-400) {
   --tw-text-opacity: 1;
   color: rgb(156 163 175 / var(--tw-text-opacity));
@@ -1828,10 +1834,6 @@ input:checked + .slider:before {
 
   .md\:w-auto {
     width: auto;
-  }
-
-  .md\:w-\[500px\] {
-    width: 500px;
   }
 
   .md\:flex-row {
