@@ -16,7 +16,7 @@ export const commonMiddlewares = async (app: express.Application) => {
     secret: process.env.SESSION_SECRET as string, 
     resave: false,
     saveUninitialized: true,
-    store: MongoStore.create({ mongoUrl: process.env.NODE_ENV as string === 'production' ? process.env.PROD_DB_URI as string : process.env.DEV_DB_URI }) as MongoStore,
+    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI as string}) as MongoStore,
     cookie: {
       secure: process.env.NODE_ENV as string === 'production' ? true : false,
       sameSite: process.env.NODE_ENV as string === 'production' ? 'none' : 'lax',

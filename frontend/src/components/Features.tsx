@@ -91,7 +91,7 @@ const Features = () => {
         type="text/css"
         href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css"
       />
-      <h3 className="text-5xl gradient-light-blue font-bold mb-5 text-center">
+      <h3 className="text-5xl gradient-pink-purple font-bold mb-5 text-center">
         What do we offer you?
       </h3>
       <div className="p-10 w-full">
@@ -105,7 +105,7 @@ const Features = () => {
                 <div className="bg-grey-200 h-[200px] rounded-md mb-5 flex justify-center items-center">
                   {feature.img}
                 </div>
-                <p className="text-2xl text-[#373F51] gradient-pink-purple text-center">
+                <p className="text-2xl text-[#373F51] text-white text-center">
                   {feature.title}
                 </p>
                 <p className="text-md text-[#373F51] dark:text-white text-center">

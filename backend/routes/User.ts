@@ -1,26 +1,12 @@
-import express, { Response } from 'express';
-import { Parser } from 'json2csv';
-import { IOrganization } from '../models/Organization';
-import fetchAndStoreData from '../util/fetchData';
-import fetchDevices from '../util/fetchDevices';
+import express, { Request, Response } from 'express';
+import argon2 from 'argon2';
+import crypto from 'crypto';
 import verifySession from '../middleware/verifySession';
-import refreshToken from '../middleware/refreshFitbitToken';
-import checkOrgMembership from '../middleware/checkOrg';
 import { CustomReq } from '../util/customReq';
 import User from '../models/User';
 import Organization from "../models/Organization"
 import { sendEmail } from '../util/emailUtil';
 import { query, validationResult } from 'express-validator';
-import { Pool } from 'pg';
-
-const pool = new Pool({
-    user: 'postgres',
-    host: '192.168.1.101',
-    database: 'physiobit',
-    password: 'MsWHXSNun4LUaZHT4tTCjdc',
-    port: 5432
-});
-
 const router = express.Router();
 
 // user session authentication status
@@ -57,34 +43,78 @@ router.get('/auth/status', async (req: CustomReq, res: Response) => {
     }
 });
 
-// get organization info
-router.get('/org/info', verifySession, checkOrgMembership, [
-    query('orgId').not().isEmpty().withMessage('No orgId provided')
-], async (req: CustomReq, res: Response) => {
+// invite resend for user
+router.post('/resend-invite', async(req: Request, res: Response) => {
+    const {email} = req.body;
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+    if (!email) {
+        return res.status(400).json({msg: 'Missing email'});
     }
 
-    const { orgId } = req.query;
+    try {
+        const user = await User.findOne({email: email});
 
+        if (!user) {
+            return res.status(404).json({msg: 'User not found'});
+        }
 
-    const org = await Organization.findOne({ orgId: orgId });
+        if (user.lastInviteSent && Number(new Date()) - Number(user.lastInviteSent) < 3 * 3600000) {
+            return res.status(429).json({msg: 'Invite already sent within the last 3 hours'});
+        }
 
-    if (!org) {
-        return res.status(404).json({ msg: 'Organization not found' });
+        const newPasswordToken = crypto.randomBytes(32).toString('hex');
+        const newTokenExpiry = new Date(Date.now() + 3600000); // 1 hour
+
+        user.setPasswordToken = newPasswordToken;
+        user.passwordTokenExpiry = newTokenExpiry;
+        user.lastInviteSent = new Date();
+
+        await user.save();
+
+        const setPasswordLink = `https://${process.env.BASE_URL}/set-password?token=${newPasswordToken}`;
+    
+        await sendEmail({
+            to: email,
+            subject: 'New Invitation Link',
+            text: `You have been invited again! Please set your password by following this link: ${setPasswordLink}\nThis link will expire in 1 hour.`,
+        });
+
+        return res.status(200).json({msg: 'Invitation link has been resent'});
+    } catch(err) {
+        console.error(err);
+        return res.status(500).json({msg: 'Internal Server Error'});
+    }
+});
+
+// user password setting
+router.post('/set-password', async (req: Request, res: Response) => {
+
+    const {token, password} = req.body;
+
+    if (!token || !password) {
+        return res.status(400).json({msg: 'Missing token or password'});
     }
 
-    const members = await User.find({
-        '_id': { $in: org.members }
-    });
+    try {
+        const user = await User.findOne({
+            setPasswordToken: token,
+            tokenExpiry: {$gte: Date.now()}
+        });
 
+        if (!user) {
+            return res.status(400).json({msg: 'Invalid or expired token'});
+        }
 
-    return res.status(200).json({
-        organization: org,
-        members: members
-    });
+        user.password = await argon2.hash(password);
+        user.setPasswordToken = null;
+        user.passwordTokenExpiry = null;
+        await user.save();
+
+        return res.status(200).json({msg: 'Password has been set successfully'});
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({msg: 'Internal Server Error'});
+    }
 });
 
 // send user verification email
@@ -136,198 +166,6 @@ router.get('/verify-email', verifySession, [
         await user.save();
 
         return res.redirect('/dashboard?verified=true');
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({ msg: 'Internal Server Error' });
-    }
-});
-
-// fetch devices from timescale
-router.get('/fetch-devices', verifySession, checkOrgMembership, async (req: CustomReq, res: Response) => {
-
-    if (!req.organization) {
-        return res.status(401).json({ msg: 'Unauthorized' });
-    }
-
-    const orgId = req.organization.orgId;
-
-    try {
-
-        console.log(orgId);
-
-        const result = await pool.query(`
-            SELECT device_id, device_type, last_sync_date, battery_level
-            FROM devices
-            WHERE organization_id = $1
-        `, [orgId]);
-
-        if (result.rowCount === 0) {
-            return res.status(404).json({ msg: 'No devices found for this organization.' });
-        }
-
-        return res.status(200).json(result.rows);
-    } catch (err) {
-        console.error(`Error fetching devices for organization ${orgId}: `, err);
-        return res.status(500).json({ msg: 'Internal Server Error' });
-    }
-});
-
-// fetch devices from fitbit
-router.post('/fetch-devices/fitbit', verifySession, checkOrgMembership, refreshToken, async (req: CustomReq, res: Response) => {
-
-    if (!req.organization) {
-        return res.status(401).json({ msg: 'Unauthorized' });
-    }
-
-    try {
-        const orgId = req.organization.orgId;
-        const orgUserId = req.organization.userId;
-        const accessToken = req.organization.fitbitAccessToken;
-
-        await fetchDevices(orgUserId, accessToken, orgId);
-
-        return res.status(200).json({ msg: 'Success!' });
-
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({ msg: 'Internal Server Error!' });
-    }
-});
-
-// sync device data by id with fitbit
-router.get('/sync-data', verifySession, checkOrgMembership, refreshToken, async (req: CustomReq, res: Response) => {
-
-    try {
-        const organization: IOrganization = req.organization as IOrganization;
-        const deviceId = typeof req.query.id === 'string' ? req.query.id : undefined;
-        const orgId = organization.orgId;
-        const orgUserId = organization.userId;
-        const startDate = typeof req.query.startDate === 'string' ? req.query.startDate : undefined;
-        const endDate = typeof req.query.endDate === 'string' ? req.query.endDate : undefined;
-
-        if (!deviceId) {
-            return res.status(500).json({ msg: 'Please provide a device Id' });
-        }
-
-        await fetchAndStoreData(orgId, orgUserId, organization.fitbitAccessToken, deviceId, startDate, endDate);
-
-        return res.status(200).json({ msg: 'Fitbit data synced successfully' });
-
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({ msg: 'Internal server error' });
-    }
-});
-
-// fetch device data from timescale by device id
-router.get('/fetch-device-data', verifySession, checkOrgMembership, refreshToken, [
-    query('id').not().isEmpty().withMessage('Device ID is required')
-], async (req: CustomReq, res: Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
-    
-    const id = typeof req.query.id === 'string' ? req.query.id : undefined;
-    const startDate = typeof req.query.startDate === 'string' ? req.query.startDate : undefined;
-    const endDate = typeof req.query.endDate === 'string' ? req.query.endDate : undefined;
-    const dataType = typeof req.query.dataType === 'string' ? req.query.dataType : undefined;
-
-    if (!startDate || !endDate) {
-        return res.status(400).json({ msg: 'Dates required' });
-    }
-
-    try {
-        let query = '';
-        const queryParams: (string | undefined)[] = [id];
-
-        if (dataType === 'heart_rate') {
-            query = 'SELECT date, resting_hr AS value FROM heart_rate_data WHERE device_id = $1';
-        } else if (dataType === 'steps') {
-            query = 'SELECT date, steps as value FROM steps_data WHERE device_id = $1';
-        } else {
-            return res.status(400).json({ msg: 'Invalid or missing data type parameters' });
-        }
-
-        if (startDate && endDate) {
-            query += ' AND date BETWEEN $2 and $3';
-            queryParams.push(startDate, endDate);
-        }
-
-        query += ' ORDER BY date ASC';
-
-        const result = await pool.query(query, queryParams);
-
-        if (result.rowCount === 0) {
-            return res.status(404).json({ msg: 'No data found for this device' });
-        }
-
-
-        return res.status(200).json(result.rows);
-    } catch (err) {
-        console.error(`Error fetching device data from TimescaleDB for device ${id}: `, err);
-        return res.status(500).json({ msg: 'Internal Server Error' });
-    }
-})
-
-// download data from timescale by device id
-router.get('/download-data', verifySession, checkOrgMembership, refreshToken, [
-    query('deviceId').not().isEmpty().withMessage('Device ID is required')
-], async (req: CustomReq, res: Response) => {
-
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
-
-    const organization: IOrganization = req.organization as IOrganization;
-
-    try {
-        const deviceId = req.query.deviceId;
-
-        const orgId = organization.orgId;
-
-        const orgDeviceId = await Organization.findOne({ orgId, devices: deviceId }).lean();
-        if (!orgDeviceId) {
-            return res.status(404).json({ msg: 'Device not found in organization' });
-        }
-
-        const deviceCheckResult = await pool.query(`SELECT 1 FROM devices WHERE device_id = $1 AND organization_id = $2`, [deviceId, orgId]);
-        if (deviceCheckResult.rowCount === 0) {
-            return res.status(404).json({ msg: 'Something is wrong with your registered device! Please contact support!' });
-        }
-
-        const heartRateResult = await pool.query(`SELECT date, resting_HR FROM heart_rate_data WHERE device_id = $1 ORDER BY date`, [deviceId]);
-        const stepsResult = await pool.query(`SELECT date, steps FROM steps_data WHERE device_id = $1 ORDER BY date`, [deviceId]);
-
-
-        const csvRows = [
-            ...heartRateResult.rows.map(row => ({
-                dataType: 'Heart Rate',
-                date: row.date.toISOString().split('T')[0].replace(/-/g, '/'),
-                HR: row.resting_hr
-            })),
-            ...stepsResult.rows.map(row => ({
-                dataType: 'Steps',
-                date: row.date.toISOString().split('T')[0].replace(/-/g, '/'),
-                Steps: row.steps
-            }))
-        ]
-
-        // const csvRows = heartRateResult.rows.map(row => ({
-        //     deviceId,
-        //     dataType: 'Heart Rate',
-        //     date: row.date,
-        //     resting_HR: row.value
-        // }));
-
-        const parser = new Parser();
-        const csvData = parser.parse(csvRows);
-
-        res.setHeader('Content-disposition', 'attachment; filename=heart-rate-data.csv');
-        res.set('Content-Type', 'text/csv');
-        return res.status(200).send(csvData);
-
     } catch (err) {
         console.error(err);
         return res.status(500).json({ msg: 'Internal Server Error' });
