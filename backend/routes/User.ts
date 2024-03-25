@@ -130,7 +130,7 @@ router.post('/send-email-verification', verifySession, async (req: CustomReq, re
         return res.status(401).json({ msg: 'Unauthorized' });
     }
 
-    const verificationLink = `https://physiobit.seancornell.io/api/user/verify-email?token=${user.emailVerfToken}`;
+    const verificationLink = `https://${process.env.BASE_URL as string}/api/user/verify-email?token=${user.emailVerfToken}`;
 
     return sendEmail({
         to: user.email,

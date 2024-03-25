@@ -37,7 +37,7 @@ async function fetchIntradayData(userId: string, accessToken: string, dataType: 
 }
 
 // get organization info
-router.get('/org/info', verifySession, checkOrgMembership, [
+router.get('/info', verifySession, checkOrgMembership, [
     query('orgId').not().isEmpty().withMessage('No orgId provided')
 ], async (req: CustomReq, res: Response) => {
 
