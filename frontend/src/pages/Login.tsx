@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import WatchLogo from "../components/Watch";
-import logo from "../assets/images/logo1.png";
+import logo from "../assets/logo.png";
 import Footer from "../components/Footer";
 import { useAuth } from "../helpers/AuthContext";
 

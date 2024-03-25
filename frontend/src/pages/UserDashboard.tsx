@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Navbar from "../components/Navbar";
+import { DashboardNavbar } from "../components/DashboardNavbar";
 import StickySidebar from "../components/StickySidebar";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 //import {CustomReq} from "../../../backend/util/customReq";
 import Data from "../components/Dashboard-Views/Data";
 import Devices from "../components/Dashboard-Views/Devices";
@@ -9,7 +9,8 @@ import Members from "../components/Dashboard-Views/Members";
 import Settings from "../components/Dashboard-Views/Settings";
 import Footer from "../components/Footer";
 import { useAuth } from "../helpers/AuthContext";
-import axios from "axios";
+//import { useOrg } from "../helpers/OrgContext";
+//import axios from "axios";
 
 const Dashboard = () => {
   //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
@@ -17,14 +18,16 @@ const Dashboard = () => {
 
   const [page, setPage] = useState("Data");
   const [showBackdrop, setShowBackdrop] = useState(false);
+  const { isAccountLinked } = useAuth();
+
+  /*
 
   //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT;
-  const [orgId, setOrgId] = useState("");
   const [orgName, setOrgName] = useState("");
   const [devices, setDevices] = useState<any[]>([]); // Initialize devices state with an empty array
   const [members, setMembers] = useState<any[]>([]);
+  const { setOrgId } = useOrg();
 
-  const { login, logout, isAccountLinked } = useAuth();
 
   const AUTH_ENDPOINT =
     import.meta.env.VITE_APP_NODE_ENV === "production"
@@ -36,22 +39,13 @@ const Dashboard = () => {
       ? import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT
       : import.meta.env.VITE_APP_FETCH_ORG_DEV_ENDPOINT;
 
-  const SYNC_DEVICE_ENDPOINT =
-    import.meta.env.VITE_APP_NODE_ENV === "production"
-      ? import.meta.env.VITE_APP_SYNC_DEVICE_ENDPOINT
-      : import.meta.env.VITE_APP_SYNC_DEVICE_DEV_ENDPOINT;
-
-  const FETCH_DEVICE_DATA_ENDPOINT =
-    import.meta.env.VITE_APP_NODE_ENV === "production"
-      ? import.meta.env.VITE_APP_FETCH_DEVICE_DATA_ENDPOINT
-      : import.meta.env.VITE_APP_FETCH_DEVICE_DATA_DEV_ENDPOINT;
-
   const FETCH_DEVICES_ENDPOINT =
     import.meta.env.VITE_APP_NODE_ENV === "production"
       ? import.meta.env.VITE_APP_FETCH_DEVICES_ENDPOINT
       : import.meta.env.VITE_APP_FETCH_DEVICES_DEV_ENDPOINT;
-
+*/
   //predefine a list of devices
+  /*
   const testDevices = [
     {
       device_id: "1234",
@@ -123,12 +117,14 @@ const Dashboard = () => {
     },
   ];
 
+  /*
   useEffect(() => {
     authResponse();
     setDevices(testDevices);
     fetchOrg();
   }, [orgId]);
-
+*/
+  /*
   const fetchOrg = async () => {
     try {
       const response = await axios.get(FETCH_ORG_ENDPOINT, {
@@ -185,118 +181,25 @@ const Dashboard = () => {
       console.log(error);
     }
   };
-
+*/
   const oAuthLogin = async () => {
     window.location.href = "https://physiobit.org/api/auth";
-  };
-
-  const fetchDataById = async (
-    id: string,
-    startDate: string,
-    endDate: string
-  ) => {
-    if (!id) {
-      return console.error("Device ID is required");
-    }
-
-    if (!startDate) {
-      startDate = Date.now().toString();
-    }
-
-    if (!endDate) {
-      endDate = Date.now().toString();
-    }
-
-    const dataType = "steps";
-
-    const url = `${FETCH_DEVICE_DATA_ENDPOINT}`;
-    console.log(url);
-
-    try {
-      const response = await axios.get(url, {
-        params: {
-          id,
-          startDate,
-          endDate,
-          dataType,
-        },
-        withCredentials: true,
-      });
-      console.log(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const formatDate = (date: Date) => {
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const year = date.getFullYear();
-    return `${year}-${month < 10 ? "0" + month : month}-${day}`;
-  };
-
-  const syncDevice = async (id: string, start: Date, end: Date) => {
-    if (!id) {
-      return console.error("Device ID is required");
-    }
-
-    if (!start) {
-      //startDate = Date.now().toString();
-    }
-
-    if (!end) {
-      //endDate = formatDate(Date.now().toString());
-    }
-
-    const url = `${SYNC_DEVICE_ENDPOINT}`;
-
-    const startDate = formatDate(start);
-    const endDate = formatDate(end);
-
-    try {
-      const response = await axios.get(url, {
-        params: {
-          id,
-          startDate,
-          endDate,
-        },
-        withCredentials: true,
-      });
-      console.log(response.data);
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   const renderComponent = useCallback(() => {
     switch (page) {
       case "Data":
-        return (
-          <Data
-            orgName={orgName}
-            devices={devices}
-            fetchDevice={fetchDataById}
-            syncDevice={syncDevice}
-          />
-        );
+        return <Data />;
       case "Devices":
-        return <Devices orgName={orgName} devices={devices} />;
+        return <Devices />;
       case "Members":
-        return <Members orgName={orgName} members={members} />;
+        return <Members />;
       case "Settings":
         return <Settings />;
       default:
-        return (
-          <Data
-            orgName={orgName}
-            devices={devices}
-            fetchDevice={fetchDataById}
-            syncDevice={syncDevice}
-          />
-        );
+        return <Data />;
     }
-  }, [page, orgId, orgName, devices, members]); // Only recompute if `page` changes
+  }, [page]); // Only recompute if `page` changes
 
   return (
     <div className="h-full font-ralewayBold">
@@ -306,7 +209,7 @@ const Dashboard = () => {
           onClick={() => setShowBackdrop(false)} // Close the backdrop when clicked
         />
       )}
-      <Navbar />
+      <DashboardNavbar />
       <div className="flex flex-row">
         <div className="w-[150px]">
           <StickySidebar setPage={setPage} />

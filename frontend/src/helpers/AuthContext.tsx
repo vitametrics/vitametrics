@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+//import { useOrg } from "./OrgContext";
 import axios from "axios";
 
 interface AuthContextProps {
@@ -20,11 +21,17 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isAccountLinked, setIsAccountLinked] = useState<boolean>(false);
   const [isOrgOwner, setIsOrgOwner] = useState<boolean>(false);
   const [isEmailVerified, setIsEmailVerified] = useState<boolean>(false);
+  //const { setOrgId } = useOrg();
 
   const AUTH_ENDPOINT =
     import.meta.env.VITE_APP_NODE_ENV === "production"
       ? import.meta.env.VITE_APP_AUTH_ENDPOINT
       : import.meta.env.VITE_APP_AUTH_DEV_ENDPOINT;
+
+  const LOGOUT_ENDPOINT =
+    import.meta.env.VITE_APP_NODE_ENV === "production"
+      ? import.meta.env.VITE_APP_LOGOUT_ENDPOINT
+      : import.meta.env.VITE_APP_LOGOUT_DEV_ENDPOINT;
 
   //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT; //~ production
 
@@ -39,6 +46,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setIsAccountLinked(response.data.user.isAccountLinked);
       setIsOrgOwner(response.data.user.isOrgOwner);
       setIsEmailVerified(response.data.user.isEmailVerified);
+      //setOrgId(response.data.user.orgId);
     } catch (error) {
       console.log(error);
     }
@@ -46,8 +54,16 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     return;
   };
 
-  const logout = () => {
-    setIsAuthenticated(false);
+  const logout = async () => {
+    try {
+      const response = await axios.get(LOGOUT_ENDPOINT, {
+        withCredentials: true,
+      });
+      setIsAuthenticated(false);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {

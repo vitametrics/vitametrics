@@ -4,26 +4,17 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useOrg } from "../../helpers/OrgContext";
 //import { Chart } from "chart.js";
 //import { Line, Bar } from "react-chartjs-2";
 //import "chart.js/auto"; // Importing auto registration of chart.js
 
-interface DataProps {
-  devices: any[];
-  orgName: string;
-  fetchDevice: (id: string, startDate: string, endDate: string) => void;
-  syncDevice: (id: string, start: Date, end: Date) => void;
-}
-
-const Data: React.FC<DataProps> = ({
-  devices,
-  orgName,
-  fetchDevice,
-  syncDevice,
-}) => {
+const Data = () => {
   const DOWNLOAD_ENDPOINT = import.meta.env.VITE_APP_DOWNLOAD_DATA_ENDPOINT;
   const [dataType, setDataType] = useState("All");
   //const [graphType, setGraphType] = useState("Bar");
+
+  const { devices, orgName, fetchDataById, syncDevice } = useOrg();
 
   //YYYY - MM - DD
   const [startDate, setStartDate] = useState(null);
@@ -243,7 +234,7 @@ const Data: React.FC<DataProps> = ({
                       <button
                         className="bg-[#93C7E1] dark:bg-[#BA6767] border-white border-solid dark:border-transparent border-2 p-2 rounded-lg w-[60px] ml-auto"
                         onClick={() =>
-                          fetchDevice(
+                          fetchDataById(
                             device.device_id,
                             startDate || formatDate(new Date()),
                             endDate || formatDate(new Date())

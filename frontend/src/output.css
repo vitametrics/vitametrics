@@ -706,6 +706,10 @@ video {
   height: 2rem;
 }
 
+.h-\[2\.5rem\] {
+  height: 2.5rem;
+}
+
 .h-\[200px\] {
   height: 200px;
 }
@@ -983,6 +987,11 @@ video {
   background-color: rgb(31 28 35 / var(--tw-bg-opacity));
 }
 
+.bg-\[\#202020\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(32 32 32 / var(--tw-bg-opacity));
+}
+
 .bg-\[\#373F51\] {
   --tw-bg-opacity: 1;
   background-color: rgb(55 63 81 / var(--tw-bg-opacity));
@@ -1102,21 +1111,6 @@ video {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
-.bg-\[\#000\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(0 0 0 / var(--tw-bg-opacity));
-}
-
-.bg-\[\#292929\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(41 41 41 / var(--tw-bg-opacity));
-}
-
-.bg-\[\#202020\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(32 32 32 / var(--tw-bg-opacity));
-}
-
 .object-cover {
   -o-object-fit: cover;
      object-fit: cover;
@@ -1177,9 +1171,19 @@ video {
   padding-right: 0.75rem;
 }
 
+.px-5 {
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
 .py-2 {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
+}
+
+.py-3 {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
 }
 
 .py-5 {
@@ -1225,10 +1229,6 @@ video {
 
 .font-ralewayBold {
   font-family: Raleway-Bold, sans-serif;
-}
-
-.font-leagueSpartan {
-  font-family: LeagueSpartan-Regular, sans-serif;
 }
 
 .text-2xl {
@@ -1615,9 +1615,9 @@ input:checked + .slider:before {
   background-color: rgb(14 13 13 / var(--tw-bg-opacity));
 }
 
-:is(.dark .dark\:bg-\[\#171619\]) {
+:is(.dark .dark\:bg-\[\#161616\]) {
   --tw-bg-opacity: 1;
-  background-color: rgb(23 22 25 / var(--tw-bg-opacity));
+  background-color: rgb(22 22 22 / var(--tw-bg-opacity));
 }
 
 :is(.dark .dark\:bg-\[\#1E1D20\]) {
