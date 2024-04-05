@@ -6,7 +6,7 @@ import { CustomReq } from '../util/customReq';
 import User from '../models/User';
 import Organization from "../models/Organization"
 import { sendEmail } from '../util/emailUtil';
-import { query, validationResult } from 'express-validator';
+import { query, validationResult, body } from 'express-validator';
 const router = express.Router();
 
 // user session authentication status
@@ -115,6 +115,37 @@ router.post('/set-password', async (req: Request, res: Response) => {
         console.error(err);
         return res.status(500).json({msg: 'Internal Server Error'});
     }
+});
+
+router.post('/change-password', verifySession, [
+    body('password').not().isEmpty().withMessage('Password is required')
+], async (req: CustomReq, res: Response) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    if (!req.user) {
+        return res.status(401).json({msg: "Unauthorized"});
+    }
+    const userId = req.user.userId;
+    const {password} = req.body;
+
+    try { 
+        const user = await User.findOne({ userId });
+
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
+        user.password = await argon2.hash(password);
+        await user.save();
+        return res.status(200).json({ msg: 'Password changed!' });
+} catch (error) {
+    console.error(error);
+    return res.status(500).json({ msg: 'Internal Server Error' });
+} 
 });
 
 // send user verification email

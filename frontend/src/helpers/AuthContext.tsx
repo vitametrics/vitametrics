@@ -9,6 +9,7 @@ interface AuthContextProps {
   isEmailVerified: boolean;
   login: () => void;
   logout: () => void;
+  userEmail: string;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -21,6 +22,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isAccountLinked, setIsAccountLinked] = useState<boolean>(false);
   const [isOrgOwner, setIsOrgOwner] = useState<boolean>(false);
   const [isEmailVerified, setIsEmailVerified] = useState<boolean>(false);
+  const [userEmail, setUserEmail] = useState<string>("");
   //const { setOrgId } = useOrg();
 
   const AUTH_ENDPOINT =
@@ -40,17 +42,16 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const response = await axios.get(AUTH_ENDPOINT, {
         withCredentials: true,
       });
-
       console.log(response.data);
       setIsAuthenticated(response.data.isAuthenticated);
       setIsAccountLinked(response.data.user.isAccountLinked);
       setIsOrgOwner(response.data.user.isOrgOwner);
       setIsEmailVerified(response.data.user.isEmailVerified);
+      setUserEmail(response.data.user.email);
       //setOrgId(response.data.user.orgId);
     } catch (error) {
       console.log(error);
     }
-
     return;
   };
 
@@ -79,6 +80,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         isEmailVerified,
         login,
         logout,
+        userEmail,
       }}
     >
       {children}

@@ -1,11 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-} from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { useAuth } from "./AuthContext";
 import axios from "axios";
 
@@ -23,7 +17,7 @@ interface OrgContextProps {
 const OrgContext = createContext<OrgContextProps | undefined>(undefined);
 
 const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { login, logout, isAuthenticated } = useAuth();
+  const { login, logout } = useAuth();
   const [orgName, setOrgName] = useState<string>("");
   const [orgId, setOrgId] = useState<string>("");
   const [members, setMembers] = useState<any[]>([]);
@@ -231,40 +225,50 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     }
   };
 
-  const authResponse = async () => {
-    try {
-      const auth_response = await axios.get(AUTH_ENDPOINT, {
-        withCredentials: true,
-      });
+  useEffect(() => {
+    const initializeAuth = async () => {
+      try {
+        const auth_response = await axios.get(AUTH_ENDPOINT, {
+          withCredentials: true,
+        });
 
-      if (auth_response.data.isAuthenticated === false) {
-        console.log("User is not authenticated");
-        logout();
-        return;
+        if (auth_response.data.isAuthenticated === false) {
+          console.log("User is not authenticated");
+          logout();
+        } else {
+          await login();
+          setOrgId(auth_response.data.user.orgId);
+        }
+      } catch (error) {
+        console.error(error);
       }
+    };
 
-      await login();
-      setOrgId(auth_response.data.user.orgId);
-      console.log(orgId);
-      console.log(auth_response.data);
-    } catch (error) {
-      console.log(error);
+    initializeAuth();
+  }, [login, logout]);
+
+  useEffect(() => {
+    const fetchOrgData = async () => {
+      console.log("fetching org " + orgId);
+      try {
+        const response = await axios.get(FETCH_ORG_ENDPOINT, {
+          params: { orgId: orgId },
+          withCredentials: true,
+        });
+
+        setOrgName(response.data.organization.orgName);
+        setMembers(response.data.members || []);
+        await fetchDevices(); // Assuming fetchDevices doesn't depend on orgId directly
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    if (orgId) {
+      fetchOrgData();
     }
-  };
+  }, [orgId]); // Only re-run when orgId changes
 
-  useEffect(() => {
-    authResponse();
-    fetchOrg();
-    fetchDevices();
-  }, [orgId, isAuthenticated]);
-
-  /*
-  useEffect(() => {
-    authResponse();
-    setDevices(devices);
-    fetchOrg();
-  }, [isAuthenticated]);
-*/
   return (
     <OrgContext.Provider
       value={{

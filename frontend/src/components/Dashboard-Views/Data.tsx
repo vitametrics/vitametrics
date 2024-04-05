@@ -2,7 +2,7 @@
 //import DatePicker from "react-datepicker";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { useOrg } from "../../helpers/OrgContext";
 //import { Chart } from "chart.js";
@@ -44,11 +44,6 @@ const Data = () => {
       datasets,
     });
   }, [devices, selectedDevices]);*/
-
-  useEffect(() => {
-    console.log(startDate);
-    console.log(endDate);
-  }, [startDate, endDate]);
 
   const handleDeviceSelectionChange = (
     deviceId: string,
