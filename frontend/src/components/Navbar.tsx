@@ -1,14 +1,11 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../helpers/AuthContext";
 import ProfileIcon from "../assets/ProfileIcon";
-import logo from "../assets/logo.png";
+import logo from "../assets/logo.webp";
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [isDarkMode, setIsDarkMode] = useState(
-    localStorage.getItem("darkMode") === "true"
-  );
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -19,14 +16,6 @@ const Navbar = () => {
   useEffect(() => {
     console.log("IsAuthenticated:", isAuthenticated);
   }, [isAuthenticated]);
-
-  const toggleDarkMode = () => {
-    const newDarkMode = !isDarkMode;
-    setIsDarkMode(newDarkMode);
-    localStorage.setItem("darkMode", newDarkMode.toString());
-    //refresh
-    window.location.reload();
-  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -47,7 +36,12 @@ const Navbar = () => {
           href="/"
           className="flex items-center space-x-3 rtl:space-x-rev  erse"
         >
-          <img src={logo} className="h-16" alt="Physiobit Logo" />
+          <img
+            src={logo}
+            loading="lazy"
+            className="h-16"
+            alt="Physiobit Logo"
+          />
         </a>
         {windowWidth <= 755 ? (
           <>
@@ -111,16 +105,6 @@ const Navbar = () => {
                   <a href="/contact" className="block py-2 px-3">
                     Contact
                   </a>
-                </li>
-                <li>
-                  <label className="switch">
-                    <input
-                      type="checkbox"
-                      checked={isDarkMode}
-                      onChange={toggleDarkMode}
-                    />
-                    <span className="slider"> </span>
-                  </label>
                 </li>
               </ul>
             </div>

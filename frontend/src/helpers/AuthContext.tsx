@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 //import { useOrg } from "./OrgContext";
 import axios from "axios";
 
@@ -66,10 +66,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    login();
-  }, []);
 
   return (
     <AuthContext.Provider

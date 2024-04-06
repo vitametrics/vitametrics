@@ -1,13 +1,10 @@
-import logo from "../assets/logo.png";
+import logo from "../assets/logo.webp";
 const Footer = () => {
   return (
     <footer className="bg-black">
       <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
         <div className="sm:flex flex sm:items-center sm:justify-between">
-          <a
-            href="https://flowbite.com/"
-            className="flex items-center  sm:mb-0 space-x-3 rtl:space-x-reverse"
-          >
+          <a className="flex items-center  sm:mb-0 space-x-3 rtl:space-x-reverse">
             <div className="flex flex-col">
               <img src={logo} className="w-[200px]" />
               <span className="text-base text-white sm:hidden font-semibold">
@@ -41,8 +38,8 @@ const Footer = () => {
             </li>
           </ul>
         </div>
-        <hr className="my-6 dark:border-gray-200 sm:mx-auto  lg:my-8" />
-        <span className="block text-sm text-[#5086A2] dark:text-white text-center sm:text-center ">
+        <hr className="my-6 border-gray-200 sm:mx-auto  lg:my-8" />
+        <span className="block text-sm text-white text-center sm:text-center ">
           © 2024{" "}
           <a href="/" className="hover:underline gap-10">
             Physiobit™

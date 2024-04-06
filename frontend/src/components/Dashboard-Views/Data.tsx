@@ -112,8 +112,8 @@ const Data = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col p-10 bg-[#FAF9F6] dark:bg-[#1E1D20] dark:bg-hero-texture">
-      <h2 className="w-full text-4xl font-ralewayBold text-[#373F51] dark:text-white p-5 pb-0">
+    <div className="w-full h-full flex flex-col p-10 bg-[#1E1D20] dark:bg-hero-texture">
+      <h2 className="w-full text-4xl font-ralewayBold text-white p-5 pb-0">
         {orgName} Overview
       </h2>
       <div className="flex flex-row p-5 w-full gap-5">
@@ -121,7 +121,7 @@ const Data = () => {
         <div className="mr-auto">
           <label
             htmlFor="dataType"
-            className="block text-sm font-medium  text-[#373F51] dark:text-white"
+            className="block text-sm font-medium  text-white"
           >
             Select Data Type:
           </label>
@@ -147,7 +147,7 @@ const Data = () => {
           <div className="ml-auto">
             <label
               htmlFor="startDate"
-              className="block text-sm font-medium  text-[#373F51] dark:text-white"
+              className="block text-sm font-medium  text-white"
             >
               Select Start Date:
             </label>
@@ -164,7 +164,7 @@ const Data = () => {
           <div>
             <label
               htmlFor="endDate"
-              className="block text-sm font-medium  text-[#373F51] dark:text-white"
+              className="block text-sm font-medium  text-white"
             >
               Select End Date:
             </label>
@@ -181,14 +181,14 @@ const Data = () => {
         </div>
       </div>
       <div className="p-5 w-full">
-        <div className="w-full h-[500px] bg-[#99BBCD] text-white dark:bg-[#2F2D2D] rounded-xl flex justify-center items-center mb-10">
+        <div className="w-full h-[500px]  text-white bg-[#2F2D2D] rounded-xl flex justify-center items-center mb-10">
           {/*
           <Bar
             data={{ datasets: [], ...chartData }}
             options={{ responsive: true }}
             />*/}
         </div>
-        <div className="w-full h-[400px] bg-[#5086A2] text-white dark:bg-[#2F2D2D] rounded-xl flex flex-col mb-10">
+        <div className="w-full h-[400px] text-white bg-[#2F2D2D] rounded-xl flex flex-col mb-10">
           <h2 className="text-center w-full text-white p-5 text-4xl">
             Devices
           </h2>
@@ -207,7 +207,7 @@ const Data = () => {
                   return (
                     <div
                       key={index}
-                      className="flex flex-row gap-5 items-center w-full h-[70px] bg-[#93C7E1] dark:bg-[#434040] p-5 rounded-xl"
+                      className="flex flex-row gap-5 items-center w-full h-[70px] bg-[#434040] p-5 rounded-xl"
                     >
                       <div className="flex flex-row mr-3 items-center justify-center">
                         <input
@@ -219,7 +219,7 @@ const Data = () => {
                             )
                           }
                           checked={selectedDevices.includes(device.device_id)}
-                          className="w-9 h-[44px] mr-2  bg-gray-100 checked:accent-[#aae5ff] dark:accent-[#BA6767] border-gray-300 rounded-xl focus:ring-transparent dark:checked:accent-[#BA6767]"
+                          className="w-9 h-[44px] mr-2  bg-gray-100 accent-[#BA6767] border-gray-300 rounded-xl focus:ring-transparent dark:checked:accent-[#BA6767]"
                         />
                         <p className="text-2xl font-bold text-white mr-auto ">
                           {device.device_id}
@@ -227,7 +227,7 @@ const Data = () => {
                       </div>
 
                       <button
-                        className="bg-[#93C7E1] dark:bg-[#BA6767] border-white border-solid dark:border-transparent border-2 p-2 rounded-lg w-[60px] ml-auto"
+                        className="bg-none text-white border-white border-solid dark:border-transparent border-2 p-2 rounded-lg w-[60px] ml-auto"
                         onClick={() =>
                           fetchDataById(
                             device.device_id,
@@ -239,7 +239,7 @@ const Data = () => {
                         Fetch
                       </button>
                       <button
-                        className="bg-[#93C7E1] dark:bg-[#BA6767] border-white dark:border-transparent border-solid border-2 p-2 rounded-lg w-[60px]"
+                        className="bg-none text-white border-white dark:border-transparent border-solid border-2 p-2 rounded-lg w-[60px]"
                         onClick={() =>
                           syncDevice(
                             device.device_id,
@@ -263,7 +263,7 @@ const Data = () => {
           </div>
         </div>
         <button
-          className="p-5 text-2xl rounded-xl w-[250px] bg-[#93C7E1] dark:bg-[#AE6B69] text-white"
+          className="p-5 text-2xl rounded-xl w-[250px] bg-[#AE6B69] text-white"
           onClick={() => downloadData()}
         >
           Export

@@ -21,6 +21,10 @@
         "backend"
     ],
     "devDependencies": {
+        "@types/react-lazy-load-image-component": "^1.6.3",
         "concurrently": "^8.2.2"
+    },
+    "dependencies": {
+        "react-intersection-observer": "^9.8.1"
     }
 }
