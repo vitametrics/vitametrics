@@ -9,8 +9,6 @@ async function fetchDevices(userId: string, accessToken: string, orgId: string) 
 
     for (const deviceData of deviceResponse.data) {
 
-        console.log(deviceData);
-
         // add fetched devices to mongodb organization document
         await Organization.updateOne(
             {orgId: orgId},
