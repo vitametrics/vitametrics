@@ -9,6 +9,7 @@ const Settings = () => {
   const { orgName } = useOrg();
   const { isEmailVerified, userEmail } = useAuth();
 
+  const [changePasswordFlag, setChangePasswordFlag] = useState(false);
   const [changePasswordMsg, setChangePasswordMsg] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -16,6 +17,10 @@ const Settings = () => {
   const [debouncedConfirmPassword, setDebouncedConfirmPassword] = useState("");
 
   const [changeEmailMsg, setChangeEmailMsg] = useState("");
+  const [changeEmailFlag, setChangeEmailFlag] = useState(false);
+
+  const [verificationLinkMsg, setVerificationLinkMsg] = useState("");
+  const [verificationLinkFlag, setVerificationLinkFlag] = useState(false);
   const [newEmail, setNewEmail] = useState("");
   const [debouncedEmail, setDebouncedEmail] = useState("");
 
@@ -28,6 +33,11 @@ const Settings = () => {
     import.meta.env.VITE_APP_NODE_ENV === "production"
       ? import.meta.env.VITE_APP_CHANGE_EMAIL_ENDPOINT
       : import.meta.env.VITE_APP_CHANGE_EMAIL_DEV_ENDPOINT;
+
+  const SEND_VERIFICATION_LINK_ENDPOINT =
+    import.meta.env.VITE_APP_NODE_ENV === "production"
+      ? import.meta.env.VITE_APP_SEND_EMAIL_VERIFICATION_ENDPOINT
+      : import.meta.env.VITE_APP_SEND_EMAIL_VERIFICATION_DEV_ENDPOINT;
 
   useEffect(() => {
     const delayInputTimeoutId = setTimeout(() => {
@@ -53,13 +63,6 @@ const Settings = () => {
     return () => clearTimeout(timerId);
   }, [newEmail]);
 
-  /*
-  const sendVerificationLink = async () => {
-
-
-
-  }*/
-
   const handleChangeEmail = async () => {
     if (!debouncedEmail) {
       setChangeEmailMsg("Email cannot be empty");
@@ -78,12 +81,23 @@ const Settings = () => {
 
       console.log(response.data);
       setNewEmail("");
-      setChangeEmailMsg("Success");
+      setChangeEmailFlag(true);
+      setChangeEmailMsg("Email successfully changed!");
     } catch (error) {
+      setChangeEmailFlag(false);
       setChangeEmailMsg("Error sending email address");
       console.log(error);
     }
   };
+
+  function passwordSuccess() {
+    setDebouncedPassword("");
+    setPassword("");
+    setConfirmPassword("");
+    setDebouncedConfirmPassword("");
+    setChangePasswordFlag(true);
+    setChangePasswordMsg("Password changed successfully");
+  }
 
   const changePassword = async () => {
     if (debouncedPassword !== debouncedConfirmPassword) {
@@ -108,12 +122,25 @@ const Settings = () => {
       );
 
       console.log(response.data);
-      setDebouncedPassword("");
-      setPassword("");
-      setConfirmPassword("");
-      setDebouncedConfirmPassword("");
-      setChangePasswordMsg("Password changed successfully");
+      passwordSuccess();
     } catch (error) {
+      setChangePasswordFlag(false);
+      console.log(error);
+    }
+  };
+
+  const sendVerificationLink = async () => {
+    try {
+      const response = await axios.post(SEND_VERIFICATION_LINK_ENDPOINT, {
+        withCredentials: true,
+      });
+
+      console.log(response.data);
+      setVerificationLinkMsg("Verification link sent!");
+      setVerificationLinkFlag(true);
+    } catch (error) {
+      setVerificationLinkMsg("Error sending verification link");
+      setVerificationLinkFlag(false);
       console.log(error);
     }
   };
@@ -131,9 +158,19 @@ const Settings = () => {
               <WarningIcon />
               <p className="text-lg text-[#ffdd00]">Email not verified:</p>
             </div>
-            <p>{userEmail}</p>
+            {userEmail}
           </div>
-          <button className="p-2 bg-[#373737]  rounded-md text-white">
+          {verificationLinkFlag ? (
+            <p className="text-green-500 mt-2 font-bold">
+              {verificationLinkMsg}
+            </p>
+          ) : (
+            <p className="text-red-500 mt-2 font-bold">{verificationLinkMsg}</p>
+          )}
+          <button
+            onClick={sendVerificationLink}
+            className="p-2 bg-[#373737]  rounded-md text-white"
+          >
             Send Verification Link
           </button>
         </div>
@@ -147,7 +184,7 @@ const Settings = () => {
         <h2 className="w-full text-3xl font-ralewayBold text-white">
           Change Password
         </h2>
-        {changePasswordMsg === "Password changed successfully" ? (
+        {changePasswordFlag ? (
           <p className="text-green-500 mt-2 font-bold">{changePasswordMsg}</p>
         ) : (
           <p className="text-red-500 mt-2 font-bold">{changePasswordMsg}</p>
@@ -155,14 +192,14 @@ const Settings = () => {
         <input
           type="password"
           value={password}
-          className="w-full md:w-[500px] h-12 p-5 mt-2 text-lg text-white bg-white  dark:bg-opacity-10 rounded-lg border-none"
+          className="w-full md:w-[500px] h-12 p-5 mt-2 text-lg text-black bg-white  dark:bg-opacity-10 rounded-lg border-none"
           placeholder="New Password"
           onChange={(e) => setPassword(e.target.value)}
         />
         <input
           type="password"
           value={confirmPassword}
-          className="w-full md:w-[500px] h-12 p-5 mt-5 text-lg text-white bg-white dark:bg-opacity-10 rounded-lg border-none"
+          className="w-full md:w-[500px] h-12 p-5 mt-5 text-lg text-black bg-white dark:bg-opacity-10 rounded-lg border-none"
           placeholder="Confirm New Password"
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
@@ -177,21 +214,20 @@ const Settings = () => {
         <h2 className="w-full text-3xl font-ralewayBold text-white">
           Change Email
         </h2>
-        {changeEmailMsg === "Success" ? (
-          <p className="text-green-500 mt-2 font-bold">
-            {" "}
-            Verification email sent! Please verify.
-          </p>
+        {changeEmailFlag ? (
+          <p className="text-green-500 mt-2 font-bold"> {changeEmailMsg}</p>
         ) : (
           <p className="text-red-500 mt-2 font-bold">{changeEmailMsg}</p>
         )}
+
         <input
           type="email"
           value={newEmail}
-          className="w-full md:w-[500px] h-12 p-5 mt-2 text-lg text-white bg-white  dark:bg-opacity-10 rounded-lg border-none"
+          className="w-full md:w-[500px] h-12 p-5 mt-2 text-lg text-black bg-white  dark:bg-opacity-10 rounded-lg border-none"
           placeholder="New Email"
           onChange={(e) => setNewEmail(e.target.value)}
         />
+
         <button
           className="w-full md:w-[500px] h-12 mt-5 bg-[#585858] text-white text-lg font-ralewayBold rounded-lg"
           onClick={handleChangeEmail}
