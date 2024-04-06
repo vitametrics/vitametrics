@@ -1,6 +1,6 @@
 import express, {Response} from 'express';
 import { query, validationResult } from 'express-validator';
-import { Parser } from 'json2csv';
+import { DateTime } from 'luxon';
 import crypto from 'crypto';
 import axios from 'axios';
 import verifySession from '../middleware/verifySession';
@@ -14,13 +14,28 @@ import User from '../models/User';
 const router = express.Router();
 
 // note: date is YYYY-MM-DD format
-async function fetchIntradayData(userId: string, accessToken: string, dataType: string, date: string) {
+async function fetchIntradayData(userId: string, accessToken: string, dataType: string, date: string, detailLevel: string) {
     const baseUrl = `https://api.fitbit.com/1/user/${userId}/activities`;
     let url;
+
+    if (detailLevel !== "1sec" && detailLevel !== "1min" && detailLevel !== "5min" && detailLevel !== "15min") {
+        throw new Error('Invalid detail level');
+    } else if (detailLevel === "1sec" && dataType !== "heart") {
+        throw new Error('Invalid detail level');
+    }
+
     if (dataType === 'heart') {
-        url = `${baseUrl}/heart/date/${date}/1d/1min.json`;
+        url = `${baseUrl}/heart/date/${date}/1d/${detailLevel}.json`;
     } else if (dataType === 'steps') {
-        url = `${baseUrl}/steps/date/${date}/1d/1min.json`;
+        url = `${baseUrl}/steps/date/${date}/1d/${detailLevel}.json`;
+    } else if (dataType === 'calories') {
+        url = `${baseUrl}/calories/date/${date}/1d/${detailLevel}.json`;
+    } else if (dataType === 'distance') {
+        url = `${baseUrl}/distance/date/${date}/1d/${detailLevel}.json`;
+    } else if (dataType === 'elevation') {
+        url = `${baseUrl}/elevation/date/${date}/1d/${detailLevel}.json`;
+    } else if (dataType === 'floors') {
+        url = `${baseUrl}/floors/date/${date}/1d/${detailLevel}.json`;
     } else {
         throw new Error('Invalid data type');
     }
@@ -29,7 +44,15 @@ async function fetchIntradayData(userId: string, accessToken: string, dataType: 
         const response = await axios.get(url, {
             headers: {'Authorization': `Bearer ${accessToken}`}
         });
-        return response.data['activities-' + dataType + '-intraday'].dataset;
+        
+        const processedData = response.data[`activities-${dataType}-intraday`].dataset.map((entry: { time: string; value: number; }) => {
+            return {
+                timestamp: DateTime.fromISO(`${date}T${entry.time}`).toFormat('yyyy-MM-dd HH:mm:ss'),
+                value: entry.value
+            }
+        });
+
+        return processedData;
     } catch (err) {
         console.error('Error fetching data from Fitbit: ', err);
         throw err;
@@ -147,7 +170,8 @@ router.post('/fetch-devices', verifySession, checkOrgMembership, refreshToken, a
 router.get('/download-data', verifySession, checkOrgMembership, refreshToken, [
     query('deviceId').not().isEmpty().withMessage('Device ID is required'),
     query('dataType').not().isEmpty().withMessage('You must specify which data to download'),
-    query('date').not().isEmpty().withMessage('You must specify a date')
+    query('date').not().isEmpty().withMessage('You must specify a date'),
+    query('detailLevel').not().isEmpty().withMessage('You must specify a detail level')
 ], async (req: CustomReq, res: Response) => {
 
     const errors = validationResult(req);
@@ -171,17 +195,13 @@ router.get('/download-data', verifySession, checkOrgMembership, refreshToken, [
             return res.status(404).json({ msg: 'Device not found in organization' });
         }
 
-        const data = await fetchIntradayData(req.user.userId, organization.fitbitAccessToken, req.query.dataType as string, req.query.date as string);
+        const data = await fetchIntradayData(organization.userId, organization.fitbitAccessToken, req.query.dataType as string, req.query.date as string, req.query.detailLevel as string);
 
-        if (data.length === 0) {
-            return res.status(404).json({ msg: 'No data found for this date' });
-        }
-        console.log(data);
 
-        const parser = new Parser();
-        const csvData = parser.parse(data);
-
-        res.setHeader('Content-disposition', 'attachment; filename=heart-rate-data.csv');
+        const header = "Timestamp,Value\n";
+        const rows = data.map((row: { timestamp: DateTime, value: number; }) => `${row.timestamp},${row.value}`).join("\n");
+        const csvData = header + rows;
+        res.setHeader('Content-disposition', `attachment; filename=${deviceId}-${req.query.dataType}${(req.query.detailLevel as string).toUpperCase()}.csv`);
         res.set('Content-Type', 'text/csv');
         return res.status(200).send(csvData);
 
