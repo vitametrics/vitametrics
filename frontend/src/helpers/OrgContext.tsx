@@ -3,12 +3,23 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { useAuth } from "./AuthContext";
 import axios from "axios";
 
+interface DeviceData {
+  id: string;
+  deviceVersion: string;
+  lastSyncTime: string;
+  batteryLevel: number;
+  steps: { date: string; value: number }[];
+  vo2max: { date: string; value: number }[];
+  heart_rate: { date: string; value: number }[];
+  [key: string]: any; // This line is the index signature
+}
+
 interface OrgContextProps {
   orgName: string;
   orgId: string;
   setOrgId: (arg0: string) => void;
   members: any[];
-  devices: any[];
+  devices: DeviceData[];
   setDevices: (arg0: []) => void;
   fetchOrg: () => void;
   fetchDataById: (id: string, startDate: string, endDate: string) => void;
@@ -22,14 +33,14 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [orgName, setOrgName] = useState<string>("");
   const [orgId, setOrgId] = useState<string>("");
   const [members, setMembers] = useState<any[]>([]);
-  const [devices, setDevices] = useState<any[]>([]);
+  const [devices, setDevices] = useState<DeviceData[]>([]);
 
   const testDevices = [
     {
-      device_id: "1234",
-      device_type: "Fitbit",
-      last_sync_date: "2021-10-10",
-      battery_level: 50,
+      id: "2570612980",
+      deviceVersion: "Alta HR",
+      lastSyncTime: "2024-02-24T00:02:13.000",
+      batteryLevel: 100,
       steps: [
         {
           date: "2024-02-20",
@@ -37,17 +48,63 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         },
         {
           date: "2024-02-21",
-          value: 10000,
+          value: 100,
         },
         {
           date: "2024-02-22",
-          value: 10000,
+          value: 100,
+        },
+      ],
+      vo2max: [
+        {
+          date: "2024-02-20",
+          value: 50,
+        },
+        {
+          date: "2024-02-21",
+          value: 51,
+        },
+        {
+          date: "2024-02-22",
+          value: 54,
+        },
+        {
+          date: "2024-02-23",
+          value: 40,
+        },
+        {
+          date: "2024-02-24",
+          value: 46,
+        },
+        {
+          date: "2024-02-25",
+          value: 55,
+        },
+        {
+          date: "2024-02-26",
+          value: 50,
+        },
+        {
+          date: "2024-02-27",
+          value: 51,
+        },
+        {
+          date: "2024-02-28",
+          value: 54,
+        },
+        {
+          date: "2024-02-29",
+          value: 40,
+        },
+        {
+          date: "2024-02-30",
+          value: 46,
         },
       ],
       heart_rate: [
         {
           date: "2024-02-20",
-          value: 100,
+          value: 74,
         },
         {
           date: "2024-02-21",
@@ -55,15 +112,35 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         },
         {
           date: "2024-02-22",
-          value: 100,
+          value: 90,
+        },
+        {
+          date: "2024-02-23",
+          value: 95,
+        },
+        {
+          date: "2024-02-24",
+          value: 64.8,
+        },
+        {
+          date: "2024-02-25",
+          value: 80,
+        },
+        {
+          date: "2024-02-26",
+          value: 90,
+        },
+        {
+          date: "2024-02-27",
+          value: 120,
         },
       ],
     },
     {
-      device_id: "5678",
-      device_type: "Fitbit",
-      last_sync_date: "2021-10-10",
-      battery_level: 50,
+      id: "2570612417",
+      deviceVersion: "Fitbit Pro",
+      lastSyncTime: "2024-02-24T00:02:13.000",
+      batteryLevel: 10,
       steps: [
         {
           date: "2024-02-20",
@@ -71,17 +148,51 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         },
         {
           date: "2024-02-21",
-          value: 10000,
+          value: 100,
         },
         {
           date: "2024-02-22",
-          value: 10000,
+          value: 100,
+        },
+      ],
+      vo2max: [
+        {
+          date: "2024-02-20",
+          value: 64.8,
+        },
+        {
+          date: "2024-02-21",
+          value: 64.8,
+        },
+        {
+          date: "2024-02-22",
+          value: 64.8,
+        },
+        {
+          date: "2024-02-23",
+          value: 64.8,
+        },
+        {
+          date: "2024-02-24",
+          value: 64.8,
+        },
+        {
+          date: "2024-02-25",
+          value: 64.8,
+        },
+        {
+          date: "2024-02-26",
+          value: 64.8,
+        },
+        {
+          date: "2024-02-27",
+          value: 64.8,
         },
       ],
       heart_rate: [
         {
           date: "2024-02-20",
-          value: 100,
+          value: 74,
         },
         {
           date: "2024-02-21",
@@ -89,7 +200,27 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         },
         {
           date: "2024-02-22",
-          value: 100,
+          value: 90,
+        },
+        {
+          date: "2024-02-23",
+          value: 95,
+        },
+        {
+          date: "2024-02-24",
+          value: 64.8,
+        },
+        {
+          date: "2024-02-25",
+          value: 80,
+        },
+        {
+          date: "2024-02-26",
+          value: 90,
+        },
+        {
+          date: "2024-02-27",
+          value: 120,
         },
       ],
     },

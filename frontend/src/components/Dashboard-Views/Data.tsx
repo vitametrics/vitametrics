@@ -2,16 +2,25 @@
 //import DatePicker from "react-datepicker";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useOrg } from "../../helpers/OrgContext";
-//import { Chart } from "chart.js";
-//import { Line, Bar } from "react-chartjs-2";
-//import "chart.js/auto"; // Importing auto registration of chart.js
+import { Line, Bar, Pie, Scatter, Doughnut } from "react-chartjs-2";
+import "chart.js/auto"; // Importing auto registration of chart.js
+
+type DataItem = {
+  date: string;
+  value: number;
+};
 
 const Data = () => {
-  const DOWNLOAD_ENDPOINT = import.meta.env.VITE_APP_DOWNLOAD_DATA_ENDPOINT;
-  const [dataType, setDataType] = useState("All");
+  const DOWNLOAD_ENDPOINT =
+    import.meta.env.VITE_APP_NODE_ENV === "production"
+      ? import.meta.env.VITE_APP_DOWNLOAD_DATA_ENDPOINT
+      : import.meta.env.VITE_APP_DOWNLOAD_DATA_DEV_ENDPOINT;
+
+  const [dataType, setDataType] = useState("heart_rate");
+  const [graphType, setGraphType] = useState("bar");
   //const [graphType, setGraphType] = useState("Bar");
 
   const { devices, orgName, fetchDataById, syncDevice } = useOrg();
@@ -19,31 +28,79 @@ const Data = () => {
   //YYYY - MM - DD
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [deviceId, setDeviceId] = useState("");
   const [selectedDevices, setSelectedDevices] = useState<string[]>([]);
+  const [detailLevel, setDetailLevel] = useState("1hour");
 
-  //const [chartData, setChartData] = useState({});
+  const detailLevelTypes = [
+    {
+      value: "1sesc",
+      label: "1 second",
+    },
+    {
+      value: "1min",
+      label: "1 minute",
+    },
+    {
+      value: "15min",
+      label: "15 minutes",
+    },
+    {
+      value: "1hour",
+      label: "1 hour",
+    },
+  ];
 
-  /*
+  useEffect(() => {
+    const deviceIds = devices.map((device) => device.id);
+    setSelectedDevices(deviceIds);
+  }, []);
+
+  const [chartData, setChartData] = useState({});
+
+  const dataTypeOptions = [
+    { value: "heart_rate", label: "Heart Rate" },
+    { value: "vo2max", label: "VO2 Max" },
+    { value: "steps", label: "Steps" },
+  ];
+
+  const graphTypeOptions = [
+    { value: "bar", label: "Bar" },
+    { value: "line", label: "Line" },
+    { value: "pie", label: "Pie" },
+    { value: "doughnut", label: "Doughnut" },
+    { value: "scatter", label: "Scatter" },
+  ];
+
   useEffect(() => {
     const datasets = selectedDevices
       .map((deviceId) => {
-        const device = devices.find((d) => d.device_id === deviceId);
+        const device = devices.find((d) => d.id === deviceId);
         if (!device) return null; // Skip if device not found
 
-        const label = device.device_id; // Use device ID as label
+        const label = device.id; // Use device ID as label
         const borderColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`; // Random color for each dataset
-        const data = device.steps.map((step: any) => step.value);
+        const backgroundColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`; // Random color for each dataset
+        const data = device?.[dataType]?.map((item: DataItem) => item.value);
 
-        return { label, data, borderColor, tension: 0.1, fill: false };
+        return {
+          label,
+          data,
+          borderColor,
+          backgroundColor,
+          tension: 0.1,
+          fill: false,
+        };
       })
       .filter((dataset) => dataset !== null); // Filter out null datasets
 
+    const labels =
+      devices[0]?.[dataType]?.map((item: DataItem) => item.date) || [];
+
     setChartData({
-      labels: devices[0]?.steps.map((step: any) => step.date), // Use dates from the first device as labels
+      labels, // Use dates from the first device as labels
       datasets,
     });
-  }, [devices, selectedDevices]);*/
+  }, [selectedDevices, dataType]);
 
   const handleDeviceSelectionChange = (
     deviceId: string,
@@ -52,14 +109,8 @@ const Data = () => {
     setSelectedDevices((prev) =>
       isChecked ? [...prev, deviceId] : prev.filter((id) => id !== deviceId)
     );
-    setDeviceId(deviceId); //for testing
+    //setDeviceId(deviceId); //for testing
   };
-
-  const dataTypeOptions = [
-    { value: "All", label: "All" },
-    { value: "heart_rate", label: "Heart Rate" },
-    { value: "sleep", label: "Sleep" },
-  ];
 
   /*
   const graphTypeOptions = [
@@ -67,40 +118,92 @@ const Data = () => {
     { value: "line", label: "Line" },
   ];*/
 
+  const renderGraph = () => {
+    switch (graphType) {
+      case "bar":
+        return (
+          <Bar
+            data={{ datasets: [], ...chartData }}
+            options={{ responsive: true }}
+          />
+        );
+      case "line":
+        return (
+          <Line
+            data={{ datasets: [], ...chartData }}
+            options={{ responsive: true }}
+          />
+        );
+      case "pie":
+        return (
+          <Pie
+            data={{ datasets: [], ...chartData }}
+            options={{ responsive: true }}
+          />
+        );
+      case "doughnut":
+        return (
+          <Doughnut
+            data={{ datasets: [], ...chartData }}
+            options={{ responsive: true }}
+          />
+        );
+      case "scatter":
+        return (
+          <Scatter
+            data={{ datasets: [], ...chartData }}
+            options={{ responsive: true }}
+          />
+        );
+
+      default:
+        return (
+          <Bar
+            data={{ datasets: [], ...chartData }}
+            options={{ responsive: true }}
+          />
+        );
+    }
+  };
+
   const downloadData = async () => {
-    if (!deviceId) {
-      console.error("Device ID is required");
+    if (selectedDevices.length === 0) {
+      console.log("devices need to be selected");
       return;
     }
 
     const url = `${DOWNLOAD_ENDPOINT}`;
+    for (let i = 0; i < selectedDevices.length; i++) {
+      try {
+        const id = selectedDevices[i];
+        const response = await axios.get(url, {
+          params: {
+            id,
+            dataType,
+            startDate,
+            detailLevel,
+          },
+          withCredentials: true,
+        });
 
-    try {
-      const response = await axios.get(url, {
-        params: {
-          deviceId,
-        },
-        withCredentials: true,
-        responseType: "blob", // Ensure you get the response as a Blob
-      });
+        console.log(response.data);
 
-      console.log(response.data);
+        // Create a URL for the blob
+        const downloadURL = window.URL.createObjectURL(
+          new Blob([response.data], { type: "text/csv" })
+        );
+        const link = document.createElement("a");
+        link.href = downloadURL;
+        link.setAttribute("download", "device-data.csv"); // or any other extension
+        document.body.appendChild(link);
+        link.click();
 
-      // Create a URL for the blob
-      const downloadURL = window.URL.createObjectURL(
-        new Blob([response.data], { type: "text/csv" })
-      );
-      const link = document.createElement("a");
-      link.href = downloadURL;
-      link.setAttribute("download", "device-data.csv"); // or any other extension
-      document.body.appendChild(link);
-      link.click();
-
-      // Clean up and remove the link
-      link.parentNode?.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.log(error);
+        // Clean up and remove the link
+        link.parentNode?.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -117,30 +220,81 @@ const Data = () => {
         {orgName} Overview
       </h2>
       <div className="flex flex-row p-5 w-full gap-5">
-        {/* Data Type Dropdown */}
-        <div className="mr-auto">
-          <label
-            htmlFor="dataType"
-            className="block text-sm font-medium  text-white"
-          >
-            Select Data Type:
-          </label>
-          <select
-            id="dataType"
-            name="dataType"
-            value={dataType}
-            onChange={(e) => setDataType(e.target.value)}
-            className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-          >
-            <option value="defaultDataType" disabled>
-              -- Select Data Type --
-            </option>
-            {dataTypeOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
+        {/* Data & Graph Type Dropdown */}
+        <div className="mr-auto flex flex-row gap-5">
+          <div className="flex flex-col">
+            <label
+              htmlFor="dataType"
+              className="block text-sm font-medium  text-white"
+            >
+              Select Data Type:
+            </label>
+            <select
+              id="dataType"
+              name="dataType"
+              value={dataType}
+              onChange={(e) => setDataType(e.target.value)}
+              className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+            >
+              <option value="defaultDataType" disabled>
+                -- Select Data Type --
               </option>
-            ))}
-          </select>
+              {dataTypeOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex flex-col">
+            <label
+              htmlFor="graphType"
+              className="block text-sm font-medium  text-white"
+            >
+              Select Graph Type:
+            </label>
+            <select
+              id="graphType"
+              name="graphType"
+              value={graphType}
+              onChange={(e) => setGraphType(e.target.value)}
+              className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+            >
+              <option value="defaultGraphType" disabled>
+                -- Select Graph Type --
+              </option>
+              {graphTypeOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col">
+            <label
+              htmlFor="detailLevelType"
+              className="block text-sm font-medium w-full text-white"
+            >
+              Select Detail Level:
+            </label>
+            <select
+              id="detailLevelType"
+              name="detailLevelType"
+              value={detailLevel}
+              onChange={(e) => setDetailLevel(e.target.value)}
+              className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+            >
+              <option value="defaultDataType" disabled>
+                -- Select Detail Level --
+              </option>
+              {detailLevelTypes.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div className="flex flex-row w-full gap-5">
@@ -182,11 +336,14 @@ const Data = () => {
       </div>
       <div className="p-5 w-full">
         <div className="w-full h-[500px]  text-white bg-[#2F2D2D] rounded-xl flex justify-center items-center mb-10">
-          {/*
+          {
+            /*
           <Bar
             data={{ datasets: [], ...chartData }}
             options={{ responsive: true }}
-            />*/}
+            />*/
+            renderGraph()
+          }
         </div>
         <div className="w-full h-[400px] text-white bg-[#2F2D2D] rounded-xl flex flex-col mb-10">
           <h2 className="text-center w-full text-white p-5 text-4xl">
