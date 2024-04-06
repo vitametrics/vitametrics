@@ -21,7 +21,7 @@ const MembersDemo = () => {
         {orgname} Members
       </h2>
       <div className="flex p-5 w-full">
-        <button className="p-2 text-2xl flex flex-row gap-2 justify-center items-center rounded-xl w-[230px] bg-[#AE6B69] text-white">
+        <button className="p-2 text-2xl flex flex-row gap-2 justify-center items-center rounded-xl w-[230px] bg-[#606060] text-white">
           Invite
         </button>
       </div>
