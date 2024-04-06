@@ -16,29 +16,29 @@ const router = express.Router();
 // note: date is YYYY-MM-DD format
 async function fetchIntradayData(userId: string, accessToken: string, dataType: string, date: string, detailLevel: string) {
     const baseUrl = `https://api.fitbit.com/1/user/${userId}/activities`;
-    let url;
 
     if (detailLevel !== "1sec" && detailLevel !== "1min" && detailLevel !== "5min" && detailLevel !== "15min") {
         throw new Error('Invalid detail level');
-    } else if (detailLevel === "1sec" && dataType !== "heart") {
+    } 
+
+    if (detailLevel === "1sec" && dataType !== "heart") {
         throw new Error('Invalid detail level');
     }
 
-    if (dataType === 'heart') {
-        url = `${baseUrl}/heart/date/${date}/1d/${detailLevel}.json`;
-    } else if (dataType === 'steps') {
-        url = `${baseUrl}/steps/date/${date}/1d/${detailLevel}.json`;
-    } else if (dataType === 'calories') {
-        url = `${baseUrl}/calories/date/${date}/1d/${detailLevel}.json`;
-    } else if (dataType === 'distance') {
-        url = `${baseUrl}/distance/date/${date}/1d/${detailLevel}.json`;
-    } else if (dataType === 'elevation') {
-        url = `${baseUrl}/elevation/date/${date}/1d/${detailLevel}.json`;
-    } else if (dataType === 'floors') {
-        url = `${baseUrl}/floors/date/${date}/1d/${detailLevel}.json`;
-    } else {
+    const dataTypes = {
+        heart: 'heart',
+        steps: 'steps',
+        calories: 'calories',
+        distance: 'distance',
+        elevation: 'elevation',
+        floors: 'floors'
+    };
+
+    if (!dataTypes[dataType as keyof typeof dataTypes]) {
         throw new Error('Invalid data type');
     }
+
+    const url = `${baseUrl}/${dataType}/date/${date}/1d/${detailLevel}.json`;
 
     try {
         const response = await axios.get(url, {
