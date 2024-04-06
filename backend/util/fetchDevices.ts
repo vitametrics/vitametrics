@@ -15,6 +15,8 @@ async function fetchDevices(userId: string, accessToken: string, orgId: string) 
             {$addToSet: {devices: deviceData.id}}
         );
     }
+
+    return deviceResponse.data;
 }
 
 export default fetchDevices;

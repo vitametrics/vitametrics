@@ -133,9 +133,9 @@ router.post('/fetch-devices', verifySession, checkOrgMembership, refreshToken, a
 
         console.log(orgUserId, accessToken, orgId);
 
-        await fetchDevices(orgUserId, accessToken, orgId);
+        const deviceResponse = await fetchDevices(orgUserId, accessToken, orgId);
 
-        return res.status(200).json({ msg: 'Success!' });
+        return res.status(200).json(deviceResponse);
 
     } catch (err) {
         console.error(err);
