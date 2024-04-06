@@ -197,10 +197,10 @@ const Data = () => {
               devices.map(
                 (
                   device: {
-                    device_id: string;
-                    device_type: string;
-                    last_sync_date: string;
-                    battery_level: number;
+                    id: string;
+                    deviceVersion: string;
+                    lastSyncTime: string;
+                    batteryLevel: number;
                   },
                   index: number
                 ) => {
@@ -214,15 +214,15 @@ const Data = () => {
                           type="checkbox"
                           onChange={(e) =>
                             handleDeviceSelectionChange(
-                              device.device_id,
+                              device.id,
                               e.target.checked
                             )
                           }
-                          checked={selectedDevices.includes(device.device_id)}
+                          checked={selectedDevices.includes(device.id)}
                           className="w-9 h-[44px] mr-2  bg-gray-100 accent-[#BA6767] border-gray-300 rounded-xl focus:ring-transparent dark:checked:accent-[#BA6767]"
                         />
                         <p className="text-2xl font-bold text-white mr-auto ">
-                          {device.device_id}
+                          {device.id}
                         </p>
                       </div>
 
@@ -230,7 +230,7 @@ const Data = () => {
                         className="bg-none text-white border-white border-solid dark:border-transparent border-2 p-2 rounded-lg w-[60px] ml-auto"
                         onClick={() =>
                           fetchDataById(
-                            device.device_id,
+                            device.id,
                             startDate || formatDate(new Date()),
                             endDate || formatDate(new Date())
                           )
@@ -242,7 +242,7 @@ const Data = () => {
                         className="bg-none text-white border-white dark:border-transparent border-solid border-2 p-2 rounded-lg w-[60px]"
                         onClick={() =>
                           syncDevice(
-                            device.device_id,
+                            device.id,
                             startDate || new Date(),
                             endDate || new Date()
                           )
