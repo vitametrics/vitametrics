@@ -4,7 +4,7 @@ import { useOrg } from "../../helpers/OrgContext";
 import axios from "axios";
 
 const Devices = () => {
-  const { devices, orgName } = useOrg();
+  const { devices, setDevices, orgName } = useOrg();
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const month = date.getMonth() + 1;
@@ -25,6 +25,7 @@ const Devices = () => {
       });
 
       console.log(response.data);
+      setDevices(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -49,10 +50,10 @@ const Devices = () => {
           devices.map(
             (
               device: {
-                device_id: string;
-                device_type: string;
-                last_sync_date: string;
-                battery_level: number;
+                id: string;
+                deviceVersion: string;
+                lastSyncTime: string;
+                batteryLevel: number;
               },
               index: number
             ) => {
@@ -62,16 +63,16 @@ const Devices = () => {
                   className="flex flex-row items-center gap-5 w-full h-[70px] bg-[#2E2E2E] rounded-xl p-5"
                 >
                   <p className="text-2xl font-bold text-white mr-auto ">
-                    {device.device_type || ""}
+                    {device.deviceVersion || ""}
                   </p>
                   <h2 className="text-2xl font-bold text-white align flex items-center mr-3">
-                    ID: {device.device_id || ""}
+                    ID: {device.id || ""}
                   </h2>
                   <h2 className="text-2xl font-bold text-white align flex items-center">
-                    Synced: {formatDate(device.last_sync_date) || ""}
+                    Synced: {formatDate(device.lastSyncTime) || ""}
                   </h2>
                   <p className="text-2xl font-bold text-white ml-auto flex flex-row gap-3">
-                    {device.battery_level || ""}
+                    {device.batteryLevel || ""}
                     <FiftyPercentIcon />
                   </p>
                 </div>

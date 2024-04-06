@@ -9,6 +9,7 @@ interface OrgContextProps {
   setOrgId: (arg0: string) => void;
   members: any[];
   devices: any[];
+  setDevices: (arg0: []) => void;
   fetchOrg: () => void;
   fetchDataById: (id: string, startDate: string, endDate: string) => void;
   syncDevice: (id: string, start: Date, end: Date) => void;
@@ -280,6 +281,7 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         fetchOrg,
         fetchDataById,
         syncDevice,
+        setDevices,
       }}
     >
       {children}
