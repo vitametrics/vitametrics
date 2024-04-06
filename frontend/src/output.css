@@ -1454,6 +1454,10 @@ video {
   accent-color: #2a2a2a;
 }
 
+.accent-\[\#606060\] {
+  accent-color: #606060;
+}
+
 .blur {
   --tw-blur: blur(8px);
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);

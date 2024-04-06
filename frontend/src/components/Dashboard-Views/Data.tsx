@@ -77,7 +77,7 @@ const Data = () => {
         const device = devices.find((d) => d.id === deviceId);
         if (!device) return null; // Skip if device not found
 
-        const label = device.id; // Use device ID as label
+        const label = device.deviceVersion + " " + device.id; // Use device ID as label
         const borderColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`; // Random color for each dataset
         const backgroundColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`; // Random color for each dataset
         const data = device?.[dataType]?.map((item: DataItem) => item.value);
@@ -100,7 +100,7 @@ const Data = () => {
       labels, // Use dates from the first device as labels
       datasets,
     });
-  }, [selectedDevices, dataType]);
+  }, [selectedDevices, dataType, startDate, endDate]);
 
   const handleDeviceSelectionChange = (
     deviceId: string,
@@ -124,35 +124,40 @@ const Data = () => {
         return (
           <Bar
             data={{ datasets: [], ...chartData }}
-            options={{ responsive: true }}
+            options={{ responsive: true, maintainAspectRatio: false }}
+            width="100%"
           />
         );
       case "line":
         return (
           <Line
             data={{ datasets: [], ...chartData }}
-            options={{ responsive: true }}
+            options={{ responsive: true, maintainAspectRatio: false }}
+            width="100%"
           />
         );
       case "pie":
         return (
           <Pie
             data={{ datasets: [], ...chartData }}
-            options={{ responsive: true }}
+            options={{ responsive: true, maintainAspectRatio: false }}
+            width="100%"
           />
         );
       case "doughnut":
         return (
           <Doughnut
             data={{ datasets: [], ...chartData }}
-            options={{ responsive: true }}
+            options={{ responsive: true, maintainAspectRatio: false }}
+            width="100%"
           />
         );
       case "scatter":
         return (
           <Scatter
             data={{ datasets: [], ...chartData }}
-            options={{ responsive: true }}
+            options={{ responsive: true, maintainAspectRatio: false }}
+            width="100%"
           />
         );
 
@@ -335,15 +340,8 @@ const Data = () => {
         </div>
       </div>
       <div className="p-5 w-full">
-        <div className="w-full h-[500px]  text-white bg-[#2F2D2D] rounded-xl flex justify-center items-center mb-10">
-          {
-            /*
-          <Bar
-            data={{ datasets: [], ...chartData }}
-            options={{ responsive: true }}
-            />*/
-            renderGraph()
-          }
+        <div className="w-full h-[500px] p-5 text-white bg-[#2F2D2D] rounded-xl flex justify-center items-center mb-10">
+          {renderGraph()}
         </div>
         <div className="w-full h-[400px] text-white bg-[#2F2D2D] rounded-xl flex flex-col mb-10">
           <h2 className="text-center w-full text-white p-5 text-4xl">
@@ -376,9 +374,10 @@ const Data = () => {
                             )
                           }
                           checked={selectedDevices.includes(device.id)}
-                          className="w-9 h-[44px] mr-2  bg-gray-100 accent-[#BA6767] border-gray-300 rounded-xl focus:ring-transparent dark:checked:accent-[#BA6767]"
+                          className="w-9 h-[44px] mr-2  bg-gray-100 accent-[#606060] border-gray-300 rounded-xl focus:ring-transparent "
                         />
                         <p className="text-2xl font-bold text-white mr-auto ">
+                          {device.deviceVersion} &nbsp;
                           {device.id}
                         </p>
                       </div>
@@ -420,7 +419,7 @@ const Data = () => {
           </div>
         </div>
         <button
-          className="p-5 text-2xl rounded-xl w-[250px] bg-[#AE6B69] text-white"
+          className="p-5 text-2xl rounded-xl w-[250px] bg-[#606060] text-white"
           onClick={() => downloadData()}
         >
           Export
