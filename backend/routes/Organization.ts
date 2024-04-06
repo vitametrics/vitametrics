@@ -86,8 +86,10 @@ router.post('/add-member', verifySession, checkOrgMembership, async(req: CustomR
 
         const passwordToken = crypto.randomBytes(32).toString('hex');
         const tokenExpiry = new Date(Date.now() + 3600000); // 1 hour
+        const newUserId = crypto.randomBytes(16).toString('hex');
 
         const newUser = new User({
+            userId: newUserId,
             email,
             name,
             orgId: organization.orgId,
