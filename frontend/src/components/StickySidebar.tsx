@@ -7,9 +7,10 @@ import { useEffect, useState } from "react";
 
 interface StickySidebarProps {
   setPage: (arg0: string) => void;
+  path: string;
 }
 
-const StickySidebar: React.FC<StickySidebarProps> = ({ setPage }) => {
+const StickySidebar: React.FC<StickySidebarProps> = ({ setPage, path }) => {
   const history = useHistory();
 
   const [currentPage, setCurrentPage] = useState("Data");
@@ -28,7 +29,7 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage }) => {
     console.log("selected page: " + newPage);
     setPage(newPage);
     setCurrentPage(newPage);
-    history.push(`/dashboard?view=${newPage.toLowerCase()}`); // Change the URL
+    history.push(`/${path}?view=${newPage.toLowerCase()}`); // Change the URL
   };
 
   return (
@@ -41,7 +42,7 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage }) => {
           onClick={() => handlePageChange("Data")}
         >
           <DataIcon />
-          <a>Data</a>
+          Data
         </li>
         <li
           className={`${
@@ -50,7 +51,7 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage }) => {
           onClick={() => handlePageChange("Devices")}
         >
           <DeviceIcon />
-          <a>Devices</a>
+          Devices
         </li>
         <li
           className={`${
@@ -59,7 +60,7 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage }) => {
           onClick={() => handlePageChange("Members")}
         >
           <MembersIcon />
-          <a>Members</a>
+          Members
         </li>
         <li
           className={`${
@@ -68,7 +69,7 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage }) => {
           onClick={() => handlePageChange("Settings")}
         >
           <SettingsIcon />
-          <a>Settings</a>
+          Settings
         </li>
       </ul>
     </div>

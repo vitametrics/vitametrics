@@ -2,8 +2,14 @@ import Graph from "../assets/Graph";
 import GithubSmallIcon from "../assets/GithubSmallIcon";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import { useHistory } from "react-router-dom";
 
 const Banner = () => {
+  const history = useHistory();
+  function navigate(url: string) {
+    history.push(url);
+  }
+
   const fadeInItemVariants = {
     hidden: { opacity: 0 },
     show: { opacity: 1 },
@@ -36,8 +42,11 @@ const Banner = () => {
           dashboard made for researchers like you.
         </p>
         <div className="flex flex-row gap-5 mt-10">
-          <button className="p-3 text-3xl flex flex-row gap-2 justify-center items-center rounded-xl w-[230px] bg-pink-gradient text-white">
-            Contact
+          <button
+            onClick={() => navigate("/demo?view=devices")}
+            className="p-3 text-3xl flex flex-row gap-2 justify-center items-center rounded-xl w-[230px] bg-pink-gradient text-white"
+          >
+            Demo
           </button>
           <button className="p-3 text-3xl flex flex-row justify-center gap-2 items-center rounded-xl w-[230px] bg-[#D9D9D9] text-black">
             <GithubSmallIcon />

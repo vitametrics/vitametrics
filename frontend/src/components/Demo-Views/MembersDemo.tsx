@@ -1,29 +1,24 @@
-import { useOrg } from "../../helpers/OrgContext";
-
-const Members = () => {
-  const { orgName, members } = useOrg();
-
-  /*
-  const [members, setMembers] = useState([
+const MembersDemo = () => {
+  const orgname = "Ada Lovelace's Org";
+  const members = [
     {
       name: "Brandon Le",
-      email: "bro",
+      email: "brandonle831@gmail.com",
     },
     {
       name: "Sean Cornell",
-      email: "bro",
+      email: "seancornell@gmail.com",
     },
     {
       name: "Angel Vazquez",
-      email: "bro",
+      email: "angelvazquez@gmail.com",
     },
-  ]);
-*/
+  ];
 
   return (
     <div className="w-full h-full flex flex-col p-10  ">
       <h2 className="w-full text-4xl font-ralewayBold text-white p-5 pb-0">
-        {orgName} Members
+        {orgname} Members
       </h2>
       <div className="flex p-5 w-full">
         <button className="p-2 text-2xl flex flex-row gap-2 justify-center items-center rounded-xl w-[230px] bg-[#AE6B69] text-white">
@@ -50,4 +45,4 @@ const Members = () => {
   );
 };
 
-export default Members;
+export default MembersDemo;

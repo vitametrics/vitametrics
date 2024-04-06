@@ -205,7 +205,7 @@ const Dashboard = () => {
       <DashboardNavbar />
       <div className="flex flex-row">
         <div className="w-[125px]">
-          <StickySidebar setPage={setPage} />
+          <StickySidebar setPage={setPage} path="dashboard" />
         </div>
         <div className="flex w-full h-full flex-col ">
           {!isAccountLinked && (

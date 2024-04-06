@@ -560,6 +560,10 @@ video {
   visibility: visible;
 }
 
+.fixed {
+  position: fixed;
+}
+
 .absolute {
   position: absolute;
 }
@@ -795,6 +799,10 @@ video {
   width: 125px;
 }
 
+.w-\[150px\] {
+  width: 150px;
+}
+
 .w-\[200px\] {
   width: 200px;
 }
@@ -837,10 +845,6 @@ video {
 
 .w-screen {
   width: 100vw;
-}
-
-.w-\[150px\] {
-  width: 150px;
 }
 
 .min-w-\[500px\] {
@@ -1157,6 +1161,11 @@ video {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
+.bg-\[\#606060\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(96 96 96 / var(--tw-bg-opacity));
+}
+
 .bg-hero-texture {
   background-image: url('/src/assets/images/hero-texture.png');
 }
@@ -1421,6 +1430,14 @@ video {
 
 .accent-\[\#BA6767\] {
   accent-color: #BA6767;
+}
+
+.accent-\[\#000000\] {
+  accent-color: #000000;
+}
+
+.accent-\[\#2a2a2a\] {
+  accent-color: #2a2a2a;
 }
 
 .blur {
