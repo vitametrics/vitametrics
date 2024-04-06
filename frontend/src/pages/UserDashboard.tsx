@@ -9,6 +9,8 @@ import Members from "../components/Dashboard-Views/Members";
 import Settings from "../components/Dashboard-Views/Settings";
 import Footer from "../components/Footer";
 import { useAuth } from "../helpers/AuthContext";
+import { useHistory } from "react-router-dom";
+
 //import { useOrg } from "../helpers/OrgContext";
 //import axios from "axios";
 
@@ -16,7 +18,16 @@ const Dashboard = () => {
   //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
   //const { isAuthenticated } = useAuth();
 
-  const [page, setPage] = useState("Data");
+  const history = useHistory();
+  const [page, setPage] = useState(window.location.search.split("=")[1]);
+
+  if (page === undefined) {
+    history.push("/demo?view=data");
+  }
+
+  function capitalizeFirstLetter(string: string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
   const { isAccountLinked } = useAuth();
 
   //const [showBackdrop, setShowBackdrop] = useState(false);
@@ -186,7 +197,7 @@ const Dashboard = () => {
   };
 
   const renderComponent = useCallback(() => {
-    switch (page) {
+    switch (capitalizeFirstLetter(page)) {
       case "Data":
         return <Data />;
       case "Devices":

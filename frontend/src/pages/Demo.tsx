@@ -13,7 +13,6 @@ const Demo = () => {
   const [page, setPage] = useState(window.location.search.split("=")[1]);
 
   if (page === undefined) {
-    console.log("balls");
     history.push("/demo?view=data");
   }
 
