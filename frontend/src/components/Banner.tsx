@@ -1,11 +1,27 @@
 import Graph from "../assets/Graph";
 import GithubSmallIcon from "../assets/GithubSmallIcon";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 
 const Banner = () => {
+  const fadeInItemVariants = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1 },
+  };
+
+  const { ref, inView } = useInView({
+    threshold: 0.1, // Adjust based on when you want the animation to trigger (1 = fully visible)
+    triggerOnce: true, // Ensures the animation only plays once
+  });
+
   return (
-    <section
+    <motion.section
       id="#home"
+      variants={fadeInItemVariants}
+      initial="hidden"
+      animate={inView ? "show" : "hidden"}
       className="w-full h-full flex flex-row box-border mb-28 mt-10 sm:flex-col bg-dark-gradient font-leagueSpartanBold"
+      ref={ref}
     >
       <div className="w-[100%] h-full p-20 flex flex-col box-border min-w-[500px] lg:p-10">
         <h1 className="text-6xl text-white font-bold mb-5 sm:text-center">
@@ -32,7 +48,7 @@ const Banner = () => {
       <div className="w-full h-full flex justify-center flex-col min-w-[500px] lg:p-10 sm:p-10 pt-20 pb-20 items-center ">
         <Graph />
       </div>
-    </section>
+    </motion.section>
   );
 };
 

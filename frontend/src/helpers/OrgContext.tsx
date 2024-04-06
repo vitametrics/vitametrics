@@ -193,7 +193,7 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const fetchDevices = async () => {
     console.log("fetching devices from " + FETCH_DEVICES_ENDPOINT);
     try {
-      const response = await axios.get(FETCH_DEVICES_ENDPOINT, {
+      const response = await axios.post(FETCH_DEVICES_ENDPOINT, {
         withCredentials: true,
       });
 

@@ -7,8 +7,8 @@ export const DashboardNavbar = () => {
   const { logout } = useAuth();
 
   return (
-    <nav className="dark:bg-[#161616] px-5">
-      <div className="flex flex-row w-full bg-transparent top-0 flex-wrap items-center justify-between mx-auto py-3">
+    <nav className="bg-[#161616] px-5">
+      <div className="flex flex-row w-full bg-[#161616] top-0 flex-wrap items-center justify-between mx-auto py-3">
         <a
           href="/"
           className="flex items-center space-x-3 rtl:space-x-reverse mr-auto"

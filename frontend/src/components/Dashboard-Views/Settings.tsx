@@ -119,8 +119,8 @@ const Settings = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col p-[3.75rem] text-white bg-[#FAF9F6] dark:bg-[#1E1D20] dark:bg-hero-texture">
-      <h2 className="w-full text-4xl font-ralewayBold text-[#373F51] dark:text-white mb-10">
+    <div className="w-full h-full flex flex-col p-[3.75rem] text-white  ">
+      <h2 className="w-full text-4xl font-ralewayBold text-white mb-10">
         {orgName} Settings
       </h2>
 
@@ -133,7 +133,7 @@ const Settings = () => {
             </div>
             <p>{userEmail}</p>
           </div>
-          <button className="p-2 bg-[#373737] rounded-md text-white">
+          <button className="p-2 bg-[#373737]  rounded-md text-white">
             Send Verification Link
           </button>
         </div>
@@ -144,7 +144,7 @@ const Settings = () => {
         </div>
       )}
       <div className="flex-col flex mt-10 mb-10">
-        <h2 className="w-full text-3xl font-ralewayBold text-[#373F51] dark:text-white">
+        <h2 className="w-full text-3xl font-ralewayBold text-white">
           Change Password
         </h2>
         {changePasswordMsg === "Password changed successfully" ? (
@@ -155,14 +155,14 @@ const Settings = () => {
         <input
           type="password"
           value={password}
-          className="w-full md:w-[500px] h-12 p-5 mt-2 text-lg text-[#373F51] dark:text-white bg-white dark:bg-[#373F51] dark:bg-opacity-10 rounded-lg border-none"
+          className="w-full md:w-[500px] h-12 p-5 mt-2 text-lg text-white bg-white  dark:bg-opacity-10 rounded-lg border-none"
           placeholder="New Password"
           onChange={(e) => setPassword(e.target.value)}
         />
         <input
           type="password"
           value={confirmPassword}
-          className="w-full md:w-[500px] h-12 p-5 mt-5 text-lg text-[#373F51] dark:text-white bg-white dark:bg-[#373F51] dark:bg-opacity-10 rounded-lg border-none"
+          className="w-full md:w-[500px] h-12 p-5 mt-5 text-lg text-white bg-white dark:bg-opacity-10 rounded-lg border-none"
           placeholder="Confirm New Password"
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
@@ -174,7 +174,7 @@ const Settings = () => {
         </button>
       </div>
       <div className="flex-col flex mt-10 mb-10">
-        <h2 className="w-full text-3xl font-ralewayBold text-[#373F51] dark:text-white">
+        <h2 className="w-full text-3xl font-ralewayBold text-white">
           Change Email
         </h2>
         {changeEmailMsg === "Success" ? (
@@ -188,7 +188,7 @@ const Settings = () => {
         <input
           type="email"
           value={newEmail}
-          className="w-full md:w-[500px] h-12 p-5 mt-2 text-lg text-[#373F51] dark:text-white bg-white dark:bg-[#373F51] dark:bg-opacity-10 rounded-lg border-none"
+          className="w-full md:w-[500px] h-12 p-5 mt-2 text-lg text-white bg-white  dark:bg-opacity-10 rounded-lg border-none"
           placeholder="New Email"
           onChange={(e) => setNewEmail(e.target.value)}
         />

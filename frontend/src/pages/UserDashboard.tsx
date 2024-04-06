@@ -17,17 +17,16 @@ const Dashboard = () => {
   //const { isAuthenticated } = useAuth();
 
   const [page, setPage] = useState("Data");
-  const [showBackdrop, setShowBackdrop] = useState(false);
   const { isAccountLinked } = useAuth();
 
-  /*
+  //const [showBackdrop, setShowBackdrop] = useState(false);
 
-  //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT;
+  /*
+  const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT;
   const [orgName, setOrgName] = useState("");
   const [devices, setDevices] = useState<any[]>([]); // Initialize devices state with an empty array
   const [members, setMembers] = useState<any[]>([]);
   const { setOrgId } = useOrg();
-
 
   const AUTH_ENDPOINT =
     import.meta.env.VITE_APP_NODE_ENV === "production"
@@ -199,33 +198,24 @@ const Dashboard = () => {
       default:
         return <Data />;
     }
-  }, [page]); // Only recompute if `page` changes
+  }, [page]);
 
   return (
-    <div className="h-full font-ralewayBold">
-      {showBackdrop && (
-        <div
-          className="fixed top-0 left-0 w-full h-full bg-black opacity-50 z-50"
-          onClick={() => setShowBackdrop(false)} // Close the backdrop when clicked
-        />
-      )}
+    <div className="h-full font-ralewayBold  bg-[#1E1D20] bg-hero-texture">
       <DashboardNavbar />
       <div className="flex flex-row">
         <div className="w-[125px]">
           <StickySidebar setPage={setPage} />
         </div>
         <div className="flex w-full h-full flex-col ">
-          {!isAccountLinked ? (
+          {!isAccountLinked && (
             <button
               onClick={oAuthLogin}
               className="p-2 text-white bg-[#BA6767] hover:bg-[#8e5252]"
             >
               Authenticate Your Fitbit Account{" "}
             </button>
-          ) : (
-            <></>
           )}
-
           {renderComponent()}
         </div>
       </div>

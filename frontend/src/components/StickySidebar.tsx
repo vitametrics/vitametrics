@@ -32,12 +32,12 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage }) => {
   };
 
   return (
-    <div className="sticky top-0 h-screen bg-[#7AA3B7] dark:bg-[#222223]">
+    <div className="sticky top-0 h-screen bg-[#222223]">
       <ul className="flex flex-col">
         <li
           className={`${
-            currentPage === "Data" ? " bg-[#5086A2] dark:bg-[#303030]" : ""
-          } flex-col flex justify-center items-center text-white hover:bg-[#5086A2] dark:hover:bg-[#303030] p-4 hover:cursor-pointer`}
+            currentPage === "Data" ? " bg-[#303030]" : ""
+          } flex-col flex justify-center items-center text-white bg-[#222223] hover:bg-[#303030] p-4 hover:cursor-pointer`}
           onClick={() => handlePageChange("Data")}
         >
           <DataIcon />
@@ -45,8 +45,8 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage }) => {
         </li>
         <li
           className={`${
-            currentPage === "Devices" ? " bg-[#5086A2] dark:bg-[#303030]" : ""
-          } flex-col flex justify-center items-center text-white hover:bg-[#5086A2] dark:hover:bg-[#303030] p-4 hover:cursor-pointer`}
+            currentPage === "Devices" ? " bg-[#303030]" : ""
+          } flex-col flex justify-center items-center text-white hover:bg-[#303030] p-4 hover:cursor-pointer`}
           onClick={() => handlePageChange("Devices")}
         >
           <DeviceIcon />
@@ -54,8 +54,8 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage }) => {
         </li>
         <li
           className={`${
-            currentPage === "Members" ? " bg-[#5086A2] dark:bg-[#303030]" : ""
-          } flex-col flex justify-center items-center text-white hover:bg-[#5086A2] dark:hover:bg-[#303030] p-4 hover:cursor-pointer`}
+            currentPage === "Members" ? " bg-[#303030]" : ""
+          } flex-col flex justify-center items-center text-white hover:bg-[#303030] p-4 hover:cursor-pointer`}
           onClick={() => handlePageChange("Members")}
         >
           <MembersIcon />
@@ -63,8 +63,8 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage }) => {
         </li>
         <li
           className={`${
-            currentPage === "Settings" ? "bg-[#5086A2] dark:bg-[#303030]" : ""
-          } flex-col flex justify-center items-center text-white hover:bg-[#5086A2] dark:hover:bg-[#303030] p-4 hover:cursor-pointer`}
+            currentPage === "Settings" ? "bg-[#303030]" : ""
+          } flex-col flex justify-center items-center text-white hover:bg-[#303030] p-4 hover:cursor-pointer`}
           onClick={() => handlePageChange("Settings")}
         >
           <SettingsIcon />

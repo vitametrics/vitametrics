@@ -1,14 +1,38 @@
 import Slider from "react-slick";
 import { useEffect, useState } from "react";
-//import DataIcon from "../assets/DataIcon";
+
+import TrackingDataIcon from "../assets/svgs/TrackingDataIcon.svg";
+import ParticipantTrackingIcon from "../assets/svgs/ParticipantTrackingIcon.svg";
+import ExportDataIcon from "../assets/svgs/ExportDataIcon.svg";
+import DeviceTrackingIcon from "../assets/svgs/DeviceTrackingIcon.svg";
+import OpenSourceIcon from "../assets/svgs/OpenSourceIcon.svg";
+import GraphingIcon from "../assets/svgs/GraphingIcon.svg";
+import DataCollectionIcon from "../assets/svgs/DataCollectionIcon.svg";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+
+//import LazyLoadSVG from "../components/LazyLoadSvg";
+
+//import DeviceTrackingIcon from "../assets/DeviceTrackingIcon";
+/*
 import TrackingDataIcon from "../assets/TrackingDataIcon";
 import ParticipantTrackingIcon from "../assets/ParticipantTrackingIcon";
 import ExportDataIcon from "../assets/ExportDataIcon";
-import DeviceTrackingIcon from "../assets/DeviceTrackingIcon";
 import OpenSourceIcon from "../assets/OpenSourceIcon";
 import GraphingIcon from "../assets/GraphingIcon";
 import DataCollectionIcon from "../assets/DataCollectionIcon";
-
+*/
+/*
+const DeviceTrackingIcon = lazy(() => import("../assets/DeviceTrackingIcon"));
+const TrackingDataIcon = lazy(() => import("../assets/TrackingDataIcon"));
+const ParticipantTrackingIcon = lazy(
+  () => import("../assets/ParticipantTrackingIcon")
+);
+const ExportDataIcon = lazy(() => import("../assets/ExportDataIcon"));
+const OpenSourceIcon = lazy(() => import("../assets/OpenSourceIcon"));
+const GraphingIcon = lazy(() => import("../assets/GraphingIcon"));
+const DataCollectionIcon = lazy(() => import("../assets/DataCollectionIcon"));
+const renderLoader = () => <p>Loading</p>;
+*/
 const Features = () => {
   const [slidesToShow, setSlidesToShow] = useState(3);
 
@@ -18,6 +42,7 @@ const Features = () => {
     speed: 500,
     slidesToShow: slidesToShow,
     slidesToScroll: 1,
+    lazy: true,
   };
 
   const handleResize = () => {
@@ -42,37 +67,37 @@ const Features = () => {
     {
       title: "Tracking Data",
       desc: "Track health data not limited to heart rate, oxygen, calories, and more!",
-      img: <TrackingDataIcon />,
+      img: TrackingDataIcon,
     },
     {
       title: "Participants Management",
       desc: "Host an organization and manage all the members and their devices!",
-      img: <ParticipantTrackingIcon />,
+      img: ParticipantTrackingIcon,
     },
     {
       title: "Export Data",
       desc: "Easily export collected data for analysis and reporting purposes.",
-      img: <ExportDataIcon />,
+      img: ExportDataIcon,
     },
     {
       title: "Device Monitoring",
       desc: "Effortlessly what devices are connected along with their battery levels and more!",
-      img: <DeviceTrackingIcon />,
+      img: DeviceTrackingIcon,
     },
     {
       title: "Automated Graphing",
       desc: "Automate the process of creating insightful graphs and visualizations based on collected data.",
-      img: <GraphingIcon />,
+      img: GraphingIcon,
     },
     {
       title: "Open-source",
       desc: "Access and contribute to the source code for a transparent and collaborative platform.",
-      img: <OpenSourceIcon />,
+      img: OpenSourceIcon,
     },
     {
       title: "Limitless Data Collection",
       desc: "Collect and store data without limitations, ensuring comprehensive tracking and analysis.",
-      img: <DataCollectionIcon />,
+      img: DataCollectionIcon,
     },
   ];
 
@@ -100,17 +125,15 @@ const Features = () => {
             return (
               <div
                 key={index}
-                className="flex flex-col items-center justify-center w-full lg:w-[450px] h-[360px] bg-[#93c6e1] dark:bg-[#0e0d0d] p-5 rounded-xl"
+                className="flex flex-col items-center justify-center w-full lg:w-[450px] h-[360px] bg-[#0e0d0d] p-5 rounded-xl"
               >
                 <div className="bg-grey-200 h-[200px] rounded-md mb-5 flex justify-center items-center">
-                  {feature.img}
+                  <LazyLoadImage src={feature.img} />
                 </div>
-                <p className="text-2xl text-[#373F51] text-white text-center">
+                <p className="text-2xl  text-white text-center">
                   {feature.title}
                 </p>
-                <p className="text-md text-[#373F51] dark:text-white text-center">
-                  {feature.desc}
-                </p>
+                <p className="text-md text-white text-center">{feature.desc}</p>
               </div>
             );
           })}

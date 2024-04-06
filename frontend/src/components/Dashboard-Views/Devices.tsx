@@ -13,12 +13,12 @@ const Devices = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col p-10 bg-[#FAF9F6] dark:bg-[#1E1D20] dark:bg-hero-texture">
-      <h2 className="w-full text-4xl font-ralewayBold text-[#373F51] dark:text-white p-5 pb-0">
+    <div className="w-full h-full flex flex-col p-10 ">
+      <h2 className="w-full text-4xl font-ralewayBold text-white p-5 pb-0">
         {orgName} Devices
       </h2>
       <div className="flex p-5 w-full">
-        <button className="p-2 text-2xl flex flex-row gap-2 justify-center items-center rounded-xl w-[230px] bg-[#93C7E1] dark:bg-[#AE6B69] text-white">
+        <button className="p-2 text-2xl flex flex-row gap-2 justify-center items-center rounded-xl w-[230px] bg-[#AE6B69] text-white">
           <ConnectIcon />
           Connect
         </button>
@@ -38,7 +38,7 @@ const Devices = () => {
               return (
                 <div
                   key={index}
-                  className="flex flex-row items-center gap-5 w-full h-[70px] bg-[#93C7E1] dark:bg-[#2E2E2E] rounded-xl p-5"
+                  className="flex flex-row items-center gap-5 w-full h-[70px] bg-[#2E2E2E] rounded-xl p-5"
                 >
                   <p className="text-2xl font-bold text-white mr-auto ">
                     {device.device_type || ""}
@@ -58,9 +58,7 @@ const Devices = () => {
             }
           )
         ) : (
-          <h2 className="text-2xl font-bold text-[#373F51] dark:text-white">
-            No Devices Found.
-          </h2>
+          <h2 className="text-2xl font-bold text-white">No Devices Found.</h2>
         )}
       </div>
     </div>
