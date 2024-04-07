@@ -1,6 +1,7 @@
 import express, {Response} from 'express';
 import { query, validationResult } from 'express-validator';
 import { DateTime } from 'luxon';
+import multer from 'multer';
 import crypto from 'crypto';
 import verifySession from '../middleware/verifySession';
 import checkOrgMembership from '../middleware/checkOrg';
@@ -12,6 +13,8 @@ import { sendEmail } from '../util/emailUtil';
 import Organization, {IOrganization} from '../models/Organization';
 import User from '../models/User';
 const router = express.Router();
+const upload = multer({ dest: '../../uploads'});
+const fitAddon = require('../fitaddon/build/Release/fitaddon.node')
 
 // get organization info
 router.get('/info', verifySession, checkOrgMembership, [
@@ -96,6 +99,25 @@ router.post('/add-member', verifySession, checkOrgMembership, async(req: CustomR
 
 });
 
+// fetch device data
+// router.get('/fetch-device-data', [
+
+// ],verifySession, checkOrgMembership, refreshToken, async (req: CustomReq, res: Response) => {
+
+//     if (!req.organization) {
+//         return res.status(401).json({msg: 'Unauthorized'});
+//     }
+
+//     try {
+//         const orgId = req.organization.orgId;
+//         const orgUserId = req.organization.userId;
+//         const accessToken = req.organization.fitbitAccessToken;
+
+        
+//     }
+
+// });
+
 // fetch devices from fitbit
 router.post('/fetch-devices', verifySession, checkOrgMembership, refreshToken, async (req: CustomReq, res: Response) => {
 
@@ -119,6 +141,17 @@ router.post('/fetch-devices', verifySession, checkOrgMembership, refreshToken, a
         return res.status(500).json({ msg: 'Internal Server Error!' });
     }
 });
+
+router.post('/upload', upload.single('fitfile'), (req: CustomReq, res: Response) => {
+
+    if (req.file) {
+        const decodedData = fitAddon.decodeFIT(req.file.path);
+        return res.json({success: true, decodedData});
+    } else {
+        return res.status(400).send('no file uploaded');
+    }
+
+})
 
 // download data from fitbit by device id
 router.get('/download-data', verifySession, checkOrgMembership, refreshToken, [
