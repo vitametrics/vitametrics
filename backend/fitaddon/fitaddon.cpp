@@ -155,7 +155,7 @@ public:
     }
 };
 
-Napi::Array DecodeFIT(const Napi::CallbackInfo& info) {
+Napi::Value DecodeFIT(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
 
     if (info.Length() < 1 || !info[0].IsString()) {
