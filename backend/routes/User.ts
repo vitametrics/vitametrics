@@ -181,7 +181,7 @@ router.get('/verify-email', verifySession, [
     }
 
     try {
-        const user = await User.findOne({ emailVerfToken: req.query.token });
+        const user = await User.findOne({ emailVerfToken: req.query.token as string });
 
         if (!user) {
             return res.status(400).json({ msg: 'Invalid or expired verification token' });

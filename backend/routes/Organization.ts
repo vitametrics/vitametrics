@@ -20,7 +20,7 @@ const fitAddon = require('../fitaddon/build/Release/fitaddon.node')
 // get organization info
 router.get('/info', verifySession, checkOrgMembership, [
     query('orgId').not().isEmpty().withMessage('No orgId provided')
-], async (req: CustomReq, res: Response) => {
+], async (req: Request, res: Response) => {
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -30,7 +30,7 @@ router.get('/info', verifySession, checkOrgMembership, [
     const { orgId } = req.query;
 
 
-    const org = await Organization.findOne({ orgId: orgId });
+    const org = await Organization.findOne({ orgId: orgId as string })
 
     if (!org) {
         return res.status(404).json({ msg: 'Organization not found' });
@@ -100,25 +100,6 @@ router.post('/add-member', verifySession, checkOrgMembership, async(req: CustomR
 
 });
 
-// fetch device data
-// router.get('/fetch-device-data', [
-
-// ],verifySession, checkOrgMembership, refreshToken, async (req: CustomReq, res: Response) => {
-
-//     if (!req.organization) {
-//         return res.status(401).json({msg: 'Unauthorized'});
-//     }
-
-//     try {
-//         const orgId = req.organization.orgId;
-//         const orgUserId = req.organization.userId;
-//         const accessToken = req.organization.fitbitAccessToken;
-
-        
-//     }
-
-// });
-
 // fetch devices from fitbit
 router.post('/fetch-devices', verifySession, checkOrgMembership, refreshToken, async (req: CustomReq, res: Response) => {
 
@@ -155,7 +136,17 @@ router.post('/upload', upload.single('fitfile'), (req: Request, res: Response) =
 })
 
 // fetch data from fitbit by device id
-router.get('/fetch-data', verifySession, checkOrgMembership, refreshToken, async (req: CustomReq, res: Response) => {
+router.get('/fetch-data', verifySession, checkOrgMembership, refreshToken, [
+    query('id').not().isEmpty().withMessage('Device ID is required'),
+    query('startDate').not().isEmpty().withMessage('You must specify a start date'),
+    query('endDate').not().isEmpty().withMessage('You must specify an end date')
+], async (req: CustomReq, res: Response) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     try {
         const organization: IOrganization = req.organization as IOrganization;
         const deviceId = typeof req.query.id === 'string' ? req.query.id : undefined;
