@@ -5,7 +5,7 @@
   "repository": "https://github.com/brandontranle/fit-bit-application",
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
+    "build": "cd fitaddon && node-gyp rebuild && cd .. && tsc && shx cp -r fitaddon build",
     "start": "node build/index.js",
     "dev": "nodemon --exec ts-node index.ts"
   },
@@ -54,5 +54,8 @@
     "redis": "^4.6.13",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "shx": "^0.3.4"
   }
 }
