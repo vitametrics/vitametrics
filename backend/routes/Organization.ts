@@ -1,4 +1,4 @@
-import express, {Response} from 'express';
+import express, {Request, Response} from 'express';
 import { query, validationResult } from 'express-validator';
 import { DateTime } from 'luxon';
 import multer from 'multer';
@@ -142,7 +142,7 @@ router.post('/fetch-devices', verifySession, checkOrgMembership, refreshToken, a
     }
 });
 
-router.post('/upload', upload.single('fitfile'), (req: CustomReq, res: Response) => {
+router.post('/upload', upload.single('fitfile'), (req: Request, res: Response) => {
 
     if (req.file) {
         const decodedData = fitAddon.decodeFIT(req.file.path);
