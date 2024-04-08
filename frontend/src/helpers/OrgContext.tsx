@@ -340,6 +340,162 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         },
       ],
     },
+    {
+      id: "2570612989",
+      deviceVersion: "Playstation 5",
+      lastSyncTime: "2024-02-24T00:02:13.000",
+      batteryLevel: 100,
+      steps: [
+        {
+          date: "2024-02-20",
+          value: 10000,
+        },
+        {
+          date: "2024-02-21",
+          value: 100,
+        },
+        {
+          date: "2024-02-22",
+          value: 100,
+        },
+      ],
+      vo2max: [
+        {
+          date: "2024-02-20",
+          value: 50,
+        },
+        {
+          date: "2024-02-21",
+          value: 51,
+        },
+        {
+          date: "2024-02-22",
+          value: 54,
+        },
+        {
+          date: "2024-02-23",
+          value: 40,
+        },
+        {
+          date: "2024-02-24",
+          value: 46,
+        },
+        {
+          date: "2024-02-25",
+          value: 55,
+        },
+        {
+          date: "2024-02-26",
+          value: 50,
+        },
+        {
+          date: "2024-02-27",
+          value: 51,
+        },
+        {
+          date: "2024-02-28",
+          value: 54,
+        },
+        {
+          date: "2024-02-29",
+          value: 40,
+        },
+        {
+          date: "2024-02-30",
+          value: 46,
+        },
+      ],
+      heart: [
+        {
+          date: "2024-02-20",
+          value: 74,
+        },
+        {
+          date: "2024-02-21",
+          value: 100,
+        },
+        {
+          date: "2024-02-22",
+          value: 90,
+        },
+        {
+          date: "2024-02-23",
+          value: 95,
+        },
+        {
+          date: "2024-02-24",
+          value: 64.8,
+        },
+        {
+          date: "2024-02-25",
+          value: 80,
+        },
+        {
+          date: "2024-02-26",
+          value: 90,
+        },
+        {
+          date: "2024-02-27",
+          value: 120,
+        },
+      ],
+      calories: [
+        {
+          date: "2024-02-20",
+          value: 10000,
+        },
+        {
+          date: "2024-02-21",
+          value: 100,
+        },
+        {
+          date: "2024-02-22",
+          value: 100,
+        },
+      ],
+      distance: [
+        {
+          date: "2024-02-20",
+          value: 1200,
+        },
+        {
+          date: "2024-02-21",
+          value: 1020,
+        },
+        {
+          date: "2024-02-22",
+          value: 5000,
+        },
+      ],
+      elevation: [
+        {
+          date: "2024-02-20",
+          value: 1000,
+        },
+        {
+          date: "2024-02-21",
+          value: 1020,
+        },
+        {
+          date: "2024-02-22",
+          value: 1030,
+        },
+      ],
+      floors: [
+        {
+          date: "2024-02-20",
+          value: 100,
+        },
+        {
+          date: "2024-02-21",
+          value: 120,
+        },
+        {
+          date: "2024-02-22",
+          value: 1480,
+        },
+      ],
+    },
   ];
 
   const AUTH_ENDPOINT =

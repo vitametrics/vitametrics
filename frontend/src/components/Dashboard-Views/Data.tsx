@@ -13,6 +13,20 @@ type DataItem = {
   value: number;
 };
 
+type DeviceData = {
+  id: string;
+  deviceVersion: string;
+  lastSyncTime: string;
+  batteryLevel: number;
+  heart: DataItem[];
+  steps: DataItem[];
+  calories: DataItem[];
+  distance: DataItem[];
+  elevation: DataItem[];
+  floors: DataItem[];
+  [key: string]: any; // This line is the index signature
+};
+
 const Data = () => {
   const DOWNLOAD_ENDPOINT =
     import.meta.env.VITE_APP_NODE_ENV === "production"
@@ -71,6 +85,7 @@ const Data = () => {
     { value: "scatter", label: "Scatter" },
   ];
 
+  /*
   useEffect(() => {
     const datasets = selectedDevices
       .map((deviceId) => {
@@ -82,13 +97,16 @@ const Data = () => {
         const label = device.deviceVersion + " " + device.id; // Use device ID as label
         const borderColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`; // Random color for each dataset
         const backgroundColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`; // Random color for each dataset
-        const data = device[dataType]
-          ?.filter((item: DataItem) => item.date === date)
-          .map((item: DataItem) => item.value);
+
+        const dataPoint = device[dataType]?.find(
+          (item: DataItem) => item.date === date
+        );
+        return dataPoint ? dataPoint.value : null; // Return the value or null if not found
+      });
 
         return {
           label,
-          data,
+          data: [dataPoint ? dataPoint.value : null], // Single data point
           borderColor,
           backgroundColor,
           tension: 0.1,
@@ -97,10 +115,58 @@ const Data = () => {
       })
       .filter((dataset) => dataset !== null); // Filter out null datasets
 
-    const labels = formatDate(startDate);
+    //const labels = devices[0]?.map((item: DeviceData) => item.deviceVersion);
+    console.log(devices);
+    const labels = selectedDevices.map((deviceId) => {
+      const device = devices.find((d) => d.id === deviceId);
+      return device ? device.deviceVersion : "Unknown";
+    }); //console.log(labels);
 
     setChartData({
       labels, // Use dates from the first device as labels
+      datasets,
+    });
+  }, [selectedDevices, dataType, startDate, devices]);
+*/
+  useEffect(() => {
+    const formattedDate = formatDate(startDate);
+
+    // Generate labels from the selected devices' versions
+    const labels = selectedDevices.map((deviceId) => {
+      const device = devices.find((d) => d.id === deviceId);
+      return device ? device.deviceVersion : "Unknown";
+    });
+
+    // Generate datasets, assuming one dataset for each device
+    const datasets = selectedDevices
+      .map((deviceId, index) => {
+        const device = devices.find((d) => d.id === deviceId);
+        if (!device) return null;
+
+        const dataPoint = device[dataType]?.find(
+          (item: DeviceData) => item.date === formattedDate
+        );
+
+        if (!dataPoint) return null; // No data point for this date, skip
+
+        // Assign a color for this dataset
+        const color = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+
+        return {
+          label: device.deviceVersion, // Label for the legend
+          data: [{ x: labels[index], y: dataPoint.value }], // Format required for Chart.js v3
+          backgroundColor: color,
+          fill: true,
+          barPercentage: 1,
+          categoryPercentage: 1,
+        };
+      })
+      .filter((dataset) => dataset !== null); // Remove any datasets without data
+
+    console.log(labels);
+    console.log(datasets);
+    setChartData({
+      labels, // Labels for the x-axis
       datasets,
     });
   }, [selectedDevices, dataType, startDate, devices]);
@@ -115,6 +181,39 @@ const Data = () => {
   };
 
   const renderGraph = () => {
+    /*
+    const options = {
+      responsive: true,
+      maintainAspectRatio: false,
+      /*
+      scales: {
+        x: {
+          // 'x' for Chart.js 3.x; use 'xAxes' for Chart.js 2.x
+          title: {
+            display: true,
+            text: "Devices",
+          },
+          barPercentage: 1, // Bars fill the full width of the category
+          categoryPercentage: 100,
+        },
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: "dataType",
+          },
+          // Additional y-axis configuration
+        },
+      }
+      plugins: {
+        legend: {
+          display: true, // Hide the legend if you only want labels under bars
+          position: "top",
+        },
+      },
+      // Include more options as necessary
+    };*/
+
     switch (graphType) {
       case "bar":
         return (
@@ -326,6 +425,10 @@ const Data = () => {
         </div>
       </div>
       <div className="p-5 w-full">
+        <h1 className="text-2xl text-white mb-5">
+          {" "}
+          Data from {formatDate(startDate)}
+        </h1>
         <div className="w-full h-[500px] p-5 text-white bg-[#2F2D2D] rounded-xl flex justify-center items-center mb-10">
           {renderGraph()}
         </div>
