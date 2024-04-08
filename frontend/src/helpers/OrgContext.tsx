@@ -10,7 +10,11 @@ interface DeviceData {
   batteryLevel: number;
   steps: { date: string; value: number }[];
   vo2max: { date: string; value: number }[];
-  heart_rate: { date: string; value: number }[];
+  heart: { date: string; value: number }[];
+  calories: { date: string; value: number }[];
+  distance: { date: string; value: number }[];
+  elevation: { date: string; value: number }[];
+  floors: { date: string; value: number }[];
   [key: string]: any; // This line is the index signature
 }
 
@@ -101,7 +105,7 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           value: 46,
         },
       ],
-      heart_rate: [
+      heart: [
         {
           date: "2024-02-20",
           value: 74,
@@ -133,6 +137,62 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         {
           date: "2024-02-27",
           value: 120,
+        },
+      ],
+      calories: [
+        {
+          date: "2024-02-20",
+          value: 10000,
+        },
+        {
+          date: "2024-02-21",
+          value: 100,
+        },
+        {
+          date: "2024-02-22",
+          value: 100,
+        },
+      ],
+      distance: [
+        {
+          date: "2024-02-20",
+          value: 1200,
+        },
+        {
+          date: "2024-02-21",
+          value: 1020,
+        },
+        {
+          date: "2024-02-22",
+          value: 5000,
+        },
+      ],
+      elevation: [
+        {
+          date: "2024-02-20",
+          value: 1000,
+        },
+        {
+          date: "2024-02-21",
+          value: 1020,
+        },
+        {
+          date: "2024-02-22",
+          value: 1030,
+        },
+      ],
+      floors: [
+        {
+          date: "2024-02-20",
+          value: 100,
+        },
+        {
+          date: "2024-02-21",
+          value: 120,
+        },
+        {
+          date: "2024-02-22",
+          value: 1480,
         },
       ],
     },
@@ -189,7 +249,7 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           value: 64.8,
         },
       ],
-      heart_rate: [
+      heart: [
         {
           date: "2024-02-20",
           value: 74,
@@ -221,6 +281,62 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         {
           date: "2024-02-27",
           value: 120,
+        },
+      ],
+      calories: [
+        {
+          date: "2024-02-20",
+          value: 10000,
+        },
+        {
+          date: "2024-02-21",
+          value: 100,
+        },
+        {
+          date: "2024-02-22",
+          value: 100,
+        },
+      ],
+      distance: [
+        {
+          date: "2024-02-20",
+          value: 10000,
+        },
+        {
+          date: "2024-02-21",
+          value: 100,
+        },
+        {
+          date: "2024-02-22",
+          value: 100,
+        },
+      ],
+      elevation: [
+        {
+          date: "2024-02-20",
+          value: 10000,
+        },
+        {
+          date: "2024-02-21",
+          value: 100,
+        },
+        {
+          date: "2024-02-22",
+          value: 100,
+        },
+      ],
+      floors: [
+        {
+          date: "2024-02-20",
+          value: 10000,
+        },
+        {
+          date: "2024-02-21",
+          value: 100,
+        },
+        {
+          date: "2024-02-22",
+          value: 100,
         },
       ],
     },

@@ -39,7 +39,7 @@ const Banner = () => {
         <p className="text-4xl font-bold text-white">
           {" "}
           Expand your research potential using Fitbit devices and our intuitive
-          dashboard made for researchers like you.
+          dashboard made for researchers.
         </p>
         <div className="flex flex-row gap-5 mt-10">
           <button
