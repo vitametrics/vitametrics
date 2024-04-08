@@ -2195,7 +2195,7 @@ find-up@^5.0.0:
     locate-path "^6.0.0"
     path-exists "^4.0.0"
 
-fitaddon@./backend/fitaddon:
+"fitaddon@file:./backend/fitaddon":
   version "1.0.0"
   dependencies:
     node-addon-api "^8.0.0"
