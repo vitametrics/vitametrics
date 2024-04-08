@@ -148,14 +148,6 @@ const Navbar = () => {
                   {" "}
                   <li>
                     <a
-                      href="/contact"
-                      className="block py-2 px-3 text-2xl text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0 dark:text-white md:dark:hover:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-                    >
-                      Contact
-                    </a>
-                  </li>
-                  <li>
-                    <a
                       href="/login"
                       className="block py-2 px-3 text-2xl text-white rounded hover:text-gray-300 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0  md:dark:hover:text-grey-200 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
                     >

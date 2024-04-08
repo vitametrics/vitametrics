@@ -33,6 +33,16 @@
         "<!@(node -p \"require('node-addon-api').include\")",
         "./FitSDK"
       ],
+      "conditions": [
+        ['OS=="win"', {
+          'msvs_settings': {
+            'VCCLCompilerTool': {
+              'ExceptionHandling': '1',
+              'AdditionalOptions': ['/EHsc']
+            }
+          }
+        }]
+      ],
       "dependencies": [
         "<!(node -p \"require('node-addon-api').gyp\")",
       ],

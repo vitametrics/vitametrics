@@ -23,13 +23,12 @@ const Data = () => {
   const [graphType, setGraphType] = useState("bar");
   //const [graphType, setGraphType] = useState("Bar");
 
-  const { devices, orgName, fetchDataById, syncDevice } = useOrg();
+  const { devices, orgName } = useOrg();
 
   //YYYY - MM - DD
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [startDate, setStartDate] = useState(new Date());
   const [selectedDevices, setSelectedDevices] = useState<string[]>([]);
-  const [detailLevel, setDetailLevel] = useState("1hour");
+  const [detailLevel, setDetailLevel] = useState("1min");
 
   const detailLevelTypes = [
     {
@@ -41,12 +40,12 @@ const Data = () => {
       label: "1 minute",
     },
     {
-      value: "15min",
-      label: "15 minutes",
+      value: "5min",
+      label: "5 minutes",
     },
     {
-      value: "1hour",
-      label: "1 hour",
+      value: "15min",
+      label: "15 minutes",
     },
   ];
 
@@ -100,7 +99,7 @@ const Data = () => {
       labels, // Use dates from the first device as labels
       datasets,
     });
-  }, [selectedDevices, dataType, startDate, endDate]);
+  }, [selectedDevices, dataType, startDate]);
 
   const handleDeviceSelectionChange = (
     deviceId: string,
@@ -180,12 +179,13 @@ const Data = () => {
     const url = `${DOWNLOAD_ENDPOINT}`;
     for (let i = 0; i < selectedDevices.length; i++) {
       try {
-        const id = selectedDevices[i];
+        const deviceId = selectedDevices[i];
+        const date = formatDate(startDate);
         const response = await axios.get(url, {
           params: {
-            id,
+            deviceId,
             dataType,
-            startDate,
+            date,
             detailLevel,
           },
           withCredentials: true,
@@ -213,8 +213,11 @@ const Data = () => {
   };
 
   const formatDate = (date: Date) => {
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
+    const month =
+      date.getMonth() + 1 < 10
+        ? "0" + (date.getMonth() + 1)
+        : date.getMonth() + 1;
+    const day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
     const year = date.getFullYear();
     return `${year}-${month}-${day}`;
   };
@@ -308,33 +311,14 @@ const Data = () => {
               htmlFor="startDate"
               className="block text-sm font-medium  text-white"
             >
-              Select Start Date:
+              Select Date:
             </label>
             <DatePicker
               selected={startDate}
               onChange={(e: React.SetStateAction<any>) => setStartDate(e)}
               selectsStart
               startDate={startDate}
-              endDate={endDate}
               className=" p-2 border border-gray-300 rounded-md w-full"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="endDate"
-              className="block text-sm font-medium  text-white"
-            >
-              Select End Date:
-            </label>
-            <DatePicker
-              selected={endDate}
-              onChange={(e: React.SetStateAction<any>) => setEndDate(e)}
-              selectsEnd
-              startDate={startDate}
-              endDate={endDate}
-              minDate={startDate}
-              className="p-2 border border-gray-300 rounded-md w-full"
             />
           </div>
         </div>
@@ -382,30 +366,18 @@ const Data = () => {
                         </p>
                       </div>
 
+                      {/*
                       <button
                         className="bg-none text-white border-white border-solid dark:border-transparent border-2 p-2 rounded-lg w-[60px] ml-auto"
                         onClick={() =>
                           fetchDataById(
                             device.id,
-                            startDate || formatDate(new Date()),
-                            endDate || formatDate(new Date())
+                            startDate || formatDate(new Date())
                           )
                         }
                       >
                         Fetch
-                      </button>
-                      <button
-                        className="bg-none text-white border-white dark:border-transparent border-solid border-2 p-2 rounded-lg w-[60px]"
-                        onClick={() =>
-                          syncDevice(
-                            device.id,
-                            startDate || new Date(),
-                            endDate || new Date()
-                          )
-                        }
-                      >
-                        Sync
-                      </button>
+                      </button>*/}
                     </div>
                   );
                 }
