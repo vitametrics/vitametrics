@@ -12,6 +12,7 @@ import fetchIntradayData from '../util/fetchIntraday';
 import { sendEmail } from '../util/emailUtil';
 import Organization, {IOrganization} from '../models/Organization';
 import User from '../models/User';
+import fetchData from '../util/fetchData';
 const router = express.Router();
 const upload = multer({ dest: '../../uploads'});
 const fitAddon = require('../fitaddon/build/Release/fitaddon.node')
@@ -152,6 +153,67 @@ router.post('/upload', upload.single('fitfile'), (req: Request, res: Response) =
     }
 
 })
+
+// fetch data from fitbit by device id
+router.get('/fetch-data', verifySession, checkOrgMembership, refreshToken, async (req: CustomReq, res: Response) => {
+    try {
+        const organization: IOrganization = req.organization as IOrganization;
+        const deviceId = typeof req.query.id === 'string' ? req.query.id : undefined;
+        const orgUserId = organization.userId;
+        const startDate = typeof req.query.startDate === 'string' ? req.query.startDate: undefined;
+        const endDate = typeof req.query.endDate === 'string' ? req.query.endDate: undefined;
+
+        if (!deviceId) {
+            return res.status(500).json({msg: 'Please provide a device id'});
+        }
+
+        const data = await fetchData(orgUserId, organization.fitbitAccessToken, deviceId, startDate, endDate);
+
+        return res.status(200).json(data);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({msg: 'Internal Server Error'});
+    }
+});
+
+// fetch intraday data from fitbit by device id
+router.get('/fetch-intraday', verifySession, checkOrgMembership, refreshToken, [
+    query('deviceId').not().isEmpty().withMessage('Device ID is required'),
+    query('dataType').not().isEmpty().withMessage('You must specify which data to download'),
+    query('date').not().isEmpty().withMessage('You must specify a date'),
+    query('detailLevel').not().isEmpty().withMessage('You must specify a detail level')
+], async (req: CustomReq, res: Response) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    if (!req.user) {
+        return res.status(401).json({ msg: 'Unauthorized' });
+    }
+
+    const organization: IOrganization = req.organization as IOrganization;
+
+    try {
+        const deviceId = req.query.deviceId;
+
+        const orgId = organization.orgId;
+
+        const orgDeviceId = await Organization.findOne({ orgId, devices: deviceId }).lean();
+        if (!orgDeviceId) {
+            return res.status(404).json({ msg: 'Device not found in organization' });
+        }
+
+        const data = await fetchIntradayData(organization.userId, organization.fitbitAccessToken, req.query.dataType as string, req.query.date as string, req.query.detailLevel as string);
+
+        return res.status(200).json(data);
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ msg: 'Internal Server Error' });
+    }
+});
 
 // download data from fitbit by device id
 router.get('/download-data', verifySession, checkOrgMembership, refreshToken, [
