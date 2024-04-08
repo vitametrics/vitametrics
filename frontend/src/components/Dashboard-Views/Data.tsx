@@ -19,15 +19,18 @@ const Data = () => {
       ? import.meta.env.VITE_APP_DOWNLOAD_DATA_ENDPOINT
       : import.meta.env.VITE_APP_DOWNLOAD_DATA_DEV_ENDPOINT;
 
-  const [dataType, setDataType] = useState("heart_rate");
+  const [dataType, setDataType] = useState("heart");
   const [graphType, setGraphType] = useState("bar");
-  //const [graphType, setGraphType] = useState("Bar");
+  const [downloadMsg, setDownloadMsg] = useState("");
+  const [downloadFlag, setDownloadFlag] = useState(false);
 
   const { devices, orgName } = useOrg();
 
-  //YYYY - MM - DD
-  const [startDate, setStartDate] = useState(new Date());
-  const [selectedDevices, setSelectedDevices] = useState<string[]>([]);
+  const [startDate, setStartDate] = useState(new Date()); //YYYY - MM - DD
+  const [selectedDevices, setSelectedDevices] = useState<string[]>(
+    devices.map((device) => device.id)
+  );
+
   const [detailLevel, setDetailLevel] = useState("1min");
 
   const detailLevelTypes = [
@@ -49,17 +52,15 @@ const Data = () => {
     },
   ];
 
-  useEffect(() => {
-    const deviceIds = devices.map((device) => device.id);
-    setSelectedDevices(deviceIds);
-  }, []);
-
   const [chartData, setChartData] = useState({});
 
   const dataTypeOptions = [
-    { value: "heart_rate", label: "Heart Rate" },
-    { value: "vo2max", label: "VO2 Max" },
+    { value: "heart", label: "Heart Rate" },
     { value: "steps", label: "Steps" },
+    { value: "calories", label: "Calories" },
+    { value: "distance", label: "Distance" },
+    { value: "elevation", label: "Elevation" },
+    { value: "floors", label: "Floors" },
   ];
 
   const graphTypeOptions = [
@@ -76,10 +77,14 @@ const Data = () => {
         const device = devices.find((d) => d.id === deviceId);
         if (!device) return null; // Skip if device not found
 
+        const date = formatDate(startDate);
+
         const label = device.deviceVersion + " " + device.id; // Use device ID as label
         const borderColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`; // Random color for each dataset
         const backgroundColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`; // Random color for each dataset
-        const data = device?.[dataType]?.map((item: DataItem) => item.value);
+        const data = device[dataType]
+          ?.filter((item: DataItem) => item.date === date)
+          .map((item: DataItem) => item.value);
 
         return {
           label,
@@ -92,14 +97,13 @@ const Data = () => {
       })
       .filter((dataset) => dataset !== null); // Filter out null datasets
 
-    const labels =
-      devices[0]?.[dataType]?.map((item: DataItem) => item.date) || [];
+    const labels = formatDate(startDate);
 
     setChartData({
       labels, // Use dates from the first device as labels
       datasets,
     });
-  }, [selectedDevices, dataType, startDate]);
+  }, [selectedDevices, dataType, startDate, devices]);
 
   const handleDeviceSelectionChange = (
     deviceId: string,
@@ -108,14 +112,7 @@ const Data = () => {
     setSelectedDevices((prev) =>
       isChecked ? [...prev, deviceId] : prev.filter((id) => id !== deviceId)
     );
-    //setDeviceId(deviceId); //for testing
   };
-
-  /*
-  const graphTypeOptions = [
-    { value: "bar", label: "Bar" },
-    { value: "line", label: "Line" },
-  ];*/
 
   const renderGraph = () => {
     switch (graphType) {
@@ -172,7 +169,8 @@ const Data = () => {
 
   const downloadData = async () => {
     if (selectedDevices.length === 0) {
-      console.log("devices need to be selected");
+      setDownloadFlag(false);
+      setDownloadMsg("Please select device(s) to download");
       return;
     }
 
@@ -206,8 +204,12 @@ const Data = () => {
         // Clean up and remove the link
         link.parentNode?.removeChild(link);
         window.URL.revokeObjectURL(url);
+        setDownloadFlag(true);
+        setDownloadMsg("Data downloaded successfully");
       } catch (error) {
         console.log(error);
+        setDownloadFlag(false);
+        setDownloadMsg("Error downloading data");
       }
     }
   };
@@ -390,6 +392,13 @@ const Data = () => {
             )}
           </div>
         </div>
+        {downloadFlag ? (
+          <p className="text-green-500 text-2xl font-bold mb-5">
+            {downloadMsg}
+          </p>
+        ) : (
+          <p className="text-red-500 text-2xl font-bold mb-5">{downloadMsg}</p>
+        )}
         <button
           className="p-5 text-2xl rounded-xl w-[250px] bg-[#606060] text-white"
           onClick={() => downloadData()}
