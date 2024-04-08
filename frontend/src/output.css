@@ -560,10 +560,6 @@ video {
   visibility: visible;
 }
 
-.fixed {
-  position: fixed;
-}
-
 .absolute {
   position: absolute;
 }
@@ -723,12 +719,12 @@ video {
   height: 2rem;
 }
 
-.h-\[2\.5rem\] {
-  height: 2.5rem;
-}
-
 .h-\[200px\] {
   height: 200px;
+}
+
+.h-\[2rem\] {
+  height: 2rem;
 }
 
 .h-\[360px\] {
@@ -769,10 +765,6 @@ video {
 
 .h-screen {
   height: 100vh;
-}
-
-.h-\[2rem\] {
-  height: 2rem;
 }
 
 .w-10 {
@@ -1081,6 +1073,11 @@ video {
   background-color: rgb(88 88 88 / var(--tw-bg-opacity));
 }
 
+.bg-\[\#606060\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(96 96 96 / var(--tw-bg-opacity));
+}
+
 .bg-\[\#613a3a\] {
   --tw-bg-opacity: 1;
   background-color: rgb(97 58 58 / var(--tw-bg-opacity));
@@ -1094,11 +1091,6 @@ video {
 .bg-\[\#79a3b7\] {
   --tw-bg-opacity: 1;
   background-color: rgb(121 163 183 / var(--tw-bg-opacity));
-}
-
-.bg-\[\#AE6B69\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(174 107 105 / var(--tw-bg-opacity));
 }
 
 .bg-\[\#BA6767\] {
@@ -1165,11 +1157,6 @@ video {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
-.bg-\[\#606060\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(96 96 96 / var(--tw-bg-opacity));
-}
-
 .bg-hero-texture {
   background-image: url('/src/assets/images/hero-texture.png');
 }
@@ -1232,6 +1219,11 @@ video {
   padding: 88px;
 }
 
+.px-2 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
 .px-20 {
   padding-left: 5rem;
   padding-right: 5rem;
@@ -1240,11 +1232,6 @@ video {
 .px-3 {
   padding-left: 0.75rem;
   padding-right: 0.75rem;
-}
-
-.px-5 {
-  padding-left: 1.25rem;
-  padding-right: 1.25rem;
 }
 
 .py-2 {
@@ -1260,16 +1247,6 @@ video {
 .py-5 {
   padding-top: 1.25rem;
   padding-bottom: 1.25rem;
-}
-
-.px-10 {
-  padding-left: 2.5rem;
-  padding-right: 2.5rem;
-}
-
-.px-2 {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
 }
 
 .pb-0 {
@@ -1440,14 +1417,6 @@ video {
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
-}
-
-.accent-\[\#BA6767\] {
-  accent-color: #BA6767;
-}
-
-.accent-\[\#000000\] {
-  accent-color: #000000;
 }
 
 .accent-\[\#2a2a2a\] {
@@ -1744,10 +1713,6 @@ input:checked + .slider:before {
 :is(.dark .dark\:text-white) {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
-}
-
-:is(.dark .dark\:checked\:accent-\[\#BA6767\]:checked) {
-  accent-color: #BA6767;
 }
 
 :is(.dark .dark\:hover\:bg-gray-700:hover) {
