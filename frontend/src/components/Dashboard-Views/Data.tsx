@@ -128,18 +128,19 @@ const Data = () => {
     });
   }, [selectedDevices, dataType, startDate, devices]);
 */
+  /*
   useEffect(() => {
     const formattedDate = formatDate(startDate);
 
     // Generate labels from the selected devices' versions
     const labels = selectedDevices.map((deviceId) => {
       const device = devices.find((d) => d.id === deviceId);
-      return device ? device.deviceVersion : "Unknown";
+      return device ? device.deviceVersion : "";
     });
 
     // Generate datasets, assuming one dataset for each device
     const datasets = selectedDevices
-      .map((deviceId, index) => {
+      .map((deviceId) => {
         const device = devices.find((d) => d.id === deviceId);
         if (!device) return null;
 
@@ -147,26 +148,108 @@ const Data = () => {
           (item: DeviceData) => item.date === formattedDate
         );
 
-        if (!dataPoint) return null; // No data point for this date, skip
+        if (!dataPoint) return null;
 
-        // Assign a color for this dataset
         const color = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
 
         return {
-          label: device.deviceVersion, // Label for the legend
-          data: [{ x: labels[index], y: dataPoint.value }], // Format required for Chart.js v3
+          label: device.deviceVersion,
+          data: [{ x: device.deviceVersion, y: dataPoint.value }], // Ensure only non-null values are included
           backgroundColor: color,
           fill: true,
           barPercentage: 1,
           categoryPercentage: 1,
+          categorySpacing: 0,
         };
       })
-      .filter((dataset) => dataset !== null); // Remove any datasets without data
-
-    console.log(labels);
+      .filter((dataset) => dataset !== null);
     console.log(datasets);
+
     setChartData({
-      labels, // Labels for the x-axis
+      labels,
+      datasets,
+    });
+  }, [selectedDevices, dataType, startDate, devices]);
+*/
+
+  /* working ish!
+  useEffect(() => {
+    const formattedDate = formatDate(startDate);
+
+    const labels = selectedDevices.map((deviceId) => {
+      const device = devices.find((d) => d.id === deviceId);
+      return device ? device.deviceVersion : "Unknown";
+    });
+
+    // Single dataset for all bars
+    const dataPoints = selectedDevices.map((deviceId) => {
+      const device = devices.find((d) => d.id === deviceId);
+      if (!device) return { x: "Unknown", y: 0 };
+
+      const dataPoint = device[dataType]?.find(
+        (item: DeviceData) => item.date === formattedDate
+      );
+      return {
+        x: device.deviceVersion,
+        y: dataPoint ? dataPoint.value : 0,
+      };
+    });
+
+    // One dataset containing all data points
+    const datasets = [
+      {
+        label: labels,
+        data: dataPoints,
+        backgroundColor: labels.map(
+          () => `#${Math.floor(Math.random() * 16777215).toString(16)}`
+        ),
+      },
+    ];
+
+    setChartData({
+      labels,
+      datasets,
+    });
+  }, [selectedDevices, dataType, startDate, devices]);
+
+  */
+
+  useEffect(() => {
+    const formattedDate = formatDate(startDate);
+
+    const labels = selectedDevices.map((deviceId) => {
+      const device = devices.find((d) => d.id === deviceId);
+      return device ? device.deviceVersion + " " + device.id : "Unknown";
+    });
+
+    const dataPoints = selectedDevices.map((deviceId) => {
+      const device = devices.find((d) => d.id === deviceId);
+      if (!device) return { x: "Unknown", y: 0 };
+
+      const dataPoint = device[dataType]?.find(
+        (item: DeviceData) => item.date === formattedDate
+      );
+
+      return {
+        x: device.deviceVersion + " " + device.id,
+        y: dataPoint ? dataPoint.value : 0,
+        device: deviceId, // include deviceId to reference specific points
+      };
+    });
+
+    const datasets = [
+      {
+        data: dataPoints,
+        backgroundColor: labels.map(
+          () => `#${Math.floor(Math.random() * 16777215).toString(16)}`
+        ),
+      },
+    ];
+
+    console.log(datasets);
+
+    setChartData({
+      labels,
       datasets,
     });
   }, [selectedDevices, dataType, startDate, devices]);
@@ -181,45 +264,62 @@ const Data = () => {
   };
 
   const renderGraph = () => {
-    /*
     const options = {
       responsive: true,
       maintainAspectRatio: false,
-      /*
       scales: {
         x: {
-          // 'x' for Chart.js 3.x; use 'xAxes' for Chart.js 2.x
-          title: {
-            display: true,
-            text: "Devices",
+          offset: true, // <== that one!
+          ticks: {
+            autoSkip: true,
           },
-          barPercentage: 1, // Bars fill the full width of the category
-          categoryPercentage: 100,
         },
         y: {
           beginAtZero: true,
           title: {
             display: true,
-            text: "dataType",
+            text: "Value",
           },
-          // Additional y-axis configuration
-        },
-      }
-      plugins: {
-        legend: {
-          display: true, // Hide the legend if you only want labels under bars
-          position: "top",
         },
       },
-      // Include more options as necessary
-    };*/
+      plugins: {
+        legend: {
+          display: true, // Show the legend
+          position: "bottom",
+          onClick: (evt: any, legendItem: any, legend: any) => {
+            const index = legend.chart.data.labels.indexOf(legendItem.text);
+            console.log(index);
+            if (index > -1) {
+              const meta = legend.chart.getDatasetMeta(0); // Assuming there is only one dataset
+              const item = meta.data[index];
+              legend.chart.toggleDataVisibility(index);
+
+              item.hidden = !item.hidden; // toggle visibility
+            }
+            legend.chart.update();
+          },
+          labels: {
+            generateLabels: (chart: any) => {
+              const datasets = chart.data.datasets;
+              return chart.data.labels.map((label: string, i: number) => ({
+                text: label,
+                fontColor: "white",
+                fillStyle: datasets[0].backgroundColor[i],
+                datasetIndex: i,
+                hidden: chart.getDatasetMeta(0).data[i].hidden,
+              }));
+            },
+          },
+        },
+      },
+    };
 
     switch (graphType) {
       case "bar":
         return (
           <Bar
             data={{ datasets: [], ...chartData }}
-            options={{ responsive: true, maintainAspectRatio: false }}
+            options={options}
             width="100%"
           />
         );
@@ -227,23 +327,7 @@ const Data = () => {
         return (
           <Line
             data={{ datasets: [], ...chartData }}
-            options={{ responsive: true, maintainAspectRatio: false }}
-            width="100%"
-          />
-        );
-      case "pie":
-        return (
-          <Pie
-            data={{ datasets: [], ...chartData }}
-            options={{ responsive: true, maintainAspectRatio: false }}
-            width="100%"
-          />
-        );
-      case "doughnut":
-        return (
-          <Doughnut
-            data={{ datasets: [], ...chartData }}
-            options={{ responsive: true, maintainAspectRatio: false }}
+            options={options}
             width="100%"
           />
         );
@@ -251,7 +335,7 @@ const Data = () => {
         return (
           <Scatter
             data={{ datasets: [], ...chartData }}
-            options={{ responsive: true, maintainAspectRatio: false }}
+            options={options}
             width="100%"
           />
         );

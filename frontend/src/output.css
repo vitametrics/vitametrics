@@ -1128,6 +1128,11 @@ video {
   background-color: rgb(210 216 230 / var(--tw-bg-opacity));
 }
 
+.bg-\[\#e6e6e6\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(230 230 230 / var(--tw-bg-opacity));
+}
+
 .bg-\[\#fff3f3\] {
   --tw-bg-opacity: 1;
   background-color: rgb(255 243 243 / var(--tw-bg-opacity));
@@ -1150,15 +1155,6 @@ video {
 .bg-white {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-}
-
-.bg-\[\#ffff\] {
-  background-color: #ffff;
-}
-
-.bg-\[\#e6e6e6\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(230 230 230 / var(--tw-bg-opacity));
 }
 
 .bg-hero-texture {
@@ -1435,6 +1431,10 @@ video {
   --tw-backdrop-blur: blur(24px);
   -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
           backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+}
+
+.\[y\:dataPoint\.value\] {
+  y: dataPoint.value;
 }
 
 html {
