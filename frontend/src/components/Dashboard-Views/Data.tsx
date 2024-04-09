@@ -32,21 +32,25 @@ const Data = () => {
     import.meta.env.VITE_APP_NODE_ENV === "production"
       ? import.meta.env.VITE_APP_DOWNLOAD_DATA_ENDPOINT
       : import.meta.env.VITE_APP_DOWNLOAD_DATA_DEV_ENDPOINT;
-
+  const { devices, orgName } = useOrg();
   const [dataType, setDataType] = useState("heart");
   const [graphType, setGraphType] = useState("bar");
   const [downloadMsg, setDownloadMsg] = useState("");
   const [downloadFlag, setDownloadFlag] = useState(false);
-
-  const { devices, orgName } = useOrg();
-
   const [startDate, setStartDate] = useState(new Date()); //YYYY - MM - DD
+  const [chartData, setChartData] = useState({});
+
+  const [rangeStartDate, setRangeStartDate] = useState(new Date());
+  const [rangeEndDate, setRangeEndDate] = useState(new Date());
+  const [rangeChartData, setRangeChartData] = useState({});
+  const [rangeDetailLevel, setRangeDetailLevel] = useState("1min");
+  const [rangeDataType, setRangeDataType] = useState("heart");
+  const [rangeGraphType, setRangeGraphType] = useState("bar");
+
   const [selectedDevices, setSelectedDevices] = useState<string[]>(
     devices.map((device) => device.id)
   );
-
   const [detailLevel, setDetailLevel] = useState("1min");
-
   const detailLevelTypes = [
     {
       value: "1sesc",
@@ -66,8 +70,6 @@ const Data = () => {
     },
   ];
 
-  const [chartData, setChartData] = useState({});
-
   const dataTypeOptions = [
     { value: "heart", label: "Heart Rate" },
     { value: "steps", label: "Steps" },
@@ -85,136 +87,7 @@ const Data = () => {
     { value: "scatter", label: "Scatter" },
   ];
 
-  /*
-  useEffect(() => {
-    const datasets = selectedDevices
-      .map((deviceId) => {
-        const device = devices.find((d) => d.id === deviceId);
-        if (!device) return null; // Skip if device not found
-
-        const date = formatDate(startDate);
-
-        const label = device.deviceVersion + " " + device.id; // Use device ID as label
-        const borderColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`; // Random color for each dataset
-        const backgroundColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`; // Random color for each dataset
-
-        const dataPoint = device[dataType]?.find(
-          (item: DataItem) => item.date === date
-        );
-        return dataPoint ? dataPoint.value : null; // Return the value or null if not found
-      });
-
-        return {
-          label,
-          data: [dataPoint ? dataPoint.value : null], // Single data point
-          borderColor,
-          backgroundColor,
-          tension: 0.1,
-          fill: false,
-        };
-      })
-      .filter((dataset) => dataset !== null); // Filter out null datasets
-
-    //const labels = devices[0]?.map((item: DeviceData) => item.deviceVersion);
-    console.log(devices);
-    const labels = selectedDevices.map((deviceId) => {
-      const device = devices.find((d) => d.id === deviceId);
-      return device ? device.deviceVersion : "Unknown";
-    }); //console.log(labels);
-
-    setChartData({
-      labels, // Use dates from the first device as labels
-      datasets,
-    });
-  }, [selectedDevices, dataType, startDate, devices]);
-*/
-  /*
-  useEffect(() => {
-    const formattedDate = formatDate(startDate);
-
-    // Generate labels from the selected devices' versions
-    const labels = selectedDevices.map((deviceId) => {
-      const device = devices.find((d) => d.id === deviceId);
-      return device ? device.deviceVersion : "";
-    });
-
-    // Generate datasets, assuming one dataset for each device
-    const datasets = selectedDevices
-      .map((deviceId) => {
-        const device = devices.find((d) => d.id === deviceId);
-        if (!device) return null;
-
-        const dataPoint = device[dataType]?.find(
-          (item: DeviceData) => item.date === formattedDate
-        );
-
-        if (!dataPoint) return null;
-
-        const color = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
-
-        return {
-          label: device.deviceVersion,
-          data: [{ x: device.deviceVersion, y: dataPoint.value }], // Ensure only non-null values are included
-          backgroundColor: color,
-          fill: true,
-          barPercentage: 1,
-          categoryPercentage: 1,
-          categorySpacing: 0,
-        };
-      })
-      .filter((dataset) => dataset !== null);
-    console.log(datasets);
-
-    setChartData({
-      labels,
-      datasets,
-    });
-  }, [selectedDevices, dataType, startDate, devices]);
-*/
-
-  /* working ish!
-  useEffect(() => {
-    const formattedDate = formatDate(startDate);
-
-    const labels = selectedDevices.map((deviceId) => {
-      const device = devices.find((d) => d.id === deviceId);
-      return device ? device.deviceVersion : "Unknown";
-    });
-
-    // Single dataset for all bars
-    const dataPoints = selectedDevices.map((deviceId) => {
-      const device = devices.find((d) => d.id === deviceId);
-      if (!device) return { x: "Unknown", y: 0 };
-
-      const dataPoint = device[dataType]?.find(
-        (item: DeviceData) => item.date === formattedDate
-      );
-      return {
-        x: device.deviceVersion,
-        y: dataPoint ? dataPoint.value : 0,
-      };
-    });
-
-    // One dataset containing all data points
-    const datasets = [
-      {
-        label: labels,
-        data: dataPoints,
-        backgroundColor: labels.map(
-          () => `#${Math.floor(Math.random() * 16777215).toString(16)}`
-        ),
-      },
-    ];
-
-    setChartData({
-      labels,
-      datasets,
-    });
-  }, [selectedDevices, dataType, startDate, devices]);
-
-  */
-
-  useEffect(() => {
+  const createDataset = () => {
     const formattedDate = formatDate(startDate);
 
     const labels = selectedDevices.map((deviceId) => {
@@ -233,7 +106,7 @@ const Data = () => {
       return {
         x: device.deviceVersion + " " + device.id,
         y: dataPoint ? dataPoint.value : 0,
-        device: deviceId, // include deviceId to reference specific points
+        device: deviceId,
       };
     });
 
@@ -246,13 +119,58 @@ const Data = () => {
       },
     ];
 
-    console.log(datasets);
-
     setChartData({
       labels,
       datasets,
     });
-  }, [selectedDevices, dataType, startDate, devices]);
+  };
+
+  const createRangeDataset = () => {
+    const start = new Date(rangeStartDate).getTime();
+    const end = new Date(rangeEndDate).getTime();
+    const datasets = selectedDevices
+      .map((deviceId) => {
+        const device = devices.find((d) => d.id === deviceId);
+        if (!device) return null; // Skip if device not found
+
+        const label = device.id; // Use device ID as label
+        const borderColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`; // Random color for each dataset
+        const backgroundColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`; // Random color for each dataset
+        //fix this
+        const data = device?.[rangeDataType]
+          ?.filter((item: DataItem) => {
+            const itemDate = new Date(item.date).getTime();
+            console.log(item.date);
+            return itemDate >= start && itemDate <= end;
+          })
+          .map((item: DataItem) => item.value);
+        console.log(data);
+
+        return {
+          label,
+          data,
+          borderColor,
+          backgroundColor,
+          tension: 0.1,
+          fill: false,
+        };
+      })
+      .filter((dataset) => dataset !== null); // Filter out null datasets
+
+    //fix this
+    const labels =
+      devices[0]?.[rangeDataType]
+        ?.filter((item: DataItem) => {
+          const itemDate = new Date(item.date).getTime();
+          return itemDate >= start && itemDate <= end;
+        })
+        .map((item: DataItem) => item.date) || [];
+
+    setRangeChartData({
+      labels, // Use dates from the first device as labels
+      datasets,
+    });
+  };
 
   const handleDeviceSelectionChange = (
     deviceId: string,
@@ -263,13 +181,61 @@ const Data = () => {
     );
   };
 
+  const renderRangeGraph = () => {
+    switch (rangeGraphType) {
+      case "bar":
+        return (
+          <Bar
+            data={{ datasets: [], ...rangeChartData }}
+            options={{ responsive: true }}
+          />
+        );
+      case "line":
+        return (
+          <Line
+            data={{ datasets: [], ...rangeChartData }}
+            options={{ responsive: true }}
+          />
+        );
+      case "pie":
+        return (
+          <Pie
+            data={{ datasets: [], ...rangeChartData }}
+            options={{ responsive: true }}
+          />
+        );
+      case "doughnut":
+        return (
+          <Doughnut
+            data={{ datasets: [], ...rangeChartData }}
+            options={{ responsive: true }}
+          />
+        );
+      case "scatter":
+        return (
+          <Scatter
+            data={{ datasets: [], ...rangeChartData }}
+            options={{ responsive: true }}
+          />
+        );
+
+      default:
+        return (
+          <Bar
+            data={{ datasets: [], ...rangeChartData }}
+            options={{ responsive: true }}
+          />
+        );
+    }
+  };
+
   const renderGraph = () => {
     const options = {
       responsive: true,
       maintainAspectRatio: false,
       scales: {
         x: {
-          offset: true, // <== that one!
+          offset: true,
           ticks: {
             autoSkip: true,
           },
@@ -286,15 +252,14 @@ const Data = () => {
         legend: {
           display: true, // Show the legend
           position: "bottom",
-          onClick: (evt: any, legendItem: any, legend: any) => {
+          onClick: (_evt: any, legendItem: any, legend: any) => {
             const index = legend.chart.data.labels.indexOf(legendItem.text);
             console.log(index);
             if (index > -1) {
-              const meta = legend.chart.getDatasetMeta(0); // Assuming there is only one dataset
+              const meta = legend.chart.getDatasetMeta(0);
               const item = meta.data[index];
               legend.chart.toggleDataVisibility(index);
-
-              item.hidden = !item.hidden; // toggle visibility
+              item.hidden = !item.hidden;
             }
             legend.chart.update();
           },
@@ -319,7 +284,16 @@ const Data = () => {
         return (
           <Bar
             data={{ datasets: [], ...chartData }}
-            options={options}
+            options={{
+              ...options,
+              plugins: {
+                ...options.plugins,
+                legend: {
+                  ...options.plugins.legend,
+                  position: "bottom",
+                },
+              },
+            }}
             width="100%"
           />
         );
@@ -327,7 +301,16 @@ const Data = () => {
         return (
           <Line
             data={{ datasets: [], ...chartData }}
-            options={options}
+            options={{
+              ...options,
+              plugins: {
+                ...options.plugins,
+                legend: {
+                  ...options.plugins.legend,
+                  position: "bottom",
+                },
+              },
+            }}
             width="100%"
           />
         );
@@ -335,7 +318,16 @@ const Data = () => {
         return (
           <Scatter
             data={{ datasets: [], ...chartData }}
-            options={options}
+            options={{
+              ...options,
+              plugins: {
+                ...options.plugins,
+                legend: {
+                  ...options.plugins.legend,
+                  position: "bottom", // Replace "bottom" with the desired position
+                },
+              },
+            }}
             width="100%"
           />
         );
@@ -407,114 +399,248 @@ const Data = () => {
     return `${year}-${month}-${day}`;
   };
 
+  useEffect(() => {
+    createDataset();
+  }, [selectedDevices, dataType, startDate]);
+
+  useEffect(() => {
+    createRangeDataset();
+  }, [selectedDevices, rangeDataType, rangeStartDate, rangeEndDate]);
+
   return (
     <div className="w-full h-full flex flex-col p-10 bg-[#1E1D20] dark:bg-hero-texture">
-      <h2 className="w-full text-4xl font-ralewayBold text-white p-5 pb-0">
+      <h2 className="w-full text-4xl font-ralewayBold text-white p-5 pb-0 mb-5">
         {orgName} Overview
       </h2>
-      <div className="flex flex-row p-5 w-full gap-5">
-        {/* Data & Graph Type Dropdown */}
-        <div className="mr-auto flex flex-row gap-5">
-          <div className="flex flex-col">
-            <label
-              htmlFor="dataType"
-              className="block text-sm font-medium  text-white"
-            >
-              Select Data Type:
-            </label>
-            <select
-              id="dataType"
-              name="dataType"
-              value={dataType}
-              onChange={(e) => setDataType(e.target.value)}
-              className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-            >
-              <option value="defaultDataType" disabled>
-                -- Select Data Type --
-              </option>
-              {dataTypeOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex flex-col">
-            <label
-              htmlFor="graphType"
-              className="block text-sm font-medium  text-white"
-            >
-              Select Graph Type:
-            </label>
-            <select
-              id="graphType"
-              name="graphType"
-              value={graphType}
-              onChange={(e) => setGraphType(e.target.value)}
-              className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-            >
-              <option value="defaultGraphType" disabled>
-                -- Select Graph Type --
-              </option>
-              {graphTypeOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
 
-          <div className="flex flex-col">
-            <label
-              htmlFor="detailLevelType"
-              className="block text-sm font-medium w-full text-white"
-            >
-              Select Detail Level:
-            </label>
-            <select
-              id="detailLevelType"
-              name="detailLevelType"
-              value={detailLevel}
-              onChange={(e) => setDetailLevel(e.target.value)}
-              className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-            >
-              <option value="defaultDataType" disabled>
-                -- Select Detail Level --
-              </option>
-              {detailLevelTypes.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div className="flex flex-row w-full gap-5">
-          <div className="ml-auto">
-            <label
-              htmlFor="startDate"
-              className="block text-sm font-medium  text-white"
-            >
-              Select Date:
-            </label>
-            <DatePicker
-              selected={startDate}
-              onChange={(e: React.SetStateAction<any>) => setStartDate(e)}
-              selectsStart
-              startDate={startDate}
-              className=" p-2 border border-gray-300 rounded-md w-full"
-            />
-          </div>
-        </div>
-      </div>
-      <div className="p-5 w-full">
-        <h1 className="text-2xl text-white mb-5">
+      <div className="p-5 w-full flex-col">
+        <h1 className="text-2xl text-yellow-500 mb-2">
           {" "}
           Data from {formatDate(startDate)}
         </h1>
+        <div className="flex flex-row w-full gap-5 mb-5">
+          {/* Data & Graph Type Dropdown */}
+          <div className="mr-auto flex flex-row gap-5">
+            <div className="flex flex-col">
+              <label
+                htmlFor="dataType"
+                className="block text-sm font-medium  text-white"
+              >
+                Select Data Type:
+              </label>
+              <select
+                id="dataType"
+                name="dataType"
+                value={dataType}
+                onChange={(e) => setDataType(e.target.value)}
+                className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+              >
+                <option value="defaultDataType" disabled>
+                  -- Select Data Type --
+                </option>
+                {dataTypeOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex flex-col">
+              <label
+                htmlFor="graphType"
+                className="block text-sm font-medium  text-white"
+              >
+                Select Graph Type:
+              </label>
+              <select
+                id="graphType"
+                name="graphType"
+                value={graphType}
+                onChange={(e) => setGraphType(e.target.value)}
+                className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+              >
+                <option value="defaultGraphType" disabled>
+                  -- Select Graph Type --
+                </option>
+                {graphTypeOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex flex-col">
+              <label
+                htmlFor="detailLevelType"
+                className="block text-sm font-medium w-full text-white"
+              >
+                Select Detail Level:
+              </label>
+              <select
+                id="detailLevelType"
+                name="detailLevelType"
+                value={detailLevel}
+                onChange={(e) => setDetailLevel(e.target.value)}
+                className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+              >
+                <option value="defaultDataType" disabled>
+                  -- Select Detail Level --
+                </option>
+                {detailLevelTypes.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="flex flex-row w-full gap-5">
+            <div className="ml-auto">
+              <label
+                htmlFor="startDate"
+                className="block text-sm font-medium  text-white"
+              >
+                Select Date:
+              </label>
+              <DatePicker
+                selected={startDate}
+                onChange={(e: React.SetStateAction<any>) => setStartDate(e)}
+                selectsStart
+                startDate={startDate}
+                className=" p-2 border border-gray-300 rounded-md w-full"
+              />
+            </div>
+          </div>
+        </div>
         <div className="w-full h-[500px] p-5 text-white bg-[#2F2D2D] rounded-xl flex justify-center items-center mb-10">
           {renderGraph()}
+        </div>
+
+        <h1 className="text-2xl text-yellow-500 mb-2">
+          {" "}
+          Data from {formatDate(rangeStartDate)} to {formatDate(rangeEndDate)}
+        </h1>
+
+        <div className="flex flex-row w-full gap-5 mb-5">
+          {/* Data & Graph Type Dropdown */}
+          <div className="mr-auto flex flex-row gap-5">
+            <div className="flex flex-col">
+              <label
+                htmlFor="dataType"
+                className="block text-sm font-medium  text-white"
+              >
+                Select Data Type:
+              </label>
+              <select
+                id="dataType"
+                name="dataType"
+                value={rangeDataType}
+                onChange={(e) => setRangeDataType(e.target.value)}
+                className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+              >
+                <option value="defaultDataType" disabled>
+                  -- Select Data Type --
+                </option>
+                {dataTypeOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex flex-col">
+              <label
+                htmlFor="graphType"
+                className="block text-sm font-medium  text-white"
+              >
+                Select Graph Type:
+              </label>
+              <select
+                id="graphType"
+                name="graphType"
+                value={rangeGraphType}
+                onChange={(e) => setRangeGraphType(e.target.value)}
+                className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+              >
+                <option value="defaultGraphType" disabled>
+                  -- Select Graph Type --
+                </option>
+                {graphTypeOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex flex-col">
+              <label
+                htmlFor="detailLevelType"
+                className="block text-sm font-medium w-full text-white"
+              >
+                Select Detail Level:
+              </label>
+              <select
+                id="detailLevelType"
+                name="detailLevelType"
+                value={rangeDetailLevel}
+                onChange={(e) => setRangeDetailLevel(e.target.value)}
+                className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+              >
+                <option value="defaultDataType" disabled>
+                  -- Select Detail Level --
+                </option>
+                {detailLevelTypes.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="flex flex-row w-full gap-5">
+            <div className="ml-auto">
+              <label
+                htmlFor="startDate"
+                className="block text-sm font-medium  text-white"
+              >
+                Select Start Date:
+              </label>
+              <DatePicker
+                selected={rangeStartDate}
+                onChange={(e: React.SetStateAction<any>) =>
+                  setRangeStartDate(e)
+                }
+                selectsStart
+                startDate={rangeStartDate}
+                className=" p-2 border border-gray-300 rounded-md w-full"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="startDate"
+                className="block text-sm font-medium  text-white"
+              >
+                Select End Date:
+              </label>
+              <DatePicker
+                selected={rangeEndDate}
+                onChange={(e: React.SetStateAction<any>) => setRangeEndDate(e)}
+                selectsEnd
+                startDate={rangeEndDate}
+                endDate={rangeEndDate}
+                minDate={rangeStartDate}
+                className=" p-2 border border-gray-300 rounded-md w-full"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="w-full h-[500px] p-5 text-white bg-[#2F2D2D] rounded-xl flex justify-center items-center mb-10">
+          {renderRangeGraph()}
         </div>
         <div className="w-full h-[400px] text-white bg-[#2F2D2D] rounded-xl flex flex-col mb-10">
           <h2 className="text-center w-full text-white p-5 text-4xl">
@@ -554,19 +680,6 @@ const Data = () => {
                           {device.id}
                         </p>
                       </div>
-
-                      {/*
-                      <button
-                        className="bg-none text-white border-white border-solid dark:border-transparent border-2 p-2 rounded-lg w-[60px] ml-auto"
-                        onClick={() =>
-                          fetchDataById(
-                            device.id,
-                            startDate || formatDate(new Date())
-                          )
-                        }
-                      >
-                        Fetch
-                      </button>*/}
                     </div>
                   );
                 }
@@ -590,7 +703,7 @@ const Data = () => {
           className="p-5 text-2xl rounded-xl w-[250px] bg-[#606060] text-white"
           onClick={() => downloadData()}
         >
-          Export
+          Download Data
         </button>
       </div>
     </div>
