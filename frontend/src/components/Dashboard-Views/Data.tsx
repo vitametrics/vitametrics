@@ -7,6 +7,7 @@ import axios from "axios";
 import { useOrg } from "../../helpers/OrgContext";
 import { Line, Bar, Pie, Scatter, Doughnut } from "react-chartjs-2";
 import "chart.js/auto"; // Importing auto registration of chart.js
+import { useDashboard } from "../../helpers/DashboardContext";
 
 type DataItem = {
   date: string;
@@ -37,11 +38,24 @@ const Data = () => {
   const [graphType, setGraphType] = useState("bar");
   const [downloadMsg, setDownloadMsg] = useState("");
   const [downloadFlag, setDownloadFlag] = useState(false);
+
+  /*
   const [startDate, setStartDate] = useState(new Date()); //YYYY - MM - DD
+    */
+  const {
+    startDate,
+    setStartDate,
+    setRangeStartDate,
+    setRangeEndDate,
+    rangeEndDate,
+    rangeStartDate,
+  } = useDashboard();
   const [chartData, setChartData] = useState({});
 
+  /*
   const [rangeStartDate, setRangeStartDate] = useState(new Date());
   const [rangeEndDate, setRangeEndDate] = useState(new Date());
+  */
   const [rangeChartData, setRangeChartData] = useState({});
   const [rangeDetailLevel, setRangeDetailLevel] = useState("1min");
   const [rangeDataType, setRangeDataType] = useState("heart");
@@ -125,26 +139,38 @@ const Data = () => {
     });
   };
 
+  const generateLabelsForRange = (start: Date, end: Date) => {
+    let currentDate = new Date(start);
+    const labels = [];
+    while (currentDate <= end) {
+      labels.push(formatDate(currentDate));
+      currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1));
+    }
+    return labels;
+  };
+
   const createRangeDataset = () => {
-    const start = new Date(rangeStartDate).getTime();
-    const end = new Date(rangeEndDate).getTime();
+    const start = new Date(rangeStartDate);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(rangeEndDate);
+    end.setHours(23, 59, 59, 999);
+
+    const labels = generateLabelsForRange(start, end);
+
     const datasets = selectedDevices
       .map((deviceId) => {
         const device = devices.find((d) => d.id === deviceId);
         if (!device) return null; // Skip if device not found
 
-        const label = device.id; // Use device ID as label
+        const label = device.deviceVersion + device.id; // Use device ID as label
         const borderColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`; // Random color for each dataset
         const backgroundColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`; // Random color for each dataset
-        //fix this
-        const data = device?.[rangeDataType]
-          ?.filter((item: DataItem) => {
-            const itemDate = new Date(item.date).getTime();
-            console.log(item.date);
-            return itemDate >= start && itemDate <= end;
-          })
-          .map((item: DataItem) => item.value);
-        console.log(data);
+        const dataByDate = new Map(
+          device[rangeDataType].map((item: DataItem) => [item.date, item.value])
+        );
+
+        // Map over labels and retrieve the corresponding value, or default to 0
+        const data = labels.map((dateLabel) => dataByDate.get(dateLabel) || 0);
 
         return {
           label,
@@ -156,15 +182,6 @@ const Data = () => {
         };
       })
       .filter((dataset) => dataset !== null); // Filter out null datasets
-
-    //fix this
-    const labels =
-      devices[0]?.[rangeDataType]
-        ?.filter((item: DataItem) => {
-          const itemDate = new Date(item.date).getTime();
-          return itemDate >= start && itemDate <= end;
-        })
-        .map((item: DataItem) => item.date) || [];
 
     setRangeChartData({
       labels, // Use dates from the first device as labels

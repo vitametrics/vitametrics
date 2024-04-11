@@ -10,6 +10,7 @@ import Settings from "../components/Dashboard-Views/Settings";
 import Footer from "../components/Footer";
 import { useAuth } from "../helpers/AuthContext";
 import { useHistory } from "react-router-dom";
+import { DashboardProvider } from "../helpers/DashboardContext";
 
 //import { useOrg } from "../helpers/OrgContext";
 //import axios from "axios";
@@ -22,13 +23,17 @@ const Dashboard = () => {
   const [page, setPage] = useState(window.location.search.split("=")[1]);
 
   if (page === undefined) {
-    history.push("/demo?view=data");
+    history.push("/dashboard?view=data");
   }
 
   function capitalizeFirstLetter(string: string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
-  const { isAccountLinked } = useAuth();
+  const { isAccountLinked, isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    history.push("/login");
+  }
 
   //const [showBackdrop, setShowBackdrop] = useState(false);
 
@@ -212,26 +217,28 @@ const Dashboard = () => {
   }, [page]);
 
   return (
-    <div className="h-full font-ralewayBold  bg-[#1E1D20] bg-hero-texture">
-      <DashboardNavbar />
-      <div className="flex flex-row">
-        <div className="w-[125px]">
-          <StickySidebar setPage={setPage} path="dashboard" />
+    <DashboardProvider>
+      <div className="h-full font-ralewayBold  bg-[#1E1D20] bg-hero-texture">
+        <DashboardNavbar />
+        <div className="flex flex-row">
+          <div className="w-[125px]">
+            <StickySidebar setPage={setPage} path="dashboard" />
+          </div>
+          <div className="flex w-full h-full flex-col ">
+            {!isAccountLinked && (
+              <button
+                onClick={oAuthLogin}
+                className="p-2 text-white bg-[#BA6767] hover:bg-[#8e5252]"
+              >
+                Authenticate Your Fitbit Account{" "}
+              </button>
+            )}
+            {renderComponent()}
+          </div>
         </div>
-        <div className="flex w-full h-full flex-col ">
-          {!isAccountLinked && (
-            <button
-              onClick={oAuthLogin}
-              className="p-2 text-white bg-[#BA6767] hover:bg-[#8e5252]"
-            >
-              Authenticate Your Fitbit Account{" "}
-            </button>
-          )}
-          {renderComponent()}
-        </div>
+        <Footer />
       </div>
-      <Footer />
-    </div>
+    </DashboardProvider>
   );
 };
 
