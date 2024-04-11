@@ -199,20 +199,19 @@ const Data = () => {
   };
 
   const renderRangeGraph = () => {
+    const options = {
+      maintainAspectRatio: false,
+      response: true,
+    };
+
     switch (rangeGraphType) {
       case "bar":
         return (
-          <Bar
-            data={{ datasets: [], ...rangeChartData }}
-            options={{ responsive: true }}
-          />
+          <Bar data={{ datasets: [], ...rangeChartData }} options={options} />
         );
       case "line":
         return (
-          <Line
-            data={{ datasets: [], ...rangeChartData }}
-            options={{ responsive: true }}
-          />
+          <Line data={{ datasets: [], ...rangeChartData }} options={options} />
         );
       case "pie":
         return (

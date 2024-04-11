@@ -60,7 +60,7 @@ const Devices = () => {
               return (
                 <div
                   key={index}
-                  className="flex flex-row items-center gap-5 w-full h-[70px] bg-[#2E2E2E] rounded-xl p-5"
+                  className="grid grid-cols-4 w-full h-[70px] bg-[#2E2E2E] rounded-xl p-5"
                 >
                   <p className="text-2xl font-bold text-white mr-auto ">
                     {device.deviceVersion || ""}
