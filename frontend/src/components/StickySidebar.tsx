@@ -34,7 +34,7 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage, path }) => {
   };
 
   return (
-    <div className="sticky top-0 h-screen bg-[#222223]">
+    <div className="sticky z-5 top-0 h-screen bg-[#222223]">
       <ul className="flex flex-col">
         <li
           className={`${

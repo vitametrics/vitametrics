@@ -1,7 +1,8 @@
 import React, { ReactNode } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
-import { LazyExoticComponent } from "react";
+import { DashboardProvider } from "./helpers/DashboardContext";
+
 
 //import { AuthProvider } from "./helpers/AuthContext";
 
@@ -35,7 +36,6 @@ import { useAuth } from "./helpers/AuthContext";
 const LoadingFallback = () => <div>Loading...</div>;
 
 import "./styles.css";
-
 interface AuthRouteProps {
   children: ReactNode;
   redirectTo: string;
@@ -59,7 +59,6 @@ const UnauthenticatedRoute:React.FC<AuthRouteProps> = ({ children, redirectTo })
   return !isAuthenticated ? children : <Navigate to={redirectTo} />;
 };
 
-
   return (
     <div className="bg-dark-gradient">
       <Router>
@@ -68,7 +67,9 @@ const UnauthenticatedRoute:React.FC<AuthRouteProps> = ({ children, redirectTo })
         <Route path="/" element={<Home />} />
           <Route path="/dashboard" element={
               <AuthenticatedRoute redirectTo="/login">
+                <DashboardProvider>
                 <Dashboard />
+                </DashboardProvider>
               </AuthenticatedRoute>
             }> 
             

@@ -45,17 +45,13 @@ const Data = () => {
     rangeDataType: "heart",
     rangeDetailLevel: "1min",
   });
-  /*
-  const [dataType, setDataType] = useState("heart");
-  const [graphType, setGraphType] = useState("bar");
-  */
+  
   const dataType = searchParams.get("dataType") || "heart";
   const graphType = searchParams.get("graphType") || "bar";
   const detailLevel = searchParams.get("detailLevel") || "1min";
   const rangeDataType = searchParams.get("rangeDataType") || "heart";
   const rangeGraphType = searchParams.get("rangeGraphType") || "bar";
   const rangeDetailLevel = searchParams.get("rangeDetailLevel") || "1min";
-
   const [downloadMsg, setDownloadMsg] = useState("");
   const [downloadFlag, setDownloadFlag] = useState(false);
 
@@ -68,15 +64,11 @@ const Data = () => {
     rangeStartDate,
   } = useDashboard();
   const [chartData, setChartData] = useState({});
-
   const [rangeChartData, setRangeChartData] = useState({});
-
-  //const [rangeDetailLevel, setRangeDetailLevel] = useState("1min");
-
   const [selectedDevices, setSelectedDevices] = useState<string[]>(
     devices.map((device) => device.id)
   );
-  //const [detailLevel, setDetailLevel] = useState("1min");
+
   const detailLevelTypes = [
     {
       value: "1sesc",
@@ -172,16 +164,14 @@ const Data = () => {
     const datasets = selectedDevices
       .map((deviceId) => {
         const device = devices.find((d) => d.id === deviceId);
-        if (!device) return null; // Skip if device not found
+        if (!device) return null; 
 
-        const label = device.deviceVersion + device.id; // Use device ID as label
-        const borderColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`; // Random color for each dataset
-        const backgroundColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`; // Random color for each dataset
+        const label = device.deviceVersion + device.id; 
+        const borderColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`; 
+        const backgroundColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`; 
         const dataByDate = new Map(
           device[rangeDataType].map((item: DataItem) => [item.date, item.value])
         );
-
-        // Map over labels and retrieve the corresponding value, or default to 0
         const data = labels.map((dateLabel) => dataByDate.get(dateLabel) || 0);
 
         return {
@@ -446,7 +436,6 @@ const Data = () => {
   });
   return (
     <motion.div
-      id="#home"
       variants={fadeInItemVariants}
       initial="hidden"
       animate={inView ? "show" : "hidden"}

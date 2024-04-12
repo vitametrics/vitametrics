@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 //import { useHistory } from "react-router-dom";
 
 import axios from "axios";
@@ -7,30 +7,24 @@ import WatchLogo from "../components/Watch";
 import logo from "../assets/logo.png";
 import Footer from "../components/Footer";
 import { useAuth } from "../helpers/AuthContext";
+import useDebounce from "../helpers/useDebounce";
 
 const Login = () => {
   const LOGIN_ENDPOINT =
     import.meta.env.VITE_APP_NODE_ENV === "production"
       ? import.meta.env.VITE_APP_LOGIN_ENDPOINT
       : import.meta.env.VITE_APP_LOGIN_DEV_ENDPOINT;
-
-  // const [authenticated, setAuthenticated] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const debouncedEmail = useDebounce(email, 500);
+  const debouncedPassword = useDebounce(password, 500);
   const { login } = useAuth();
-
-
 
   const handleLogin = async () => {
     try {
-
       const response = await axios.post(
         LOGIN_ENDPOINT,
-        {
-          email: email,
-          password: password,
-        },
+        { email: debouncedEmail, password: debouncedPassword },
         { withCredentials: true }
       );
 

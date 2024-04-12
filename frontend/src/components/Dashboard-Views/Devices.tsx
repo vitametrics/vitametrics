@@ -2,6 +2,8 @@ import ConnectIcon from "../../assets/ConnectIcon";
 import FiftyPercentIcon from "../../assets/FiftyPercentIcon";
 import { useOrg } from "../../helpers/OrgContext";
 import axios from "axios";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 
 const Devices = () => {
   const { devices, setDevices, orgName } = useOrg();
@@ -31,8 +33,23 @@ const Devices = () => {
     }
   };
 
+  const fadeInItemVariants = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1 },
+  };
+
+  const { ref, inView } = useInView({
+    threshold: 0.1, // Adjust based on when you want the animation to trigger (1 = fully visible)
+    triggerOnce: true, // Ensures the animation only plays once
+  });
+
   return (
-    <div className="w-full h-full flex flex-col p-10 ">
+    <motion.div
+      variants={fadeInItemVariants}
+      initial="hidden"
+      animate={inView ? "show" : "hidden"}
+      ref={ref} 
+    className="w-full h-full flex flex-col p-10 ">
       <h2 className="w-full text-4xl font-ralewayBold text-white p-5 pb-0">
         {orgName} Devices
       </h2>
@@ -83,7 +100,7 @@ const Devices = () => {
           <h2 className="text-2xl font-bold text-white">No Devices Found.</h2>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
 
