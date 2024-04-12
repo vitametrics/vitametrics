@@ -31,6 +31,12 @@ services:
       ADMIN_EMAIL: ${ADMIN_EMAIL}
     networks:
       - physiobit-net
+    healthcheck:
+    test: ["CMD", "curl", "-f", "http://localhost:7970/health"]
+    interval: 30s
+    timeout: 10s
+    retries: 3
+    start_period: 10s
 
   mongo:
     container_name: physiobit-mongo
@@ -45,6 +51,11 @@ services:
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     networks:
       - physiobit-net
+    healthcheck:
+      test: echo 'db.runCommand("ping")' | mongo physiobit --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
 networks:
   physiobit-net:

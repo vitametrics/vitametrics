@@ -6,7 +6,7 @@
     "install-all": "yarn install && yarn workspace frontend install && yarn workspace backend install",
     "build": "yarn workspace frontend build && yarn workspace backend build",
     "start": "concurrently \"yarn start-frontend\" \"yarn start-backend\"",
-    "start-frontend": "yarn workspace frontend start",
+    "start-frontend": "yarn workspace frontend preview",
     "start-backend": "yarn workspace backend start",
     "dev": "concurrently \"yarn dev-frontend\" \"yarn dev-backend\"",
     "dev-frontend": "yarn workspace frontend dev",
