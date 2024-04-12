@@ -32,11 +32,11 @@ services:
     networks:
       - physiobit-net
     healthcheck:
-    test: ["CMD", "curl", "-f", "http://localhost:7970/health"]
-    interval: 30s
-    timeout: 10s
-    retries: 3
-    start_period: 10s
+      test: ["CMD", "curl", "-f", "http://localhost:7970/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
   mongo:
     container_name: physiobit-mongo
