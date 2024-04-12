@@ -2,13 +2,14 @@ FROM node:18
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
-
-RUN npm install --only=production && npm cache clean --force && npm install -g typescript
+COPY package.json ./
 
 COPY . .
 
-RUN npm run build
+RUN yarn install
+
+RUN yarn build
 
 EXPOSE 7970
-CMD [ "npm", "start"]
+
+CMD ["yarn", "start"]
