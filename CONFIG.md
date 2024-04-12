@@ -13,7 +13,7 @@ A sample ```.env``` might look like this:
     NODE_ENV='production'
     WEB_PORT='5173'
     API_PORT='7970'
-    MONGODB_URI='mongodb://user:pass@host:port/database'
+    MONGODB_URI='mongodb://physiobit:physiobit@physiobit-mongo:27017/physiobit'
     FITBIT_CLIENT_ID=''
     FITBIT_CLIENT_SECRET=''
     BASE_URL='https://yoursite.com'
@@ -39,7 +39,7 @@ The port you'd like the backend to run on. Will default to ```7970```.
 
 ### MONGODB_URI
 
-The MongoDB URI for your database where you will be storing your data.
+The MongoDB URI for your database where you will be storing your data. Keep the default value if you do not want to use a different mongo database.
 
 ### FITBIT_CLIENT_ID, FITBIT_CLIENT_SECRET, REDIRECT_URI
 
