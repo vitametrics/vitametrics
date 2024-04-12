@@ -1,37 +1,35 @@
 import { useState } from "react";
+//import { useHistory } from "react-router-dom";
+
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import WatchLogo from "../components/Watch";
-import logo from "../assets/images/logo.png";
+import logo from "../assets/logo.png";
+import Footer from "../components/Footer";
+import { useAuth } from "../helpers/AuthContext";
+import useDebounce from "../helpers/useDebounce";
 
 const Login = () => {
-  const [authenticated, setAuthenticated] = useState(false);
+  const LOGIN_ENDPOINT =
+    import.meta.env.VITE_APP_NODE_ENV === "production"
+      ? import.meta.env.VITE_APP_LOGIN_ENDPOINT
+      : import.meta.env.VITE_APP_LOGIN_DEV_ENDPOINT;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  //todos
-  //if the user is already authenticated --> send them back to the dashboard
-  //if the user is not authenticated --> send them to the login page
-
-  if (authenticated) {
-    //send them to the dashboard
-    window.location.href = "/dashboard";
-  }
+  const debouncedEmail = useDebounce(email, 500);
+  const debouncedPassword = useDebounce(password, 500);
+  const { login } = useAuth();
 
   const handleLogin = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:7970/login",
-        {
-          email: email,
-          password: password,
-        },
+        LOGIN_ENDPOINT,
+        { email: debouncedEmail, password: debouncedPassword },
         { withCredentials: true }
       );
 
-      console.log(response.data);
-
-      if (response.data.token) {
-        setAuthenticated(true);
+      if (response.data) {
+        login();
       }
     } catch (error) {
       console.log(error);
@@ -39,18 +37,18 @@ const Login = () => {
   };
 
   return (
-    <div className="h-screen w-screen overflow-y-hidden">
+    <div className="h-full w-full overflow-y-hidden font-leagueSpartanBold bg-[#d2d8e6] bg-dark-gradient">
       <Navbar />
       <div className="flex flex-col justify-center place-items-center p-20 sm:p-0">
         <div className="flex flex-row sm:flex-col-reverse sm:h-screen">
-          <div className="flex flex-col items-center justify-center bg-[#BA6767] w-[500px] h-[600px] rounded-tl-2xl rounded-bl-2xl sm:hidden">
+          <div className="flex flex-col items-center justify-center bg-[#202020]  w-[500px] h-[600px] rounded-tl-2xl rounded-bl-2xl sm:hidden">
             <WatchLogo />
-            <h2 className="font-bold text-5xl text-[#4d2020]">Welcome</h2>
+            <h2 className="font-bold text-5xl text-white">Welcome</h2>
             <h4 className="font-bold text-2xl text-gray-300 mt-1">
               Analyze all in one place
             </h4>
           </div>
-          <div className="flex flex-col items-center justify-center bg-white w-[500px] h-[600px]  p-20 rounded-tr-2xl rounded-br-2xl  sm:w-screen sm:rounded-none sm:h-full sm:p-5">
+          <div className="flex flex-col items-center justify-center bg-[#E1E1E1] w-[500px] h-[600px]  p-20 rounded-tr-2xl rounded-br-2xl  sm:w-screen sm:rounded-none sm:h-full sm:p-5">
             <a href="/" className="mb-5 sm:mt-10">
               <img src={logo} className="h-20" alt="Physiobit Logo" />
             </a>
@@ -73,7 +71,7 @@ const Login = () => {
 
             <button
               onClick={handleLogin}
-              className="p-[10px] mt-5 bg-[#BA6767] w-72 rounded-lg cursor-pointer font-bold text-white"
+              className="p-[10px] mt-5 bg-[#202020] w-72 rounded-lg cursor-pointer font-bold text-white"
             >
               {" "}
               Login{" "}
@@ -84,6 +82,7 @@ const Login = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

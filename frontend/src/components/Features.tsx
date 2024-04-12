@@ -1,41 +1,143 @@
+import Slider from "react-slick";
+import { useEffect, useState } from "react";
+
+import TrackingDataIcon from "../assets/svgs/TrackingDataIcon.svg";
+import ParticipantTrackingIcon from "../assets/svgs/ParticipantTrackingIcon.svg";
+import ExportDataIcon from "../assets/svgs/ExportDataIcon.svg";
+import DeviceTrackingIcon from "../assets/svgs/DeviceTrackingIcon.svg";
+import OpenSourceIcon from "../assets/svgs/OpenSourceIcon.svg";
+import GraphingIcon from "../assets/svgs/GraphingIcon.svg";
+import DataCollectionIcon from "../assets/svgs/DataCollectionIcon.svg";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+
+//import LazyLoadSVG from "../components/LazyLoadSvg";
+
+//import DeviceTrackingIcon from "../assets/DeviceTrackingIcon";
+/*
+import TrackingDataIcon from "../assets/TrackingDataIcon";
+import ParticipantTrackingIcon from "../assets/ParticipantTrackingIcon";
+import ExportDataIcon from "../assets/ExportDataIcon";
+import OpenSourceIcon from "../assets/OpenSourceIcon";
+import GraphingIcon from "../assets/GraphingIcon";
+import DataCollectionIcon from "../assets/DataCollectionIcon";
+*/
+/*
+const DeviceTrackingIcon = lazy(() => import("../assets/DeviceTrackingIcon"));
+const TrackingDataIcon = lazy(() => import("../assets/TrackingDataIcon"));
+const ParticipantTrackingIcon = lazy(
+  () => import("../assets/ParticipantTrackingIcon")
+);
+const ExportDataIcon = lazy(() => import("../assets/ExportDataIcon"));
+const OpenSourceIcon = lazy(() => import("../assets/OpenSourceIcon"));
+const GraphingIcon = lazy(() => import("../assets/GraphingIcon"));
+const DataCollectionIcon = lazy(() => import("../assets/DataCollectionIcon"));
+const renderLoader = () => <p>Loading</p>;
+*/
 const Features = () => {
-  const symbol = ">";
+  const [slidesToShow, setSlidesToShow] = useState(3);
 
-  const featuresList = [
-    "Track HR, GPS and Sleep data",
-    "Easy User Management",
-    "Export data",
-    "Unlimited participant tracking",
-    "Automated Graphing",
-    "Open-souce",
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: slidesToShow,
+    slidesToScroll: 1,
+    lazy: true,
+  };
+
+  const handleResize = () => {
+    if (window.innerWidth >= 1100) {
+      setSlidesToShow(3);
+    } else if (window.innerWidth >= 768) {
+      setSlidesToShow(2);
+    } else {
+      setSlidesToShow(1);
+    }
+  };
+
+  useEffect(() => {
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  const features = [
+    {
+      title: "Tracking Data",
+      desc: "Track health data not limited to heart rate, oxygen, calories, and more!",
+      img: TrackingDataIcon,
+    },
+    {
+      title: "Participants Management",
+      desc: "Host an organization and manage all the members and their devices!",
+      img: ParticipantTrackingIcon,
+    },
+    {
+      title: "Export Data",
+      desc: "Easily export collected data for analysis and reporting purposes.",
+      img: ExportDataIcon,
+    },
+    {
+      title: "Device Monitoring",
+      desc: "Effortlessly what devices are connected along with their battery levels and more!",
+      img: DeviceTrackingIcon,
+    },
+    {
+      title: "Automated Graphing",
+      desc: "Automate the process of creating insightful graphs and visualizations based on collected data.",
+      img: GraphingIcon,
+    },
+    {
+      title: "Open-source",
+      desc: "Access and contribute to the source code for a transparent and collaborative platform.",
+      img: OpenSourceIcon,
+    },
+    {
+      title: "Limitless Data Collection",
+      desc: "Collect and store data without limitations, ensuring comprehensive tracking and analysis.",
+      img: DataCollectionIcon,
+    },
   ];
-
-  const firstThreeFeatures = featuresList.slice(0, 3);
-  const nextThreeFeatures = featuresList.slice(3, 6);
 
   return (
     <section
       id="#features"
-      className="w-full h-full flex flex-col box-border mb-[50px] "
+      className="w-full h-full flex flex-col box-border p-10 justify-center items-center bg-[#1A1A1A] font-leagueSpartanBold"
     >
-      <h3 className="text-5xl text-[#BA6767] font-bold mb-5 text-center">
-        Features{" "}
+      <link
+        rel="stylesheet"
+        type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css"
+      />
+      <link
+        rel="stylesheet"
+        type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css"
+      />
+      <h3 className="text-5xl gradient-pink-purple font-bold mb-5 text-center">
+        What do we offer you?
       </h3>
-      <div className="flex flex-row sm:flex-col">
-        <div className="w-[100%] h-full p-10 flex  flex-col box-border min-w-[500px] lg:p-10 text-center">
-          {firstThreeFeatures.map((feature) => (
-            <h3 className="text-5xl text-[#BA6767] font-bold mb-5 text-left">
-              {symbol} <span className="text-white"> {feature} </span>
-            </h3>
-          ))}
-        </div>
-        <div className="w-[100%] h-full p-10 flex  flex-col box-border min-w-[500px] lg:p-10 text-center">
-          {nextThreeFeatures.map((feature) => (
-            <h3 className="text-5xl text-[#BA6767] font-bold mb-5 text-left">
-              {symbol} <span className="text-white"> {feature} </span>
-            </h3>
-          ))}
-        </div>
+      <div className="p-10 w-full">
+        <Slider {...settings}>
+          {features.map((feature, index) => {
+            return (
+              <div
+                key={index}
+                className="flex flex-col items-center justify-center w-full lg:w-[450px] h-[360px] bg-[#0e0d0d] p-5 rounded-xl"
+              >
+                <div className="bg-grey-200 h-[200px] rounded-md mb-5 flex justify-center items-center">
+                  <LazyLoadImage src={feature.img} />
+                </div>
+                <p className="text-2xl  text-white text-center">
+                  {feature.title}
+                </p>
+                <p className="text-md text-white text-center">{feature.desc}</p>
+              </div>
+            );
+          })}
+        </Slider>
       </div>
     </section>
   );

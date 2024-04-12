@@ -1,12 +1,21 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: "class",
+
   content: [
     "./frontend/src/**/*.{js,jsx,ts,tsx}",
     "./frontend/src/pages/*.{js,jsx,ts,tsx}",
     "./frontend/src/components/*.{js,jsx,ts,tsx}",
   ],
+
   theme: {
-    extend: {},
+    extend: {
+      backgroundImage: {
+        "hero-texture": "url('/src/assets/images/hero-texture.png')",
+        "hero-texture-1": "url('/src/assets/images/hero-texture-1.png')",
+      },
+    },
+
     screens: {
       sm: { min: "0", max: "767px" },
       // => @media (min-width: 640px and max-width: 767px) { ... }
@@ -23,6 +32,13 @@ export default {
       "2xl": { min: "1536px" },
       // => @media (min-width: 1536px) { ... }
     },
+    fontFamily: {
+      raleway: ["Raleway-Regular", "sans-serif"],
+      ralewayBold: ["Raleway-Bold", "sans-serif"],
+      ralewaySemibold: ["Raleway-Semibold", "sans-serif"],
+      leagueSpartanBold: ["LeagueSpartan-Bold", "sans-serif"],
+      leagueSpartan: ["LeagueSpartan-Regular", "sans-serif"],
+    },
   },
-  plugins: [],
+  plugins: ["@tailwindcss/forms"],
 };

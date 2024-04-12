@@ -2,11 +2,16 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <link rel="stylesheet" href="./src/output.css">
-
+    <link rel="icon" type="image/svg+xml" href="/src/assets/logo.webp" fetchPriority="high"/>
+    <link rel="stylesheet" href="./src/output.css" fetchPriority="high">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Physiobit</title>
+    <!--<script>
+      document.documentElement.classList.toggle(
+        'dark',
+        localStorage.getItem('darkMode') === 'true'
+      );
+    </script>-->
   </head>
   <body>
     <div id="root"></div>

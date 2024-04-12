@@ -1,33 +1,51 @@
 import axios from 'axios';
-import Device from '../models/Device';
 
+async function fetchData(orgUserId: string, accessToken: string, deviceId: string, startDate: string | undefined, endDate: string | undefined) {
 
-async function fetchAndStoreData(orgId: string, orgUserId: string, accessToken: string, deviceId: string) {
+    const result = {
+        deviceInfo: {},
+        heartData: [],
+        stepsData: []
+    };
+
     try {
-        let heartRateEndpoint = `https://api.fitbit.com/1/user/${orgUserId}/activities/heart/date/today/1d.json?deviceId=${deviceId}`;
 
-        let sleepEndpoint = `https://api.fitbit.com/1.2/user/${orgUserId}/sleep/date/today.json?deviceId=${deviceId}`;
-
-        const heartRateResponse = await axios.get(heartRateEndpoint, {
+        const deviceInfoResponse = await axios.get(`https://api.fitbit.com/1/user/${orgUserId}/devices.json`, {
             headers: { 'Authorization': `Bearer ${accessToken}` }
         });
 
-        const sleepResponse = await axios.get(sleepEndpoint, {
-            headers: { 'Authorization': `Bearer ${accessToken}` }
+        const deviceInfo = deviceInfoResponse.data.find((device: any) => device.id === deviceId);
+        if (!deviceInfo) {
+            throw new Error('Device details not found in Fitbit response.');
+        }
+
+        result.deviceInfo = deviceInfo;
+
+        let heartRateEndpoint = `https://api.fitbit.com/1/user/${orgUserId}/activities/heart/date/${startDate}/${endDate}.json?deviceId=${deviceId}`;
+
+        const heartResponse = await axios.get(heartRateEndpoint, {
+            headers: {'Authorization': `Bearer ${accessToken}`}
         });
 
-        await Device.findOneAndUpdate(
-            { orgId, deviceId },
-            {
-                heartRateData: heartRateResponse.data['activities-heart'],
-                sleepData: sleepResponse.data.sleep,
-                lastSyncDate: new Date()
-            },
-            { new: true }
-        );
+        let stepsEndpoint = `https://api.fitbit.com/1/user/${orgUserId}/activities/steps/date/${startDate}/${endDate}.json?deviceId=${deviceId}`;
+        const stepsResponse = await axios.get(stepsEndpoint, {
+            headers: {'Authorization': `Bearer ${accessToken}`}
+        });
+
+        result.stepsData = stepsResponse.data['activities-steps'].map((data: any) => ({
+            dateTime: data.dateTime,
+            value: data.value,
+        }));
+
+        result.heartData = heartResponse.data['activities-heart'].map((data: any) => ({
+            dateTime: data.dateTime,
+            value: data.value,
+        }));
+
     } catch (err) {
-        console.error(`Error fetching data for device ${deviceId}: `, err);
+        console.error('Error fetching data from Fitbit: ', err);
+        throw err;
     }
 }
 
-export default fetchAndStoreData;
+export default fetchData;

@@ -1,22 +1,17 @@
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 
 export interface IDevice extends Document {
+    ownerName: string;
+    deviceName: string;
     deviceId: string;
-    deviceType: string;
-    userFullName: string;
-    lastSyncDate: Date;
-};
+}
 
-const devicesSchema = new mongoose.Schema({
-    deviceId: String,
-    deviceType: String,
-    heartRateData: [{ date: Date, value: Number }],
-    sleepData: [{ date: Date, duration: Number, quality: String }],
-    nutritionData: [{ date: Date, value: Number }],
-    lastSyncDate: [{date: Date}]
+const deviceSchema = new mongoose.Schema({
+    ownerName: { type: String, default: ""},
+    deviceName: {type: String, default: ""},
+    deviceId: { type: String, default: ""}
 });
 
-const deviceSchema = mongoose.model('devices', devicesSchema);
+const deviceModel = mongoose.model<IDevice>('Devices', deviceSchema);
 
-
-export default deviceSchema;
+export default deviceModel;

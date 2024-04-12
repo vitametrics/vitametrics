@@ -1,31 +1,29 @@
 {
-    "name": "physiobit",
-    "private": true,
-    "version": "1.0.0",
-    "scripts": {
-        "install-all": "npm install && npm run install-frontend && npm run install-backend",
-        "install-frontend": "cd frontend && npm install",
-        "install-backend": "cd backend && npm install",
-        "build": "npm run build-frontend && npm run build-backend",
-        "build-frontend": "npm run build --workspace=frontend",
-        "build-backend": "npm run build --workspace=backend",
-        "start": "concurrently \"npm run start-frontend\" \"npm run start-backend\"",
-        "start-frontend": "cd frontend && npm run preview",
-        "start-backend": "cd backend && npm start",
-        "dev": "concurrently \"npm run dev-frontend\" \"npm run dev-backend\"",
-        "dev-frontend": "cd frontend && npm run dev",
-        "dev-backend": "cd backend && npm run dev"
-    },
-    "workspaces": [
-        "frontend",
-        "backend"
+  "name": "physiobit",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "install-all": "yarn install && yarn workspace frontend install && yarn workspace backend install",
+    "build": "yarn workspace frontend build && yarn workspace backend build",
+    "start": "concurrently \"yarn start-frontend\" \"yarn start-backend\"",
+    "start-frontend": "yarn workspace frontend start",
+    "start-backend": "yarn workspace backend start",
+    "dev": "concurrently \"yarn dev-frontend\" \"yarn dev-backend\"",
+    "dev-frontend": "yarn workspace frontend dev",
+    "dev-backend": "yarn workspace backend dev"
+  },
+  "workspaces": {
+    "packages": [
+      "frontend",
+      "backend"
     ],
-    "devDependencies": {
-        "@types/node": "^20.11.10",
-        "concurrently": "^8.2.2"
-    },
-    "dependencies": {
-        "@marsidev/react-turnstile": "^0.4.1",
-        "@tinymce/tinymce-react": "^4.3.2"
-    }
+    "nohoist": [
+      "**/react",
+      "**/react-dom",
+      "**/react-popper"
+    ]
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
 }

@@ -1,19 +1,23 @@
+import logo from "../assets/logo.webp";
 const SignUpBanner = () => {
   return (
     <section
-      className="w-full h-full flex flex-row box-border p-10 sm:flex-col bg-[#2B2730] sm:p-0"
+      className="w-full h-full flex flex-row box-border sm:flex-col font-leagueSpartanBold sm:p-0"
       id="#act-now"
     >
-      <div className="w-[100%] h-full p-10 flex  flex-col box-border min-w-[500px] lg:p-10 justify-center place-items-center gap-[30px]">
-        <h3 className="text-5xl  text-[#ffffff] font-bold mb-5 sm:text-center text-center">
-          Doing Research?
-        </h3>
-        <a href="/contact">
-          <button className="bg-[#BA6767] font-bold text-3xl text-white px-10 py-3 rounded-md">
+      <div className="w-full h-full flex flex-row sm:flex-col box-border min-w-[500px] justify-center place-items-center">
+        <div className="flex justify-center items-center w-full h-full bg-white p-[100px] slope-right ">
+          <img src={logo} className="w-[400px]" />
+        </div>
+        <div className="flex flex-col justify-center items-center w-full p-[88px] bg-[#4C4C4C] slope">
+          <h1 className="text-4xl mb-10 text-white text-center">
             {" "}
-            Sign Up Now!
+            Where do you get started?{" "}
+          </h1>
+          <button className="p-3 text-3xl flex flex-row gap-2 justify-center text-center items-center rounded-xl w-[230px] bg-pink-gradient text-white">
+            Contact
           </button>
-        </a>
+        </div>
       </div>
     </section>
   );

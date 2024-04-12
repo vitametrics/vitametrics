@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
-import logo from "../assets/images/logo.png";
+import { useAuth } from "../helpers/AuthContext";
+import ProfileIcon from "../assets/ProfileIcon";
+import logo from "../assets/logo.webp";
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -8,6 +10,9 @@ const Navbar = () => {
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
+
+  const { isAuthenticated } = useAuth();
+
 
   useEffect(() => {
     const handleResize = () => {
@@ -21,22 +26,19 @@ const Navbar = () => {
     };
   }, []);
 
-  /*todos:
-    -add url to login button
-
-  */
-
   return (
-    <nav className="bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700">
-      <div className="flex flex-row w-full bg-[#3F3E43] h-20 sticky top-0 flex-wrap items-center justify-between mx-auto p-4">
+    <nav className="bg-transparent px-20">
+      <div className="flex flex-row w-full bg-transparent  top-0 flex-wrap items-center justify-between mx-auto py-5">
         <a
           href="/"
           className="flex items-center space-x-3 rtl:space-x-rev  erse"
         >
-          <img src={logo} className="h-8" alt="Physiobit Logo" />
-          <span className="self-center text-2xl font-bold whitespace-nowrap dark:text-white ">
-            Physiobit
-          </span>
+          <img
+            src={logo}
+            loading="lazy"
+            className="h-16"
+            alt="Physiobit Logo"
+          />
         </a>
         {windowWidth <= 755 ? (
           <>
@@ -82,11 +84,20 @@ const Navbar = () => {
                     FAQs
                   </a>
                 </li>
-                <li>
-                  <a href="/login" className="block py-2 px-3">
-                    Login
-                  </a>
-                </li>
+                {isAuthenticated ? (
+                  <li>
+                    <a href="/dashboard" className="block py-2 px-3">
+                      Dashboard
+                    </a>
+                  </li>
+                ) : (
+                  <li>
+                    <a href="/login" className="block py-2 px-3">
+                      Login
+                    </a>
+                  </li>
+                )}
+
                 <li>
                   <a href="/contact" className="block py-2 px-3">
                     Contact
@@ -96,47 +107,57 @@ const Navbar = () => {
             </div>
           </>
         ) : (
-          <div className="hidden w-full md:block md:w-auto" id="navbar-default">
-            <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-transparent md:dark:bg-transparent">
+          <div
+            className="hidden w-full md:block md:w-auto bg-transparent"
+            id="navbar-default"
+          >
+            <ul className="font-medium flex flex-col justify-center items-center p-4 md:p-0 mt-4 border border-gray-100 rounded-lg  md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 dark:bg-transparent md:dark:bg-transparent">
               <li>
                 <a
-                  href="/"
-                  className="block py-2 px-3 text-lg text-white bg-transparent rounded md:bg-transparent md:text-white md:p-0 dark:text-white md:dark:text-white"
+                  href="/demo?view=data"
+                  className="block py-2 px-3 text-2xl text-white hover:text-gray-300 bg-transparent rounded md:bg-transparent  md:p-0  "
                   aria-current="page"
                 >
-                  Home
+                  Demo
                 </a>
               </li>
 
               <li>
                 <a
                   href="/FAQs"
-                  className="block py-2 px-3 text-lg text-gray-900 rounded hover:bg-gray-300 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0 dark:text-white md:dark:hover:text-grey-200 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                  className="block py-2 px-3 text-2xl text-white rounded hover:text-gray-300 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0  md:dark:hover:text-grey-200 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
                 >
-                  FAQs
+                  Support
                 </a>
               </li>
 
-              <li>
-                <a
-                  href="/login"
-                  className="block py-2 px-3 text-lg text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0 dark:text-white md:dark:hover:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-                >
-                  Login
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/contact"
-                  className="block py-2 px-3 text-lg text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0 dark:text-white md:dark:hover:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-                >
-                  Contact
-                </a>
-              </li>
+              {isAuthenticated ? (
+                <li>
+                  <a
+                    href="/dashboard?view=data"
+                    className="block py-2 px-3 text-2xl text-white rounded hover:text-gray-300 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0  md:dark:hover:text-grey-200 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                  >
+                    <ProfileIcon />
+                  </a>
+                </li>
+              ) : (
+                <>
+                  {" "}
+                  <li>
+                    <a
+                      href="/login"
+                      className="block py-2 px-3 text-2xl text-white rounded hover:text-gray-300 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0  md:dark:hover:text-grey-200 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                    >
+                      Login
+                    </a>
+                  </li>
+                </>
+              )}
             </ul>
           </div>
         )}
       </div>
+      <div className="w-full h-0.5 bg-white"></div>
     </nav>
   );
 };

@@ -3,9 +3,9 @@
     "module": "commonjs",
     "outDir": "build",
     "removeComments": true,
-    "target": "ES6",
+    "target": "ES2020",
     "esModuleInterop": true,
-    "moduleResolution": "node",
+    "moduleResolution": "Node",
     "preserveConstEnums": true,
     "paths": {},
     "sourceMap": true,
@@ -18,12 +18,14 @@
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
   },
   "include": [
     "./**/*.ts"
   ],
   "exclude": [
-    "node_modules/**/*"
+    "node_modules",
+    "../frontend",
+    "**/*.test,ts"
   ]
 }
