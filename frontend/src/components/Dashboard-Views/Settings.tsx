@@ -70,7 +70,7 @@ const Settings = () => {
     }
     try {
       const response = await axios.post(
-        CHANGE_EMAIL_ENDPOINT,
+        CHANGE_EMAIL_ENDPOINT!,
         {
           email: debouncedEmail,
         },
@@ -112,7 +112,7 @@ const Settings = () => {
 
     try {
       const response = await axios.post(
-        CHANGE_PASSWORD_ENDPOINT,
+        CHANGE_PASSWORD_ENDPOINT!,
         {
           password: debouncedPassword,
         },
@@ -131,7 +131,7 @@ const Settings = () => {
 
   const sendVerificationLink = async () => {
     try {
-      const response = await axios.post(SEND_VERIFICATION_LINK_ENDPOINT, {
+      const response = await axios.post(SEND_VERIFICATION_LINK_ENDPOINT!, {
         withCredentials: true,
       });
 

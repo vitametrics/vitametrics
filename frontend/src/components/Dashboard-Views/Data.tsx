@@ -5,9 +5,12 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useOrg } from "../../helpers/OrgContext";
+import { useSearchParams } from "react-router-dom";
 import { Line, Bar, Pie, Scatter, Doughnut } from "react-chartjs-2";
 import "chart.js/auto"; // Importing auto registration of chart.js
 import { useDashboard } from "../../helpers/DashboardContext";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 
 type DataItem = {
   date: string;
@@ -30,18 +33,32 @@ type DeviceData = {
 
 const Data = () => {
   const DOWNLOAD_ENDPOINT =
-    import.meta.env.VITE_APP_NODE_ENV === "production"
+    import.meta.env.NODE_ENV === "production"
       ? import.meta.env.VITE_APP_DOWNLOAD_DATA_ENDPOINT
       : import.meta.env.VITE_APP_DOWNLOAD_DATA_DEV_ENDPOINT;
   const { devices, orgName } = useOrg();
+  const [searchParams, setSearchParams] = useSearchParams({
+    detailLevel: "1min",
+    dataType: "heart",
+    graphType: "bar",
+    rangeGraphType: "bar",
+    rangeDataType: "heart",
+    rangeDetailLevel: "1min",
+  });
+  /*
   const [dataType, setDataType] = useState("heart");
   const [graphType, setGraphType] = useState("bar");
+  */
+  const dataType = searchParams.get("dataType") || "heart";
+  const graphType = searchParams.get("graphType") || "bar";
+  const detailLevel = searchParams.get("detailLevel") || "1min";
+  const rangeDataType = searchParams.get("rangeDataType") || "heart";
+  const rangeGraphType = searchParams.get("rangeGraphType") || "bar";
+  const rangeDetailLevel = searchParams.get("rangeDetailLevel") || "1min";
+
   const [downloadMsg, setDownloadMsg] = useState("");
   const [downloadFlag, setDownloadFlag] = useState(false);
 
-  /*
-  const [startDate, setStartDate] = useState(new Date()); //YYYY - MM - DD
-    */
   const {
     startDate,
     setStartDate,
@@ -52,19 +69,14 @@ const Data = () => {
   } = useDashboard();
   const [chartData, setChartData] = useState({});
 
-  /*
-  const [rangeStartDate, setRangeStartDate] = useState(new Date());
-  const [rangeEndDate, setRangeEndDate] = useState(new Date());
-  */
   const [rangeChartData, setRangeChartData] = useState({});
-  const [rangeDetailLevel, setRangeDetailLevel] = useState("1min");
-  const [rangeDataType, setRangeDataType] = useState("heart");
-  const [rangeGraphType, setRangeGraphType] = useState("bar");
+
+  //const [rangeDetailLevel, setRangeDetailLevel] = useState("1min");
 
   const [selectedDevices, setSelectedDevices] = useState<string[]>(
     devices.map((device) => device.id)
   );
-  const [detailLevel, setDetailLevel] = useState("1min");
+  //const [detailLevel, setDetailLevel] = useState("1min");
   const detailLevelTypes = [
     {
       value: "1sesc",
@@ -423,8 +435,24 @@ const Data = () => {
     createRangeDataset();
   }, [selectedDevices, rangeDataType, rangeStartDate, rangeEndDate]);
 
+  const fadeInItemVariants = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1 },
+  };
+
+  const { ref, inView } = useInView({
+    threshold: 0.1, // Adjust based on when you want the animation to trigger (1 = fully visible)
+    triggerOnce: true, // Ensures the animation only plays once
+  });
   return (
-    <div className="w-full h-full flex flex-col p-10 bg-[#1E1D20] dark:bg-hero-texture">
+    <motion.div
+      id="#home"
+      variants={fadeInItemVariants}
+      initial="hidden"
+      animate={inView ? "show" : "hidden"}
+      ref={ref}
+      className="w-full h-full flex flex-col p-10 bg-[#1E1D20] dark:bg-hero-texture"
+    >
       <h2 className="w-full text-4xl font-ralewayBold text-white p-5 pb-0 mb-5">
         {orgName} Overview
       </h2>
@@ -448,7 +476,15 @@ const Data = () => {
                 id="dataType"
                 name="dataType"
                 value={dataType}
-                onChange={(e) => setDataType(e.target.value)}
+                onChange={(e) =>
+                  setSearchParams(
+                    (prev) => {
+                      prev.set("dataType", e.target.value);
+                      return prev;
+                    },
+                    { replace: true }
+                  )
+                }
                 className="mt-1 p-2 border border-gray-300 rounded-md w-full"
               >
                 <option value="defaultDataType" disabled>
@@ -472,7 +508,15 @@ const Data = () => {
                 id="graphType"
                 name="graphType"
                 value={graphType}
-                onChange={(e) => setGraphType(e.target.value)}
+                onChange={(e) =>
+                  setSearchParams(
+                    (prev) => {
+                      prev.set("graphType", e.target.value);
+                      return prev;
+                    },
+                    { replace: true }
+                  )
+                }
                 className="mt-1 p-2 border border-gray-300 rounded-md w-full"
               >
                 <option value="defaultGraphType" disabled>
@@ -497,7 +541,15 @@ const Data = () => {
                 id="detailLevelType"
                 name="detailLevelType"
                 value={detailLevel}
-                onChange={(e) => setDetailLevel(e.target.value)}
+                onChange={(e) =>
+                  setSearchParams(
+                    (prev) => {
+                      prev.set("detailLevel", e.target.value);
+                      return prev;
+                    },
+                    { replace: true }
+                  )
+                }
                 className="mt-1 p-2 border border-gray-300 rounded-md w-full"
               >
                 <option value="defaultDataType" disabled>
@@ -553,7 +605,15 @@ const Data = () => {
                 id="dataType"
                 name="dataType"
                 value={rangeDataType}
-                onChange={(e) => setRangeDataType(e.target.value)}
+                onChange={(e) =>
+                  setSearchParams(
+                    (prev) => {
+                      prev.set("rangeDataType", e.target.value);
+                      return prev;
+                    },
+                    { replace: true }
+                  )
+                }
                 className="mt-1 p-2 border border-gray-300 rounded-md w-full"
               >
                 <option value="defaultDataType" disabled>
@@ -577,7 +637,15 @@ const Data = () => {
                 id="graphType"
                 name="graphType"
                 value={rangeGraphType}
-                onChange={(e) => setRangeGraphType(e.target.value)}
+                onChange={(e) =>
+                  setSearchParams(
+                    (prev) => {
+                      prev.set("rangeGraphType", e.target.value);
+                      return prev;
+                    },
+                    { replace: true }
+                  )
+                }
                 className="mt-1 p-2 border border-gray-300 rounded-md w-full"
               >
                 <option value="defaultGraphType" disabled>
@@ -602,7 +670,15 @@ const Data = () => {
                 id="detailLevelType"
                 name="detailLevelType"
                 value={rangeDetailLevel}
-                onChange={(e) => setRangeDetailLevel(e.target.value)}
+                onChange={(e) =>
+                  setSearchParams(
+                    (prev) => {
+                      prev.set("rangeDetailLevel", e.target.value);
+                      return prev;
+                    },
+                    { replace: true }
+                  )
+                }
                 className="mt-1 p-2 border border-gray-300 rounded-md w-full"
               >
                 <option value="defaultDataType" disabled>
@@ -722,7 +798,7 @@ const Data = () => {
           Download Data
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

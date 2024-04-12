@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DashboardNavbar } from "../components/DashboardNavbar";
 import StickySidebar from "../components/StickySidebar";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 //import {CustomReq} from "../../../backend/util/customReq";
 import Data from "../components/Dashboard-Views/Data";
 import Devices from "../components/Dashboard-Views/Devices";
@@ -9,7 +9,7 @@ import Members from "../components/Dashboard-Views/Members";
 import Settings from "../components/Dashboard-Views/Settings";
 import Footer from "../components/Footer";
 import { useAuth } from "../helpers/AuthContext";
-import { useHistory } from "react-router-dom";
+import { useNavigate, useParams, Navigate, useSearchParams } from "react-router-dom";
 import { DashboardProvider } from "../helpers/DashboardContext";
 
 //import { useOrg } from "../helpers/OrgContext";
@@ -19,22 +19,20 @@ const Dashboard = () => {
   //const FETCH_ORG_ENDPOINT = import.meta.env.VITE_APP_FETCH_ORG_ENDPOINT;
   //const { isAuthenticated } = useAuth();
 
-  const history = useHistory();
-  const [page, setPage] = useState(window.location.search.split("=")[1]);
+  const navigate = useNavigate();
+  const { isAccountLinked } = useAuth();
 
-  if (page === undefined) {
-    history.push("/dashboard?view=data");
-  }
+  const [searchParams, setSearchParams] = useSearchParams({view:"data"})
+  const view = searchParams.get("view") || "data";
 
   function capitalizeFirstLetter(string: string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
-  const { isAccountLinked, isAuthenticated } = useAuth();
 
-  if (!isAuthenticated) {
-    history.push("/login");
-  }
-
+  const setPage = (newView: string) => {
+    setSearchParams({ "view": newView }, { replace: true } );
+  };
+  
   //const [showBackdrop, setShowBackdrop] = useState(false);
 
   /*
@@ -202,19 +200,19 @@ const Dashboard = () => {
   };
 
   const renderComponent = useCallback(() => {
-    switch (capitalizeFirstLetter(page)) {
-      case "Data":
+    switch (view) {
+      case "data":
         return <Data />;
-      case "Devices":
+      case "devices":
         return <Devices />;
-      case "Members":
+      case "members":
         return <Members />;
-      case "Settings":
+      case "settings":
         return <Settings />;
       default:
         return <Data />;
     }
-  }, [page]);
+  }, [view]);
 
   return (
     <DashboardProvider>

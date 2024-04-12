@@ -1,9 +1,10 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 //import { useOrg } from "./OrgContext";
 import axios from "axios";
 
 interface AuthContextProps {
   isAuthenticated: boolean;
+  isLoadingAuth: boolean;
   isAccountLinked: boolean;
   isOrgOwner: boolean;
   isEmailVerified: boolean;
@@ -18,7 +19,13 @@ const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  useEffect(() => {
+    // Check auth status on mount
+    login();
+  }, []); // Empty dependency array to run only on mount
+
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isLoadingAuth, setIsLoadingAuth] = useState<boolean>(true);
   const [isAccountLinked, setIsAccountLinked] = useState<boolean>(false);
   const [isOrgOwner, setIsOrgOwner] = useState<boolean>(false);
   const [isEmailVerified, setIsEmailVerified] = useState<boolean>(false);
@@ -36,6 +43,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       : import.meta.env.VITE_APP_LOGOUT_DEV_ENDPOINT;
 
   //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT; //~ production
+ 
+
 
   const login = async () => {
     try {
@@ -51,6 +60,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       //setOrgId(response.data.user.orgId);
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoadingAuth(false);
     }
     return;
   };
@@ -71,6 +82,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     <AuthContext.Provider
       value={{
         isAuthenticated,
+        isLoadingAuth,
         isAccountLinked,
         isOrgOwner,
         isEmailVerified,

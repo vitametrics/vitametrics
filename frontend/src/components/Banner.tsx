@@ -2,12 +2,12 @@ import Graph from "../assets/Graph";
 import GithubSmallIcon from "../assets/GithubSmallIcon";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Banner = () => {
-  const history = useHistory();
+  const history = useNavigate();
   function navigate(url: string) {
-    history.push(url);
+    history(url);
   }
 
   const fadeInItemVariants = {

@@ -18,17 +18,12 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { login, isAuthenticated } = useAuth();
+  const { login } = useAuth();
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      window.location.href = "/dashboard?view=data";
-    }
-  }, [isAuthenticated]);
+
 
   const handleLogin = async () => {
     try {
-      console.log("Logging in from:", LOGIN_ENDPOINT);
 
       const response = await axios.post(
         LOGIN_ENDPOINT,
@@ -38,8 +33,6 @@ const Login = () => {
         },
         { withCredentials: true }
       );
-
-      console.log(response.data);
 
       if (response.data) {
         login();

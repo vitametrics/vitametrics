@@ -2,7 +2,7 @@ import DataIcon from "../assets/DataIcon";
 import DeviceIcon from "../assets/DeviceIcon";
 import MembersIcon from "../assets/MembersIcon";
 import SettingsIcon from "../assets/SettingsIcon";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 interface StickySidebarProps {
@@ -11,25 +11,26 @@ interface StickySidebarProps {
 }
 
 const StickySidebar: React.FC<StickySidebarProps> = ({ setPage, path }) => {
-  const history = useHistory();
-
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState("Data");
 
-  //useEffect to allocate the page to a variable
-  useEffect(() => {
+
+   
+   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const view = urlParams.get("view");
-    if (view) {
-      setPage(view);
+    const view = urlParams.get("view") || "data";  
+    if (view !== currentPage) {
       setCurrentPage(view);
     }
-  }, [setPage]);
+  }, []);  
 
   const handlePageChange = (newPage: string) => {
-    console.log("selected page: " + newPage);
-    setPage(newPage);
-    setCurrentPage(newPage);
-    history.push(`/${path}?view=${newPage.toLowerCase()}`); // Change the URL
+    if (newPage !== currentPage) {
+      console.log("Selected page:", newPage);
+      setPage(newPage);
+      setCurrentPage(newPage);
+      navigate(`/${path}?view=${newPage.toLowerCase()}`);
+    }
   };
 
   return (

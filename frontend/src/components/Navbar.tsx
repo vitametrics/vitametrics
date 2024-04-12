@@ -13,9 +13,6 @@ const Navbar = () => {
 
   const { isAuthenticated } = useAuth();
 
-  useEffect(() => {
-    console.log("IsAuthenticated:", isAuthenticated);
-  }, [isAuthenticated]);
 
   useEffect(() => {
     const handleResize = () => {

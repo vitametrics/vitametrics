@@ -6,14 +6,14 @@ import DevicesDemo from "../components/Demo-Views/DevicesDemo";
 import MembersDemo from "../components/Demo-Views/MembersDemo";
 import SettingsDemo from "../components/Demo-Views/SettingsDemo";
 import Footer from "../components/Footer";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Demo = () => {
-  const history = useHistory();
+  const history = useNavigate();
   const [page, setPage] = useState(window.location.search.split("=")[1]);
 
   if (page === undefined) {
-    history.push("/demo?view=data");
+    history("/demo?view=data");
   }
 
   function capitalizeFirstLetter(string: string) {

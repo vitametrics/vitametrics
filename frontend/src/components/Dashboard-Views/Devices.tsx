@@ -20,7 +20,7 @@ const Devices = () => {
 
   const handleFetchDevices = async () => {
     try {
-      const response = await axios.post(FETCH_DEVICES_ENDPOINT, {
+      const response = await axios.post(FETCH_DEVICES_ENDPOINT!, {
         withCredentials: true,
       });
 
