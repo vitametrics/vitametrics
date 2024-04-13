@@ -3,31 +3,27 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "install-all": "npm install && npm run install-frontend && npm run install-backend",
-    "install-frontend": "cd frontend && npm install",
-    "install-backend": "cd backend && npm install",
-    "build": "npm run build-frontend && npm run build-backend",
-    "build-frontend": "npm run build --workspace=frontend",
-    "build-backend": "npm run build --workspace=backend",
-    "start": "concurrently \"npm run start-frontend\" \"npm run start-backend\"",
-    "start-frontend": "cd frontend && npm run preview",
-    "start-backend": "cd backend && npm start",
-    "dev": "concurrently \"npm run dev-frontend\" \"npm run dev-backend\"",
-    "dev-frontend": "cd frontend && npm run dev",
-    "dev-backend": "cd backend && npm run dev"
+    "install-all": "yarn install && yarn workspace frontend install && yarn workspace backend install",
+    "build": "yarn workspace frontend build && yarn workspace backend build",
+    "start": "concurrently \"yarn start-frontend\" \"yarn start-backend\"",
+    "start-frontend": "yarn workspace frontend preview",
+    "start-backend": "yarn workspace backend start",
+    "dev": "concurrently \"yarn dev-frontend\" \"yarn dev-backend\"",
+    "dev-frontend": "yarn workspace frontend dev",
+    "dev-backend": "yarn workspace backend dev"
   },
-  "workspaces": [
-    "frontend",
-    "backend"
-  ],
+  "workspaces": {
+    "packages": [
+      "frontend",
+      "backend"
+    ],
+    "nohoist": [
+      "**/react",
+      "**/react-dom",
+      "**/react-popper"
+    ]
+  },
   "devDependencies": {
-    "@types/react-lazy-load-image-component": "^1.6.3",
     "concurrently": "^8.2.2"
-  },
-  "dependencies": {
-    "backend": "^0.0.0",
-    "framer-motion": "^11.0.28",
-    "react-intersection-observer": "^9.8.1",
-    "react-router-dom": "^6.22.3"
   }
 }

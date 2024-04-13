@@ -112,8 +112,6 @@ router.post('/fetch-devices', verifySession, checkOrgMembership, refreshToken, a
         const orgUserId = req.organization.userId;
         const accessToken = req.organization.fitbitAccessToken;
 
-        console.log(orgUserId, accessToken, orgId);
-
         const deviceResponse = await fetchDevices(orgUserId, accessToken, orgId);
 
         return res.status(200).json(deviceResponse);

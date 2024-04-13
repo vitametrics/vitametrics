@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Organization from '../models/Organization';
+import Device from '../models/Device';
 
 async function fetchDevices(userId: string, accessToken: string, orgId: string) {
     console.log('made it to fetch devices');
@@ -14,6 +15,16 @@ async function fetchDevices(userId: string, accessToken: string, orgId: string) 
             {orgId: orgId},
             {$addToSet: {devices: deviceData.id}}
         );
+
+        await Device.updateOne(
+            {deviceId: deviceData.id},
+            {
+                ownerName: "",
+                deviceName: "",
+                deviceId: deviceData.id
+            },
+            {upsert: true}
+        )
     }
 
     return deviceResponse.data;

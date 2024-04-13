@@ -18,7 +18,8 @@ services:
     ports:
       - "${API_PORT}:7970"
     environment:
-      NODE_ENV: ${NODE_ENV}
+      NODE_ENV: ${NODE_ENV},
+      API_PORT: ${API_PORT},
       MONGODB_URI: ${MONGODB_URI} 
       FITBIT_CLIENT_ID: ${FITBIT_CLIENT_ID}
       FITBIT_CLIENT_SECRET: ${FITBIT_CLIENT_SECRET}
@@ -30,6 +31,12 @@ services:
       ADMIN_EMAIL: ${ADMIN_EMAIL}
     networks:
       - physiobit-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7970/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
   mongo:
     container_name: physiobit-mongo
@@ -44,6 +51,11 @@ services:
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     networks:
       - physiobit-net
+    healthcheck:
+      test: echo 'db.runCommand("ping")' | mongo physiobit --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
 networks:
   physiobit-net:

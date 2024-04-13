@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
 dotenv.config({ path: '../.env' });
 import { commonMiddlewares } from './middleware/common';
@@ -35,6 +35,10 @@ app.use('/login', loginRoute(passport));
 app.use('/logout', logoutRoute);
 
 connectDB();
+
+app.get('/health', (_req: Request, res: Response) => {
+    res.status(200).json({ status: 'success', message: 'Backend is healthy'});
+});
 
 app.listen(process.env.API_PORT || 3000, () => {
     console.log('Listening on port', process.env.API_PORT || 3000);

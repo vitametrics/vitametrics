@@ -28,6 +28,6 @@ const organizationSchema = new mongoose.Schema({
     devices: [{ type: String }]
 });
 
-const orgSchema = mongoose.model<IOrganization>('Organizations', organizationSchema);
+const orgModel = mongoose.model<IOrganization>('Organizations', organizationSchema);
 
-export default orgSchema;
+export default orgModel;

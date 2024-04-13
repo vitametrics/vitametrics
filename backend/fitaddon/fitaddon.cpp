@@ -196,6 +196,7 @@ Napi::Value DecodeFIT(const Napi::CallbackInfo& info) {
         file.seekg(0, std::ios::beg);
         decode.Read(&file, &mesgBroadcaster, &mesgBroadcaster, &listener);
     } catch (const fit::RuntimeException& e) {
+        std::cout << "Exception: " << e.what() << std::endl;
         Napi::Error::New(env, "Failed to decode FIT file").ThrowAsJavaScriptException();
     }
 
