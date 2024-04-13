@@ -3,6 +3,8 @@ import { useAuth } from "../../helpers/AuthContext";
 import { useState, useEffect } from "react";
 import { WarningIcon } from "../../assets/WarningIcon";
 import { CheckmarkIcon } from "../../assets/CheckmarkIcon";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 import axios from "axios";
 
 const Settings = () => {
@@ -41,7 +43,6 @@ const Settings = () => {
 
   useEffect(() => {
     const delayInputTimeoutId = setTimeout(() => {
-      console.log("password: " + password);
       setDebouncedPassword(password);
     }, 200);
     return () => clearTimeout(delayInputTimeoutId);
@@ -49,7 +50,6 @@ const Settings = () => {
 
   useEffect(() => {
     const timerId = setTimeout(() => {
-      console.log("confirm new password: " + confirmPassword);
       setDebouncedConfirmPassword(confirmPassword);
     }, 200);
     return () => clearTimeout(timerId);
@@ -57,7 +57,6 @@ const Settings = () => {
 
   useEffect(() => {
     const timerId = setTimeout(() => {
-      console.log("confirm new email: " + newEmail);
       setDebouncedEmail(newEmail);
     }, 200);
     return () => clearTimeout(timerId);
@@ -145,8 +144,23 @@ const Settings = () => {
     }
   };
 
+  const fadeInItemVariants = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1 },
+  };
+  const { ref, inView } = useInView({
+    threshold: 0.1, // Adjust based on when you want the animation to trigger (1 = fully visible)
+    triggerOnce: true, // Ensures the animation only plays once
+  });
+
   return (
-    <div className="w-full h-full flex flex-col p-[3.75rem] text-white  ">
+    <motion.div
+      variants={fadeInItemVariants}
+      initial="hidden"
+      animate={inView ? "show" : "hidden"}
+      ref={ref}
+      className="w-full h-full flex flex-col p-[3.75rem] text-white  "
+    >
       <h2 className="w-full text-4xl font-ralewayBold text-white mb-10">
         {orgName} Settings
       </h2>
@@ -235,7 +249,11 @@ const Settings = () => {
           Verify Email Address
         </button>
       </div>
-    </div>
+      <button className="bg-red-400 p-4 text-xl w-full rounded-lg md:w-[350px]">
+        {" "}
+        Delete Account{" "}
+      </button>
+    </motion.div>
   );
 };
 

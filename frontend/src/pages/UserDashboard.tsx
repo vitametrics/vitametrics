@@ -51,9 +51,9 @@ const Dashboard = () => {
             {!isAccountLinked && (
               <button
                 onClick={oAuthLogin}
-                className="p-2 text-white bg-[#BA6767] hover:bg-[#8e5252]"
+                className="p-2 text-white bg-red-400 hover:bg-[#8e5252]"
               >
-                Authenticate Your Fitbit Account{" "}
+                ALERT: Authenticate Your Fitbit Account{" "}
               </button>
             )}
             {renderComponent()}

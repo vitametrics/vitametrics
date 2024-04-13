@@ -21,9 +21,8 @@ html {
   scroll-behavior: smooth;
 }
 
-.transform-center{
+.transform-center {
   transform: translate(-50%, -50%);
-
 }
 
 /* width */
@@ -172,7 +171,12 @@ input:checked + .slider:before {
   color: #fff;
 }
 
-
+.overflow-fix {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+}
 
 .item-3 {
   width: 30px;
@@ -187,7 +191,7 @@ input:checked + .slider:before {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%) rotate(-45deg);
-    transition: ease-out .3s all;
+    transition: ease-out 0.3s all;
   }
   &:after {
     content: "";
@@ -198,9 +202,10 @@ input:checked + .slider:before {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%) rotate(45deg);
-    transition: ease-out .3s all;
+    transition: ease-out 0.3s all;
   }
-  &:hover, &:focus {
+  &:hover,
+  &:focus {
     &:before {
       transform: translate(-50%, -50%) rotate(135deg);
     }
@@ -223,18 +228,19 @@ input:checked + .slider:before {
   pointer-events: none; /* Prevents interaction */
 }
 
-
 .backdrop.show {
   opacity: 1;
   pointer-events: all; /* Allows interaction */
 }
 
-.opacity-transition{
+.opacity-transition {
   opacity: 0;
-  transition: opacity 300ms ease-out, transform 300ms ease-out;
+  transition:
+    opacity 300ms ease-out,
+    transform 300ms ease-out;
 }
 
-.opacity-transition.show{
+.opacity-transition.show {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
 }

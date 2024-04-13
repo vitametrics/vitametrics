@@ -609,6 +609,10 @@ video {
   margin-bottom: 1.5rem;
 }
 
+.mb-1 {
+  margin-bottom: 0.25rem;
+}
+
 .mb-10 {
   margin-bottom: 2.5rem;
 }
@@ -679,10 +683,6 @@ video {
 
 .mt-5 {
   margin-top: 1.25rem;
-}
-
-.mb-1 {
-  margin-bottom: 0.25rem;
 }
 
 .box-border {
@@ -1183,6 +1183,11 @@ video {
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
 }
 
+.bg-red-400 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(248 113 113 / var(--tw-bg-opacity));
+}
+
 .bg-transparent {
   background-color: transparent;
 }
@@ -1234,6 +1239,10 @@ video {
   padding: 1.25rem;
 }
 
+.p-6 {
+  padding: 1.5rem;
+}
+
 .p-\[100px\] {
   padding: 100px;
 }
@@ -1252,14 +1261,6 @@ video {
 
 .p-\[88px\] {
   padding: 88px;
-}
-
-.p-8 {
-  padding: 2rem;
-}
-
-.p-6 {
-  padding: 1.5rem;
 }
 
 .px-2 {
@@ -1498,7 +1499,7 @@ html {
   scroll-behavior: smooth;
 }
 
-.transform-center{
+.transform-center {
   transform: translate(-50%, -50%);
 }
 
@@ -1660,6 +1661,13 @@ input:checked + .slider:before {
   color: #fff;
 }
 
+.overflow-fix {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+}
+
 .item-3 {
   width: 30px;
   height: 30px;
@@ -1673,7 +1681,7 @@ input:checked + .slider:before {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%) rotate(-45deg);
-    transition: ease-out .3s all;
+    transition: ease-out 0.3s all;
   }
   &:after {
     content: "";
@@ -1684,9 +1692,10 @@ input:checked + .slider:before {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%) rotate(45deg);
-    transition: ease-out .3s all;
+    transition: ease-out 0.3s all;
   }
-  &:hover, &:focus {
+  &:hover,
+  &:focus {
     &:before {
       transform: translate(-50%, -50%) rotate(135deg);
     }
@@ -1718,12 +1727,14 @@ input:checked + .slider:before {
   /* Allows interaction */
 }
 
-.opacity-transition{
+.opacity-transition {
   opacity: 0;
-  transition: opacity 300ms ease-out, transform 300ms ease-out;
+  transition:
+    opacity 300ms ease-out,
+    transform 300ms ease-out;
 }
 
-.opacity-transition.show{
+.opacity-transition.show {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
 }
@@ -1975,12 +1986,12 @@ input:checked + .slider:before {
     height: 35%;
   }
 
-  .md\:h-\[400px\] {
-    height: 400px;
-  }
-
   .md\:h-\[450px\] {
     height: 450px;
+  }
+
+  .md\:w-\[350px\] {
+    width: 350px;
   }
 
   .md\:w-\[500px\] {

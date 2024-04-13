@@ -4,13 +4,13 @@ import { useAuth } from "./AuthContext";
 import axios from "axios";
 
 interface Member {
-  distanceUnit: string,
-  email: string,
-  emailVerified: boolean,
-  languageLocale: string, 
-  lastInviteSent: any, //fix this
-  orgId: string,
-  userId: string,
+  distanceUnit: string;
+  email: string;
+  emailVerified: boolean;
+  languageLocale: string;
+  lastInviteSent: any; //fix this
+  orgId: string;
+  userId: string;
 }
 
 interface DeviceData {
@@ -18,6 +18,7 @@ interface DeviceData {
   deviceVersion: string;
   lastSyncTime: string;
   batteryLevel: number;
+  ownerName: string;
   steps: { date: string; value: number }[];
   vo2max: { date: string; value: number }[];
   heart: { date: string; value: number }[];
@@ -34,7 +35,7 @@ interface OrgContextProps {
   setOrgId: (arg0: string) => void;
   members: any[];
   devices: DeviceData[];
-  setDevices: (arg0: []) => void;
+  setDevices: (arg0: DeviceData[]) => void;
   fetchOrg: () => void;
   fetchDataById: (id: string, startDate: string, endDate: string) => void;
   syncDevice: (id: string, start: Date, end: Date) => void;
@@ -55,6 +56,7 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       deviceVersion: "Alta HR",
       lastSyncTime: "2024-02-24T00:02:13.000",
       batteryLevel: 100,
+      ownerName: "Brandon Le",
       steps: [
         {
           date: "2024-02-20",
@@ -211,6 +213,7 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       deviceVersion: "Fitbit Pro",
       lastSyncTime: "2024-02-24T00:02:13.000",
       batteryLevel: 10,
+      ownerName: "Angel Vazquez",
       steps: [
         {
           date: "2024-02-20",
@@ -355,6 +358,7 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       deviceVersion: "Playstation 5",
       lastSyncTime: "2024-02-24T00:02:13.000",
       batteryLevel: 100,
+      ownerName: "Sean Cornell",
       steps: [
         {
           date: "2024-02-20",
