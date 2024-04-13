@@ -23,7 +23,6 @@ type DataItem = {
 };
 
 const DataDemo = () => {
-  //const DOWNLOAD_ENDPOINT = import.meta.env.VITE_APP_DOWNLOAD_DATA_ENDPOINT;
   const [dataType, setDataType] = useState("heart_rate");
   const [graphType, setGraphType] = useState("bar");
 

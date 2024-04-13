@@ -23,9 +23,9 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [startDate, setStartDate] = useState(new Date()); // use `new Date()` instead of `Date.now()`
-  const [rangeStartDate, setRangeStartDate] = useState(new Date()); 
-  const [rangeEndDate, setRangeEndDate] = useState(new Date()); 
-  const [showBackDrop, setShowBackDrop] = useState(false); 
+  const [rangeStartDate, setRangeStartDate] = useState(new Date());
+  const [rangeEndDate, setRangeEndDate] = useState(new Date());
+  const [showBackDrop, setShowBackDrop] = useState(false);
 
   return (
     <DashboardContext.Provider

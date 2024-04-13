@@ -1,43 +1,106 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import ConnectIcon from "../../assets/ConnectIcon";
 import FiftyPercentIcon from "../../assets/FiftyPercentIcon";
+import { Fragment, useState } from "react";
+import EditButton from "../EditButton";
+import SaveButton from "../SaveButton";
+import { useDemo } from "../../helpers/DemoContext";
+
+const MAX_NAME_LENGTH = 15;
+
+interface Device {
+  id: string;
+  deviceVersion: string;
+  lastSyncTime: string;
+  batteryLevel: number;
+  ownerName: string;
+}
 
 const DevicesDemo = () => {
   const orgName = "Ada Lovelace's Org";
+  const { devices, setDevices } = useDemo();
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const year = date.getFullYear();
-    return `${month}/${day}/${year}`;
+  const [editingDevices, setEditingDevices] = useState<{
+    [key: string]: string;
+  }>({});
+
+  const Device = (device: Device) => {
+    const isEditing = editingDevices[device.id] !== undefined;
+
+    const handleOwnerNameChange = async () => {
+      //test code -- can be used for demo
+      const updatedOwnerName = editingDevices[device.id];
+      const updatedDevices = devices.map((d) =>
+        d.id === device.id ? { ...d, ownerName: updatedOwnerName } : d
+      );
+      setDevices(updatedDevices);
+      setEditingDevices((prevEditingDevices) => {
+        const { [device.id]: removed, ...rest } = prevEditingDevices;
+        return rest;
+      });
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        handleOwnerNameChange();
+      }
+    };
+
+    return (
+      <div className="grid grid-cols-4 w-full h-[70px] bg-[#2E2E2E] rounded-xl p-5">
+        <p className="text-2xl font-bold text-white mr-auto overflow-fix">
+          {device.deviceVersion || ""}
+        </p>
+        <h2 className="text-2xl font-bold text-white align flex items-center mr-3 overflow-fix">
+          ID: {device.id || ""}
+        </h2>
+        <div className="flex flex-row items-center gap-2">
+          {isEditing ? (
+            <Fragment>
+              <input
+                type="text"
+                value={editingDevices[device.id]}
+                maxLength={MAX_NAME_LENGTH}
+                className="p-1 rounded-lg"
+                placeholder="Enter new owner name"
+                onChange={(e) =>
+                  setEditingDevices((prevEditingDevices) => ({
+                    ...prevEditingDevices,
+                    [device.id]: e.target.value,
+                  }))
+                }
+                onKeyDown={handleKeyDown}
+              />
+              <SaveButton onClick={handleOwnerNameChange} />
+              {/*render character limit going down*/}
+              <p className="text-2xl font-bold text-white">
+                {MAX_NAME_LENGTH - (editingDevices[device.id] || "").length}
+              </p>
+            </Fragment>
+          ) : (
+            <Fragment>
+              <h2 className="text-2xl font-bold text-white align flex items-center overflow-fix">
+                Owner: {device.ownerName || ""}
+              </h2>
+              <EditButton onClick={() => toggleEdit(device.id)} />
+            </Fragment>
+          )}
+        </div>
+        <p className="text-2xl font-bold text-white ml-auto flex flex-row gap-3">
+          {device.batteryLevel || ""}
+          <FiftyPercentIcon />
+        </p>
+      </div>
+    );
   };
 
-  const devices = [
-    {
-      id: "2570612980",
-      deviceVersion: "Alta HR",
-      lastSyncTime: "2024-02-24T00:02:13.000",
-      batteryLevel: 100,
-    },
-    {
-      id: "2570612417",
-      deviceVersion: "Fitbit Pro",
-      lastSyncTime: "2024-02-24T00:02:13.000",
-      batteryLevel: 10,
-    },
-    {
-      id: "2570612980",
-      deviceVersion: "Apple Vision Pro",
-      lastSyncTime: "2024-02-24T00:02:13.000",
-      batteryLevel: 50,
-    },
-    {
-      id: "4200612980",
-      deviceVersion: "Playstation 5",
-      lastSyncTime: "1995-04-24T00:02:43.000",
-      batteryLevel: 25,
-    },
-  ];
+  const toggleEdit = (deviceId: string) => {
+    setEditingDevices((prevEditingDevices) => ({
+      ...prevEditingDevices,
+      [deviceId]: devices.find((dev) => dev.id === deviceId)?.ownerName || "",
+    }));
+  };
 
   return (
     <div className="w-full h-full flex flex-col p-10 ">
@@ -52,38 +115,9 @@ const DevicesDemo = () => {
       </div>
       <div className="flex flex-col gap-5 p-5">
         {devices.length > 0 ? (
-          devices.map(
-            (
-              device: {
-                id: string;
-                deviceVersion: string;
-                lastSyncTime: string;
-                batteryLevel: number;
-              },
-              index: number
-            ) => {
-              return (
-                <div
-                  key={index}
-                  className="grid grid-cols-4 w-full h-[70px] bg-[#2E2E2E] rounded-xl p-5"
-                >
-                  <p className="text-2xl font-bold text-white mr-auto ">
-                    {device.deviceVersion || ""}
-                  </p>
-                  <h2 className="text-2xl font-bold text-white align flex items-center mr-3">
-                    ID: {device.id || ""}
-                  </h2>
-                  <h2 className="text-2xl font-bold text-white align flex items-center">
-                    Synced: {formatDate(device.lastSyncTime) || ""}
-                  </h2>
-                  <p className="text-2xl font-bold text-white ml-auto flex flex-row gap-3">
-                    {device.batteryLevel || ""}
-                    <FiftyPercentIcon />
-                  </p>
-                </div>
-              );
-            }
-          )
+          devices.map((device: Device) => {
+            return Device(device);
+          })
         ) : (
           <h2 className="text-2xl font-bold text-white">No Devices Found.</h2>
         )}

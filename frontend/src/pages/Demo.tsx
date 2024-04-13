@@ -7,12 +7,13 @@ import MembersDemo from "../components/Demo-Views/MembersDemo";
 import SettingsDemo from "../components/Demo-Views/SettingsDemo";
 import Footer from "../components/Footer";
 import { useSearchParams } from "react-router-dom";
+import { DemoProvider } from "../helpers/DemoContext";
 
 const Demo = () => {
-  const [searchParams, setSearchParams] = useSearchParams({view:"data"})
+  const [searchParams, setSearchParams] = useSearchParams({ view: "data" });
   const view = searchParams.get("view") || "data";
   const setPage = (newView: string) => {
-    setSearchParams({ "view": newView }, { replace: true } );
+    setSearchParams({ view: newView }, { replace: true });
   };
 
   const renderComponent = useCallback(() => {
@@ -31,16 +32,20 @@ const Demo = () => {
   }, [view]);
 
   return (
-    <div className="h-full font-ralewayBold bg-hero-texture">
-      <DashboardNavbar />
-      <div className="flex flex-row">
-        <div className="w-[125px]">
-          <StickySidebar setPage={setPage} path={"demo"} />
+    <DemoProvider>
+      <div className="h-full font-ralewayBold bg-hero-texture">
+        <DashboardNavbar />
+        <div className="flex flex-row">
+          <div className="w-[125px]">
+            <StickySidebar setPage={setPage} path={"demo"} />
+          </div>
+          <div className="flex w-full h-full flex-col ">
+            {renderComponent()}
+          </div>
         </div>
-        <div className="flex w-full h-full flex-col ">{renderComponent()}</div>
+        <Footer />
       </div>
-      <Footer />
-    </div>
+    </DemoProvider>
   );
 };
 

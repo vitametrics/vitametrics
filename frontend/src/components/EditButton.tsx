@@ -6,7 +6,7 @@ interface EditButtonProps {
 
 export const EditButton: React.FC<EditButtonProps> = ({ onClick }) => {
   return (
-    <div className="edit-button" onClick={onClick}>
+    <div className="hover:cursor-pointer" onClick={onClick}>
       <svg
         width="14"
         height="14"
