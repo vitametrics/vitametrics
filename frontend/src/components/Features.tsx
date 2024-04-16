@@ -1,143 +1,85 @@
-import Slider from "react-slick";
-import { useEffect, useState } from "react";
-
-import TrackingDataIcon from "../assets/svgs/TrackingDataIcon.svg";
-import ParticipantTrackingIcon from "../assets/svgs/ParticipantTrackingIcon.svg";
-import ExportDataIcon from "../assets/svgs/ExportDataIcon.svg";
-import DeviceTrackingIcon from "../assets/svgs/DeviceTrackingIcon.svg";
-import OpenSourceIcon from "../assets/svgs/OpenSourceIcon.svg";
-import GraphingIcon from "../assets/svgs/GraphingIcon.svg";
-import DataCollectionIcon from "../assets/svgs/DataCollectionIcon.svg";
-import { LazyLoadImage } from "react-lazy-load-image-component";
-
-//import LazyLoadSVG from "../components/LazyLoadSvg";
-
-//import DeviceTrackingIcon from "../assets/DeviceTrackingIcon";
-/*
-import TrackingDataIcon from "../assets/TrackingDataIcon";
-import ParticipantTrackingIcon from "../assets/ParticipantTrackingIcon";
-import ExportDataIcon from "../assets/ExportDataIcon";
-import OpenSourceIcon from "../assets/OpenSourceIcon";
-import GraphingIcon from "../assets/GraphingIcon";
-import DataCollectionIcon from "../assets/DataCollectionIcon";
-*/
-/*
-const DeviceTrackingIcon = lazy(() => import("../assets/DeviceTrackingIcon"));
-const TrackingDataIcon = lazy(() => import("../assets/TrackingDataIcon"));
-const ParticipantTrackingIcon = lazy(
-  () => import("../assets/ParticipantTrackingIcon")
-);
-const ExportDataIcon = lazy(() => import("../assets/ExportDataIcon"));
-const OpenSourceIcon = lazy(() => import("../assets/OpenSourceIcon"));
-const GraphingIcon = lazy(() => import("../assets/GraphingIcon"));
-const DataCollectionIcon = lazy(() => import("../assets/DataCollectionIcon"));
-const renderLoader = () => <p>Loading</p>;
-*/
+type interview = {
+  name: string;
+  review: string;
+  img: string;
+};
 const Features = () => {
-  const [slidesToShow, setSlidesToShow] = useState(3);
-
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: slidesToShow,
-    slidesToScroll: 1,
-    lazy: true,
-  };
-
-  const handleResize = () => {
-    if (window.innerWidth >= 1100) {
-      setSlidesToShow(3);
-    } else if (window.innerWidth >= 768) {
-      setSlidesToShow(2);
-    } else {
-      setSlidesToShow(1);
-    }
-  };
-
-  useEffect(() => {
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  const features = [
+  const reviews = [
     {
-      title: "Tracking Data",
-      desc: "Track health data not limited to heart rate, oxygen, calories, and more!",
-      img: TrackingDataIcon,
+      name: "Tom Rebold",
+      review:
+        "It's perfect for not just advanced researchers, but beginners too!",
+      img: "",
     },
     {
-      title: "Participants Management",
-      desc: "Host an organization and manage all the members and their devices!",
-      img: ParticipantTrackingIcon,
+      name: "Greg Welk",
+      review:
+        "The platform is free to use and perfect for my graduate research in kinesiology.",
+      img: "",
     },
     {
-      title: "Export Data",
-      desc: "Easily export collected data for analysis and reporting purposes.",
-      img: ExportDataIcon,
+      name: "Lief Koepsel",
+      review:
+        "Nothing is better than open-source. I love that I can see the code and contribute to the project!",
+      img: "",
     },
     {
-      title: "Device Monitoring",
-      desc: "Effortlessly what devices are connected along with their battery levels and more!",
-      img: DeviceTrackingIcon,
+      name: "Zyrille Lumbang",
+      review:
+        "As a undergraduate pre-health student, this is perfect for getting into research! ",
+      img: "",
     },
     {
-      title: "Automated Graphing",
-      desc: "Automate the process of creating insightful graphs and visualizations based on collected data.",
-      img: GraphingIcon,
+      name: "Jasmine Sebastian",
+      review:
+        "The exercise research I've done with Vitametrics is great for my portfolio!",
+      img: "",
     },
     {
-      title: "Open-source",
-      desc: "Access and contribute to the source code for a transparent and collaborative platform.",
-      img: OpenSourceIcon,
-    },
-    {
-      title: "Limitless Data Collection",
-      desc: "Collect and store data without limitations, ensuring comprehensive tracking and analysis.",
-      img: DataCollectionIcon,
+      name: "Timothy Liu",
+      review:
+        "Vitametrics data analysis tools extracts helpful insights of my running capabilities.",
+      img: "",
     },
   ];
+
+  const reviewCard = (content: interview[]) => {
+    return (
+      <div className="flex flex-col bg-[#F2F2F2] p-5 rounded-xl">
+        <div className="flex flex-row items-center gap-5">
+          <img src={content[0].img} className="h-10 w-10 rounded-full" />
+          <h1 className="text-primary text-2xl">{content[0].name}</h1>
+        </div>
+        <div className="bg-[#c9c9c9] h-[0.25px] w-full mt-2" />
+        <p className="text-desc mt-2 font-leagueSpartan">{content[0].review}</p>
+      </div>
+    );
+  };
 
   return (
     <section
       id="#features"
-      className="w-full h-full flex flex-col box-border p-10 justify-center items-center bg-[#1A1A1A] font-leagueSpartanBold"
+      className="w-full h-full flex flex-col box-border px-10 lg:px-32 lg:pb-16 "
     >
-      <link
-        rel="stylesheet"
-        type="text/css"
-        href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css"
-      />
-      <link
-        rel="stylesheet"
-        type="text/css"
-        href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css"
-      />
-      <h3 className="text-5xl gradient-pink-purple font-bold mb-5 text-center">
-        What do we offer you?
-      </h3>
-      <div className="p-10 w-full">
-        <Slider {...settings}>
-          {features.map((feature, index) => {
-            return (
-              <div
-                key={index}
-                className="flex flex-col items-center justify-center w-full lg:w-[450px] h-[360px] bg-[#0e0d0d] p-5 rounded-xl"
-              >
-                <div className="bg-grey-200 h-[200px] rounded-md mb-5 flex justify-center items-center">
-                  <LazyLoadImage src={feature.img} />
-                </div>
-                <p className="text-2xl  text-white text-center">
-                  {feature.title}
-                </p>
-                <p className="text-md text-white text-center">{feature.desc}</p>
-              </div>
-            );
-          })}
-        </Slider>
+      <div className="flex flex-col bg-glass rounded-lg p-12 lg:px-40 items-center mb-10">
+        <h1 className="text-5xl text-primary text-center mb-5">
+          See what researchers have said.
+        </h1>
+        <p className="text-xl text-desc text-center font-leagueSpartan mb-5">
+          Our platform enables meaningful collaborations and your next
+          discoveries.
+        </p>
+        <div className="grid grid-cols-2 gap-5 mb-5 text-white">
+          <button className="bg-quaternary hover:bg-hoverQuaternary p-3 rounded-lg w-[175px] text-2xl">
+            Feedback
+          </button>
+          <button className="bg-quinary hover:bg-hoverQuinary p-3 rounded-lg w-[175px] text-2xl">
+            FAQs
+          </button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-5">
+          {reviews.map((review) => reviewCard([review]))}
+        </div>
       </div>
     </section>
   );

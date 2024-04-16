@@ -43,8 +43,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       : import.meta.env.VITE_APP_LOGOUT_DEV_ENDPOINT;
 
   //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT; //~ production
- 
-
 
   const login = async () => {
     try {

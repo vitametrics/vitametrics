@@ -60,15 +60,27 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       steps: [
         {
           date: "2024-02-20",
-          value: 10000,
+          value: 9820,
         },
         {
           date: "2024-02-21",
-          value: 100,
+          value: 4350,
         },
         {
           date: "2024-02-22",
-          value: 100,
+          value: 1230,
+        },
+        {
+          date: "2024-02-23",
+          value: 6784,
+        },
+        {
+          date: "2024-02-24",
+          value: 8910,
+        },
+        {
+          date: "2024-02-25",
+          value: 13234,
         },
       ],
       vo2max: [
@@ -217,15 +229,27 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       steps: [
         {
           date: "2024-02-20",
-          value: 10000,
+          value: 3421,
         },
         {
           date: "2024-02-21",
-          value: 100,
+          value: 5423,
         },
         {
           date: "2024-02-22",
-          value: 100,
+          value: 2310,
+        },
+        {
+          date: "2024-02-23",
+          value: 7450,
+        },
+        {
+          date: "2024-02-24",
+          value: 9182,
+        },
+        {
+          date: "2024-02-25",
+          value: 12134,
         },
       ],
       vo2max: [
@@ -366,11 +390,23 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         },
         {
           date: "2024-02-21",
-          value: 100,
+          value: 12570,
         },
         {
           date: "2024-02-22",
-          value: 100,
+          value: 6450,
+        },
+        {
+          date: "2024-02-23",
+          value: 11453,
+        },
+        {
+          date: "2024-02-24",
+          value: 8760,
+        },
+        {
+          date: "2024-02-25",
+          value: 3420,
         },
       ],
       vo2max: [
@@ -426,11 +462,11 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         },
         {
           date: "2024-02-21",
-          value: 100,
+          value: 110,
         },
         {
           date: "2024-02-22",
-          value: 90,
+          value: 75,
         },
         {
           date: "2024-02-23",
@@ -450,7 +486,7 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         },
         {
           date: "2024-02-27",
-          value: 120,
+          value: 140,
         },
       ],
       calories: [

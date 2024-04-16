@@ -14,8 +14,28 @@ export default {
         "hero-texture": "url('/src/assets/images/hero-texture.png')",
         "hero-texture-1": "url('/src/assets/images/hero-texture-1.png')",
       },
+      backgroundColor: {
+        primary: "#45496a",
+        secondary: "#7d8bae",
+        tertiary: "#e5857b",
+        quaternary: "#f1b2b2",
+        quinary: "#e8ccc7",
+        hoverSecondary: "#707D9C",
+        hoverTertiary: "#CE776E",
+        hoverQuaternary: "#D8A0A0",
+        hoverQuinary: "#D0B7B3",
+      },
+      textColor: {
+        primary: "#45496a",
+        secondary: "#7d8bae",
+        tertiary: "#e5857b",
+        quaternary: "#f1b2b2",
+        quinary: "#e8ccc7",
+        desc: "#868686",
+      },
     },
 
+    /*
     screens: {
       sm: { min: "0", max: "767px" },
       // => @media (min-width: 640px and max-width: 767px) { ... }
@@ -31,7 +51,7 @@ export default {
 
       "2xl": { min: "1536px" },
       // => @media (min-width: 1536px) { ... }
-    },
+    },*/
     fontFamily: {
       raleway: ["Raleway-Regular", "sans-serif"],
       ralewayBold: ["Raleway-Bold", "sans-serif"],

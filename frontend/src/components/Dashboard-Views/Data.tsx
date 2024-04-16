@@ -22,6 +22,7 @@ type DeviceData = {
   deviceVersion: string;
   lastSyncTime: string;
   batteryLevel: number;
+  ownerName: string;
   heart: DataItem[];
   steps: DataItem[];
   calories: DataItem[];
@@ -45,7 +46,7 @@ const Data = () => {
     rangeDataType: "heart",
     rangeDetailLevel: "1min",
   });
-  
+
   const dataType = searchParams.get("dataType") || "heart";
   const graphType = searchParams.get("graphType") || "bar";
   const detailLevel = searchParams.get("detailLevel") || "1min";
@@ -110,7 +111,10 @@ const Data = () => {
 
     const labels = selectedDevices.map((deviceId) => {
       const device = devices.find((d) => d.id === deviceId);
-      return device ? device.deviceVersion + " " + device.id : "Unknown";
+      if (!device) return { x: "Unknown", y: 0 };
+      return device
+        ? device.deviceVersion + " " + device?.ownerName + " " + device.id
+        : "Unknown";
     });
 
     const dataPoints = selectedDevices.map((deviceId) => {
@@ -122,7 +126,7 @@ const Data = () => {
       );
 
       return {
-        x: device.deviceVersion + " " + device.id,
+        x: device.deviceVersion + " " + device?.ownerName + " " + device.id,
         y: dataPoint ? dataPoint.value : 0,
         device: deviceId,
       };
@@ -164,11 +168,11 @@ const Data = () => {
     const datasets = selectedDevices
       .map((deviceId) => {
         const device = devices.find((d) => d.id === deviceId);
-        if (!device) return null; 
+        if (!device) return null;
 
-        const label = device.deviceVersion + device.id; 
-        const borderColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`; 
-        const backgroundColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`; 
+        const label = device.deviceVersion + device.id;
+        const borderColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+        const backgroundColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
         const dataByDate = new Map(
           device[rangeDataType].map((item: DataItem) => [item.date, item.value])
         );
