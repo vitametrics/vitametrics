@@ -405,6 +405,8 @@ const DataDemo = () => {
       }
     }
     */
+    setDownloadFlag(true);
+    setDownloadMsg("Data downloaded successfully");
   };
 
   const formatDate = (date: Date) => {

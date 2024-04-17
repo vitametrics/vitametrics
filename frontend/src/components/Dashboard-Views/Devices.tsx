@@ -15,17 +15,16 @@ interface Device {
   lastSyncTime: string;
   batteryLevel: number;
   ownerName: string;
-  steps: { date: string; value: number }[];
-  vo2max: { date: string; value: number }[];
-  heart: { date: string; value: number }[];
-  calories: { date: string; value: number }[];
-  distance: { date: string; value: number }[];
-  elevation: { date: string; value: number }[];
-  floors: { date: string; value: number }[];
 }
 
 const Devices = () => {
-  const { devices, setDevices, orgName } = useOrg();
+  const {
+    devices,
+    setDevices,
+    orgName,
+    deviceViewDevices,
+    setDeviceViewDevices,
+  } = useOrg();
   const [editingDevices, setEditingDevices] = useState<{
     [key: string]: string;
   }>({});
@@ -76,6 +75,7 @@ const Devices = () => {
 
         console.log(response.data);
         setDevices(response.data); //ask sean to return the updated devices
+        setDeviceViewDevices(response.data);
         setEditingDevices((prevEditingDevices) => {
           const { [device.id]: removed, ...rest } = prevEditingDevices;
           return rest;
@@ -89,7 +89,11 @@ const Devices = () => {
       const updatedDevices = devices.map((d) =>
         d.id === device.id ? { ...d, ownerName: updatedOwnerName } : d
       );
+      const updatedTestDevices = deviceViewDevices.map((d) =>
+        d.id === device.id ? { ...d, ownerName: updatedOwnerName } : d
+      );
       setDevices(updatedDevices);
+      setDeviceViewDevices(updatedTestDevices);
       setEditingDevices((prevEditingDevices) => {
         const { [device.id]: removed, ...rest } = prevEditingDevices;
         return rest;
@@ -173,7 +177,7 @@ const Devices = () => {
       </div>
       <div className="flex flex-col gap-5 p-5">
         {devices.length > 0 ? (
-          devices.map((device: Device) => {
+          deviceViewDevices.map((device: Device) => {
             return Device(device);
           })
         ) : (

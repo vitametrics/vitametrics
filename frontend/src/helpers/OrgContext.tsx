@@ -29,6 +29,16 @@ interface DeviceData {
   [key: string]: any; // This line is the index signature
 }
 
+interface Device {
+  id: string;
+  deviceVersion: string;
+  lastSyncTime: string;
+  batteryLevel: number;
+  ownerName: string;
+  mac: string;
+  type: string;
+}
+
 interface OrgContextProps {
   orgName: string;
   orgId: string;
@@ -39,6 +49,8 @@ interface OrgContextProps {
   fetchOrg: () => void;
   fetchDataById: (id: string, startDate: string, endDate: string) => void;
   syncDevice: (id: string, start: Date, end: Date) => void;
+  deviceViewDevices: Device[];
+  setDeviceViewDevices: (arg0: Device[]) => void;
 }
 
 const OrgContext = createContext<OrgContextProps | undefined>(undefined);
@@ -49,6 +61,37 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [orgId, setOrgId] = useState<string>("");
   const [members, setMembers] = useState<Member[]>([]);
   const [devices, setDevices] = useState<DeviceData[]>([]);
+  const [deviceViewDevices, setDeviceViewDevices] = useState<Device[]>([]);
+
+  const testDeviceViewDevices = [
+    {
+      id: "2570612980",
+      deviceVersion: "Alta HR",
+      lastSyncTime: "2024-02-24T00:02:13.000",
+      batteryLevel: 100,
+      ownerName: "Brandon Le",
+      mac: "123456789",
+      type: "TRACKER",
+    },
+    {
+      id: "2570612417",
+      deviceVersion: "Fitbit Pro",
+      lastSyncTime: "2024-02-24T00:02:13.000",
+      batteryLevel: 10,
+      ownerName: "Angel Vazquez",
+      mac: "123456789",
+      type: "TRACKER",
+    },
+    {
+      id: "2570612989",
+      deviceVersion: "Alta HR 2",
+      lastSyncTime: "2024-02-24T00:02:13.000",
+      batteryLevel: 50,
+      ownerName: "Sean Cornell",
+      mac: "123456789",
+      type: "TRACKER",
+    },
+  ];
 
   const testDevices = [
     {
@@ -652,9 +695,10 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       });
 
       console.log(response.data);
-      setDevices(response.data);
+      setDeviceViewDevices(response.data);
     } catch (error) {
       setDevices(testDevices);
+      setDeviceViewDevices(testDeviceViewDevices);
       console.log(error);
     }
   };
@@ -735,6 +779,8 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         fetchDataById,
         syncDevice,
         setDevices,
+        deviceViewDevices,
+        setDeviceViewDevices,
       }}
     >
       {children}
