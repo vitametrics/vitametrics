@@ -19,12 +19,21 @@ interface DashboardProps {
   setStartDate: Dispatch<SetStateAction<Date>>;
   setRangeStartDate: Dispatch<SetStateAction<Date>>;
   setRangeEndDate: Dispatch<SetStateAction<Date>>;
+  detailLevel: string;
+  setDetailLevel: Dispatch<SetStateAction<string>>;
   showBackDrop: boolean;
   setShowBackDrop: (arg0: boolean) => void;
   selectedDevices: string[];
   setSelectedDevices: (arg0: string[]) => void;
   handleDeviceSelectionChange: (deviceId: string, isChecked: boolean) => void;
   devicesData: any[]; //temp any
+  deviceData: any[]; //temp any
+}
+
+interface DeviceData {
+  rangeStartDate: Date;
+  rangeEndDate: Date;
+  data: any; // Detailed data for each device
 }
 
 interface DeviceContext {
@@ -44,16 +53,69 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
       ? import.meta.env.VITE_APP_FETCH_DEVICE_DATA_ENDPOINT
       : import.meta.env.VITE_APP_FETCH_DEVICE_DATA_DEV_ENDPOINT;
 
+  const FETCH_INTRADAY_DATA_ENDPOINT =
+    import.meta.env.NODE_ENV === "production"
+      ? import.meta.env.VITE_APP_FETCH_INTRADAY_DATA_ENDPOINT
+      : import.meta.env.VITE_APP_FETCH_INTRADAY_DATA_DEV_ENDPOINT;
+
   const { devices } = useOrg();
   const [startDate, setStartDate] = useState(new Date()); // use `new Date()` instead of `Date.now()`
   const [rangeStartDate, setRangeStartDate] = useState(new Date());
   const [rangeEndDate, setRangeEndDate] = useState(new Date());
-  const [showBackDrop, setShowBackDrop] = useState(false);
+  const [detailLevel, setDetailLevel] = useState<string>("1min");
   const [selectedDevices, setSelectedDevices] = useState<string[]>(
     devices.map((device) => device.id)
   );
   const [devicesData, setDevicesData] = useState<any[]>([]); //temp any
   const loadedDevicesRef = useRef<DeviceContext>({});
+  const [deviceData, setDeviceData] = useState<any[]>([]); //temp any
+  const [showBackDrop, setShowBackDrop] = useState(false);
+
+  const saveDeviceDataToLocalStorage = (deviceId: string, data: DeviceData) => {
+    localStorage.setItem(`deviceData_${deviceId}`, JSON.stringify(data));
+  };
+
+  const getDeviceDataFromLocalStorage = (
+    deviceId: string
+  ): DeviceData | undefined => {
+    const data = localStorage.getItem(`deviceData_${deviceId}`);
+    return data ? JSON.parse(data) : undefined;
+  };
+
+  const fetchSingleViewDevice = (deviceId: string) => {
+    const deviceData = getDeviceDataFromLocalStorage(deviceId);
+    if (
+      !deviceData ||
+      deviceData.rangeStartDate !== rangeStartDate ||
+      deviceData.rangeEndDate !== rangeEndDate
+    ) {
+      try {
+        axios
+          .get(FETCH_INTRADAY_DATA_ENDPOINT, {
+            params: {
+              id: deviceId,
+              startDate: formatDate(rangeStartDate),
+              endDate: formatDate(rangeEndDate),
+              detailLevel,
+            },
+          })
+          .then((res) => {
+            console.log(res.data);
+            const newDeviceData: DeviceData = {
+              data: res.data,
+              rangeStartDate: rangeStartDate,
+              rangeEndDate: rangeEndDate,
+            };
+            setDeviceData((prev) => ({ ...prev, [deviceId]: newDeviceData }));
+            saveDeviceDataToLocalStorage(deviceId, newDeviceData);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      setDeviceData((prev) => ({ ...prev, [deviceId]: deviceData }));
+    }
+  };
 
   const formatDate = (date: Date) => {
     const month =
@@ -119,6 +181,14 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [rangeStartDate, rangeEndDate, selectedDevices]);
 
+  useEffect(() => {
+    if (selectedDevices.length > 0) {
+      selectedDevices.forEach((deviceId) => {
+        fetchSingleViewDevice(deviceId);
+      });
+    }
+  }, [startDate, detailLevel]);
+
   return (
     <DashboardContext.Provider
       value={{
@@ -134,6 +204,9 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
         setSelectedDevices,
         handleDeviceSelectionChange,
         devicesData,
+        detailLevel,
+        setDetailLevel,
+        deviceData,
       }}
     >
       {children}
