@@ -63,12 +63,11 @@ const Data = () => {
     setRangeEndDate,
     rangeEndDate,
     rangeStartDate,
+    selectedDevices,
+    handleDeviceSelectionChange,
   } = useDashboard();
   const [chartData, setChartData] = useState({});
   const [rangeChartData, setRangeChartData] = useState({});
-  const [selectedDevices, setSelectedDevices] = useState<string[]>(
-    devices.map((device) => device.id)
-  );
 
   const detailLevelTypes = [
     {
@@ -193,15 +192,6 @@ const Data = () => {
       labels, // Use dates from the first device as labels
       datasets,
     });
-  };
-
-  const handleDeviceSelectionChange = (
-    deviceId: string,
-    isChecked: boolean
-  ) => {
-    setSelectedDevices((prev) =>
-      isChecked ? [...prev, deviceId] : prev.filter((id) => id !== deviceId)
-    );
   };
 
   const renderRangeGraph = () => {
