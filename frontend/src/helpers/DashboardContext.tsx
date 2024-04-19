@@ -49,10 +49,11 @@ const DashboardContext = createContext<DashboardProps | undefined>(undefined);
 const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const FETCH_DEVICE_DATA_ENDPOINT =
+  const FETCH_DEVICE_DATA_ENDPOINT = "https://physiobit.org/api/org/fetch-data";
+  /*
     import.meta.env.NODE_ENV === "production"
       ? import.meta.env.VITE_APP_FETCH_DEVICE_DATA_ENDPOINT
-      : import.meta.env.VITE_APP_FETCH_DEVICE_DATA_DEV_ENDPOINT;
+      : import.meta.env.VITE_APP_FETCH_DEVICE_DATA_DEV_ENDPOINT; */
 
   const FETCH_INTRADAY_DATA_ENDPOINT =
     import.meta.env.NODE_ENV === "production"
