@@ -59,7 +59,7 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
       : import.meta.env.VITE_APP_FETCH_INTRADAY_DATA_DEV_ENDPOINT;
 
   const { devices } = useOrg();
-  const [startDate, setStartDate] = useState(new Date()); // use `new Date()` instead of `Date.now()`
+  const [startDate, setStartDate] = useState(new Date("2024-02-10"));
   const [rangeStartDate, setRangeStartDate] = useState(new Date());
   const [rangeEndDate, setRangeEndDate] = useState(new Date());
   const [detailLevel, setDetailLevel] = useState<string>("1min");
@@ -84,6 +84,7 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const fetchSingleViewDevice = (deviceId: string) => {
     const deviceData = getDeviceDataFromLocalStorage(deviceId);
+    console.log("fetching single device data");
     if (
       !deviceData ||
       deviceData.rangeStartDate !== rangeStartDate ||
@@ -188,6 +189,14 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
       });
     }
   }, [startDate, detailLevel]);
+
+  useEffect(() => {
+    setDevicesData([]);
+    devices.forEach((device) => {
+      fetchDevice(device.deviceId);
+      fetchSingleViewDevice(device.deviceId);
+    });
+  }, [devices]);
 
   return (
     <DashboardContext.Provider

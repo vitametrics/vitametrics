@@ -1357,6 +1357,14 @@ video {
   padding-top: 10px;
 }
 
+.pt-20 {
+  padding-top: 5rem;
+}
+
+.pt-32 {
+  padding-top: 8rem;
+}
+
 .text-left {
   text-align: left;
 }
@@ -2091,6 +2099,10 @@ nav.animated-parent {
     margin-top: 0px;
   }
 
+  .md\:mb-auto {
+    margin-bottom: auto;
+  }
+
   .md\:block {
     display: block;
   }
@@ -2166,9 +2178,17 @@ nav.animated-parent {
     padding: 2.5rem;
   }
 
+  .md\:p-20 {
+    padding: 5rem;
+  }
+
   .md\:py-8 {
     padding-top: 2rem;
     padding-bottom: 2rem;
+  }
+
+  .md\:pt-20 {
+    padding-top: 5rem;
   }
 
   .md\:hover\:bg-transparent:hover {

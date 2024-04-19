@@ -42,17 +42,17 @@ const Login = () => {
     <div className="h-full w-full bg-fixed overflow-y-hidden font-leagueSpartanBold ">
       <Navbar />
       <div className="flex flex-col justify-center items-center p-0 md:p-10">
-        <div className="flex flex-row sm:flex-col-reverse sm:h-screen items-center justify-center">
-          <div className="flex flex-col items-center justify-center bg-glass w-full h-full md:w-[500px] md:h-[600px]  p-20  rounded-none md:rounded-xl  sm:p-5">
-            <a href="/" className="mb-5 sm:mt-10">
+        <div className="flex flex-row h-screen items-center justify-center">
+          <div className="flex flex-col pt-32 items-center justify-center bg-glass w-full h-full md:w-[500px] md:h-[600px]  p-20 md:pt-20 rounded-none md:rounded-xl ">
+            <a href="/" className="mb-5">
               <img
                 src={logo}
                 onClick={() => navigate("/")}
-                className="h-20"
+                className="h-20 rounded-xl border-primary"
                 alt="VitametricsLogo"
               />
             </a>
-            <h2 className="font-bold text-4xl w-72 mt-5 text-center">
+            <h2 className="font-bold text-4xl w-72 mt-5 text-center text-primary">
               {" "}
               Login{" "}
             </h2>
@@ -71,13 +71,16 @@ const Login = () => {
             />
             <button
               onClick={handleLogin}
-              className="p-[10px] mt-5 bg-[#202020] w-72 rounded-lg cursor-pointer font-bold text-white"
+              className="p-[10px] mt-5 bg-secondary w-72 rounded-lg cursor-pointer font-bold text-white"
             >
               {" "}
               Login{" "}
             </button>
-            <a href="/register" className="mb-auto">
-              <p className="mt-5 text-[#696969]"> Haven't started? Register</p>
+            <a href="/register" className="md:mb-auto">
+              <p className="mt-5 text-[#696969] font-leagueSpartan">
+                {" "}
+                Haven't started? Register
+              </p>
             </a>
           </div>
         </div>
