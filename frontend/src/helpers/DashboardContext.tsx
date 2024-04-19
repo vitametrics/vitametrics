@@ -56,9 +56,7 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
       : import.meta.env.VITE_APP_FETCH_DEVICE_DATA_DEV_ENDPOINT; */
 
   const FETCH_INTRADAY_DATA_ENDPOINT =
-    import.meta.env.NODE_ENV === "production"
-      ? import.meta.env.VITE_APP_FETCH_INTRADAY_DATA_ENDPOINT
-      : import.meta.env.VITE_APP_FETCH_INTRADAY_DATA_DEV_ENDPOINT;
+    "https://physiobit.org/api/org/fetch-intraday";
 
   const { deviceViewDevices } = useOrg();
   const [startDate, setStartDate] = useState(new Date("2024-02-10"));
@@ -147,6 +145,7 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const fetchWorkingDevice = async () => {
     console.log("fetching working device data based on range date");
+    /*
     try {
       //const startDate = formatDate(rangeStartDate);
       //const endDate = formatDate(rangeEndDate);
@@ -161,15 +160,15 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
       });
 
       console.log(response.data);
-      /*
-            setDevicesData((prev) => [...prev, res.data]);
-            loadedDevicesRef.current["2570612980"] = {
-              rangeStartDate,
-              rangeEndDate,
-            };*/
+
+      setDevicesData((prev) => [...prev, response.data]);
+      loadedDevicesRef.current["2570612980"] = {
+        rangeStartDate,
+        rangeEndDate,
+      };
     } catch (error) {
       console.log(error);
-    }
+    }*/
   };
 
   const fetchDevice = async (deviceId: string) => {
@@ -190,12 +189,12 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
           })
           .then((res) => {
             console.log(res.data);
-            /*
+
             setDevicesData((prev) => [...prev, res.data]);
             loadedDevicesRef.current[deviceId] = {
               rangeStartDate,
               rangeEndDate,
-            };*/
+            };
           });
       } catch (error) {
         console.error(error);
@@ -221,12 +220,12 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [startDate, detailLevel]);
 
   useEffect(() => {
-    fetchWorkingDevice();
-    /*
+    //fetchWorkingDevice();
+
     deviceViewDevices.forEach((device) => {
       fetchDevice(device.id);
       fetchSingleViewDevice(device.id);
-    });*/
+    });
   }, [deviceViewDevices]);
 
   return (
