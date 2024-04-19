@@ -28,6 +28,7 @@ interface DashboardProps {
   handleDeviceSelectionChange: (deviceId: string, isChecked: boolean) => void;
   devicesData: any[]; //temp any
   deviceData: any[]; //temp any
+  fetchWorkingDevice: () => void;
 }
 
 interface DeviceData {
@@ -167,7 +168,7 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
               rangeEndDate,
             };*/
       } catch (error) {
-        console.error(error);
+        console.log(error);
       }
     }
   };
@@ -221,11 +222,11 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     fetchWorkingDevice();
+    /*
     deviceViewDevices.forEach((device) => {
-      //console.log(device);
       fetchDevice(device.id);
       fetchSingleViewDevice(device.id);
-    });
+    });*/
   }, [deviceViewDevices]);
 
   return (
@@ -246,6 +247,7 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
         detailLevel,
         setDetailLevel,
         deviceData,
+        fetchWorkingDevice,
       }}
     >
       {children}
