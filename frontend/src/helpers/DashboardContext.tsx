@@ -60,8 +60,8 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const { devices } = useOrg();
   const [startDate, setStartDate] = useState(new Date("2024-02-10"));
-  const [rangeStartDate, setRangeStartDate] = useState(new Date());
-  const [rangeEndDate, setRangeEndDate] = useState(new Date());
+  const [rangeStartDate, setRangeStartDate] = useState(new Date("2024-02-10"));
+  const [rangeEndDate, setRangeEndDate] = useState(new Date("2024-02-11"));
   const [detailLevel, setDetailLevel] = useState<string>("1min");
   const [selectedDevices, setSelectedDevices] = useState<string[]>(
     devices.map((device) => device.id)
