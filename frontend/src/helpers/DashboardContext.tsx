@@ -83,30 +83,30 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
     return data ? JSON.parse(data) : undefined;
   };
 */
-  const fetchSingleViewDevice = (deviceId: string) => {
+  const fetchSingleViewDevice = async (deviceId: string) => {
     //const deviceData = getDeviceDataFromLocalStorage(deviceId);
     console.log("fetching single device data");
 
     try {
-      axios
-        .get(FETCH_INTRADAY_DATA_ENDPOINT, {
-          params: {
-            id: deviceId,
-            startDate: formatDate(rangeStartDate),
-            endDate: formatDate(rangeEndDate),
-            detailLevel,
-          },
-        })
-        .then((res) => {
-          console.log(res.data);
-          const newDeviceData: DeviceData = {
-            data: res.data,
-            rangeStartDate: rangeStartDate,
-            rangeEndDate: rangeEndDate,
-          };
-          setDeviceData((prev) => ({ ...prev, [deviceId]: newDeviceData }));
-          saveDeviceDataToLocalStorage(deviceId, newDeviceData);
-        });
+      const response = await axios.get(FETCH_INTRADAY_DATA_ENDPOINT, {
+        params: {
+          deviceId: deviceId,
+          dataType: "heart",
+          date: formatDate(startDate),
+          detailLevel: detailLevel,
+        },
+        withCredentials: true,
+      });
+
+      console.log(response.data);
+
+      const newDeviceData: DeviceData = {
+        data: response.data,
+        rangeStartDate: rangeStartDate,
+        rangeEndDate: rangeEndDate,
+      };
+      setDeviceData((prev) => ({ ...prev, [deviceId]: newDeviceData }));
+      saveDeviceDataToLocalStorage(deviceId, newDeviceData);
     } catch (error) {
       console.log(error);
     }
@@ -142,17 +142,18 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
     );
   };
 
-  const fetchDevice = (deviceId: string) => {
+  const fetchDevice = async (deviceId: string) => {
     if (shouldFetchDeviceData(deviceId)) {
       console.log("fetching device data based on range date");
       try {
-        axios
+        await axios
           .get(FETCH_DEVICE_DATA_ENDPOINT, {
             params: {
               id: deviceId,
               startDate: formatDate(rangeStartDate),
               endDate: formatDate(rangeEndDate),
             },
+            withCredentials: true,
           })
           .then((res) => {
             console.log(res.data);
