@@ -191,10 +191,10 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [startDate, detailLevel]);
 
   useEffect(() => {
-    setDevicesData([]);
     devices.forEach((device) => {
-      fetchDevice(device.deviceId);
-      fetchSingleViewDevice(device.deviceId);
+      console.log(device);
+      fetchDevice(device.id);
+      fetchSingleViewDevice(device.id);
     });
   }, [devices]);
 
