@@ -75,46 +75,40 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.setItem(`deviceData_${deviceId}`, JSON.stringify(data));
   };
 
+  /*
   const getDeviceDataFromLocalStorage = (
     deviceId: string
   ): DeviceData | undefined => {
     const data = localStorage.getItem(`deviceData_${deviceId}`);
     return data ? JSON.parse(data) : undefined;
   };
-
+*/
   const fetchSingleViewDevice = (deviceId: string) => {
-    const deviceData = getDeviceDataFromLocalStorage(deviceId);
+    //const deviceData = getDeviceDataFromLocalStorage(deviceId);
     console.log("fetching single device data");
-    if (
-      !deviceData ||
-      deviceData.rangeStartDate !== rangeStartDate ||
-      deviceData.rangeEndDate !== rangeEndDate
-    ) {
-      try {
-        axios
-          .get(FETCH_INTRADAY_DATA_ENDPOINT, {
-            params: {
-              id: deviceId,
-              startDate: formatDate(rangeStartDate),
-              endDate: formatDate(rangeEndDate),
-              detailLevel,
-            },
-          })
-          .then((res) => {
-            console.log(res.data);
-            const newDeviceData: DeviceData = {
-              data: res.data,
-              rangeStartDate: rangeStartDate,
-              rangeEndDate: rangeEndDate,
-            };
-            setDeviceData((prev) => ({ ...prev, [deviceId]: newDeviceData }));
-            saveDeviceDataToLocalStorage(deviceId, newDeviceData);
-          });
-      } catch (error) {
-        console.log(error);
-      }
-    } else {
-      setDeviceData((prev) => ({ ...prev, [deviceId]: deviceData }));
+
+    try {
+      axios
+        .get(FETCH_INTRADAY_DATA_ENDPOINT, {
+          params: {
+            id: deviceId,
+            startDate: formatDate(rangeStartDate),
+            endDate: formatDate(rangeEndDate),
+            detailLevel,
+          },
+        })
+        .then((res) => {
+          console.log(res.data);
+          const newDeviceData: DeviceData = {
+            data: res.data,
+            rangeStartDate: rangeStartDate,
+            rangeEndDate: rangeEndDate,
+          };
+          setDeviceData((prev) => ({ ...prev, [deviceId]: newDeviceData }));
+          saveDeviceDataToLocalStorage(deviceId, newDeviceData);
+        });
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -150,6 +144,7 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const fetchDevice = (deviceId: string) => {
     if (shouldFetchDeviceData(deviceId)) {
+      console.log("fetching device data based on range date");
       try {
         axios
           .get(FETCH_DEVICE_DATA_ENDPOINT, {
@@ -192,7 +187,7 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     devices.forEach((device) => {
-      console.log(device);
+      //console.log(device);
       fetchDevice(device.id);
       fetchSingleViewDevice(device.id);
     });
