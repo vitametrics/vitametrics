@@ -191,11 +191,12 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
           })
           .then((res) => {
             console.log(res.data);
+            /*
             setDevicesData((prev) => [...prev, res.data]);
             loadedDevicesRef.current[deviceId] = {
               rangeStartDate,
               rangeEndDate,
-            };
+            };*/
           });
       } catch (error) {
         console.error(error);
