@@ -58,22 +58,22 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
       ? import.meta.env.VITE_APP_FETCH_INTRADAY_DATA_ENDPOINT
       : import.meta.env.VITE_APP_FETCH_INTRADAY_DATA_DEV_ENDPOINT;
 
-  const { devices } = useOrg();
+  const { deviceViewDevices } = useOrg();
   const [startDate, setStartDate] = useState(new Date("2024-02-10"));
   const [rangeStartDate, setRangeStartDate] = useState(new Date("2024-02-10"));
   const [rangeEndDate, setRangeEndDate] = useState(new Date("2024-02-11"));
   const [detailLevel, setDetailLevel] = useState<string>("1min");
   const [selectedDevices, setSelectedDevices] = useState<string[]>(
-    devices.map((device) => device.id)
+    deviceViewDevices.map((device) => device.id)
   );
   const [devicesData, setDevicesData] = useState<any[]>([]); //temp any
   const loadedDevicesRef = useRef<DeviceContext>({});
   const [deviceData, setDeviceData] = useState<any[]>([]); //temp any
   const [showBackDrop, setShowBackDrop] = useState(false);
 
-  const saveDeviceDataToLocalStorage = (deviceId: string, data: DeviceData) => {
-    localStorage.setItem(`deviceData_${deviceId}`, JSON.stringify(data));
-  };
+  //const saveDeviceDataToLocalStorage = (deviceId: string, data: DeviceData) => {
+  //localStorage.setItem(`deviceData_${deviceId}`, JSON.stringify(data));
+  //};
 
   /*
   const getDeviceDataFromLocalStorage = (
@@ -88,11 +88,12 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
     console.log("fetching single device data");
 
     try {
+      const date = formatDate(startDate);
       const response = await axios.get(FETCH_INTRADAY_DATA_ENDPOINT, {
         params: {
           deviceId: deviceId,
           dataType: "heart",
-          date: formatDate(startDate),
+          date: date,
           detailLevel: detailLevel,
         },
         withCredentials: true,
@@ -106,7 +107,7 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
         rangeEndDate: rangeEndDate,
       };
       setDeviceData((prev) => ({ ...prev, [deviceId]: newDeviceData }));
-      saveDeviceDataToLocalStorage(deviceId, newDeviceData);
+      //saveDeviceDataToLocalStorage(deviceId, newDeviceData);
     } catch (error) {
       console.log(error);
     }
@@ -142,16 +143,48 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
     );
   };
 
+  const fetchWorkingDevice = async () => {
+    if (shouldFetchDeviceData("2570612980")) {
+      console.log("fetching working device data based on range date");
+      try {
+        //const startDate = formatDate(rangeStartDate);
+        //const endDate = formatDate(rangeEndDate);
+
+        const response = await axios.get(FETCH_DEVICE_DATA_ENDPOINT, {
+          params: {
+            id: "2570612980",
+            startDate: "2024-02-10",
+            endDate: "2024-02-11",
+          },
+          withCredentials: true,
+        });
+
+        console.log(response.data);
+        /*
+            setDevicesData((prev) => [...prev, res.data]);
+            loadedDevicesRef.current["2570612980"] = {
+              rangeStartDate,
+              rangeEndDate,
+            };*/
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
   const fetchDevice = async (deviceId: string) => {
     if (shouldFetchDeviceData(deviceId)) {
       console.log("fetching device data based on range date");
       try {
+        const startDate = formatDate(rangeStartDate);
+        const endDate = formatDate(rangeEndDate);
+
         await axios
           .get(FETCH_DEVICE_DATA_ENDPOINT, {
             params: {
               id: deviceId,
-              startDate: formatDate(rangeStartDate),
-              endDate: formatDate(rangeEndDate),
+              startDate: startDate,
+              endDate: endDate,
             },
             withCredentials: true,
           })
@@ -187,12 +220,13 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [startDate, detailLevel]);
 
   useEffect(() => {
-    devices.forEach((device) => {
+    fetchWorkingDevice();
+    deviceViewDevices.forEach((device) => {
       //console.log(device);
       fetchDevice(device.id);
       fetchSingleViewDevice(device.id);
     });
-  }, [devices]);
+  }, [deviceViewDevices]);
 
   return (
     <DashboardContext.Provider
