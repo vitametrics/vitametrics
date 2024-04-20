@@ -36,7 +36,7 @@ const Navbar = () => {
           <img
             fetchPriority="high"
             src={imagePath}
-            className="h-10 w-[135px] rounded-xl border-primary"
+            className="h-10 w-[145px] rounded-xl border-primary"
             alt="VitametricsLogo"
           />
         </a>
