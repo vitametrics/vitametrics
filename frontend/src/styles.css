@@ -22,7 +22,7 @@ html {
 }
 
 .bg-fixed {
-  background-image: url("./assets/images/home.webp");
+  background-image: url("./assets/images/home1.webp");
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: cover;
@@ -66,28 +66,36 @@ html {
 }
 
 @font-face {
-  font-family: "Raleway-Regular";
-  src: url("./assets/fonts/Raleway-Regular.ttf");
-}
-
-@font-face {
   font-family: "Raleway-Bold";
-  src: url("./assets/fonts/Raleway-Bold.ttf");
-}
-
-@font-face {
-  font-family: "Raleway-Semibold";
-  src: url("./assets/fonts/Raleway-SemiBold.ttf");
+  src:
+    url("./assets/fonts/Raleway-Bold.woff2") format("woff2"),
+    url("./assets/fonts/Raleway-Bold.woff") format("woff");
 }
 
 @font-face {
   font-family: "LeagueSpartan-Bold";
-  src: url("./assets/fonts/LeagueSpartan-Bold.ttf");
+  src: url("./assets/fonts/LeagueSpartan-Bold.woff"),
+    url("./assets/fonts/LeagueSpartan-Bold.woff2");
+  font-optical-sizing: auto;
+  font-display: swap; /* This will use fallback font until the font is fully loaded */
 }
 
 @font-face {
   font-family: "LeagueSpartan-Regular";
-  src: url("./assets/fonts/LeagueSpartan-Regular.ttf");
+  src:
+    url("./assets/fonts/LeagueSpartan-Regular.woff2") format("woff2"),
+    url("./assets/fonts/LeagueSpartan-Regular.woff") format("woff");
+  font-optical-sizing: auto;
+  font-display: swap; /* This will use fallback font until the font is fully loaded */
+}
+
+.check {
+  display: inline-block;
+  transform: rotate(45deg);
+  height: 25px;
+  width: 12px;
+  border-bottom: 7px solid #78b13f;
+  border-right: 7px solid #78b13f;
 }
 
 .slope {
