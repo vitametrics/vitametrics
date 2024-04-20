@@ -1,4 +1,4 @@
-# [Physiobit](https://physiobit.seancornell.io)
+# [Vitametrics](https://physiobit.seancornell.io)
 
 Physiobit is a web application designed to help users collect, view, analyze, and download data from their Fitbit profiles. Aimed towards university and research use, Physiobit provides a user-friendly interface and robust data analysis tools to help researchers and scientists collect and analyze data more efficiently.
 
