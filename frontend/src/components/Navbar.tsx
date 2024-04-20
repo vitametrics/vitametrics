@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../helpers/AuthContext";
-//import ProfileIcon from "../assets/ProfileIcon";
-import logo from "../assets/images/vitamix.webp";
 import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const navigate = useNavigate();
+  const imagePath = "./src/assets/images/vitamix.webp";
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -35,9 +34,9 @@ const Navbar = () => {
           className="flex items-center space-x-3 rtl:space-x-rev  erse"
         >
           <img
-            src={logo}
-            loading="lazy"
-            className="h-10 rounded-xl border-primary"
+            fetchPriority="high"
+            src={imagePath}
+            className="h-10 w-[135px] rounded-xl border-primary"
             alt="VitametricsLogo"
           />
         </a>

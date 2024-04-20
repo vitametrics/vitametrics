@@ -6,7 +6,11 @@ const Footer = () => {
         <div className="sm:flex flex sm:items-center sm:justify-between">
           <a className="flex items-center  sm:mb-0 space-x-3 rtl:space-x-reverse">
             <div className="flex flex-col">
-              <img src={logo} className="w-[150px] rounded-lg" />
+              <img
+                src={logo}
+                alt="footer-logo"
+                className="w-[150px] rounded-lg"
+              />
               <span className="text-base text-white sm:hidden font-semibold">
                 {" "}
               </span>

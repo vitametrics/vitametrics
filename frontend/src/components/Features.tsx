@@ -47,7 +47,11 @@ const Features = () => {
     return (
       <div className="flex flex-col bg-[#F2F2F2] p-5 rounded-xl">
         <div className="flex flex-row items-center gap-5">
-          <img src={content[0].img} className="h-10 w-10 rounded-full" />
+          <img
+            src={content[0].img}
+            className="h-10 w-10 rounded-full"
+            alt={`reviewer-${content[0].name}`}
+          />
           <h1 className="text-primary text-2xl">{content[0].name}</h1>
         </div>
         <div className="bg-[#c9c9c9] h-[0.25px] w-full mt-2" />
@@ -57,10 +61,7 @@ const Features = () => {
   };
 
   return (
-    <section
-      id="#features"
-      className="w-full h-full flex flex-col box-border px-10 lg:px-32 lg:pb-16 "
-    >
+    <section className="w-full h-full flex flex-col box-border px-10 lg:px-32 lg:pb-16 ">
       <div className="flex flex-col bg-glass rounded-lg p-12 lg:px-40 items-center mb-10">
         <h1 className="text-5xl text-primary text-center mb-5">
           See what researchers have said.

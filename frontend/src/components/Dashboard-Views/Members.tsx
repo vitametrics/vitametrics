@@ -179,7 +179,6 @@ const Members = () => {
       setMsg("User has already been invited.");
       return false;
     }
-
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     if (!emailRegex.test(debouncedEmail)) {
       setMsg("Email is invalid.");
@@ -189,7 +188,6 @@ const Members = () => {
       });
       return false;
     }
-
     return true;
   };
 

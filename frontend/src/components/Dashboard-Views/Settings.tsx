@@ -2,7 +2,6 @@ import { useOrg } from "../../helpers/OrgContext";
 import { useAuth } from "../../helpers/AuthContext";
 import { useState, useEffect } from "react";
 import { WarningIcon } from "../../assets/WarningIcon";
-import { CheckmarkIcon } from "../../assets/CheckmarkIcon";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import axios from "axios";
@@ -190,7 +189,7 @@ const Settings = () => {
         </div>
       ) : (
         <div className="flex flex-row gap-2">
-          <CheckmarkIcon />
+          <span className="check" />
           <p className="text-lg text-white"> {userEmail} </p>
         </div>
       )}

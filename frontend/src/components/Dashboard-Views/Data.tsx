@@ -2,12 +2,17 @@
 //import DatePicker from "react-datepicker";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import axios from "axios";
 import { useOrg } from "../../helpers/OrgContext";
 import { useSearchParams } from "react-router-dom";
-import { Line, Bar, Pie, Scatter, Doughnut } from "react-chartjs-2";
-import "chart.js/auto"; // Importing auto registration of chart.js
+const LazyBarChart = lazy(() =>
+  import("react-chartjs-2").then((module) => ({ default: module.Bar }))
+);
+const LazyLineChart = lazy(() =>
+  import("react-chartjs-2").then((module) => ({ default: module.Line }))
+);
+import "chart.js/auto";
 import { useDashboard } from "../../helpers/DashboardContext";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
@@ -203,40 +208,31 @@ const Data = () => {
     switch (rangeGraphType) {
       case "bar":
         return (
-          <Bar data={{ datasets: [], ...rangeChartData }} options={options} />
+          <Suspense fallback={<div>Loading Chart...</div>}>
+            <LazyBarChart
+              data={{ datasets: [], ...rangeChartData }}
+              options={options}
+            />
+          </Suspense>
         );
       case "line":
         return (
-          <Line data={{ datasets: [], ...rangeChartData }} options={options} />
-        );
-      case "pie":
-        return (
-          <Pie
-            data={{ datasets: [], ...rangeChartData }}
-            options={{ responsive: true }}
-          />
-        );
-      case "doughnut":
-        return (
-          <Doughnut
-            data={{ datasets: [], ...rangeChartData }}
-            options={{ responsive: true }}
-          />
-        );
-      case "scatter":
-        return (
-          <Scatter
-            data={{ datasets: [], ...rangeChartData }}
-            options={{ responsive: true }}
-          />
+          <Suspense fallback={<div>Loading Chart...</div>}>
+            <LazyLineChart
+              data={{ datasets: [], ...rangeChartData }}
+              options={options}
+            />
+          </Suspense>
         );
 
       default:
         return (
-          <Bar
-            data={{ datasets: [], ...rangeChartData }}
-            options={{ responsive: true }}
-          />
+          <Suspense fallback={<div>Loading Chart...</div>}>
+            <LazyBarChart
+              data={{ datasets: [], ...rangeChartData }}
+              options={options}
+            />
+          </Suspense>
         );
     }
   };
@@ -294,62 +290,51 @@ const Data = () => {
     switch (graphType) {
       case "bar":
         return (
-          <Bar
-            data={{ datasets: [], ...chartData }}
-            options={{
-              ...options,
-              plugins: {
-                ...options.plugins,
-                legend: {
-                  ...options.plugins.legend,
-                  position: "bottom",
+          <Suspense fallback={<div>Loading Chart...</div>}>
+            <LazyBarChart
+              data={{ datasets: [], ...chartData }}
+              options={{
+                ...options,
+                plugins: {
+                  ...options.plugins,
+                  legend: {
+                    ...options.plugins.legend,
+                    position: "bottom",
+                  },
                 },
-              },
-            }}
-            width="100%"
-          />
+              }}
+              width="100%"
+            />
+          </Suspense>
         );
       case "line":
         return (
-          <Line
-            data={{ datasets: [], ...chartData }}
-            options={{
-              ...options,
-              plugins: {
-                ...options.plugins,
-                legend: {
-                  ...options.plugins.legend,
-                  position: "bottom",
+          <Suspense fallback={<div>Loading Chart...</div>}>
+            <LazyLineChart
+              data={{ datasets: [], ...chartData }}
+              options={{
+                ...options,
+                plugins: {
+                  ...options.plugins,
+                  legend: {
+                    ...options.plugins.legend,
+                    position: "bottom",
+                  },
                 },
-              },
-            }}
-            width="100%"
-          />
-        );
-      case "scatter":
-        return (
-          <Scatter
-            data={{ datasets: [], ...chartData }}
-            options={{
-              ...options,
-              plugins: {
-                ...options.plugins,
-                legend: {
-                  ...options.plugins.legend,
-                  position: "bottom", // Replace "bottom" with the desired position
-                },
-              },
-            }}
-            width="100%"
-          />
+              }}
+              width="100%"
+            />
+          </Suspense>
         );
 
       default:
         return (
-          <Bar
-            data={{ datasets: [], ...chartData }}
-            options={{ responsive: true }}
-          />
+          <Suspense fallback={<div>Loading Chart...</div>}>
+            <LazyBarChart
+              data={{ datasets: [], ...chartData }}
+              options={{ responsive: true }}
+            />
+          </Suspense>
         );
     }
   };

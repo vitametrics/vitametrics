@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { WarningIcon } from "../../assets/WarningIcon";
-import { CheckmarkIcon } from "../../assets/CheckmarkIcon";
 
 const SettingsDemo = () => {
   const orgName = "Ada Lovelace's Org";
@@ -116,7 +115,7 @@ const SettingsDemo = () => {
         </div>
       ) : (
         <div className="flex flex-row gap-2">
-          <CheckmarkIcon />
+          <span className="check" />
           <p className="text-lg text-white"> {userEmail} </p>
         </div>
       )}

@@ -19,11 +19,6 @@ const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  useEffect(() => {
-    // Check auth status on mount
-    login();
-  }, []); // Empty dependency array to run only on mount
-
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoadingAuth, setIsLoadingAuth] = useState<boolean>(true);
   const [isAccountLinked, setIsAccountLinked] = useState<boolean>(false);
@@ -45,21 +40,23 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT; //~ production
 
   const login = async () => {
-    try {
-      const response = await axios.get(AUTH_ENDPOINT, {
-        withCredentials: true,
-      });
-      console.log(response.data);
-      setIsAuthenticated(response.data.isAuthenticated);
-      setIsAccountLinked(response.data.user.isAccountLinked);
-      setIsOrgOwner(response.data.user.isOrgOwner);
-      setIsEmailVerified(response.data.user.isEmailVerified);
-      setUserEmail(response.data.user.email);
-      //setOrgId(response.data.user.orgId);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoadingAuth(false);
+    if (!isAuthenticated) {
+      try {
+        const response = await axios.get(AUTH_ENDPOINT, {
+          withCredentials: true,
+        });
+        console.log(response.data);
+        setIsAuthenticated(response.data.isAuthenticated);
+        setIsAccountLinked(response.data.user.isAccountLinked);
+        setIsOrgOwner(response.data.user.isOrgOwner);
+        setIsEmailVerified(response.data.user.isEmailVerified);
+        setUserEmail(response.data.user.email);
+        //setOrgId(response.data.user.orgId);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoadingAuth(false);
+      }
     }
     return;
   };
@@ -75,6 +72,10 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    login();
+  }, []); // Empty dependency array to run only on mount
 
   return (
     <AuthContext.Provider

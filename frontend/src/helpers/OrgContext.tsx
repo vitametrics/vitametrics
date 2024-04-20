@@ -696,6 +696,7 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
       console.log(response.data);
       setDeviceViewDevices(response.data);
+      setDevices(response.data);
     } catch (error) {
       setDevices(testDevices);
       setDeviceViewDevices(testDeviceViewDevices);

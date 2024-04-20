@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import ConnectIcon from "../../assets/ConnectIcon";
-import FiftyPercentIcon from "../../assets/FiftyPercentIcon";
+//import FiftyPercentIcon from "../../assets/FiftyPercentIcon";
 import { Fragment, useState } from "react";
-import EditButton from "../EditButton";
-import SaveButton from "../SaveButton";
 import { useDemo } from "../../helpers/DemoContext";
 
 const MAX_NAME_LENGTH = 15;
@@ -72,8 +69,19 @@ const DevicesDemo = () => {
                 }
                 onKeyDown={handleKeyDown}
               />
-              <SaveButton onClick={handleOwnerNameChange} />
-              {/*render character limit going down*/}
+              <button onClick={handleOwnerNameChange}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  x="0px"
+                  y="0px"
+                  width="15"
+                  height="15"
+                  viewBox="0 0 30 30"
+                  fill="white"
+                >
+                  <path d="M 26.980469 5.9902344 A 1.0001 1.0001 0 0 0 26.292969 6.2929688 L 11 21.585938 L 4.7070312 15.292969 A 1.0001 1.0001 0 1 0 3.2929688 16.707031 L 10.292969 23.707031 A 1.0001 1.0001 0 0 0 11.707031 23.707031 L 27.707031 7.7070312 A 1.0001 1.0001 0 0 0 26.980469 5.9902344 z"></path>
+                </svg>
+              </button>{" "}
               <p className="text-2xl font-bold text-white">
                 {MAX_NAME_LENGTH - (editingDevices[device.id] || "").length}
               </p>
@@ -83,13 +91,18 @@ const DevicesDemo = () => {
               <h2 className="text-2xl font-bold text-white align flex items-center overflow-fix">
                 Owner: {device.ownerName || ""}
               </h2>
-              <EditButton onClick={() => toggleEdit(device.id)} />
+              <a
+                className="hover:cursor-pointer"
+                onClick={() => toggleEdit(device.id)}
+              >
+                {" "}
+                Edit{" "}
+              </a>{" "}
             </Fragment>
           )}
         </div>
         <p className="text-2xl font-bold text-white ml-auto flex flex-row gap-3">
-          {device.batteryLevel || ""}
-          <FiftyPercentIcon />
+          {device.batteryLevel || ""}%
         </p>
       </div>
     );
@@ -109,7 +122,6 @@ const DevicesDemo = () => {
       </h2>
       <div className="flex p-5 w-full">
         <button className="p-2 text-2xl flex flex-row gap-2 justify-center items-center rounded-xl w-[150px] bg-[#606060] text-white">
-          <ConnectIcon />
           Fetch
         </button>
       </div>

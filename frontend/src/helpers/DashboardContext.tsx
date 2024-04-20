@@ -145,30 +145,6 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const fetchWorkingDevice = async () => {
     console.log("fetching working device data based on range date");
-    /*
-    try {
-      //const startDate = formatDate(rangeStartDate);
-      //const endDate = formatDate(rangeEndDate);
-
-      const response = await axios.get(FETCH_DEVICE_DATA_ENDPOINT, {
-        params: {
-          id: "2570612980",
-          startDate: "2024-02-10",
-          endDate: "2024-02-11",
-        },
-        withCredentials: true,
-      });
-
-      console.log(response.data);
-
-      setDevicesData((prev) => [...prev, response.data]);
-      loadedDevicesRef.current["2570612980"] = {
-        rangeStartDate,
-        rangeEndDate,
-      };
-    } catch (error) {
-      console.log(error);
-    }*/
   };
 
   const fetchDevice = async (deviceId: string) => {

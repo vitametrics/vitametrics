@@ -67,7 +67,7 @@ const Steps = () => {
         <img
           src={src}
           className="w-full h-full rounded-2xl mt-5 bg-cover"
-          alt="preview"
+          alt="preview-1"
         />
       </div>
       <div className="flex flex-col bg-glass rounded-lg p-12 lg:px-40 items-center">
@@ -100,7 +100,8 @@ const Steps = () => {
           <div className="flex flex-col items-center w-full justify-center text-center text-white bg-quinary rounded-tr-lg rounded-br-lg pl-10">
             <img
               src={src2}
-              className="h-[250px] rounded-tl-lg rounded-bl-lg object-cover"
+              alt="preview-2"
+              className="h-[250px] w-full rounded-tl-lg rounded-bl-lg object-cover"
             />
           </div>
         </div>
