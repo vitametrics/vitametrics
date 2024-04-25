@@ -19,7 +19,11 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
 
 const app = express();
 app.use(helmet({
-    contentSecurityPolicy: false
+    contentSecurityPolicy: {
+        directives: {
+            "default-src": ["'self'", `'${process.env.BASE_URL}'`],
+        }
+    }
 }));
 app.use(mongoSanitize());
 commonMiddlewares(app);
