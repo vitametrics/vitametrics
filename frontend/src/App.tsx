@@ -45,7 +45,7 @@ function App() {
   };
 
   return (
-    <div className="bg-dark-gradient">
+    <div className="bg-white">
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />

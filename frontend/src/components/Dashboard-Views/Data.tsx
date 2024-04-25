@@ -21,7 +21,7 @@ type DataItem = {
   date: string;
   value: number;
 };
-
+/*
 type DeviceData = {
   id: string;
   deviceVersion: string;
@@ -35,7 +35,7 @@ type DeviceData = {
   elevation: DataItem[];
   floors: DataItem[];
   [key: string]: any; // This line is the index signature
-};
+};*/
 
 const Data = () => {
   const DOWNLOAD_ENDPOINT =
@@ -53,7 +53,7 @@ const Data = () => {
   });
 
   const dataType = searchParams.get("dataType") || "heart";
-  const graphType = searchParams.get("graphType") || "bar";
+  //const graphType = searchParams.get("graphType") || "bar";
   const detailLevel = searchParams.get("detailLevel") || "1min";
   const rangeDataType = searchParams.get("rangeDataType") || "heart";
   const rangeGraphType = searchParams.get("rangeGraphType") || "bar";
@@ -63,16 +63,21 @@ const Data = () => {
 
   const {
     startDate,
-    setStartDate,
+    // setStartDate,
     setRangeStartDate,
     setRangeEndDate,
     rangeEndDate,
     rangeStartDate,
     selectedDevices,
     handleDeviceSelectionChange,
+    fetchDevice,
   } = useDashboard();
-  const [chartData, setChartData] = useState({});
+  //const [chartData, setChartData] = useState({});
   const [rangeChartData, setRangeChartData] = useState({});
+
+  const handleFetchDevice = async () => {
+    await fetchDevice("2572732440");
+  };
 
   const detailLevelTypes = [
     {
@@ -105,11 +110,9 @@ const Data = () => {
   const graphTypeOptions = [
     { value: "bar", label: "Bar" },
     { value: "line", label: "Line" },
-    { value: "pie", label: "Pie" },
-    { value: "doughnut", label: "Doughnut" },
-    { value: "scatter", label: "Scatter" },
   ];
 
+  /*
   const createDataset = () => {
     const formattedDate = formatDate(startDate);
 
@@ -149,7 +152,7 @@ const Data = () => {
       labels,
       datasets,
     });
-  };
+  };*/
 
   const generateLabelsForRange = (start: Date, end: Date) => {
     let currentDate = new Date(start);
@@ -199,6 +202,17 @@ const Data = () => {
     });
   };
 
+  const changeWeekDays = () => {
+    const start = new Date(rangeStartDate);
+    const end = new Date(rangeEndDate);
+
+    start.setDate(start.getDate() - 7);
+    end.setDate(end.getDate() - 7);
+
+    setRangeStartDate(start);
+    setRangeEndDate(end);
+  };
+
   const renderRangeGraph = () => {
     const options = {
       maintainAspectRatio: false,
@@ -237,6 +251,7 @@ const Data = () => {
     }
   };
 
+  /*
   const renderGraph = () => {
     const options = {
       responsive: true,
@@ -337,7 +352,7 @@ const Data = () => {
           </Suspense>
         );
     }
-  };
+  };*/
 
   const downloadData = async () => {
     if (selectedDevices.length === 0) {
@@ -397,10 +412,6 @@ const Data = () => {
   };
 
   useEffect(() => {
-    createDataset();
-  }, [selectedDevices, dataType, startDate]);
-
-  useEffect(() => {
     createRangeDataset();
   }, [selectedDevices, rangeDataType, rangeStartDate, rangeEndDate]);
 
@@ -421,17 +432,21 @@ const Data = () => {
       ref={ref}
       className="w-full h-full flex flex-col p-10 bg-[#1E1D20] dark:bg-hero-texture"
     >
+      <button className="text-white" onClick={handleFetchDevice}>
+        {" "}
+        Test Fetch Data{" "}
+      </button>
       <h2 className="w-full text-4xl font-ralewayBold text-white p-5 pb-0 mb-5">
         {orgName} Overview
       </h2>
 
       <div className="p-5 w-full flex-col">
+        {/*
         <h1 className="text-2xl text-yellow-500 mb-2">
           {" "}
           Data from {formatDate(startDate)}
         </h1>
         <div className="flex flex-row w-full gap-5 mb-5">
-          {/* Data & Graph Type Dropdown */}
           <div className="mr-auto flex flex-row gap-5">
             <div className="flex flex-col">
               <label
@@ -551,8 +566,10 @@ const Data = () => {
           </div>
         </div>
         <div className="w-full h-[500px] p-5 text-white bg-[#2F2D2D] rounded-xl flex justify-center items-center mb-10">
-          {renderGraph()}
+          {/*renderGraph()}
         </div>
+
+        */}
 
         <h1 className="text-2xl text-yellow-500 mb-2">
           {" "}
@@ -661,7 +678,7 @@ const Data = () => {
             </div>
           </div>
 
-          <div className="flex flex-row w-full gap-5">
+          <div className="flex flex-row w-full gap-5 items-center">
             <div className="ml-auto">
               <label
                 htmlFor="startDate"
@@ -696,6 +713,37 @@ const Data = () => {
                 className=" p-2 border border-gray-300 rounded-md w-full"
               />
             </div>
+            <button
+              onClick={() => changeWeekDays()}
+              className="items-center h-full justify-center"
+            >
+              {" "}
+              <svg
+                width="48px"
+                height="48px"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                stroke="#ffffff"
+              >
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g
+                  id="SVGRepo_tracerCarrier"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></g>
+                <g id="SVGRepo_iconCarrier">
+                  {" "}
+                  <path
+                    d="M6 12H18M18 12L13 7M18 12L13 17"
+                    stroke="#000000"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></path>{" "}
+                </g>
+              </svg>{" "}
+            </button>
           </div>
         </div>
 

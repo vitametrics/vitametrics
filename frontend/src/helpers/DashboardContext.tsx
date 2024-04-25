@@ -29,6 +29,7 @@ interface DashboardProps {
   devicesData: any[]; //temp any
   deviceData: any[]; //temp any
   fetchWorkingDevice: () => void;
+  fetchDevice: (deviceId: string) => void;
 }
 
 interface DeviceData {
@@ -83,6 +84,7 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
     return data ? JSON.parse(data) : undefined;
   };
 */
+
   const fetchSingleViewDevice = async (deviceId: string) => {
     //const deviceData = getDeviceDataFromLocalStorage(deviceId);
     console.log("fetching single device data");
@@ -147,31 +149,34 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
     console.log("fetching working device data based on range date");
   };
 
+  /*
+  const fetchWeeklyDeviceData = async (deviceId: string) => {
+    console.log("fetching weekly device data based on range date");
+  };*/
+
   const fetchDevice = async (deviceId: string) => {
     if (shouldFetchDeviceData(deviceId)) {
-      console.log("fetching device data based on range date");
+      console.log("fetching device data based on range date for: " + deviceId);
       try {
         const startDate = formatDate(rangeStartDate);
         const endDate = formatDate(rangeEndDate);
 
-        await axios
-          .get(FETCH_DEVICE_DATA_ENDPOINT, {
-            params: {
-              id: deviceId,
-              startDate: startDate,
-              endDate: endDate,
-            },
-            withCredentials: true,
-          })
-          .then((res) => {
-            console.log(res.data);
+        const response = await axios.get(FETCH_DEVICE_DATA_ENDPOINT, {
+          params: {
+            id: deviceId,
+            startDate: startDate,
+            endDate: endDate,
+          },
+          withCredentials: true,
+        });
 
-            setDevicesData((prev) => [...prev, res.data]);
-            loadedDevicesRef.current[deviceId] = {
-              rangeStartDate,
-              rangeEndDate,
-            };
-          });
+        console.log(response.data);
+
+        setDevicesData((prev) => [...prev, response.data]);
+        loadedDevicesRef.current[deviceId] = {
+          rangeStartDate,
+          rangeEndDate,
+        };
       } catch (error) {
         console.error(error);
       }
@@ -223,6 +228,7 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
         setDetailLevel,
         deviceData,
         fetchWorkingDevice,
+        fetchDevice,
       }}
     >
       {children}
