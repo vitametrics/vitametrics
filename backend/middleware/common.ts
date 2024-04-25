@@ -3,8 +3,6 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
-const compression = require('compression');
-
 
 export const commonMiddlewares = async (app: express.Application) => {
   app.use(express.json());
@@ -13,8 +11,6 @@ export const commonMiddlewares = async (app: express.Application) => {
     origin: process.env.NODE_ENV as string === 'production' ? process.env.BASE_URL as string : '127.0.0.1',
     credentials: true
   }));
-  app.use(compression());
-
   
   app.use(session({
     secret: process.env.SESSION_SECRET as string, 

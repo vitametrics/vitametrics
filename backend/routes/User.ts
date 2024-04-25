@@ -2,15 +2,17 @@ import express, { Request, Response } from 'express';
 import argon2 from 'argon2';
 import crypto from 'crypto';
 import verifySession from '../middleware/verifySession';
-import { CustomReq } from '../util/customReq';
 import User from '../models/User';
 import Organization from "../models/Organization"
 import { sendEmail } from '../util/emailUtil';
 import { query, validationResult, body } from 'express-validator';
+import { CustomReq } from '../types/custom';
 const router = express.Router();
 
 // user session authentication status
-router.get('/auth/status', async (req: CustomReq, res: Response) => {
+router.get('/auth/status', async (expressReq: Request, res: Response) => {
+
+    const req = expressReq as CustomReq;
 
     if (req.isAuthenticated && req.isAuthenticated()) {
 
@@ -44,7 +46,10 @@ router.get('/auth/status', async (req: CustomReq, res: Response) => {
 });
 
 // invite resend for user
-router.post('/resend-invite', async(req: Request, res: Response) => {
+router.post('/resend-invite', async(expressReq: Request, res: Response) => {
+
+    const req = expressReq as CustomReq;
+
     const {email} = req.body;
 
     if (!email) {
@@ -87,7 +92,9 @@ router.post('/resend-invite', async(req: Request, res: Response) => {
 });
 
 // user password setting
-router.post('/set-password', async (req: Request, res: Response) => {
+router.post('/set-password', async (expressReq: Request, res: Response) => {
+
+    const req = expressReq as CustomReq;
 
     const {token, password} = req.body;
 
@@ -119,12 +126,15 @@ router.post('/set-password', async (req: Request, res: Response) => {
 
 router.post('/change-password', verifySession, [
     body('password').not().isEmpty().withMessage('Password is required')
-], async (req: CustomReq, res: Response) => {
+], async (expressReq: Request, res: Response) => {
 
-    const errors = validationResult(req);
+
+    const errors = validationResult(expressReq);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
+
+    const req = expressReq as CustomReq;
 
     if (!req.user) {
         return res.status(401).json({msg: "Unauthorized"});
@@ -149,7 +159,9 @@ router.post('/change-password', verifySession, [
 });
 
 // send user verification email
-router.post('/send-email-verification', verifySession, async (req: CustomReq, res: Response) => {
+router.post('/send-email-verification', verifySession, async (expressReq: Request, res: Response) => {
+
+    const req = expressReq as CustomReq;
 
     if (!req.user) {
         return res.status(401).json({ msg: 'Unauthorized' });
@@ -173,12 +185,14 @@ router.post('/send-email-verification', verifySession, async (req: CustomReq, re
 // verify user email 
 router.get('/verify-email', verifySession, [
     query('token').not().isEmpty().withMessage('No token provided')
-], async (req: CustomReq, res: Response) => {
+], async (expressReq: Request, res: Response) => {
 
-    const errors = validationResult(req);
+    const errors = validationResult(expressReq);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
+
+    const req = expressReq as CustomReq;
 
     try {
         const user = await User.findOne({ emailVerfToken: req.query.token as string });

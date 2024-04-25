@@ -1,12 +1,12 @@
 import express, {Request, Response} from 'express';
 import { query, validationResult } from 'express-validator';
 import { DateTime } from 'luxon';
-import multer from 'multer';
+// import multer from 'multer';
 import crypto from 'crypto';
 import verifySession from '../middleware/verifySession';
 import checkOrgMembership from '../middleware/checkOrg';
 import refreshToken from '../middleware/refreshFitbitToken';
-import { CustomReq } from '../util/customReq';
+import { CustomReq } from '../types/custom';
 import fetchDevices from '../util/fetchDevices';
 import fetchIntradayData from '../util/fetchIntraday';
 import { sendEmail } from '../util/emailUtil';
@@ -14,11 +14,11 @@ import Organization, {IOrganization} from '../models/Organization';
 import User from '../models/User';
 import fetchData from '../util/fetchData';
 const router = express.Router();
-const upload = multer({ dest: '../../uploads'});
-const fitAddon = require('../fitaddon/build/Release/fitaddon.node')
+// const upload = multer({ dest: '../../uploads'});
+// const fitAddon = require('../fitaddon/build/Release/fitaddon.node')
 
 // get organization info
-router.get('/info', verifySession, checkOrgMembership, [
+router.get('/info', verifySession, checkOrgMembership as any, [
     query('orgId').not().isEmpty().withMessage('No orgId provided')
 ], async (req: Request, res: Response) => {
 
@@ -47,7 +47,9 @@ router.get('/info', verifySession, checkOrgMembership, [
     });
 });
 
-router.post('/add-member', verifySession, checkOrgMembership, async(req: CustomReq, res: Response) => {
+router.post('/add-member', verifySession, checkOrgMembership as any, async(expressReq: Request, res: Response) => {
+
+    const req = expressReq as CustomReq;
 
     if (!req.user || !req.organization) {
         return res.status(401).json({ msg: 'Unauthorized' });
@@ -101,7 +103,9 @@ router.post('/add-member', verifySession, checkOrgMembership, async(req: CustomR
 });
 
 // fetch devices from fitbit
-router.post('/fetch-devices', verifySession, checkOrgMembership, refreshToken, async (req: CustomReq, res: Response) => {
+router.post('/fetch-devices', verifySession, checkOrgMembership as any, refreshToken, async (expressReq: Request, res: Response) => {
+
+    const req = expressReq as CustomReq;
 
     if (!req.organization) {
         return res.status(401).json({ msg: 'Unauthorized' });
@@ -122,31 +126,33 @@ router.post('/fetch-devices', verifySession, checkOrgMembership, refreshToken, a
     }
 });
 
-router.post('/upload', upload.single('fitfile'), (req: Request, res: Response) => {
+// router.post('/upload', upload.single('fitfile'), (req: Request, res: Response) => {
 
-    if (req.file) {
-        const decodedData = fitAddon.decodeFIT(req.file.path);
-        return res.json({success: true, decodedData});
-    } else {
-        return res.status(400).send('no file uploaded');
-    }
+//     if (req.file) {
+//         const decodedData = fitAddon.decodeFIT(req.file.path);
+//         return res.json({success: true, decodedData});
+//     } else {
+//         return res.status(400).send('no file uploaded');
+//     }
 
-})
+// })
 
 // fetch data from fitbit by device id
-router.get('/fetch-data', verifySession, checkOrgMembership, refreshToken, [
+router.get('/fetch-data', verifySession, checkOrgMembership as any, refreshToken, [
     query('id').not().isEmpty().withMessage('Device ID is required'),
     query('startDate').not().isEmpty().withMessage('You must specify a start date'),
     query('endDate').not().isEmpty().withMessage('You must specify an end date')
-], async (req: CustomReq, res: Response) => {
+], async (expressReq: Request, res: Response) => {
 
-    const errors = validationResult(req);
+    const errors = validationResult(expressReq);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
 
+    const req = expressReq as CustomReq;
+
     try {
-        const organization: IOrganization = req.organization as IOrganization;
+        const organization = req.organization as IOrganization;
         const deviceId = typeof req.query.id === 'string' ? req.query.id : undefined;
         const orgUserId = organization.userId;
         const startDate = typeof req.query.startDate === 'string' ? req.query.startDate: undefined;
@@ -166,17 +172,19 @@ router.get('/fetch-data', verifySession, checkOrgMembership, refreshToken, [
 });
 
 // fetch intraday data from fitbit by device id
-router.get('/fetch-intraday', verifySession, checkOrgMembership, refreshToken, [
+router.get('/fetch-intraday', verifySession, checkOrgMembership as any, refreshToken, [
     query('deviceId').not().isEmpty().withMessage('Device ID is required'),
     query('dataType').not().isEmpty().withMessage('You must specify which data to download'),
     query('date').not().isEmpty().withMessage('You must specify a date'),
     query('detailLevel').not().isEmpty().withMessage('You must specify a detail level')
-], async (req: CustomReq, res: Response) => {
+], async (expressReq: Request, res: Response) => {
 
-    const errors = validationResult(req);
+    const errors = validationResult(expressReq);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
+
+    const req = expressReq as CustomReq;
 
     if (!req.user) {
         return res.status(401).json({ msg: 'Unauthorized' });
@@ -205,17 +213,19 @@ router.get('/fetch-intraday', verifySession, checkOrgMembership, refreshToken, [
 });
 
 // download data from fitbit by device id
-router.get('/download-data', verifySession, checkOrgMembership, refreshToken, [
+router.get('/download-data', verifySession, checkOrgMembership as any, refreshToken, [
     query('deviceId').not().isEmpty().withMessage('Device ID is required'),
     query('dataType').not().isEmpty().withMessage('You must specify which data to download'),
     query('date').not().isEmpty().withMessage('You must specify a date'),
     query('detailLevel').not().isEmpty().withMessage('You must specify a detail level')
-], async (req: CustomReq, res: Response) => {
+], async (expressReq: Request, res: Response) => {
 
-    const errors = validationResult(req);
+    const errors = validationResult(expressReq);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
+
+    const req = expressReq as CustomReq;
 
     if (!req.user) {
         return res.status(401).json({ msg: 'Unauthorized' });
