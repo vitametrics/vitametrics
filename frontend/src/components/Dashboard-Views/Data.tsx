@@ -76,7 +76,7 @@ const Data = () => {
   const [rangeChartData, setRangeChartData] = useState({});
 
   const handleFetchDevice = async () => {
-    await fetchDevice("2572732440");
+    await fetchDevice("2570612980");
   };
 
   const detailLevelTypes = [
