@@ -10,21 +10,23 @@ async function fetchDevices(userId: string, accessToken: string, orgId: string) 
 
     for (const deviceData of deviceResponse.data) {
 
-        // add fetched devices to mongodb organization document
-        await Organization.updateOne(
-            {orgId: orgId},
-            {$addToSet: {devices: deviceData.id}}
-        );
+        if (deviceData.type !== 'TRACKER') {
 
-        await Device.updateOne(
-            {deviceId: deviceData.id},
-            {
-                ownerName: "",
-                deviceName: "",
-                deviceId: deviceData.id
-            },
-            {upsert: true}
-        )
+            // add fetched devices to mongodb organization document
+            await Organization.updateOne(
+                {orgId: orgId},
+                {$addToSet: {devices: deviceData.id}}
+            );
+
+            await Device.updateOne(
+                {deviceId: deviceData.id},
+                {
+                    deviceName: deviceData.deviceName,
+                    deviceId: deviceData.id
+                },
+                {upsert: true}
+            )
+        }
     }
 
     return deviceResponse.data;
