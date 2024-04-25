@@ -6,3 +6,9 @@ export interface CustomReq extends Request {
     user?: IUser;
     organization?: IOrganization;
 }
+
+declare global {
+    namespace Express {
+        interface User extends IUser {}
+    }
+}

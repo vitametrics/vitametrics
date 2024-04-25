@@ -1,4 +1,3 @@
-import express, { Router } from 'express';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import User from '../models/User';
@@ -7,10 +6,7 @@ import { IUser } from '../models/User';
 
 type PassportVerifyCallback = (error: any, user?: any, info?: any) => void;
 
-const passportConfig = (passport: passport.Authenticator): Router => {
-    const router = express.Router();
-
-    router.use(express.json());
+const passportConfig = (passport: passport.Authenticator) => {
 
     passport.use(new LocalStrategy({ usernameField: 'email' }, 
         async (email: string, password: string, done: PassportVerifyCallback) => {
@@ -47,8 +43,6 @@ const passportConfig = (passport: passport.Authenticator): Router => {
             done(err, null);
         }
     });
-
-    return router;
 };
 
 export default passportConfig;
