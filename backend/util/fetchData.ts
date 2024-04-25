@@ -14,7 +14,7 @@ async function fetchData(orgUserId: string, accessToken: string, deviceId: strin
             headers: { 'Authorization': `Bearer ${accessToken}` }
         });
 
-        const deviceInfo = deviceInfoResponse.data.find((device: any) => device.id === deviceId);
+        const deviceInfo = deviceInfoResponse.data.find((device: any) => device.deviceId === deviceId);
         if (!deviceInfo) {
             throw new Error('Device details not found in Fitbit response.');
         }
