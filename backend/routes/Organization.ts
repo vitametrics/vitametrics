@@ -1,7 +1,7 @@
 import express, {Request, Response} from 'express';
 import { query, validationResult } from 'express-validator';
 import { DateTime } from 'luxon';
-import multer from 'multer';
+// import multer from 'multer';
 import crypto from 'crypto';
 import verifySession from '../middleware/verifySession';
 import checkOrgMembership from '../middleware/checkOrg';
@@ -14,8 +14,8 @@ import Organization, {IOrganization} from '../models/Organization';
 import User from '../models/User';
 import fetchData from '../util/fetchData';
 const router = express.Router();
-const upload = multer({ dest: '../../uploads'});
-const fitAddon = require('../fitaddon/build/Release/fitaddon.node')
+// const upload = multer({ dest: '../../uploads'});
+// const fitAddon = require('../fitaddon/build/Release/fitaddon.node')
 
 // get organization info
 router.get('/info', verifySession, checkOrgMembership as any, [
@@ -126,16 +126,16 @@ router.post('/fetch-devices', verifySession, checkOrgMembership as any, refreshT
     }
 });
 
-router.post('/upload', upload.single('fitfile'), (req: Request, res: Response) => {
+// router.post('/upload', upload.single('fitfile'), (req: Request, res: Response) => {
 
-    if (req.file) {
-        const decodedData = fitAddon.decodeFIT(req.file.path);
-        return res.json({success: true, decodedData});
-    } else {
-        return res.status(400).send('no file uploaded');
-    }
+//     if (req.file) {
+//         const decodedData = fitAddon.decodeFIT(req.file.path);
+//         return res.json({success: true, decodedData});
+//     } else {
+//         return res.status(400).send('no file uploaded');
+//     }
 
-})
+// })
 
 // fetch data from fitbit by device id
 router.get('/fetch-data', verifySession, checkOrgMembership as any, refreshToken, [
