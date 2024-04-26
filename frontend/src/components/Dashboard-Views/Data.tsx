@@ -385,6 +385,7 @@ const Data = () => {
         console.log(response.data);
 
         // Create a URL for the blob
+        /*
         const downloadURL = window.URL.createObjectURL(
           new Blob([response.data], { type: "text/csv" })
         );
@@ -392,11 +393,12 @@ const Data = () => {
         link.href = downloadURL;
         link.setAttribute("download", "device-data.csv"); // or any other extension
         document.body.appendChild(link);
-        link.click();
+        link.click();*/
 
         // Clean up and remove the link
-        link.parentNode?.removeChild(link);
-        window.URL.revokeObjectURL(url);
+
+        //link.parentNode?.removeChild(link);
+        //window.URL.revokeObjectURL(url);
         setDownloadFlag(true);
         setDownloadMsg("Data downloaded successfully");
       } catch (error) {
