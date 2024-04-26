@@ -745,7 +745,7 @@ const Data = () => {
             Devices
           </h2>
           <div className="flex flex-row justify-between h-full w-full p-5 gap-5">
-            {devices !== null ? (
+            {devices && devices.length > 0 ? (
               devices.map(
                 (
                   device: {
