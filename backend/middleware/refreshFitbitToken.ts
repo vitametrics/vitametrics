@@ -48,6 +48,8 @@ async function refreshToken(req: Request, res: Response, next: NextFunction) {
                 fitbitRefreshToken: newRefreshToken
             });
 
+	    organization.lastTokenRefresh  = new Date();
+	    await organization.save();
             return next();
         } else {
             return res.status(500).json({ msg: 'Error refreshing Fitbit access token', error: error.response.data});
