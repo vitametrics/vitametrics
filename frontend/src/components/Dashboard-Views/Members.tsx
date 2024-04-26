@@ -95,6 +95,7 @@ const Members = () => {
 
   const renderMemberInfo = () => {
     if (member) {
+      const user = members.find((m) => m.userId === member);
       console.log("Showing member info");
       return (
         <motion.div
@@ -108,7 +109,9 @@ const Members = () => {
             onClick={() => toggleMemberInfo(false, "")}
             className="item-3 ml-auto"
           ></button>
-          Hello, world from the member info menu! {/* Add member info here */}
+          <h1 className="text-2xl mb-3 text-center w-full">Member Info</h1>
+          <h1 className="text-xl mb-1">{user.name}</h1>
+          <h1 className="text-xl mb-1">{user.email}</h1>
         </motion.div>
       );
     }
