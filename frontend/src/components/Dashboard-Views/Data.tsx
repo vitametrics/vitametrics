@@ -407,6 +407,19 @@ const Data = () => {
     }
   };
 
+  /*
+  const renderStatistics = () => {
+    const mean = 
+    const median =
+    const mode =
+    const stdev = 
+
+
+
+
+    
+  }*/
+
   const formatDate = (date: Date) => {
     const month =
       date.getMonth() + 1 < 10
@@ -725,13 +738,14 @@ const Data = () => {
 
         <div className="w-full h-[500px] p-5 text-white bg-[#2F2D2D] rounded-xl flex justify-center items-center mb-10">
           {/*renderRangeGraph()*/}
+          {/*renderStatistics()*/}
         </div>
         <div className="w-full h-[400px] text-white bg-[#2F2D2D] rounded-xl flex flex-col mb-10">
           <h2 className="text-center w-full text-white p-5 text-4xl">
             Devices
           </h2>
           <div className="flex flex-row justify-between h-full w-full p-5 gap-5">
-            {devices.length > 0 ? (
+            {devices !== null ? (
               devices.map(
                 (
                   device: {

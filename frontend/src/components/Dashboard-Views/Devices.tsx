@@ -217,7 +217,7 @@ const Devices = () => {
         </button>
       </div>
       <div className="flex flex-col gap-5 p-5">
-        {devices.length > 0 ? (
+        {devices !== null ? (
           deviceViewDevices.map((device: Device) => {
             return Device(device);
           })
