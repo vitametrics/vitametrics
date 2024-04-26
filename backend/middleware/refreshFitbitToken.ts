@@ -16,7 +16,13 @@ async function refreshToken(req: Request, res: Response, next: NextFunction) {
         return res.status(404).json({ msg: 'Organization not found' });
     }
 
-    const { fitbitAccessToken, fitbitRefreshToken } = organization;
+    const { fitbitAccessToken, fitbitRefreshToken, lastTokenRefresh } = organization;
+
+    const tokenAge = lastTokenRefresh ? (new Date().getTime() - new Date(lastTokenRefresh).getTime()) / (1000 * 60 * 60) : Infinity;
+
+    if (tokenAge < 8) {
+        return next();
+    }
 
     try {
         const response = await axios.get('https://api.fitbit.com/1/user/-/profile.json', {
