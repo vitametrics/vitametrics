@@ -8,10 +8,10 @@ async function fetchDevices(userId: string, accessToken: string, orgId: string) 
         headers: {'Authorization': `Bearer ${accessToken}`}
     });
 
+
     for (const deviceData of deviceResponse.data) {
 
-        if (deviceData.type !== 'TRACKER') {
-
+        if (deviceData.deviceVersion !== 'MobileTrack') {
             // add fetched devices to mongodb organization document
             await Organization.updateOne(
                 {orgId: orgId},
@@ -20,11 +20,7 @@ async function fetchDevices(userId: string, accessToken: string, orgId: string) 
 
             await Device.updateOne(
                 {deviceId: deviceData.id},
-                {
-                    deviceName: deviceData.deviceName,
-                    deviceId: deviceData.id
-                },
-                {upsert: true}
+                {deviceName: deviceData.deviceName}
             )
         }
     }
