@@ -2,25 +2,28 @@
 //import DatePicker from "react-datepicker";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useState, useEffect, lazy, Suspense } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { useOrg } from "../../helpers/OrgContext";
 import { useSearchParams } from "react-router-dom";
+
+/*
 const LazyBarChart = lazy(() =>
   import("react-chartjs-2").then((module) => ({ default: module.Bar }))
 );
 const LazyLineChart = lazy(() =>
   import("react-chartjs-2").then((module) => ({ default: module.Line }))
-);
-import "chart.js/auto";
+);*/
+//import "chart.js/auto";
 import { useDashboard } from "../../helpers/DashboardContext";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 
+/*
 type DataItem = {
   date: string;
   value: number;
-};
+};*/
 /*
 type DeviceData = {
   id: string;
@@ -73,7 +76,7 @@ const Data = () => {
     fetchDevice,
   } = useDashboard();
   //const [chartData, setChartData] = useState({});
-  const [rangeChartData, setRangeChartData] = useState({});
+  //const [rangeChartData, setRangeChartData] = useState({});
 
   const handleFetchDevice = async () => {
     await fetchDevice("2570612980");
@@ -154,6 +157,7 @@ const Data = () => {
     });
   };*/
 
+  /*
   const generateLabelsForRange = (start: Date, end: Date) => {
     let currentDate = new Date(start);
     const labels = [];
@@ -164,6 +168,7 @@ const Data = () => {
     return labels;
   };
 
+  
   const createRangeDataset = () => {
     const start = new Date(rangeStartDate);
     start.setHours(0, 0, 0, 0);
@@ -213,6 +218,7 @@ const Data = () => {
     setRangeEndDate(end);
   };
 
+  /*
   const renderRangeGraph = () => {
     const options = {
       maintainAspectRatio: false,
@@ -411,10 +417,11 @@ const Data = () => {
     return `${year}-${month}-${day}`;
   };
 
+  /*
   useEffect(() => {
     createRangeDataset();
   }, [selectedDevices, rangeDataType, rangeStartDate, rangeEndDate]);
-
+*/
   const fadeInItemVariants = {
     hidden: { opacity: 0 },
     show: { opacity: 1 },
@@ -713,42 +720,11 @@ const Data = () => {
                 className=" p-2 border border-gray-300 rounded-md w-full"
               />
             </div>
-            <button
-              onClick={() => changeWeekDays()}
-              className="items-center h-full justify-center"
-            >
-              {" "}
-              <svg
-                width="48px"
-                height="48px"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                stroke="#ffffff"
-              >
-                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                <g
-                  id="SVGRepo_tracerCarrier"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                ></g>
-                <g id="SVGRepo_iconCarrier">
-                  {" "}
-                  <path
-                    d="M6 12H18M18 12L13 7M18 12L13 17"
-                    stroke="#000000"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  ></path>{" "}
-                </g>
-              </svg>{" "}
-            </button>
           </div>
         </div>
 
         <div className="w-full h-[500px] p-5 text-white bg-[#2F2D2D] rounded-xl flex justify-center items-center mb-10">
-          {renderRangeGraph()}
+          {/*renderRangeGraph()*/}
         </div>
         <div className="w-full h-[400px] text-white bg-[#2F2D2D] rounded-xl flex flex-col mb-10">
           <h2 className="text-center w-full text-white p-5 text-4xl">
