@@ -385,6 +385,7 @@ const Data = () => {
         console.log(response.data);
 
         // Create a URL for the blob
+
         /*
         const downloadURL = window.URL.createObjectURL(
           new Blob([response.data], { type: "text/csv" })
@@ -393,12 +394,20 @@ const Data = () => {
         link.href = downloadURL;
         link.setAttribute("download", "device-data.csv"); // or any other extension
         document.body.appendChild(link);
-        link.click();*/
+        link.click();
 
-        // Clean up and remove the link
+        //Clean up and remove the link
 
-        //link.parentNode?.removeChild(link);
-        //window.URL.revokeObjectURL(url);
+        link.parentNode?.removeChild(link);
+        window.URL.revokeObjectURL(url);*/
+
+        //FIX THIS LATER
+        // Generate the download link based on the parameters
+        const downloadUrl = `https://physiobit.org/api/org/download-data?deviceId=${deviceId}&dataType=${dataType}&date=${date}&detailLevel=${detailLevel}`;
+
+        // Redirect to the download URL
+        window.location.href = downloadUrl;
+
         setDownloadFlag(true);
         setDownloadMsg("Data downloaded successfully");
       } catch (error) {
