@@ -13,27 +13,30 @@ async function fetchDevices(userId: string, accessToken: string, orgId: string) 
 
 	//console.log(deviceData);
 
-	if (deviceData.deviceVersion === "MobileTrack") {
-		continue;
+		if (deviceData.deviceVersion === "MobileTrack") {
+			continue;
+		}
+
+		validDevices.push({
+			id: deviceData.id,
+			name: deviceData.deviceVersion
+		});
+
+		await Device.findOneAndUpdate(
+            { deviceId: deviceData.id },
+            { deviceName: deviceData.deviceVersion, orgId: orgId },
+            { new: true, upsert: true }
+        );
+
+		// add fetched devices to mongodb organization document
+		await Organization.updateOne(
+			{orgId: orgId},
+			{$addToSet: {devices: deviceData._id}}
+		);
+
 	}
 
-	validDevices.push(deviceData);
-
-	// add fetched devices to mongodb organization document
-	await Organization.updateOne(
-		{orgId: orgId},
-		{$addToSet: {devices: deviceData.id}}
-	);
-
-	await Device.updateOne(
-		{deviceId: deviceData.id},
-		{deviceName: deviceData.deviceVersion},
-		{upsert: true}
-	)
-
-    }
-
-    console.log(validDevices);
+    // console.log(validDevices);
 
     return validDevices;
 }
