@@ -6,7 +6,7 @@ const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const navigate = useNavigate();
-  const imagePath = "/assets/images/vitamix.webp";
+  const imagePath = "/src/assets/images/vitamix.webp";
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
