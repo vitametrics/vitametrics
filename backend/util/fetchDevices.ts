@@ -22,17 +22,17 @@ async function fetchDevices(userId: string, accessToken: string, orgId: string) 
 			name: deviceData.deviceVersion
 		});
 
-		await Device.findOneAndUpdate(
+        await Device.findOneAndUpdate(
             { deviceId: deviceData.id },
-            { deviceName: deviceData.deviceVersion, orgId: orgId },
+            { deviceName: deviceData.deviceVersion },
             { new: true, upsert: true }
         );
 
 		// add fetched devices to mongodb organization document
-		await Organization.updateOne(
-			{orgId: orgId},
-			{$addToSet: {devices: deviceData._id}}
-		);
+        await Organization.updateOne(
+            { orgId: orgId },
+            { $addToSet: { devices: deviceData.id } }
+        );
 
 	}
 

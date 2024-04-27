@@ -12,7 +12,7 @@ export interface IOrganization extends Document {
     lastTokenRefresh: Date;
     inviteCode: Types.ObjectId[];
     members: Types.ObjectId[];
-    devices: Types.ObjectId[];
+    devices: string[];
 };
 
 const organizationSchema = new mongoose.Schema({
@@ -27,7 +27,7 @@ const organizationSchema = new mongoose.Schema({
     lastTokenRefresh: { type: Date, default: null},
     inviteCode: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Invite' }],
     members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    devices: { type: mongoose.Schema.Types.ObjectId, ref: 'Device' }
+    devices: [{ type: String}]
 });
 
 const orgModel = mongoose.model<IOrganization>('Organizations', organizationSchema);
