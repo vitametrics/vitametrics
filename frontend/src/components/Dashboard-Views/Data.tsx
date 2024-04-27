@@ -367,12 +367,11 @@ const Data = () => {
       return;
     }
 
-    const url = `${DOWNLOAD_ENDPOINT}`;
-    for (let i = 0; i < selectedDevices.length; i++) {
+    const downloadPromises = selectedDevices.map(async (deviceId) => {
       try {
-        const deviceId = selectedDevices[i];
         const date = formatDate(startDate);
-        const response = await axios.get(url, {
+
+        const response = await axios.get(DOWNLOAD_ENDPOINT, {
           params: {
             deviceId,
             dataType,
@@ -382,49 +381,41 @@ const Data = () => {
           withCredentials: true,
         });
 
-        console.log(response.data);
-
-        // Create a URL for the blob
-
-        /*
-        const downloadURL = window.URL.createObjectURL(
-          new Blob([response.data], { type: "text/csv" })
-        );
+        const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement("a");
-        link.href = downloadURL;
-        link.setAttribute("download", "device-data.csv"); // or any other extension
+        link.href = url;
+        link.setAttribute("download", `device-${deviceId}-${date}.csv`);
         document.body.appendChild(link);
         link.click();
-
-        //Clean up and remove the link
-
         link.parentNode?.removeChild(link);
-        window.URL.revokeObjectURL(url);*/
-
-        //FIX THIS LATER
-        // Generate the download link based on the parameters
-        const downloadUrl = `https://physiobit.org/api/org/download-data?deviceId=${deviceId}&dataType=${dataType}&date=${date}&detailLevel=${detailLevel}`;
-
-        // Redirect to the download URL
-        window.location.href = downloadUrl;
-
-        setDownloadFlag(true);
-        setDownloadMsg("Data downloaded successfully");
       } catch (error) {
         console.log(error);
-        setDownloadFlag(false);
-        setDownloadMsg("Error downloading data");
       }
-    }
+    });
+
+    const results = await Promise.allSettled(downloadPromises);
+    const errors = results
+      .filter((result) => result.status === "rejected")
+      .map((result) => (result as PromiseRejectedResult).reason.message); // Now safely accessing the 'reason' property
+
+    const allDownloadsSuccess = errors.length === 0;
+    const successMessage = allDownloadsSuccess
+      ? "Data downloaded successfully"
+      : "Some downloads were not successful";
+
+    setDownloadFlag(allDownloadsSuccess);
+    setDownloadMsg(errors.length > 0 ? errors.join("\n") : successMessage);
   };
 
   /*
+
   const renderStatistics = () => {
     const mean = 
     const median =
     const mode =
     const stdev = 
 
+    == to do ==
 
 
 
