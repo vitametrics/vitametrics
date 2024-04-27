@@ -27,11 +27,6 @@ const Devices = () => {
     [key: string]: string;
   }>({});
 
-  const FETCH_DEVICES_ENDPOINT =
-    import.meta.env.VITE_APP_NODE_ENV === "production"
-      ? import.meta.env.VITE_APP_FETCH_DEVICES_ENDPOINT
-      : import.meta.env.VITE_APP_FETCH_DEVICES_DEV_ENDPOINT;
-
   const NAME_CHANGE_ENDPOINT =
     import.meta.env.VITE_APP_NODE_ENV === "production"
       ? import.meta.env.VITE_APP_NAME_CHANGE_ENDPOINT
