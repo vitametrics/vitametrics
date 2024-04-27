@@ -367,38 +367,34 @@ const Data = () => {
       return;
     }
 
-    try {
-      await Promise.all(
-        selectedDevices.map(async (deviceId) => {
-          try {
-            const date = formatDate(startDate);
+    for (const deviceId of selectedDevices) {
+      try {
+        const date = formatDate(startDate);
+        const response = await axios.get(DOWNLOAD_ENDPOINT, {
+          params: {
+            deviceId,
+            dataType,
+            date,
+            detailLevel,
+          },
+          withCredentials: true,
+        });
 
-            const response = await axios.get(DOWNLOAD_ENDPOINT, {
-              params: {
-                deviceId,
-                dataType,
-                date,
-                detailLevel,
-              },
-              withCredentials: true,
-            });
+        console.log(response.data);
 
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement("a");
-            link.href = url;
-            link.setAttribute("download", `device-${deviceId}-${date}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            link.parentNode?.removeChild(link);
-          } catch (error) {
-            console.log(error);
-          }
-        })
-      );
-    } catch (error) {
-      console.log(error);
-      setDownloadFlag(false);
-      setDownloadMsg("Data failed to download");
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", `device-${deviceId}-${date}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode?.removeChild(link);
+      } catch (error) {
+        console.log(error);
+        setDownloadFlag(false);
+        setDownloadMsg("Data failed to download");
+        return;
+      }
     }
 
     setDownloadFlag(true);
