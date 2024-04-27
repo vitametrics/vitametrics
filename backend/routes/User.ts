@@ -4,6 +4,7 @@ import crypto from 'crypto';
 import verifySession from '../middleware/verifySession';
 import User from '../models/User';
 import Organization from "../models/Organization"
+import Device from '../models/Device';
 import { sendEmail } from '../util/emailUtil';
 import { query, validationResult, body } from 'express-validator';
 import { CustomReq } from '../types/custom';
@@ -215,6 +216,37 @@ router.get('/verify-email', verifySession, [
         console.error(err);
         return res.status(500).json({ msg: 'Internal Server Error' });
     }
+});
+
+router.post('/delete-account', verifySession, async (expressReq: Request, res: Response) => {
+    
+        const req = expressReq as CustomReq;
+    
+        if (!req.user) {
+            return res.status(401).json({ msg: 'Unauthorized' });
+        }
+    
+        const userId = req.user.userId;
+
+        try {
+
+            await Organization.updateMany(
+                { members: userId },
+                { $pull: { members: userId } }
+            );
+
+            const organization = await Organization.findOne({ ownerId: userId});
+            if (organization) {
+                await Device.deleteMany({ orgId: organization._id});
+
+                await Organization.deleteOne({ _id: organization._id});
+            }
+            await User.deleteOne({ userId });
+            return res.status(200).json({ msg: 'Account deleted' });
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ msg: 'Internal Server Error' });
+        }
 });
 
 export default router;
