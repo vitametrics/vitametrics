@@ -16,11 +16,12 @@ export const commonMiddlewares = async (app: express.Application) => {
     secret: process.env.SESSION_SECRET as string, 
     resave: false,
     saveUninitialized: true,
-    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI as string}) as MongoStore,
+    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI as string}),
     cookie: {
       secure: process.env.NODE_ENV as string === 'production' ? true : false,
       sameSite: process.env.NODE_ENV as string === 'production' ? 'none' : 'lax',
       httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 1 // 1 hour session expiry
     }
   }));
   app.set('trust proxy', 1);
