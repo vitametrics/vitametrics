@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useOrg } from "../../helpers/OrgContext";
-import { useDashboard } from "../../helpers/DashboardContext";
 import axios from "axios";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
@@ -22,8 +21,8 @@ const Devices = () => {
     orgName,
     deviceViewDevices,
     setDeviceViewDevices,
+    fetchDevices,
   } = useOrg();
-  const { fetchWorkingDevice } = useDashboard();
   const [editingDevices, setEditingDevices] = useState<{
     [key: string]: string;
   }>({});
@@ -39,17 +38,7 @@ const Devices = () => {
       : import.meta.env.VITE_APP_NAME_CHANGE_DEV_ENDPOINT;
 
   const handleFetchDevices = async () => {
-    fetchWorkingDevice();
-    try {
-      const response = await axios.post(FETCH_DEVICES_ENDPOINT!, {
-        withCredentials: true,
-      });
-
-      console.log(response.data);
-      setDevices(response.data);
-    } catch (error) {
-      console.log(error);
-    }
+    fetchDevices();
   };
 
   const toggleEdit = (deviceId: string) => {

@@ -51,6 +51,7 @@ interface OrgContextProps {
   syncDevice: (id: string, start: Date, end: Date) => void;
   deviceViewDevices: Device[];
   setDeviceViewDevices: (arg0: Device[]) => void;
+  fetchDevices: () => void;
 }
 
 const OrgContext = createContext<OrgContextProps | undefined>(undefined);
@@ -722,7 +723,7 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       console.log(response.data);
       //setDevices(response.data.organization.devices);
       setMembers(response.data.members || []);
-      await fetchDevices();
+      //await fetchDevices();
     } catch (error) {
       console.log(error);
     }
@@ -761,7 +762,7 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
         setOrgName(response.data.organization.orgName);
         setMembers(response.data.members || []);
-        await fetchDevices(); // Assuming fetchDevices doesn't depend on orgId directly
+        //await fetchDevices(); // Assuming fetchDevices doesn't depend on orgId directly
       } catch (error) {
         console.error(error);
       }
@@ -784,6 +785,7 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         fetchDataById,
         syncDevice,
         setDevices,
+        fetchDevices,
         deviceViewDevices,
         setDeviceViewDevices,
       }}

@@ -28,7 +28,6 @@ interface DashboardProps {
   handleDeviceSelectionChange: (deviceId: string, isChecked: boolean) => void;
   devicesData: any[]; //temp any
   deviceData: any[]; //temp any
-  fetchWorkingDevice: () => void;
   fetchDevice: (deviceId: string) => void;
 }
 
@@ -145,10 +144,6 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
     );
   };
 
-  const fetchWorkingDevice = async () => {
-    console.log("fetching working device data based on range date");
-  };
-
   /*
   const fetchWeeklyDeviceData = async (deviceId: string) => {
     console.log("fetching weekly device data based on range date");
@@ -227,7 +222,6 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
         detailLevel,
         setDetailLevel,
         deviceData,
-        fetchWorkingDevice,
         fetchDevice,
       }}
     >
