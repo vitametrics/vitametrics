@@ -41,10 +41,11 @@ type DeviceData = {
 };*/
 
 const Data = () => {
+  /*
   const DOWNLOAD_ENDPOINT =
     import.meta.env.NODE_ENV === "production"
       ? import.meta.env.VITE_APP_DOWNLOAD_DATA_ENDPOINT
-      : import.meta.env.VITE_APP_DOWNLOAD_DATA_DEV_ENDPOINT;
+      : import.meta.env.VITE_APP_DOWNLOAD_DATA_DEV_ENDPOINT;*/
   const { deviceViewDevices, orgName } = useOrg();
   const [searchParams, setSearchParams] = useSearchParams({
     detailLevel: "1min",
