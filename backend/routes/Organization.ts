@@ -162,7 +162,7 @@ router.get('/fetch-data', verifySession, checkOrgMembership as any, refreshToken
             return res.status(500).json({msg: 'Please provide a device id'});
         }
 
-        const data = await fetchData(orgUserId, organization.fitbitAccessToken, deviceId, startDate, endDate);
+        const data = await fetchData(orgUserId, organization.fitbitAccessToken, startDate, endDate);
 
         return res.status(200).json(data);
     } catch (err) {

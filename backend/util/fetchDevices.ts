@@ -3,29 +3,39 @@ import Organization from '../models/Organization';
 import Device from '../models/Device';
 
 async function fetchDevices(userId: string, accessToken: string, orgId: string) {
-    console.log('made it to fetch devices');
+    //console.log('made it to fetch devices');
     const deviceResponse = await axios.get(`https://api.fitbit.com/1/user/${userId}/devices.json`, {
         headers: {'Authorization': `Bearer ${accessToken}`}
     });
-
+    const validDevices = [];
 
     for (const deviceData of deviceResponse.data) {
 
-        if (deviceData.deviceVersion !== 'MobileTrack') {
-            // add fetched devices to mongodb organization document
-            await Organization.updateOne(
-                {orgId: orgId},
-                {$addToSet: {devices: deviceData.id}}
-            );
+	//console.log(deviceData);
 
-            await Device.updateOne(
-                {deviceId: deviceData.id},
-                {deviceName: deviceData.deviceName}
-            )
-        }
+	if (deviceData.deviceVersion === "MobileTrack") {
+		continue;
+	}
+
+	validDevices.push(deviceData);
+
+	// add fetched devices to mongodb organization document
+	await Organization.updateOne(
+		{orgId: orgId},
+		{$addToSet: {devices: deviceData.id}}
+	);
+
+	await Device.updateOne(
+		{deviceId: deviceData.id},
+		{deviceName: deviceData.deviceVersion},
+		{upsert: true}
+	)
+
     }
 
-    return deviceResponse.data;
+    console.log(validDevices);
+
+    return validDevices;
 }
 
 export default fetchDevices;
