@@ -72,7 +72,7 @@ const Login = () => {
             </h4>
           </div>
           <div className="flex flex-col items-center justify-center bg-white w-[500px] h-[600px]  p-20 rounded-tr-2xl rounded-br-2xl  sm:w-screen sm:rounded-none sm:h-full sm:p-5">
-            <img src={logo} className="h-16 mb-5" alt="Physiobit Logo" />
+            <img src={logo} className="h-16 mb-5" alt="vitametrics Logo" />
 
             <h2 className="font-bold text-4xl w-72 text-center"> Register </h2>
             {message != "Success" ? (

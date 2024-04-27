@@ -10,7 +10,7 @@ export const DashboardNavbar = () => {
           href="/"
           className="flex items-center space-x-3 rtl:space-x-reverse mr-auto"
         >
-          <img src={logo} className="h-[2rem]" alt="Physiobit Logo" />
+          <img src={logo} className="h-[2rem]" alt="vitametrics Logo" />
         </a>
         <div className="flex items-center space-x-3">
           <a

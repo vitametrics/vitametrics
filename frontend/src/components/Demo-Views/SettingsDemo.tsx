@@ -4,7 +4,7 @@ import { WarningIcon } from "../../assets/WarningIcon";
 const SettingsDemo = () => {
   const orgName = "Ada Lovelace's Org";
   const isEmailVerified = true;
-  const userEmail = "adalovelace@physiobit.org";
+  const userEmail = "adalovelace@vitametrics.org";
 
   const [changePasswordFlag, setChangePasswordFlag] = useState(false);
   const [changePasswordMsg, setChangePasswordMsg] = useState("");

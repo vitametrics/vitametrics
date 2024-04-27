@@ -13,15 +13,15 @@ import { useDashboard } from "../helpers/DashboardContext";
 
 const Dashboard = () => {
   const { isAccountLinked } = useAuth();
-  const {showBackDrop} = useDashboard();
-  const [searchParams, setSearchParams] = useSearchParams({view:"data"})
+  const { showBackDrop } = useDashboard();
+  const [searchParams, setSearchParams] = useSearchParams({ view: "data" });
   const view = searchParams.get("view") || "data";
   const setPage = (newView: string) => {
-    setSearchParams({ "view": newView }, { replace: true } );
+    setSearchParams({ view: newView }, { replace: true });
   };
-  
+
   const oAuthLogin = async () => {
-    window.location.href = "https://physiobit.org/api/auth";
+    window.location.href = "https://vitametrics.org/api/auth";
   };
 
   const renderComponent = useCallback(() => {
@@ -40,27 +40,27 @@ const Dashboard = () => {
   }, [view]);
 
   return (
-      <div className="h-full font-ralewayBold  bg-[#1E1D20] bg-hero-texture">
-        <DashboardNavbar />
-        <div className={`backdrop ${showBackDrop ? "show" : ""}`}></div>
-        <div className="flex flex-row">
-          <div className="w-[125px]">
-            <StickySidebar setPage={setPage} path="dashboard" />
-          </div>
-          <div className="flex w-full h-full flex-col ">
-            {!isAccountLinked && (
-              <button
-                onClick={oAuthLogin}
-                className="p-2 text-white bg-red-400 hover:bg-[#8e5252]"
-              >
-                ALERT: Authenticate Your Fitbit Account{" "}
-              </button>
-            )}
-            {renderComponent()}
-          </div>
+    <div className="h-full font-ralewayBold  bg-[#1E1D20] bg-hero-texture">
+      <DashboardNavbar />
+      <div className={`backdrop ${showBackDrop ? "show" : ""}`}></div>
+      <div className="flex flex-row">
+        <div className="w-[125px]">
+          <StickySidebar setPage={setPage} path="dashboard" />
         </div>
-        <Footer />
+        <div className="flex w-full h-full flex-col ">
+          {!isAccountLinked && (
+            <button
+              onClick={oAuthLogin}
+              className="p-2 text-white bg-red-400 hover:bg-[#8e5252]"
+            >
+              ALERT: Authenticate Your Fitbit Account{" "}
+            </button>
+          )}
+          {renderComponent()}
+        </div>
       </div>
+      <Footer />
+    </div>
   );
 };
 
