@@ -45,7 +45,7 @@ const Data = () => {
     import.meta.env.NODE_ENV === "production"
       ? import.meta.env.VITE_APP_DOWNLOAD_DATA_ENDPOINT
       : import.meta.env.VITE_APP_DOWNLOAD_DATA_DEV_ENDPOINT;
-  const { devices, orgName } = useOrg();
+  const { deviceViewDevices, orgName } = useOrg();
   const [searchParams, setSearchParams] = useSearchParams({
     detailLevel: "1min",
     dataType: "heart",
@@ -747,8 +747,8 @@ const Data = () => {
             Devices
           </h2>
           <div className="flex flex-row justify-between h-full w-full p-5 gap-5">
-            {devices && devices.length > 0 ? (
-              devices.map(
+            {deviceViewDevices && deviceViewDevices.length > 0 ? (
+              deviceViewDevices.map(
                 (
                   device: {
                     id: string;

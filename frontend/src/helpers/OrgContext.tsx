@@ -62,7 +62,11 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [orgId, setOrgId] = useState<string>("");
   const [members, setMembers] = useState<Member[]>([]);
   const [devices, setDevices] = useState<DeviceData[]>([]);
-  const [deviceViewDevices, setDeviceViewDevices] = useState<Device[]>([]);
+  const [deviceViewDevices, setDeviceViewDevices] = useState<Device[]>(
+    localStorage.getItem("devices")
+      ? JSON.parse(localStorage.getItem("devices")!)
+      : []
+  );
 
   const testDeviceViewDevices = [
     {
@@ -700,6 +704,7 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         return;
       }
       setDeviceViewDevices(response.data);
+      localStorage.setItem("devices", JSON.stringify(response.data));
       setDevices(response.data);
     } catch (error) {
       setDevices(testDevices);
