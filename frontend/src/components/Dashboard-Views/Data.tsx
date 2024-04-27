@@ -369,9 +369,7 @@ const Data = () => {
     }
 
     for (const deviceId of selectedDevices) {
-      console.log("trying deviceId: " + deviceId);
       try {
-        console.log("beginning download-data for: " + deviceId);
         const date = formatDate(startDate);
         const response = await axios.get(
           "https://vitametrics.org/api/org/download-data",
@@ -386,8 +384,6 @@ const Data = () => {
           }
         );
 
-        console.log("backend completed!");
-        console.log(response.data);
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement("a");
         link.href = url;
@@ -396,7 +392,6 @@ const Data = () => {
         link.click();
         link.parentNode?.removeChild(link);
       } catch (error) {
-        console.log(error);
         setDownloadFlag(false);
         setDownloadMsg("Data failed to download");
         return;
