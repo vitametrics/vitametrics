@@ -367,44 +367,42 @@ const Data = () => {
       return;
     }
 
-    const downloadPromises = selectedDevices.map(async (deviceId) => {
-      try {
-        const date = formatDate(startDate);
+    try {
+      await Promise.all(
+        selectedDevices.map(async (deviceId) => {
+          try {
+            const date = formatDate(startDate);
 
-        const response = await axios.get(DOWNLOAD_ENDPOINT, {
-          params: {
-            deviceId,
-            dataType,
-            date,
-            detailLevel,
-          },
-          withCredentials: true,
-        });
+            const response = await axios.get(DOWNLOAD_ENDPOINT, {
+              params: {
+                deviceId,
+                dataType,
+                date,
+                detailLevel,
+              },
+              withCredentials: true,
+            });
 
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", `device-${deviceId}-${date}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        link.parentNode?.removeChild(link);
-      } catch (error) {
-        console.log(error);
-      }
-    });
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", `device-${deviceId}-${date}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode?.removeChild(link);
+          } catch (error) {
+            console.log(error);
+          }
+        })
+      );
+    } catch (error) {
+      console.log(error);
+      setDownloadFlag(false);
+      setDownloadMsg("Data failed to download");
+    }
 
-    const results = await Promise.allSettled(downloadPromises);
-    const errors = results
-      .filter((result) => result.status === "rejected")
-      .map((result) => (result as PromiseRejectedResult).reason.message); // Now safely accessing the 'reason' property
-
-    const allDownloadsSuccess = errors.length === 0;
-    const successMessage = allDownloadsSuccess
-      ? "Data downloaded successfully"
-      : "Some downloads were not successful";
-
-    setDownloadFlag(allDownloadsSuccess);
-    setDownloadMsg(errors.length > 0 ? errors.join("\n") : successMessage);
+    setDownloadFlag(true);
+    setDownloadMsg("Data downloaded successfully");
   };
 
   /*
