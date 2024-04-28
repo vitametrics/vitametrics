@@ -8,7 +8,7 @@ import { sendEmail } from './emailUtil';
 async function initializeDatabase() {
     try {
         const isInitialized = await Setting.findOne({ type: 'initialized'});
-        if (!isInitialized) {
+        if (!isInitialized && process.env.ADMIN_EMAIL && process.env.NODE_ENV === 'production') {
             const newUserId = crypto.randomBytes(16).toString('hex');
             const newOrgId = crypto.randomBytes(16).toString('hex');
             const tempPassword = crypto.randomBytes(16).toString('hex');
