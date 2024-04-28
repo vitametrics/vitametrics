@@ -15,10 +15,10 @@ interface Member {
 
 interface DeviceData {
   id: string;
+  name: string;
   deviceVersion: string;
   lastSyncTime: string;
   batteryLevel: number;
-  ownerName: string;
   [key: string]: any; // This line is the index signature
 }
 
@@ -54,7 +54,9 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [orgName, setOrgName] = useState<string>("");
   const [orgId, setOrgId] = useState<string>("");
   const [members, setMembers] = useState<Member[]>([]);
-  const [devices, setDevices] = useState<DeviceData[]>([]);
+  const [devices, setDevices] = useState<DeviceData[]>(
+    localStorage.get("devices") ? JSON.parse(localStorage.get("devices")!) : []
+  );
 
   const testDeviceViewDevices = [
     {
@@ -90,10 +92,10 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const testDevices = [
     {
       id: "2570612980",
+      name: "Brandon Le",
       deviceVersion: "Alta HR",
       lastSyncTime: "2024-02-24T00:02:13.000",
       batteryLevel: 100,
-      ownerName: "Brandon Le",
       steps: [
         {
           date: "2024-02-20",
@@ -262,7 +264,7 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       deviceVersion: "Fitbit Pro",
       lastSyncTime: "2024-02-24T00:02:13.000",
       batteryLevel: 10,
-      ownerName: "Angel Vazquez",
+      name: "Angel Vazquez",
       steps: [
         {
           date: "2024-02-20",
@@ -419,7 +421,7 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       deviceVersion: "Playstation 5",
       lastSyncTime: "2024-02-24T00:02:13.000",
       batteryLevel: 100,
-      ownerName: "Sean Cornell",
+      name: "Sean Cornell",
       steps: [
         {
           date: "2024-02-20",

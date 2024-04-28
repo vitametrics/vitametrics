@@ -8,10 +8,10 @@ import { Fragment, useState } from "react";
 const MAX_NAME_LENGTH = 15;
 interface Device {
   id: string;
+  name: string;
   deviceVersion: string;
   lastSyncTime: string;
   batteryLevel: number;
-  ownerName: string;
 }
 
 const Devices = () => {
@@ -87,7 +87,7 @@ const Devices = () => {
     return (
       <div className="grid grid-cols-4 w-full h-[70px] bg-[#2E2E2E] rounded-xl p-5">
         <p className="text-2xl font-bold text-white mr-auto overflow-fix">
-          {device.deviceVersion || ""}
+          {device.name || ""}
         </p>
         <h2 className="text-2xl font-bold text-white align flex items-center mr-3 overflow-fix">
           ID: {device.id || ""}
@@ -127,7 +127,7 @@ const Devices = () => {
           ) : (
             <Fragment>
               <h2 className="text-2xl font-bold text-white align flex items-center overflow-fix">
-                Owner: {device.ownerName || ""}
+                Owner: {"" || ""}
               </h2>
               <a
                 className="hover:cursor-pointer"
@@ -202,7 +202,7 @@ const Devices = () => {
       </div>
       <div className="flex flex-col gap-5 p-5">
         {devices && devices.length > 0 ? (
-          deviceViewDevices.map((device: Device) => {
+          devices.map((device: Device) => {
             return Device(device);
           })
         ) : (
