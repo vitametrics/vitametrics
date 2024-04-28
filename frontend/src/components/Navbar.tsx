@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../helpers/AuthContext";
 import { useNavigate } from "react-router-dom";
+import imagePath from "../assets/images/vitamix.webp";
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const navigate = useNavigate();
-  const imagePath = "/src/assets/images/vitamix.webp";
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -100,12 +100,6 @@ const Navbar = () => {
                     </button>
                   </li>
                 )}
-
-                <li>
-                  <a href="/contact" className="block py-2 px-3">
-                    Contact
-                  </a>
-                </li>
               </ul>
             </div>
           </>
@@ -122,15 +116,6 @@ const Navbar = () => {
                   aria-current="page"
                 >
                   Demo
-                </a>
-              </li>
-
-              <li>
-                <a
-                  href="/FAQs"
-                  className="block py-2 px-3 text-2xl rounded hover:text-gray-300 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0  md:dark:hover:text-grey-200 dark:hover:bg-gray-700 dark:hover: md:dark:hover:bg-transparent"
-                >
-                  Support
                 </a>
               </li>
 
