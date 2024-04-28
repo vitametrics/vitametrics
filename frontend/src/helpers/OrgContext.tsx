@@ -703,6 +703,7 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         return;
       }
       setDeviceViewDevices(response.data);
+
       localStorage.setItem("devices", JSON.stringify(response.data));
       setDevices(response.data);
     } catch (error) {
