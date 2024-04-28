@@ -55,7 +55,9 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [orgId, setOrgId] = useState<string>("");
   const [members, setMembers] = useState<Member[]>([]);
   const [devices, setDevices] = useState<DeviceData[]>(
-    localStorage.get("devices") ? JSON.parse(localStorage.get("devices")!) : []
+    localStorage.getItem("devices")
+      ? JSON.parse(localStorage.getItem("devices")!)
+      : []
   );
 
   const testDeviceViewDevices = [
