@@ -8,7 +8,6 @@ import logoutRoute from './routes/Logout';
 import passportConfig from './util/passport-config';
 import authRoute from './routes/Auth';
 import loginRoute from './routes/Login';
-import adminRoute from './routes/Admin';
 import orgRoute from './routes/Organization';
 import { connectDB } from './middleware/config';
 import sgMail from '@sendgrid/mail';
@@ -32,7 +31,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 // TODO: Change to /auth
 app.use('/', authRoute);
-app.use('/admin', adminRoute);
 app.use('/org', orgRoute);
 app.use('/user', userRoute);
 app.use('/login', loginRoute(passport));
