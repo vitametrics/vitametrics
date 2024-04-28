@@ -428,10 +428,10 @@ const Data = () => {
           "https://vitametrics.org/api/org/download-data",
           {
             params: {
-              deviceId,
-              downloadDataType,
-              date,
-              downloadDetailLevel,
+              deviceId: deviceId,
+              type: downloadDataType,
+              date: date,
+              detailLevel: downloadDetailLevel,
             },
             withCredentials: true,
           }
