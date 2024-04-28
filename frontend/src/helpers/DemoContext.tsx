@@ -36,6 +36,7 @@ interface Device {
   distance: DataItem[];
   elevation: DataItem[];
   floors: DataItem[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any; // This line is the index signature
 }
 

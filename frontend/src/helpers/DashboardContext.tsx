@@ -16,6 +16,8 @@ interface DashboardProps {
   startDate: Date;
   rangeStartDate: Date;
   rangeEndDate: Date;
+  downloadDate: Date;
+  setDownloadDate: Dispatch<SetStateAction<Date>>;
   setStartDate: Dispatch<SetStateAction<Date>>;
   setRangeStartDate: Dispatch<SetStateAction<Date>>;
   setRangeEndDate: Dispatch<SetStateAction<Date>>;
@@ -26,15 +28,8 @@ interface DashboardProps {
   selectedDevices: string[];
   setSelectedDevices: (arg0: string[]) => void;
   handleDeviceSelectionChange: (deviceId: string, isChecked: boolean) => void;
-  devicesData: any[]; //temp any
-  deviceData: any[]; //temp any
+  devicesData: DeviceData[]; //temp any
   fetchDevice: (deviceId: string) => void;
-}
-
-interface DeviceData {
-  rangeStartDate: Date;
-  rangeEndDate: Date;
-  data: any; // Detailed data for each device
 }
 
 interface DeviceContext {
@@ -42,6 +37,35 @@ interface DeviceContext {
     rangeStartDate: Date;
     rangeEndDate: Date;
   };
+}
+
+interface DeviceInfo {
+  battery: string;
+  batteryLevel: number;
+  deviceVersion: string;
+  features: string[];
+  id: string;
+}
+
+interface HeartData {
+  dateTime: string;
+  value: {
+    customHeartRateZones: any[];
+    heartRateZones: any[];
+    restingHeartRate: number;
+  };
+}
+
+interface StepsData {
+  dateTime: string;
+  value: string;
+}
+
+interface DeviceData {
+  deviceId: string;
+  deviceInfo: DeviceInfo;
+  heartData: HeartData[];
+  stepsData: StepsData[];
 }
 
 const DashboardContext = createContext<DashboardProps | undefined>(undefined);
@@ -56,64 +80,122 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
       ? import.meta.env.VITE_APP_FETCH_DEVICE_DATA_ENDPOINT
       : import.meta.env.VITE_APP_FETCH_DEVICE_DATA_DEV_ENDPOINT; */
 
-  const FETCH_INTRADAY_DATA_ENDPOINT =
-    "https://vitametrics.org/api/org/fetch-intraday";
+  /*const FETCH_INTRADAY_DATA_ENDPOINT =
+    "https://vitametrics.org/api/org/fetch-intraday";*/
+
+  const testDevicesData: DeviceData[] = [
+    {
+      deviceId: "2570612980",
+      deviceInfo: {
+        battery: "Medium",
+        batteryLevel: 59,
+        deviceVersion: "Alta HR",
+        features: [],
+        id: "2570612980",
+      },
+      heartData: [
+        {
+          dateTime: "2024-02-09",
+          value: {
+            customHeartRateZones: [],
+            heartRateZones: [
+              {
+                caloriesOut: 578.88462,
+                max: 98,
+                min: 30,
+                minutes: 376,
+                name: "Out of Range",
+              },
+              {
+                caloriesOut: 49.83132,
+                max: 137,
+                min: 98,
+                minutes: 9,
+                name: "Fat Burn",
+              },
+              {
+                caloriesOut: 0,
+                max: 166,
+                min: 137,
+                minutes: 0,
+                name: "Cardio",
+              },
+              {
+                caloriesOut: 37.751,
+                max: 220,
+                min: 166,
+                minutes: 3,
+                name: "Peak",
+              },
+            ],
+            restingHeartRate: 53,
+          },
+        },
+        {
+          dateTime: "2024-02-10",
+          value: {
+            customHeartRateZones: [],
+            heartRateZones: [
+              {
+                caloriesOut: 578.88462,
+                max: 98,
+                min: 30,
+                minutes: 376,
+                name: "Out of Range",
+              },
+              {
+                caloriesOut: 49.83132,
+                max: 137,
+                min: 98,
+                minutes: 9,
+                name: "Fat Burn",
+              },
+              {
+                caloriesOut: 0,
+                max: 166,
+                min: 137,
+                minutes: 0,
+                name: "Cardio",
+              },
+              {
+                caloriesOut: 37.751,
+                max: 220,
+                min: 166,
+                minutes: 3,
+                name: "Peak",
+              },
+            ],
+            restingHeartRate: 69,
+          },
+        },
+      ],
+      stepsData: [
+        { dateTime: "2024-02-09", value: "1000" },
+        { dateTime: "2024-02-10", value: "2000" },
+      ],
+    },
+  ];
 
   const { deviceViewDevices } = useOrg();
-  const [startDate, setStartDate] = useState(new Date("2024-02-10"));
+  const [startDate, setStartDate] = useState(new Date("2024-02-09"));
   const [rangeStartDate, setRangeStartDate] = useState(new Date("2024-02-10"));
   const [rangeEndDate, setRangeEndDate] = useState(new Date("2024-02-11"));
+  const [downloadDate, setDownloadDate] = useState(new Date("2024-02-10"));
   const [detailLevel, setDetailLevel] = useState<string>("1min");
   const [selectedDevices, setSelectedDevices] = useState<string[]>(
     deviceViewDevices.map((device) => device.id)
   );
-  const [devicesData, setDevicesData] = useState<any[]>([]); //temp any
+
+  const [devicesData, setDevicesData] = useState<DeviceData[]>(
+    localStorage.getItem("devicesData")
+      ? JSON.parse(localStorage.getItem("devicesData") as string)
+      : []
+  );
+  //const [devicesData, setDevicesData] = useState<DeviceData[]>(testDevicesData);
+  console.log(devicesData);
+
   const loadedDevicesRef = useRef<DeviceContext>({});
-  const [deviceData, setDeviceData] = useState<any[]>([]); //temp any
   const [showBackDrop, setShowBackDrop] = useState(false);
-
-  //const saveDeviceDataToLocalStorage = (deviceId: string, data: DeviceData) => {
-  //localStorage.setItem(`deviceData_${deviceId}`, JSON.stringify(data));
-  //};
-
-  /*
-  const getDeviceDataFromLocalStorage = (
-    deviceId: string
-  ): DeviceData | undefined => {
-    const data = localStorage.getItem(`deviceData_${deviceId}`);
-    return data ? JSON.parse(data) : undefined;
-  };
-*/
-
-  const fetchSingleViewDevice = async (deviceId: string) => {
-    //const deviceData = getDeviceDataFromLocalStorage(deviceId);
-    console.log("fetching single device data");
-
-    try {
-      const date = formatDate(startDate);
-      const response = await axios.get(FETCH_INTRADAY_DATA_ENDPOINT, {
-        params: {
-          deviceId: deviceId,
-          dataType: "heart",
-          date: date,
-          detailLevel: detailLevel,
-        },
-        withCredentials: true,
-      });
-
-      console.log(response.data);
-
-      const newDeviceData: DeviceData = {
-        data: response.data,
-        rangeStartDate: rangeStartDate,
-        rangeEndDate: rangeEndDate,
-      };
-      setDeviceData((prev) => ({ ...prev, [deviceId]: newDeviceData }));
-      //saveDeviceDataToLocalStorage(deviceId, newDeviceData);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const formatDate = (date: Date) => {
     const month =
@@ -145,14 +227,8 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
     );
   };
 
-  /*
-  const fetchWeeklyDeviceData = async (deviceId: string) => {
-    console.log("fetching weekly device data based on range date");
-  };*/
-
   const fetchDevice = async (deviceId: string) => {
     if (shouldFetchDeviceData(deviceId)) {
-      console.log("fetching device data based on range date for: " + deviceId);
       try {
         const startDate = formatDate(rangeStartDate);
         const endDate = formatDate(rangeEndDate);
@@ -167,14 +243,18 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
         });
 
         console.log(response.data);
+        //console.log("fetched device range data for: " + deviceId);
 
         setDevicesData((prev) => [...prev, response.data]);
+        localStorage.setItem("devicesData", JSON.stringify(devicesData));
+
         loadedDevicesRef.current[deviceId] = {
           rangeStartDate,
           rangeEndDate,
         };
       } catch (error) {
         console.error(error);
+        setDevicesData(testDevicesData);
       }
     }
   };
@@ -188,22 +268,13 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [rangeStartDate, rangeEndDate, selectedDevices]);
 
+  /*
   useEffect(() => {
-    if (selectedDevices.length > 0) {
-      selectedDevices.forEach((deviceId) => {
-        fetchSingleViewDevice(deviceId);
-      });
-    }
-  }, [startDate, detailLevel]);
-
-  useEffect(() => {
-    //fetchWorkingDevice();
-
     deviceViewDevices.forEach((device) => {
       fetchDevice(device.id);
-      fetchSingleViewDevice(device.id);
+      //fetchSingleViewDevice(device.id);
     });
-  }, [deviceViewDevices]);
+  }, [deviceViewDevices]);*/
 
   return (
     <DashboardContext.Provider
@@ -212,6 +283,8 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
         rangeStartDate,
         rangeEndDate,
         setRangeStartDate,
+        downloadDate,
+        setDownloadDate,
         setStartDate,
         setRangeEndDate,
         showBackDrop,
@@ -222,7 +295,6 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
         devicesData,
         detailLevel,
         setDetailLevel,
-        deviceData,
         fetchDevice,
       }}
     >

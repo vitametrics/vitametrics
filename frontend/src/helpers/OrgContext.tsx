@@ -19,13 +19,6 @@ interface DeviceData {
   lastSyncTime: string;
   batteryLevel: number;
   ownerName: string;
-  steps: { date: string; value: number }[];
-  vo2max: { date: string; value: number }[];
-  heart: { date: string; value: number }[];
-  calories: { date: string; value: number }[];
-  distance: { date: string; value: number }[];
-  elevation: { date: string; value: number }[];
-  floors: { date: string; value: number }[];
   [key: string]: any; // This line is the index signature
 }
 
@@ -62,11 +55,6 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [orgId, setOrgId] = useState<string>("");
   const [members, setMembers] = useState<Member[]>([]);
   const [devices, setDevices] = useState<DeviceData[]>([]);
-  const [deviceViewDevices, setDeviceViewDevices] = useState<Device[]>(
-    localStorage.getItem("devices")
-      ? JSON.parse(localStorage.getItem("devices")!)
-      : []
-  );
 
   const testDeviceViewDevices = [
     {
@@ -78,6 +66,7 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       mac: "123456789",
       type: "TRACKER",
     },
+    /*
     {
       id: "2570612417",
       deviceVersion: "Fitbit Pro",
@@ -95,7 +84,7 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       ownerName: "Sean Cornell",
       mac: "123456789",
       type: "TRACKER",
-    },
+    },*/
   ];
 
   const testDevices = [
@@ -595,6 +584,12 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       ],
     },
   ];
+
+  const [deviceViewDevices, setDeviceViewDevices] = useState<Device[]>(
+    localStorage.getItem("devices")
+      ? JSON.parse(localStorage.getItem("devices")!)
+      : testDeviceViewDevices
+  );
 
   const AUTH_ENDPOINT =
     import.meta.env.VITE_APP_NODE_ENV === "production"

@@ -2,19 +2,19 @@
 //import DatePicker from "react-datepicker";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useState } from "react";
+import { useState, lazy, Suspense, useEffect } from "react";
 import axios from "axios";
 import { useOrg } from "../../helpers/OrgContext";
 import { useSearchParams } from "react-router-dom";
 
-/*
 const LazyBarChart = lazy(() =>
   import("react-chartjs-2").then((module) => ({ default: module.Bar }))
 );
+
 const LazyLineChart = lazy(() =>
   import("react-chartjs-2").then((module) => ({ default: module.Line }))
-);*/
-//import "chart.js/auto";
+);
+import "chart.js/auto";
 import { useDashboard } from "../../helpers/DashboardContext";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
@@ -40,6 +40,39 @@ type DeviceData = {
   [key: string]: any; // This line is the index signature
 };*/
 
+interface DeviceInfo {
+  battery: string;
+  batteryLevel: number;
+  deviceVersion: string;
+  features: string[];
+  id: string;
+}
+
+interface HeartData {
+  dateTime: string;
+  value: {
+    customHeartRateZones: any[];
+    heartRateZones: any[];
+    restingHeartRate: number;
+  };
+}
+
+interface StepsData {
+  dateTime: string;
+  value: string;
+}
+
+interface DeviceData {
+  deviceId: string;
+  deviceInfo: DeviceInfo;
+  heartData: HeartData[];
+  stepsData: StepsData[];
+}
+interface DataItem {
+  dateTime: string;
+  value: string;
+}
+
 const Data = () => {
   /*
   const DOWNLOAD_ENDPOINT =
@@ -49,24 +82,29 @@ const Data = () => {
   const { deviceViewDevices, orgName } = useOrg();
   const [searchParams, setSearchParams] = useSearchParams({
     detailLevel: "1min",
-    dataType: "heart",
+    dataType: "steps",
     graphType: "bar",
     rangeGraphType: "bar",
-    rangeDataType: "heart",
-    rangeDetailLevel: "1min",
+    rangeDataType: "steps",
+    //rangeDetailLevel: "1min",
+    downloadDataType: "steps",
+    downloadDetailLevel: "1min",
   });
 
-  const dataType = searchParams.get("dataType") || "heart";
+  //const dataType = searchParams.get("dataType") || "steps";
   //const graphType = searchParams.get("graphType") || "bar";
-  const detailLevel = searchParams.get("detailLevel") || "1min";
-  const rangeDataType = searchParams.get("rangeDataType") || "heart";
+  //const detailLevel = searchParams.get("detailLevel") || "1min";
+  const rangeDataType = searchParams.get("rangeDataType") || "steps";
   const rangeGraphType = searchParams.get("rangeGraphType") || "bar";
-  const rangeDetailLevel = searchParams.get("rangeDetailLevel") || "1min";
+  //const rangeDetailLevel = searchParams.get("rangeDetailLevel") || "1min";
+  const downloadDataType = searchParams.get("downloadDataType") || "steps";
+  const downloadDetailLevel = searchParams.get("downloadDetailLevel") || "1min";
+
   const [downloadMsg, setDownloadMsg] = useState("");
   const [downloadFlag, setDownloadFlag] = useState(false);
 
   const {
-    startDate,
+    //startDate,
     // setStartDate,
     setRangeStartDate,
     setRangeEndDate,
@@ -74,14 +112,18 @@ const Data = () => {
     rangeStartDate,
     selectedDevices,
     handleDeviceSelectionChange,
-    fetchDevice,
+    //fetchDevice,
+    devicesData,
+    downloadDate,
+    setDownloadDate,
   } = useDashboard();
   //const [chartData, setChartData] = useState({});
-  //const [rangeChartData, setRangeChartData] = useState({});
+  const [rangeChartData, setRangeChartData] = useState({});
 
+  /*
   const handleFetchDevice = async () => {
     await fetchDevice("2570612980");
-  };
+  };*/
 
   const detailLevelTypes = [
     {
@@ -103,8 +145,8 @@ const Data = () => {
   ];
 
   const dataTypeOptions = [
-    { value: "heart", label: "Heart Rate" },
     { value: "steps", label: "Steps" },
+    { value: "heart", label: "Heart Rate" },
     { value: "calories", label: "Calories" },
     { value: "distance", label: "Distance" },
     { value: "elevation", label: "Elevation" },
@@ -158,7 +200,6 @@ const Data = () => {
     });
   };*/
 
-  /*
   const generateLabelsForRange = (start: Date, end: Date) => {
     let currentDate = new Date(start);
     const labels = [];
@@ -169,7 +210,6 @@ const Data = () => {
     return labels;
   };
 
-  
   const createRangeDataset = () => {
     const start = new Date(rangeStartDate);
     start.setHours(0, 0, 0, 0);
@@ -177,18 +217,29 @@ const Data = () => {
     end.setHours(23, 59, 59, 999);
 
     const labels = generateLabelsForRange(start, end);
+    console.log("selected devices: " + selectedDevices);
 
+    console.log("device data " + devicesData);
     const datasets = selectedDevices
       .map((deviceId) => {
-        const device = devices.find((d) => d.id === deviceId);
+        const device = devicesData.find(
+          (d: DeviceData) => d.deviceId === deviceId
+        );
         if (!device) return null;
 
-        const label = device.deviceVersion + device.id;
+        const label =
+          device["deviceInfo"].deviceVersion + " " + device.deviceId;
         const borderColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
         const backgroundColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+
         const dataByDate = new Map(
-          device[rangeDataType].map((item: DataItem) => [item.date, item.value])
+          device["stepsData"].map((item: DataItem) => [
+            item.dateTime,
+            item.value,
+          ])
         );
+        console.log(dataByDate);
+
         const data = labels.map((dateLabel) => dataByDate.get(dateLabel) || 0);
 
         return {
@@ -206,8 +257,11 @@ const Data = () => {
       labels, // Use dates from the first device as labels
       datasets,
     });
+    console.log(labels);
+    console.log(datasets);
   };
 
+  /*
   const changeWeekDays = () => {
     const start = new Date(rangeStartDate);
     const end = new Date(rangeEndDate);
@@ -217,9 +271,8 @@ const Data = () => {
 
     setRangeStartDate(start);
     setRangeEndDate(end);
-  };
+  };*/
 
-  /*
   const renderRangeGraph = () => {
     const options = {
       maintainAspectRatio: false,
@@ -370,15 +423,15 @@ const Data = () => {
 
     for (const deviceId of selectedDevices) {
       try {
-        const date = formatDate(startDate);
+        const date = formatDate(downloadDate);
         const response = await axios.get(
           "https://vitametrics.org/api/org/download-data",
           {
             params: {
               deviceId,
-              dataType,
+              downloadDataType,
               date,
-              detailLevel,
+              downloadDetailLevel,
             },
             withCredentials: true,
           }
@@ -387,7 +440,10 @@ const Data = () => {
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement("a");
         link.href = url;
-        link.setAttribute("download", `device-${deviceId}-${date}.csv`);
+        link.setAttribute(
+          "download",
+          `device-${deviceId}-${date}-${downloadDataType}.csv`
+        );
         document.body.appendChild(link);
         link.click();
         link.parentNode?.removeChild(link);
@@ -427,11 +483,16 @@ const Data = () => {
     return `${year}-${month}-${day}`;
   };
 
-  /*
   useEffect(() => {
     createRangeDataset();
-  }, [selectedDevices, rangeDataType, rangeStartDate, rangeEndDate]);
-*/
+  }, [
+    selectedDevices,
+    rangeDataType,
+    rangeStartDate,
+    rangeEndDate,
+    devicesData,
+  ]);
+
   const fadeInItemVariants = {
     hidden: { opacity: 0 },
     show: { opacity: 1 },
@@ -449,10 +510,11 @@ const Data = () => {
       ref={ref}
       className="w-full h-full flex flex-col p-10 bg-[#1E1D20] dark:bg-hero-texture"
     >
+      {/*
       <button className="text-white" onClick={handleFetchDevice}>
         {" "}
         Test Fetch Data{" "}
-      </button>
+  </button>*/}
       <h2 className="w-full text-4xl font-ralewayBold text-white p-5 pb-0 mb-5">
         {orgName} Overview
       </h2>
@@ -660,39 +722,6 @@ const Data = () => {
                 ))}
               </select>
             </div>
-
-            <div className="flex flex-col">
-              <label
-                htmlFor="detailLevelType"
-                className="block text-sm font-medium w-full text-white"
-              >
-                Select Detail Level:
-              </label>
-              <select
-                id="detailLevelType"
-                name="detailLevelType"
-                value={rangeDetailLevel}
-                onChange={(e) =>
-                  setSearchParams(
-                    (prev) => {
-                      prev.set("rangeDetailLevel", e.target.value);
-                      return prev;
-                    },
-                    { replace: true }
-                  )
-                }
-                className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-              >
-                <option value="defaultDataType" disabled>
-                  -- Select Detail Level --
-                </option>
-                {detailLevelTypes.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
           </div>
 
           <div className="flex flex-row w-full gap-5 items-center">
@@ -734,9 +763,15 @@ const Data = () => {
         </div>
 
         <div className="w-full h-[500px] p-5 text-white bg-[#2F2D2D] rounded-xl flex justify-center items-center mb-10">
-          {/*renderRangeGraph()*/}
+          {renderRangeGraph()}
           {/*renderStatistics()*/}
         </div>
+        {/*
+        <div className="w-full h-[500px] p-5 text-white bg-[#2F2D2D] rounded-xl flex justify-center items-center mb-10">
+          {/*renderRangeGraph()
+           /*renderStatistics()
+            </div>   
+            */}
         <div className="w-full h-[400px] text-white bg-[#2F2D2D] rounded-xl flex flex-col mb-10">
           <h2 className="text-center w-full text-white p-5 text-4xl">
             Devices
@@ -787,19 +822,106 @@ const Data = () => {
             )}
           </div>
         </div>
-        {downloadFlag ? (
-          <p className="text-green-500 text-2xl font-bold mb-5">
-            {downloadMsg}
-          </p>
-        ) : (
-          <p className="text-red-500 text-2xl font-bold mb-5">{downloadMsg}</p>
-        )}
-        <button
-          className="p-5 text-2xl rounded-xl w-[250px] bg-[#606060] text-white"
-          onClick={() => downloadData()}
-        >
-          Download Data
-        </button>
+
+        <div className="flex-col">
+          <div className="flex flex-row gap-5">
+            <div className="flex flex-col">
+              <label
+                htmlFor="dataType"
+                className="block text-sm font-medium  text-white"
+              >
+                Select Data Type:
+              </label>
+              <select
+                id="dataType"
+                name="dataType"
+                value={downloadDataType}
+                onChange={(e) =>
+                  setSearchParams(
+                    (prev) => {
+                      prev.set("downloadDataType", e.target.value);
+                      return prev;
+                    },
+                    { replace: true }
+                  )
+                }
+                className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+              >
+                <option value="defaultDataType" disabled>
+                  -- Select Data Type --
+                </option>
+                {dataTypeOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex flex-col mb-5">
+              <label
+                htmlFor="detailLevelType"
+                className="block text-sm font-medium w-full text-white"
+              >
+                Select Detail Level:
+              </label>
+              <select
+                id="detailLevelType"
+                name="detailLevelType"
+                value={downloadDetailLevel}
+                onChange={(e) =>
+                  setSearchParams(
+                    (prev) => {
+                      prev.set("downloadDetailLevel", e.target.value);
+                      return prev;
+                    },
+                    { replace: true }
+                  )
+                }
+                className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+              >
+                <option value="defaultDataType" disabled>
+                  -- Select Detail Level --
+                </option>
+                {detailLevelTypes.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex flex-col">
+              <label
+                htmlFor="downloadDate"
+                className="block text-sm font-medium  text-white"
+              >
+                Select Start Date:
+              </label>
+              <DatePicker
+                selected={downloadDate}
+                onChange={(e: React.SetStateAction<any>) => setDownloadDate(e)}
+                selectsStart
+                startDate={downloadDate}
+                className=" p-2 border border-gray-300 rounded-md w-full"
+              />
+            </div>
+          </div>
+          {downloadFlag ? (
+            <p className="text-green-500 text-2xl font-bold mb-5">
+              {downloadMsg}
+            </p>
+          ) : (
+            <p className="text-red-500 text-2xl font-bold mb-5">
+              {downloadMsg}
+            </p>
+          )}
+          <button
+            className="p-5 text-2xl rounded-xl w-[250px] bg-[#606060] text-white"
+            onClick={() => downloadData()}
+          >
+            Download Data
+          </button>
+        </div>
       </div>
     </motion.div>
   );
