@@ -188,7 +188,7 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const [devicesData, setDevicesData] = useState<DeviceData[]>(
     localStorage.getItem("devicesData")
-      ? JSON.parse(localStorage.getItem("devicesData")!)
+      ? JSON.parse(localStorage.getItem("devicesData") as string)
       : []
   );
   //const [devicesData, setDevicesData] = useState<DeviceData[]>(testDevicesData);
@@ -262,6 +262,7 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     if (selectedDevices.length > 0) {
       setDevicesData([]);
+
       selectedDevices.forEach((deviceId) => {
         fetchDevice(deviceId);
       });
