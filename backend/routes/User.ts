@@ -6,7 +6,7 @@ import User from '../models/User';
 import Organization from "../models/Organization"
 import Device from '../models/Device';
 import { sendEmail } from '../util/emailUtil';
-import { query, param, validationResult, body } from 'express-validator';
+import { query, validationResult, body } from 'express-validator';
 import { CustomReq } from '../types/custom';
 const router = express.Router();
 
@@ -159,6 +159,49 @@ router.post('/change-password', verifySession, [
 } 
 });
 
+router.post('/change-email', verifySession, [
+    body('email').isEmail().withMessage('Invalid email')
+], async (expressReq: Request, res: Response) => {
+
+    const errors = validationResult(expressReq);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const req = expressReq as CustomReq;
+
+    if (!req.user) {
+        return res.status(401).json({ msg: 'Unauthorized' });
+    }
+
+    const userId = req.user.userId;
+    const {email} = req.body;
+
+    try {
+        const user = await User.findOne({ userId });
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
+        user.email = email;
+        user.emailVerified = false;
+        user.emailVerfToken = crypto.randomBytes(32).toString('hex');
+        await user.save();
+        
+        const organization = await Organization.findOne({ ownerId: userId});
+        if (organization) {
+            organization.ownerEmail = email;
+            await organization.save();
+        }
+
+        return res.status(200).json({ msg: 'Email changed!' });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ msg: 'Internal Server Error' });
+    }
+
+});
+
 // send user verification email
 router.post('/send-email-verification', verifySession, async (expressReq: Request, res: Response) => {
 
@@ -219,7 +262,7 @@ router.get('/verify-email', verifySession, [
 });
 
 router.post('/delete-account', verifySession, [
-    param('password').not().isEmpty().withMessage('Password is required')
+    body('password').not().isEmpty().withMessage('Password is required')
 ], async (expressReq: Request, res: Response) => {
 
     const errors = validationResult(expressReq);
@@ -232,7 +275,7 @@ router.post('/delete-account', verifySession, [
         return res.status(401).json({ msg: 'Unauthorized' });
     }
 
-    const password  = req.params.password;
+    const { password }  = req.body;
     const userId = req.user.userId;
 
     try {
@@ -252,7 +295,9 @@ router.post('/delete-account', verifySession, [
 
             const members = organization.members;
 
-            await Device.deleteMany({ orgId: organization._id});
+            const deviceIds = organization.devices;
+
+            await Device.deleteMany({ deviceId: {$in: deviceIds }});
 
             await Organization.deleteOne({ _id: organization._id});
 
