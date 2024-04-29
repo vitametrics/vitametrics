@@ -27,7 +27,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="bg-transparent px-32 py-5 nav fixed top-0 w-full z-50 animated-parent">
+    <nav className="bg-transparent px-32 py-5 nav fixed top-0 w-full z-50 animated-parent font-leagueSpartanBold">
       <div className="flex flex-row w-full bg-glass rounded-xl top-0 flex-wrap items-center justify-between mx-auto p-3 animated-container">
         <a
           href="/"

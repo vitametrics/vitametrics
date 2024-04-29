@@ -76,12 +76,6 @@ const Login = () => {
               {" "}
               Login{" "}
             </button>
-            <a href="/register" className="md:mb-auto">
-              <p className="mt-5 text-[#696969] font-leagueSpartan">
-                {" "}
-                Haven't started? Register
-              </p>
-            </a>
           </div>
         </div>
       </div>

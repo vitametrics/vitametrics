@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 
 const PrivacyPolicy = () => {
   return (
-    <div>
+    <div className="flex bg-fixed ">
       <Navbar />
       <div className=" p-5 dark:text-white">
         <h1>Privacy Policy</h1>
