@@ -6,7 +6,7 @@ import {
   Dispatch,
   SetStateAction,
   useEffect,
-  useRef,
+  //useRef,
 } from "react";
 import axios from "axios";
 
@@ -32,12 +32,13 @@ interface DashboardProps {
   fetchDevice: (deviceId: string) => void;
 }
 
+/*
 interface DeviceContext {
   [deviceId: string]: {
     rangeStartDate: Date;
     rangeEndDate: Date;
   };
-}
+}*/
 
 interface DeviceInfo {
   battery: string;
@@ -194,7 +195,7 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
   //const [devicesData, setDevicesData] = useState<DeviceData[]>(testDevicesData);
   console.log(devicesData);
 
-  const loadedDevicesRef = useRef<DeviceContext>({});
+  //const loadedDevicesRef = useRef<DeviceContext>({});
   const [showBackDrop, setShowBackDrop] = useState(false);
 
   const formatDate = (date: Date) => {
@@ -218,6 +219,7 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   };
 
+  /*
   const shouldFetchDeviceData = (deviceId: string) => {
     const loadedData = loadedDevicesRef.current[deviceId];
     return (
@@ -225,49 +227,43 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
       loadedData.rangeStartDate !== rangeStartDate ||
       loadedData.rangeEndDate !== rangeEndDate
     );
-  };
+  };*/
 
   const fetchDevice = async (deviceId: string) => {
-    if (shouldFetchDeviceData(deviceId)) {
-      try {
-        const startDate = formatDate(rangeStartDate);
-        const endDate = formatDate(rangeEndDate);
+    try {
+      const startDate = formatDate(rangeStartDate);
+      const endDate = formatDate(rangeEndDate);
 
-        const response = await axios.get(FETCH_DEVICE_DATA_ENDPOINT, {
-          params: {
-            id: deviceId,
-            startDate: startDate,
-            endDate: endDate,
-          },
-          withCredentials: true,
-        });
+      const response = await axios.get(FETCH_DEVICE_DATA_ENDPOINT, {
+        params: {
+          id: deviceId,
+          startDate: startDate,
+          endDate: endDate,
+        },
+        withCredentials: true,
+      });
 
-        console.log(response.data);
-        //console.log("fetched device range data for: " + deviceId);
-        //setDevicesData((prev) => [...prev, response.data]);
-        //update current id in devicesData
-        const deviceIndex = devicesData.findIndex(
-          (deviceData) => deviceData.deviceId === deviceId
-        );
+      console.log(response.data);
+      //console.log("fetched device range data for: " + deviceId);
+      //setDevicesData((prev) => [...prev, response.data]);
+      //update current id in devicesData
+      const deviceIndex = devicesData.findIndex(
+        (deviceData) => deviceData.deviceId === deviceId
+      );
 
-        if (deviceIndex !== -1) {
-          const newDevicesData = [...devicesData];
-          newDevicesData[deviceIndex] = response.data;
-          setDevicesData(newDevicesData);
-        } else {
-          setDevicesData((prev) => [...prev, response.data]);
-        }
-
-        localStorage.setItem("devicesData", JSON.stringify(devicesData));
-
-        loadedDevicesRef.current[deviceId] = {
-          rangeStartDate,
-          rangeEndDate,
-        };
-      } catch (error) {
-        console.error(error);
-        setDevicesData(testDevicesData);
+      if (deviceIndex !== -1) {
+        const newDevicesData = [...devicesData];
+        newDevicesData[deviceIndex] = response.data;
+        setDevicesData(newDevicesData);
+      } else {
+        setDevicesData((prev) => [...prev, response.data]);
       }
+
+      console.log("setting local storage");
+      localStorage.setItem("devicesData", JSON.stringify(devicesData));
+    } catch (error) {
+      console.error(error);
+      setDevicesData(testDevicesData);
     }
   };
 
