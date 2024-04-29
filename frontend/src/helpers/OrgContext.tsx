@@ -713,7 +713,6 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     }
   };
   const fetchOrg = async () => {
-    console.log("fetching org " + orgId);
     try {
       const response = await axios.get(FETCH_ORG_ENDPOINT, {
         params: {
@@ -722,10 +721,7 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         withCredentials: true,
       });
 
-      console.log(response.data);
       setOrgName(response.data.organization.orgName);
-      console.log(response.data);
-      //setDevices(response.data.organization.devices);
       setMembers(response.data.members || []);
       //await fetchDevices();
     } catch (error) {
