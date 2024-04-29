@@ -1,12 +1,12 @@
 import express, { Request, Response } from 'express';
-import argon2 from 'argon2';
+import argon2, { verify } from 'argon2';
 import crypto from 'crypto';
 import verifySession from '../middleware/verifySession';
 import User from '../models/User';
 import Organization from "../models/Organization"
 import Device from '../models/Device';
 import { sendEmail } from '../util/emailUtil';
-import { query, validationResult, body } from 'express-validator';
+import { query, param, validationResult, body } from 'express-validator';
 import { CustomReq } from '../types/custom';
 const router = express.Router();
 
@@ -218,35 +218,61 @@ router.get('/verify-email', verifySession, [
     }
 });
 
-router.post('/delete-account', verifySession, async (expressReq: Request, res: Response) => {
+router.post('/delete-account', verifySession, [
+    param('password').not().isEmpty().withMessage('Password is required')
+], async (expressReq: Request, res: Response) => {
+
+    const errors = validationResult(expressReq);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     
-        const req = expressReq as CustomReq;
-    
-        if (!req.user) {
-            return res.status(401).json({ msg: 'Unauthorized' });
+    const req = expressReq as CustomReq;
+    if (!req.user) {
+        return res.status(401).json({ msg: 'Unauthorized' });
+    }
+
+    const password  = req.params.password;
+    const userId = req.user.userId;
+
+    try {
+
+        const user = await User.findOne({ userId });
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found'});
         }
-    
-        const userId = req.user.userId;
 
-        try {
+        const passMatch = await verify(user.password, password);
+        if (!passMatch) {
+            return res.status(401).json({ msg: 'Incorrect Password'});
+        }
 
+        const organization = await Organization.findOne({ ownerId: userId});
+        if (organization) {
+
+            const members = organization.members;
+
+            await Device.deleteMany({ orgId: organization._id});
+
+            await Organization.deleteOne({ _id: organization._id});
+
+            for (const member of members) {
+                await User.deleteOne({ _id: member});
+            }
+        } else {
+            
             await Organization.updateMany(
                 { members: userId },
                 { $pull: { members: userId } }
             );
 
-            const organization = await Organization.findOne({ ownerId: userId});
-            if (organization) {
-                await Device.deleteMany({ orgId: organization._id});
-
-                await Organization.deleteOne({ _id: organization._id});
-            }
             await User.deleteOne({ userId });
-            return res.status(200).json({ msg: 'Account deleted' });
-        } catch (err) {
-            console.error(err);
-            return res.status(500).json({ msg: 'Internal Server Error' });
         }
+        return res.status(200).json({ msg: 'Account deleted' });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ msg: 'Internal Server Error' });
+    }
 });
 
 export default router;

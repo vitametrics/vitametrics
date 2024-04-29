@@ -1,6 +1,6 @@
 import User from '../models/User';
 import Organization from '../models/Organization';
-import Setting from "../routes/Setting";
+import Setting from "../models/Setting";
 import crypto from 'crypto';
 import argon2 from 'argon2';
 import { sendEmail } from './emailUtil';
