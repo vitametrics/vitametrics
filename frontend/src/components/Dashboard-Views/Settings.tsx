@@ -83,6 +83,7 @@ const Settings = () => {
   useEffect(() => {
     const timerId = setTimeout(() => {
       setDebounceDeleteConfirmPassword(deletePassword);
+      console.log(debounceDeleteConfirmPassword);
     }, 200);
     return () => clearTimeout(timerId);
   }, [deletePassword]);
@@ -93,12 +94,15 @@ const Settings = () => {
       return;
     }
     try {
-      await axios.post("https://vitametrics.org/api/user/delete-account", {
-        params: {
-          password: debounceDeleteConfirmPassword,
+      await axios.post(
+        "https://vitametrics.org/api/user/delete-account",
+        {
+          debounceDeleteConfirmPassword,
         },
-        withCredentials: true,
-      });
+        {
+          withCredentials: true,
+        }
+      );
       window.location.href = "/";
     } catch (error) {
       setDeletePasswordMsg("ERROR: Incorrect password!");
