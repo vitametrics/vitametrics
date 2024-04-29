@@ -1,14 +1,17 @@
 import { useOrg } from "../../helpers/OrgContext";
 import { useAuth } from "../../helpers/AuthContext";
+import { useDashboard } from "../../helpers/DashboardContext";
 import { useState, useEffect } from "react";
 import { WarningIcon } from "../../assets/WarningIcon";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import axios from "axios";
+import { useSearchParams } from "react-router-dom";
 
 const Settings = () => {
   const { orgName } = useOrg();
   const { isEmailVerified, userEmail } = useAuth();
+  const { setShowBackDrop, showBackDrop } = useDashboard();
 
   const [changePasswordFlag, setChangePasswordFlag] = useState(false);
   const [changePasswordMsg, setChangePasswordMsg] = useState("");
@@ -20,10 +23,26 @@ const Settings = () => {
   const [changeEmailMsg, setChangeEmailMsg] = useState("");
   const [changeEmailFlag, setChangeEmailFlag] = useState(false);
 
+  const [deletePassword, setDeletePassword] = useState("");
+  const [debounceDeleteConfirmPassword, setDebounceDeleteConfirmPassword] =
+    useState("");
+  const [deletePasswordMsg, setDeletePasswordMsg] = useState("");
+
   const [verificationLinkMsg, setVerificationLinkMsg] = useState("");
   const [verificationLinkFlag, setVerificationLinkFlag] = useState(false);
   const [newEmail, setNewEmail] = useState("");
   const [debouncedEmail, setDebouncedEmail] = useState("");
+
+  const [searchParams, setSearchParams] = useSearchParams({
+    view: "settings",
+    showDeleteMenu: "false",
+  });
+
+  const showDeleteMenu = searchParams.get("showDeleteMenu") === "true";
+
+  useEffect(() => {
+    if (showDeleteMenu) setShowBackDrop(showDeleteMenu);
+  }, []);
 
   const CHANGE_PASSWORD_ENDPOINT =
     import.meta.env.VITE_APP_NODE_ENV === "production"
@@ -61,13 +80,85 @@ const Settings = () => {
     return () => clearTimeout(timerId);
   }, [newEmail]);
 
+  useEffect(() => {
+    const timerId = setTimeout(() => {
+      setDebounceDeleteConfirmPassword(deletePassword);
+    }, 200);
+    return () => clearTimeout(timerId);
+  }, [deletePassword]);
+
+  const handleAccountDeletion = async () => {
+    if (deletePassword === "") {
+      setDeletePasswordMsg("ERROR: Password cannot be empty");
+      return;
+    }
+    try {
+      await axios.post("https://vitametrics.org/api/user/delete-account", {
+        params: {
+          password: debounceDeleteConfirmPassword,
+        },
+        withCredentials: true,
+      });
+      window.location.href = "/";
+    } catch (error) {
+      setDeletePasswordMsg("ERROR: Incorrect password!");
+      console.log(error);
+    }
+  };
+
+  const renderDeleteMenu = () => {
+    if (showDeleteMenu) {
+      return (
+        <motion.div
+          variants={fadeInItemVariants}
+          initial="hidden"
+          animate={inView ? "show" : "hidden"}
+          ref={ref}
+          className={`opacity-transition ${showBackDrop ? "show" : ""} absolute w-full  p-10 z-20 bg-[#e8e8e8] flex flex-col left-0 md:left-1/2 md:top-1/2 transform-center md:w-[500px] rounded-xl text-black`}
+        >
+          <button
+            onClick={() => toggleDeleteMenu(false)}
+            className="item-3 ml-auto"
+          ></button>
+          <h1 className="text-3xl mb-3 text-center w-full">Delete Account</h1>
+          <p className="text-yellow-500 text-center w-full mb-5">
+            Are you sure you want to delete your account? <br />
+            This action is irreversible.
+          </p>
+          <p className="text-red-500 text-center p-5"> {deletePasswordMsg}</p>
+          <h1 className="text-xl mb-1">Enter Password</h1>
+          <input
+            type="password"
+            value={deletePassword}
+            className="w-full h-10 p-6 rounded-xl mb-5"
+            onChange={(e) => setDeletePassword(e.target.value)}
+          />
+          <button
+            className="bg-red-400 p-4 text-xl w-full rounded-lg"
+            onClick={handleAccountDeletion}
+          >
+            Delete Account
+          </button>
+        </motion.div>
+      );
+    }
+  };
+
+  const toggleDeleteMenu = (show: boolean) => {
+    setSearchParams((prev) => {
+      prev.set("showDeleteMenu", show.toString());
+      return prev;
+    });
+    setShowBackDrop(show); // Show or hide backdrop when invite menu is toggled
+  };
+
   const handleChangeEmail = async () => {
     if (!debouncedEmail) {
       setChangeEmailMsg("Email cannot be empty");
       return;
     }
     try {
-      const response = await axios.post(
+      await axios.post(
         CHANGE_EMAIL_ENDPOINT!,
         {
           email: debouncedEmail,
@@ -77,7 +168,7 @@ const Settings = () => {
         }
       );
 
-      console.log(response.data);
+      //console.log(response.data);
       setNewEmail("");
       setChangeEmailFlag(true);
       setChangeEmailMsg("Email successfully changed!");
@@ -160,6 +251,7 @@ const Settings = () => {
       ref={ref}
       className="w-full h-full flex flex-col p-[3.75rem] text-white  "
     >
+      {renderDeleteMenu()}
       <h2 className="w-full text-4xl font-ralewayBold text-white mb-10">
         {orgName} Settings
       </h2>
@@ -248,9 +340,11 @@ const Settings = () => {
           Verify Email Address
         </button>
       </div>
-      <button className="bg-red-400 p-4 text-xl w-full rounded-lg md:w-[350px]">
-        {" "}
-        Delete Account{" "}
+      <button
+        className="bg-red-400 p-4 text-xl w-full rounded-lg md:w-[350px]"
+        onClick={() => toggleDeleteMenu(true)}
+      >
+        Delete Account
       </button>
     </motion.div>
   );
