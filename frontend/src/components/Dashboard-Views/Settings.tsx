@@ -97,7 +97,7 @@ const Settings = () => {
       await axios.post(
         "https://vitametrics.org/api/user/delete-account",
         {
-          debounceDeleteConfirmPassword,
+          password: debounceDeleteConfirmPassword,
         },
         {
           withCredentials: true,
