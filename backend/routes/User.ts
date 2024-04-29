@@ -230,18 +230,27 @@ router.post('/delete-account', verifySession, async (expressReq: Request, res: R
 
         try {
 
-            await Organization.updateMany(
-                { members: userId },
-                { $pull: { members: userId } }
-            );
-
             const organization = await Organization.findOne({ ownerId: userId});
             if (organization) {
+
+                const members = organization.members;
+
                 await Device.deleteMany({ orgId: organization._id});
 
                 await Organization.deleteOne({ _id: organization._id});
+
+                for (const member of members) {
+                    await User.deleteOne({ _id: member});
+                }
+            } else {
+                
+                await Organization.updateMany(
+                    { members: userId },
+                    { $pull: { members: userId } }
+                );
+                
+                await User.deleteOne({ userId });
             }
-            await User.deleteOne({ userId });
             return res.status(200).json({ msg: 'Account deleted' });
         } catch (err) {
             console.error(err);
