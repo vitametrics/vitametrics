@@ -10,7 +10,6 @@ import Home from "./pages/Home"; // Regular import for Home
 const Dashboard = lazy(() => import("./pages/UserDashboard"));
 const Login = lazy(() => import("./pages/Login"));
 const FAQs = lazy(() => import("./pages/FAQs"));
-const Register = lazy(() => import("./pages/Register"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TOS = lazy(() => import("./pages/TOS"));
 const Demo = lazy(() => import("./pages/Demo"));
@@ -79,14 +78,7 @@ function App() {
               </Suspense>
             }
           />
-          <Route
-            path="/register"
-            element={
-              <Suspense fallback={<LoadingFallback />}>
-                <Register />
-              </Suspense>
-            }
-          />
+
           <Route
             path="/privacy-policy"
             element={
