@@ -250,6 +250,8 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
       let deviceIndex = -1;
 
       for (const device of devicesData) {
+        console.log("device id in loop: " + device.deviceId);
+        console.log(device);
         if (device.deviceId === deviceId) {
           deviceIndex = devicesData.indexOf(device);
           break;
