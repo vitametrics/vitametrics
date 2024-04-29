@@ -247,25 +247,19 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
       //console.log("fetched device range data for: " + deviceId);
       //setDevicesData((prev) => [...prev, response.data]);
       //update current id in devicesData
-      let deviceIndex = -1;
+      const newDeviceData = response.data;
 
-      for (const device of devicesData) {
-        console.log("device id in loop: " + device.deviceId);
-        console.log(device);
-        if (device.deviceId === deviceId) {
-          deviceIndex = devicesData.indexOf(device);
-          break;
-        }
-      }
-
+      const deviceIndex = devicesData.findIndex(
+        (device) => device.deviceId === deviceId
+      );
       console.log("deviceIndex: " + deviceIndex);
 
       if (deviceIndex !== -1) {
         const newDevicesData = [...devicesData];
-        newDevicesData[deviceIndex] = response.data;
+        newDevicesData[deviceIndex] = newDeviceData;
         setDevicesData(newDevicesData);
       } else {
-        setDevicesData((prev) => [...prev, response.data]);
+        setDevicesData((prev) => [...prev, newDeviceData]);
       }
 
       console.log("setting local storage");
