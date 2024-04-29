@@ -244,8 +244,20 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
 
         console.log(response.data);
         //console.log("fetched device range data for: " + deviceId);
+        //setDevicesData((prev) => [...prev, response.data]);
+        //update current id in devicesData
+        const deviceIndex = devicesData.findIndex(
+          (deviceData) => deviceData.deviceId === deviceId
+        );
 
-        setDevicesData((prev) => [...prev, response.data]);
+        if (deviceIndex !== -1) {
+          const newDevicesData = [...devicesData];
+          newDevicesData[deviceIndex] = response.data;
+          setDevicesData(newDevicesData);
+        } else {
+          setDevicesData((prev) => [...prev, response.data]);
+        }
+
         localStorage.setItem("devicesData", JSON.stringify(devicesData));
 
         loadedDevicesRef.current[deviceId] = {
