@@ -232,7 +232,7 @@ const Data = () => {
             "iterating inside of devicesData (for loop): " + deviceData
           );
           if (deviceData[0].deviceId === deviceId) {
-            device = deviceData;
+            device = deviceData[0];
             break;
           }
         }
