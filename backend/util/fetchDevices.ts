@@ -11,12 +11,9 @@ async function fetchDevices(userId: string, accessToken: string, orgId: string) 
 
     for (const deviceData of deviceResponse.data) {
 
-	//console.log(deviceData);
-
 		if (deviceData.deviceVersion === "MobileTrack") {
 			continue;
 		}
-
 		validDevices.push({
 			id: deviceData.id,
 			name: deviceData.deviceVersion

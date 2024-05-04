@@ -3,6 +3,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
+import morgan from 'morgan';
 
 export const commonMiddlewares = async (app: express.Application) => {
   app.use(express.json());
@@ -11,6 +12,10 @@ export const commonMiddlewares = async (app: express.Application) => {
     origin: process.env.NODE_ENV as string === 'production' ? process.env.BASE_URL as string : '127.0.0.1',
     credentials: true
   }));
+
+  if (process.env.NODE_ENV as string === 'dev') {
+    app.use(morgan('dev'));
+  }
   
   app.use(session({
     secret: process.env.SESSION_SECRET as string, 
