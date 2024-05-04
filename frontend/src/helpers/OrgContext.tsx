@@ -723,6 +723,7 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
       setOrgName(response.data.organization.orgName);
       setMembers(response.data.members || []);
+      console.log(response.data);
       //await fetchDevices();
     } catch (error) {
       console.log(error);
@@ -762,6 +763,7 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
         setOrgName(response.data.organization.orgName);
         setMembers(response.data.members || []);
+        console.log(response.data);
         //await fetchDevices(); // Assuming fetchDevices doesn't depend on orgId directly
       } catch (error) {
         console.error(error);
