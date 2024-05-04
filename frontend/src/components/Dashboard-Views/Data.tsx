@@ -221,6 +221,7 @@ const Data = () => {
     console.log(
       "iterating through devicesData in createRangeDataset(): " + devicesData
     );
+    console.log("creating dataset type of: " + rangeDataType);
 
     const datasets = selectedDevices
       .map((deviceId) => {
@@ -232,8 +233,6 @@ const Data = () => {
           device["deviceInfo"].deviceVersion + " " + device.deviceId;
         const borderColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
         const backgroundColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
-
-        console.log("creating dataset type of: " + rangeDataType);
 
         const dataByDate = new Map(
           device[`${rangeDataType}`].map((item: DataItem) => [
