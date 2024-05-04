@@ -26,7 +26,7 @@ const Members = () => {
     triggerOnce: true, // Ensures the animation only plays once
   });
   const { orgName, members, fetchOrg } = useOrg();
-  const { isOrgOwner } = useAuth();
+  const { isOrgOwner, userId } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams({
     view: "members",
     showInviteMenu: "false",
@@ -149,7 +149,7 @@ const Members = () => {
           <h1 className="text-2xl text-center"> Member Info</h1>
           <h1 className="text-2xl mb-3 text-center">{user.name}</h1>
           <h1 className="text-xl mb-1">{user.email}</h1>
-          {isOrgOwner && (
+          {isOrgOwner && userId != member && (
             <button
               onClick={() => handleRemoveMember(user.userId)}
               className={`w-full mt-auto ${confirmDelete.id === user.userId && confirmDelete.confirm ? "bg-yellow-500" : "bg-red-500"} text-white p-3 rounded-lg`}
