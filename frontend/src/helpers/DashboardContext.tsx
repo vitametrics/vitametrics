@@ -286,6 +286,7 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
         const existingIndex = -1;
 
         for (const device of prevDevicesData) {
+          console.log(device);
           console.log("from prev devices: " + device.deviceId);
         }
 
