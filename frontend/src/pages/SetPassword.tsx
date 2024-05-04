@@ -18,7 +18,6 @@ const SetPassword = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [debouncedPassword, setDebouncedPassword] = useState("");
   const [debouncedConfirmPassword, setDebouncedConfirmPassword] = useState("");
-  const token = searchParams.get("token");
   const [isTokenValid, setIsTokenValid] = useState(false);
   const SET_PASSWORD_ENDPOINT =
     import.meta.env.VITE_APP_NODE_ENV === "production"
