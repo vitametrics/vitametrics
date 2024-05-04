@@ -226,7 +226,6 @@ const Data = () => {
           (d: DeviceData) => d.deviceId === deviceId
         );
         if (!device) return null;
-
         const label =
           device["deviceInfo"].deviceVersion + " " + device.deviceId;
         const borderColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
@@ -429,7 +428,7 @@ const Data = () => {
           {
             params: {
               deviceId: deviceId,
-              type: downloadDataType,
+              dataType: downloadDataType,
               date: date,
               detailLevel: downloadDetailLevel,
             },
