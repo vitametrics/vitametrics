@@ -72,7 +72,6 @@ const Members = () => {
   const handleRemoveMember = async (memberId: string) => {
     if (confirmDelete.confirm && confirmDelete.id === memberId) {
       try {
-        console.log(memberId);
         const response = await axios.post(REMOVE_MEMBER_ENDPOINT, {
           params: {
             userId: memberId,
@@ -80,7 +79,7 @@ const Members = () => {
           withCredentials: true,
         });
         console.log(response.data);
-        setConfirmDelete({ id: "", confirm: false });
+        handleClose();
       } catch (error) {
         console.log(error);
       }
