@@ -222,10 +222,6 @@ const Data = () => {
       "iterating through devicesData in createRangeDataset(): " + devicesData
     );
 
-    for (const device in devicesData) {
-      console.log("device: " + device);
-    }
-
     const datasets = selectedDevices
       .map((deviceId) => {
         const device = devicesData.find(

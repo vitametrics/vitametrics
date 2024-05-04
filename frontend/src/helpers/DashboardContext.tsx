@@ -281,26 +281,25 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
         "searching through the previous devices data: " + devicesData
       );
       setDevicesData((prevDevicesData) => {
+        console.log("previously was: " + prevDevicesData);
         const existingIndex = prevDevicesData.findIndex(
           (device) => device.deviceId === deviceId
         );
 
         if (existingIndex !== -1) {
-          // Update existing device data
           const updatedDevicesData = [...prevDevicesData];
           updatedDevicesData[existingIndex] = newDeviceData;
           localStorage.setItem(
             "devicesData",
             JSON.stringify(updatedDevicesData)
-          ); // Update localStorage here
+          );
           return updatedDevicesData;
         } else {
-          // Add new device data
           const updatedDevicesData = [...prevDevicesData, newDeviceData];
           localStorage.setItem(
             "devicesData",
             JSON.stringify(updatedDevicesData)
-          ); // Update localStorage here
+          );
           return updatedDevicesData;
         }
       });
