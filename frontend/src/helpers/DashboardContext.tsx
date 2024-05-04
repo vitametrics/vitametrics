@@ -264,6 +264,7 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
         console.log("from prev devices: " + device.deviceId);
       }
     }
+    return true;
   };
 
   const fetchDevice = async (deviceId: string) => {
