@@ -1,11 +1,11 @@
 db.createUser(
 	{
-		user: "physiobit",
-		pwd: "physiobit",
+		user: "vitametrics",
+		pwd: "vitametrics",
 		roles: [
 			{
 				role: "readWrite",
-				db: "physiobit"
+				db: "vitametrics"
 			}
 		]
 	}
