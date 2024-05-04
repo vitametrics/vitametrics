@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 //import { useHistory } from "react-router-dom";
 
@@ -20,6 +21,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const debouncedEmail = useDebounce(email, 500);
   const debouncedPassword = useDebounce(password, 500);
+  const [msg, setMsg] = useState("");
   const { login } = useAuth();
 
   const handleLogin = async () => {
@@ -33,8 +35,10 @@ const Login = () => {
       if (response.data) {
         login();
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      const errorMessage =
+        error.response.data.message || "An unknown error occurred";
+      setMsg(errorMessage);
     }
   };
 
@@ -52,12 +56,13 @@ const Login = () => {
                 alt="VitametricsLogo"
               />
             </a>
-            <h2 className="font-bold text-4xl w-72 mt-5 text-center text-primary">
+            <h2 className="font-bold text-4xl w-72 mt-5 mb-5 text-center text-primary">
               {" "}
               Login{" "}
             </h2>
+            <a className="text-red-500 mb-3"> {msg} </a>
             <input
-              className="p-[10px] mt-5 w-72 bg-[#d2d1d1] text-black  rounded-lg border-[#6d6c6c]"
+              className="p-[10px] w-72 bg-[#d2d1d1] text-black  rounded-lg border-[#6d6c6c]"
               type="text"
               placeholder="Email"
               onChange={(e) => setEmail(e.target.value)}
