@@ -245,7 +245,7 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
     for (const device of devicesData) {
       console.log("inside of shouldFetchDevice:" + device); //this works -- it outputs a device
       if (device) {
-        console.log("in should fetch data: " + device.deviceId);
+        console.log("in should fetch data: " + device[0].deviceId);
         if (device.deviceId === deviceId) {
           console.log("found the device id: " + deviceId);
 
