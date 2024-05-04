@@ -219,10 +219,9 @@ const Data = () => {
     const labels = generateLabelsForRange(start, end);
     console.log("selected devices: " + selectedDevices);
 
-    console.log("device data " + devicesData);
     const datasets = selectedDevices
-      .map((deviceId) => {
-        const device = devicesData.find(
+      .map((deviceId, index: number) => {
+        const device = devicesData[index].find(
           (d: DeviceData) => d.deviceId === deviceId
         );
         if (!device) return null;
