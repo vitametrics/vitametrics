@@ -199,11 +199,8 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
   });
 
   useEffect(() => {
-    // Example: You might want to update localStorage when devicesData changes
     localStorage.setItem("devicesData", JSON.stringify(devicesData));
-  }, [devicesData]); // Only re-run this effect if devicesData changes
-
-  console.log("devicesData: ", devicesData);
+  }, [devicesData]);
 
   //const loadedDevicesRef = useRef<DeviceContext>({});
   const [showBackDrop, setShowBackDrop] = useState(false);
@@ -239,27 +236,58 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
     );
   };*/
 
+  const shouldFetchDevice = (deviceId: string) => {
+    for (const device of devicesData) {
+      console.log(device); //this works -- it outputs a device
+      if (device) {
+        console.log("from prev devices: " + device.deviceId);
+        if (device.deviceId === deviceId) {
+          console.log("found the device id: " + deviceId);
+
+          //check if the date range is the same or within the range
+          const deviceStartDate = new Date(device.stepsData[0].dateTime);
+          const deviceEndDate = new Date(
+            device.stepsData[device.stepsData.length - 1].dateTime
+          );
+
+          if (
+            deviceStartDate <= rangeStartDate &&
+            deviceEndDate >= rangeEndDate
+          ) {
+            console.log("no need to fetch data for: " + deviceId);
+            return false;
+          } else {
+            console.log("need to fetch data for: " + deviceId);
+            return true;
+          }
+        }
+        console.log("from prev devices: " + device.deviceId);
+      }
+    }
+  };
+
   const fetchDevice = async (deviceId: string) => {
-    try {
-      const startDate = formatDate(rangeStartDate);
-      const endDate = formatDate(rangeEndDate);
+    if (shouldFetchDevice(deviceId)) {
+      try {
+        const startDate = formatDate(rangeStartDate);
+        const endDate = formatDate(rangeEndDate);
 
-      const response = await axios.get(FETCH_DEVICE_DATA_ENDPOINT, {
-        params: {
-          id: deviceId,
-          startDate: startDate,
-          endDate: endDate,
-        },
-        withCredentials: true,
-      });
+        const response = await axios.get(FETCH_DEVICE_DATA_ENDPOINT, {
+          params: {
+            id: deviceId,
+            startDate: startDate,
+            endDate: endDate,
+          },
+          withCredentials: true,
+        });
 
-      console.log(response.data);
-      //console.log("fetched device range data for: " + deviceId);
-      //setDevicesData((prev) => [...prev, response.data]);
-      //update current id in devicesData
-      const newDeviceData = response.data;
+        console.log(response.data);
+        //console.log("fetched device range data for: " + deviceId);
+        //setDevicesData((prev) => [...prev, response.data]);
+        //update current id in devicesData
+        const newDeviceData = response.data;
 
-      /*
+        /*
       const deviceIndex = devicesData.findIndex(
         (device) => device.deviceId === deviceId
       );
@@ -276,47 +304,48 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
       console.log("setting local storage");
       localStorage.setItem("devicesData", JSON.stringify(devicesData));*/
 
-      console.log(
-        "searching through the previous devices data: " + devicesData
-      );
-      setDevicesData((prevDevicesData) => {
-        console.log("previously was: " + prevDevicesData);
+        console.log(
+          "searching through the previous devices data: " + devicesData
+        );
+        setDevicesData((prevDevicesData) => {
+          console.log("previously was: " + prevDevicesData);
 
-        let existingIndex = -1;
+          let existingIndex = -1;
 
-        for (const device of prevDevicesData) {
-          console.log(device); //this works -- it outputs a device
-          if (device) {
-            console.log("from prev devices: " + device.deviceId);
-            if (device.deviceId === deviceId) {
-              console.log("found the device id: " + deviceId);
-              existingIndex++;
-              break;
+          for (const device of prevDevicesData) {
+            console.log(device); //this works -- it outputs a device
+            if (device) {
+              console.log("from prev devices: " + device.deviceId);
+              if (device.deviceId === deviceId) {
+                console.log("found the device id: " + deviceId);
+                existingIndex++;
+                break;
+              }
+              console.log("from prev devices: " + device.deviceId);
             }
-            console.log("from prev devices: " + device.deviceId);
           }
-        }
 
-        if (existingIndex !== -1) {
-          const updatedDevicesData = [...prevDevicesData];
-          updatedDevicesData[existingIndex] = newDeviceData;
-          localStorage.setItem(
-            "devicesData",
-            JSON.stringify(updatedDevicesData)
-          );
-          return updatedDevicesData;
-        } else {
-          const updatedDevicesData = [...prevDevicesData, newDeviceData];
-          localStorage.setItem(
-            "devicesData",
-            JSON.stringify(updatedDevicesData)
-          );
-          return updatedDevicesData;
-        }
-      });
-    } catch (error) {
-      console.error(error);
-      setDevicesData(testDevicesData);
+          if (existingIndex !== -1) {
+            const updatedDevicesData = [...prevDevicesData];
+            updatedDevicesData[existingIndex] = newDeviceData;
+            localStorage.setItem(
+              "devicesData",
+              JSON.stringify(updatedDevicesData)
+            );
+            return updatedDevicesData;
+          } else {
+            const updatedDevicesData = [...prevDevicesData, newDeviceData];
+            localStorage.setItem(
+              "devicesData",
+              JSON.stringify(updatedDevicesData)
+            );
+            return updatedDevicesData;
+          }
+        });
+      } catch (error) {
+        console.error(error);
+        setDevicesData(testDevicesData);
+      }
     }
   };
 

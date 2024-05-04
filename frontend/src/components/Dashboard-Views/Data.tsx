@@ -74,29 +74,19 @@ interface DataItem {
 }
 
 const Data = () => {
-  /*
-  const DOWNLOAD_ENDPOINT =
-    import.meta.env.NODE_ENV === "production"
-      ? import.meta.env.VITE_APP_DOWNLOAD_DATA_ENDPOINT
-      : import.meta.env.VITE_APP_DOWNLOAD_DATA_DEV_ENDPOINT;*/
   const { deviceViewDevices, orgName } = useOrg();
   const [searchParams, setSearchParams] = useSearchParams({
     detailLevel: "1min",
     dataType: "steps",
     graphType: "bar",
     rangeGraphType: "bar",
-    rangeDataType: "steps",
+    rangeDataType: "stepsData",
     //rangeDetailLevel: "1min",
     downloadDataType: "steps",
     downloadDetailLevel: "1min",
   });
-
-  //const dataType = searchParams.get("dataType") || "steps";
-  //const graphType = searchParams.get("graphType") || "bar";
-  //const detailLevel = searchParams.get("detailLevel") || "1min";
-  const rangeDataType = searchParams.get("rangeDataType") || "steps";
+  const rangeDataType = searchParams.get("rangeDataType") || "stepsData";
   const rangeGraphType = searchParams.get("rangeGraphType") || "bar";
-  //const rangeDetailLevel = searchParams.get("rangeDetailLevel") || "1min";
   const downloadDataType = searchParams.get("downloadDataType") || "steps";
   const downloadDetailLevel = searchParams.get("downloadDetailLevel") || "1min";
 
@@ -145,13 +135,22 @@ const Data = () => {
     },
   ];
 
-  const dataTypeOptions = [
+  const downloadTypeOptions = [
     { value: "steps", label: "Steps" },
     { value: "heart", label: "Heart Rate" },
     { value: "calories", label: "Calories" },
     { value: "distance", label: "Distance" },
     { value: "elevation", label: "Elevation" },
     { value: "floors", label: "Floors" },
+  ];
+
+  const dataTypeOptions = [
+    { value: "stepsData", label: "Steps" },
+    { value: "heartData", label: "Heart Rate" },
+    { value: "caloriesData", label: "Calories" },
+    { value: "distanceData", label: "Distance" },
+    { value: "elevationData", label: "Elevation" },
+    { value: "floorsData", label: "Floors" },
   ];
 
   const graphTypeOptions = [
@@ -235,7 +234,7 @@ const Data = () => {
         const backgroundColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
 
         const dataByDate = new Map(
-          device["stepsData"].map((item: DataItem) => [
+          device[rangeDataType].map((item: DataItem) => [
             item.dateTime,
             item.value,
           ])
@@ -859,7 +858,7 @@ const Data = () => {
                 <option value="defaultDataType" disabled>
                   -- Select Data Type --
                 </option>
-                {dataTypeOptions.map((option) => (
+                {downloadTypeOptions.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
                   </option>
