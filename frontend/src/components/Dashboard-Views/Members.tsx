@@ -73,9 +73,8 @@ const Members = () => {
     if (confirmDelete.confirm && confirmDelete.id === memberId) {
       try {
         await axios.post(REMOVE_MEMBER_ENDPOINT, {
-          params: {
             userId: memberId,
-          },
+          }, {
           withCredentials: true,
         });
         await fetchOrg();

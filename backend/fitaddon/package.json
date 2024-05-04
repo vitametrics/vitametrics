@@ -1,9 +1,0 @@
-{
-  "name": "fitaddon",
-  "version": "1.0.0",
-  "main": "./build/Release/fitaddon.node",
-  "license": "MIT",
-  "dependencies": {
-    "node-addon-api": "^8.0.0"
-  }
-}
