@@ -224,6 +224,7 @@ const Data = () => {
 
     const datasets = selectedDevices
       .map((deviceId) => {
+        console.log("inside of mapping selected devices " + devicesData);
         const device = devicesData.find(
           (d: DeviceData) => d.deviceId === deviceId
         );
@@ -231,6 +232,7 @@ const Data = () => {
           console.log("device " + deviceId + " not found");
           return null;
         }
+        console.log("device found: " + device.deviceId);
 
         const label =
           device["deviceInfo"].deviceVersion + " " + device.deviceId;
