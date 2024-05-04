@@ -1,5 +1,5 @@
 import express, {Request, Response} from 'express';
-import { query, validationResult } from 'express-validator';
+import { query, body, validationResult } from 'express-validator';
 import { DateTime } from 'luxon';
 // import multer from 'multer';
 import crypto from 'crypto';
@@ -11,7 +11,7 @@ import fetchDevices from '../util/fetchDevices';
 import fetchIntradayData from '../util/fetchIntraday';
 import { sendEmail } from '../util/emailUtil';
 import Organization, {IOrganization} from '../models/Organization';
-import User from '../models/User';
+import User, { IUser } from '../models/User';
 import fetchData from '../util/fetchData';
 const router = express.Router();
 // const upload = multer({ dest: '../../uploads'});
@@ -20,29 +20,24 @@ const router = express.Router();
 // get organization info
 router.get('/info', verifySession, checkOrgMembership as any, [
     query('orgId').not().isEmpty().withMessage('No orgId provided')
-], async (req: Request, res: Response) => {
+], async (expressReq: Request, res: Response) => {
 
-    const errors = validationResult(req);
+    const errors = validationResult(expressReq);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
 
+    const req = expressReq as CustomReq;
+
     const { orgId } = req.query;
 
 
-    const org = await Organization.findOne({ orgId: orgId as string })
-
-    if (!org) {
-        return res.status(404).json({ msg: 'Organization not found' });
-    }
-
     const members = await User.find({
-        '_id': { $in: org.members }
+        '_id': { $in: req.organization?.members }
     });
 
-
     return res.status(200).json({
-        organization: org,
+        organization: req.organization,
         members: members
     });
 });
@@ -90,7 +85,7 @@ router.post('/add-member', verifySession, checkOrgMembership as any, async(expre
         await sendEmail({
             to: email,
             subject: `You have been invited to ${organization.orgName}`,
-            text: `An account has been created for you. Please login using this link: https://${process.env.BASE_URL}/set-password?token=${passwordToken}`
+            text: `An account has been created for you. Please login using this link: ${process.env.BASE_URL}/set-password?token=${passwordToken}`
         });
 
         return res.status(200).json({msg: 'User successfully invited'});
@@ -100,6 +95,55 @@ router.post('/add-member', verifySession, checkOrgMembership as any, async(expre
         return res.status(500).json({msg: 'Internal Server Error'});
     }
 
+});
+
+router.post('/remove-member', verifySession, checkOrgMembership as any, [
+    body('userId').not().isEmpty().withMessage('No userId provided')
+], async (expressReq: Request, res: Response) => {
+
+    const errors = validationResult(expressReq);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const req = expressReq as CustomReq;
+
+    try {
+
+        const removedMemberId = req.body.userId as string;
+        const organization = req.organization as IOrganization;
+
+        const user = req.user as IUser;
+
+        if (!user) {
+            return res.status(401).json({msg: 'Unauthorized'});
+        }
+        
+        if (organization.ownerId === removedMemberId) {
+            return res.status(400).json({msg: 'Cannot remove owner from organization'});
+        } else if (user.userId !== organization.ownerId) {
+            return res.status(403).json({msg: 'Unauthorized'});
+        }
+
+        const userToRemove = await User.findOne({removedMemberId});
+        if (!userToRemove) {
+            return res.status(404).json({msg: 'User not found'});
+        }
+
+        await userToRemove.deleteOne();
+
+        await Organization.updateOne(
+            { orgId: organization.orgId },
+            { $pull: { members: userToRemove._id }}
+        );
+
+        return res.status(200).json({msg: 'Member removed from organization'});
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({msg: 'Internal Server Error'});
+    
+    }
 });
 
 // fetch devices from fitbit

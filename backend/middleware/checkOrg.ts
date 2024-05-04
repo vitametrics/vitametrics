@@ -1,9 +1,12 @@
-import { Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import Organization from '../models/Organization';
 import User from '../models/User';
 import { CustomReq } from '../types/custom';
 
-const checkOrgMembership = async (req: CustomReq, res: Response, next: NextFunction) => {
+const checkOrgMembership = async (expressReq: Request, res: Response, next: NextFunction) => {
+    
+    const req = expressReq as CustomReq;
+    
     if (!req.user) {
         return res.status(401).json({ msg: 'Unauthorized - User not logged in' });
     }
@@ -18,11 +21,11 @@ const checkOrgMembership = async (req: CustomReq, res: Response, next: NextFunct
             return res.status(404).json({msg: 'User not found'});
         }
 
-        const organization = await Organization.findOne({ members: user._id });
+        const organization = await Organization.findOne({ orgId: user.orgId});
 
         if (!organization) {
-            return res.status(403).json({ msg: 'Organization not found' });
-        } else if (organization.ownerId != userId) {
+            return res.status(403).json({ msg: 'Organization not found in middleware' });
+        } else if (!organization.members.some(memberId => memberId.equals(user._id))) {
             return res.status(403).json({ msg: 'Access denied - User not a member of any organization', data: `user._id: ${user._id}` });
 	    }
 

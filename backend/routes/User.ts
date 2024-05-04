@@ -92,33 +92,62 @@ router.post('/resend-invite', async(expressReq: Request, res: Response) => {
     }
 });
 
+router.post('/check-password-token', [
+    body('token').not().isEmpty().withMessage('Token is required')
+],  async( expressReq: Request, res: Response) => {
+
+    const errors = validationResult(expressReq);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+   
+    const req = expressReq as CustomReq;
+
+    const {token} = req.body;
+
+    try {
+        const user = await User.findOne({setPasswordToken: token});
+        if (!user) {
+            return res.status(500).json({msg: 'Invalid token'});
+        }
+
+        return res.status(200).json({msg: 'Token is valid'});
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({msg: 'Internal Server Error'});
+    }
+
+});
+
 // user password setting
-router.post('/set-password', async (expressReq: Request, res: Response) => {
+router.post('/set-password', [
+    body('token').not().isEmpty().withMessage('Token is required'),
+    body('password').not().isEmpty().withMessage('Password is required')
+], async (expressReq: Request, res: Response) => {
+
+    const errors = validationResult(expressReq);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
 
     const req = expressReq as CustomReq;
 
     const {token, password} = req.body;
-
-    if (!token || !password) {
-        return res.status(400).json({msg: 'Missing token or password'});
-    }
-
+    
     try {
-        const user = await User.findOne({
-            setPasswordToken: token,
-            tokenExpiry: {$gte: Date.now()}
-        });
+        const user = await User.findOne({setPasswordToken: token});
 
         if (!user) {
             return res.status(400).json({msg: 'Invalid or expired token'});
         }
 
         user.password = await argon2.hash(password);
+        user.emailVerified = true;
         user.setPasswordToken = null;
         user.passwordTokenExpiry = null;
         await user.save();
 
-        return res.status(200).json({msg: 'Password has been set successfully'});
+        return res.status(200).json({msg: 'Password has been set successfully', email: user.email});
     } catch (err) {
         console.error(err);
         return res.status(500).json({msg: 'Internal Server Error'});
@@ -305,10 +334,10 @@ router.post('/delete-account', verifySession, [
                 await User.deleteOne({ _id: member});
             }
         } else {
-            
-            await Organization.updateMany(
-                { members: userId },
-                { $pull: { members: userId } }
+
+            await Organization.updateOne(
+                { members: user._id },
+                { $pull: { members: user._id } }
             );
 
             await User.deleteOne({ userId });

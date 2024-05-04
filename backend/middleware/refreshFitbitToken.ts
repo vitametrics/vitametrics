@@ -10,10 +10,12 @@ async function refreshToken(req: Request, res: Response, next: NextFunction) {
         return res.status(401).json({ msg: 'Unauthorized - User not found' });
     }
 
-    const organization = await Organization.findOne({ ownerId: user.userId });
+    const organization = await Organization.findOne({ orgId: user.orgId});
 
     if (!organization) {
-        return res.status(404).json({ msg: 'Organization not found' });
+        return res.status(403).json({ msg: 'Organization not found in middleware' });
+    } else if (!organization.members.some(memberId => memberId.equals(user._id))) {
+        return res.status(403).json({ msg: 'Access denied - User not a member of any organization', data: `user._id: ${user._id}` });
     }
 
     const { fitbitAccessToken, fitbitRefreshToken, lastTokenRefresh } = organization;

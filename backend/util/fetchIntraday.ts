@@ -7,7 +7,7 @@ async function fetchIntradayData(userId: string, accessToken: string, dataType: 
 
     if (detailLevel !== "1sec" && detailLevel !== "1min" && detailLevel !== "5min" && detailLevel !== "15min") {
         throw new Error('Invalid detail level');
-    } 
+    }
 
     if (detailLevel === "1sec" && dataType !== "heart") {
         throw new Error('Invalid detail level');
