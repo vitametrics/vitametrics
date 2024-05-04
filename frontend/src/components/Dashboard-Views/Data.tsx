@@ -231,7 +231,7 @@ const Data = () => {
           console.log(
             "iterating inside of devicesData (for loop): " + deviceData
           );
-          if (deviceData.deviceId === deviceId) {
+          if (deviceData[0].deviceId === deviceId) {
             device = deviceData;
             break;
           }
