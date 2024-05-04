@@ -226,9 +226,13 @@ const Data = () => {
       .map((deviceId) => {
         console.log("inside of mapping selected devices " + devicesData);
 
-        const device = devicesData[0].find(
-          (d: DeviceData) => d.deviceId === deviceId
-        );
+        let device = undefined as DeviceData | undefined;
+        for (const deviceData of devicesData) {
+          if (deviceData.deviceId === deviceId) {
+            device = deviceData;
+            break;
+          }
+        }
 
         if (!device) {
           console.log("device " + deviceId + " not found");
