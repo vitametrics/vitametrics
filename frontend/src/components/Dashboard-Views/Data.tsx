@@ -116,6 +116,7 @@ const Data = () => {
     devicesData,
     downloadDate,
     setDownloadDate,
+    fetchDevices,
   } = useDashboard();
   //const [chartData, setChartData] = useState({});
   const [rangeChartData, setRangeChartData] = useState({});
@@ -519,7 +520,14 @@ const Data = () => {
       <h2 className="w-full text-4xl font-ralewayBold text-white p-5 pb-0 mb-5">
         {orgName} Overview
       </h2>
-
+      <span className="p-5">
+        <button
+          className="mr-auto p-3 bg-white rounded-xl hover:bg-slate-200"
+          onClick={() => fetchDevices()}
+        >
+          Fetch Data{" "}
+        </button>
+      </span>
       <div className="p-5 w-full flex-col">
         {/*
         <h1 className="text-2xl text-yellow-500 mb-2">

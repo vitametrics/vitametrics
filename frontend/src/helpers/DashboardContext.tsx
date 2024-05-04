@@ -10,7 +10,7 @@ import {
 } from "react";
 import axios from "axios";
 
-import { useOrg } from "./OrgContext";
+//import { useOrg } from "./OrgContext";
 
 interface DashboardProps {
   startDate: Date;
@@ -30,6 +30,7 @@ interface DashboardProps {
   handleDeviceSelectionChange: (deviceId: string, isChecked: boolean) => void;
   devicesData: DeviceData[]; //temp any
   fetchDevice: (deviceId: string) => void;
+  fetchDevices: () => void;
 }
 
 /*
@@ -178,15 +179,13 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
     },
   ];
 
-  const { deviceViewDevices } = useOrg();
+  //const { deviceViewDevices } = useOrg();
   const [startDate, setStartDate] = useState(new Date("2024-02-09"));
   const [rangeStartDate, setRangeStartDate] = useState(new Date("2024-02-10"));
   const [rangeEndDate, setRangeEndDate] = useState(new Date("2024-02-11"));
   const [downloadDate, setDownloadDate] = useState(new Date("2024-02-10"));
   const [detailLevel, setDetailLevel] = useState<string>("1min");
-  const [selectedDevices, setSelectedDevices] = useState<string[]>(
-    deviceViewDevices.map((device) => device.id)
-  );
+  const [selectedDevices, setSelectedDevices] = useState<string[]>([]);
 
   const [devicesData, setDevicesData] = useState<DeviceData[]>(() => {
     try {
@@ -330,6 +329,17 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [rangeStartDate, rangeEndDate, selectedDevices]);
 
+  const fetchDevices = async () => {
+    try {
+      for (const device of selectedDevices) {
+        fetchDevice(device);
+      }
+    } catch (error) {
+      console.error(error);
+      //setDevicesData(testDevicesData);
+    }
+  };
+
   /*
   useEffect(() => {
     deviceViewDevices.forEach((device) => {
@@ -347,6 +357,7 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
         setRangeStartDate,
         downloadDate,
         setDownloadDate,
+        fetchDevices,
         setStartDate,
         setRangeEndDate,
         showBackDrop,
