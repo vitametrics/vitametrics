@@ -228,6 +228,9 @@ const Data = () => {
 
         let device = undefined as DeviceData | undefined;
         for (const deviceData of devicesData) {
+          console.log(
+            "iterating inside of devicesData (for loop): " + deviceData
+          );
           if (deviceData.deviceId === deviceId) {
             device = deviceData;
             break;
