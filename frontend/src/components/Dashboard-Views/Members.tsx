@@ -72,11 +72,15 @@ const Members = () => {
   const handleRemoveMember = async (memberId: string) => {
     if (confirmDelete.confirm && confirmDelete.id === memberId) {
       try {
-        await axios.post(REMOVE_MEMBER_ENDPOINT, {
+        await axios.post(
+          REMOVE_MEMBER_ENDPOINT,
+          {
             userId: memberId,
-          }, {
-          withCredentials: true,
-        });
+          },
+          {
+            withCredentials: true,
+          }
+        );
         await fetchOrg();
         handleClose();
       } catch (error) {
@@ -148,7 +152,7 @@ const Members = () => {
           <h1 className="text-2xl text-center"> Member Info</h1>
           <h1 className="text-2xl mb-3 text-center">{user.name}</h1>
           <h1 className="text-xl mb-1">{user.email}</h1>
-          {isOrgOwner && userId != member && (
+          {isOrgOwner && userId != user.userId ? (
             <button
               onClick={() => handleRemoveMember(user.userId)}
               className={`w-full mt-auto ${confirmDelete.id === user.userId && confirmDelete.confirm ? "bg-yellow-500" : "bg-red-500"} text-white p-3 rounded-lg`}
@@ -157,7 +161,7 @@ const Members = () => {
                 ? "Confirm Remove"
                 : "Remove"}
             </button>
-          )}
+          ) : null}
         </motion.div>
       );
     }
