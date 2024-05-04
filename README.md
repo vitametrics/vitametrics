@@ -4,7 +4,7 @@ Vitametrics is a web application designed to help users collect, view, analyze, 
 
 ## Installation
 
-To install and configure Physiobit on your local machine, read [INSTALL.md](INSTALL.md)
+To install Vitametrics on your local machine, read [INSTALL.md](INSTALL.md)
 
 ## Configuration
 

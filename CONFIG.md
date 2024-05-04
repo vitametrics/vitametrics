@@ -1,6 +1,6 @@
 # Configuration
 
-To get Physiobit running, follow this guide on getting your instance configured.
+To get Vitametrics running, follow this guide on getting your instance configured.
 
 ## API
 

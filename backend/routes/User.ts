@@ -250,7 +250,7 @@ router.post('/send-email-verification', verifySession, async (expressReq: Reques
 
     return sendEmail({
         to: user.email,
-        subject: 'Physiobit Email Verification',
+        subject: 'Vitametrics Email Verification',
         text: `Please verify your email using this link ${verificationLink}`
     });
 });
