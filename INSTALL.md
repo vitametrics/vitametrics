@@ -1,11 +1,11 @@
 # Installation
 
-To install Physiobit on your local machine, you will either need [yarn](https://classic.yarnpkg.com/lang/en/docs/install/) or [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+To install Vitametrics on your local machine, you will either need [yarn](https://classic.yarnpkg.com/lang/en/docs/install/) or [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 
 Once installed, run the following commands:
 ```bash
-git clone https://github.com/brandontranle/physiobit
-cd physiobit
+git clone https://github.com/vitametrics/vitametrics
+cd vitametrics
 ```
 
 Once you have completed these steps, read [CONFIG.md](CONFIG.md)
@@ -19,7 +19,7 @@ OR
 docker compose up --build -d
 ```
 
-This will build and start the docker containers for the Physiobit application.
+This will build and start the docker containers for the Vitametrics application.
 
 
 TODO: Add updating section here
