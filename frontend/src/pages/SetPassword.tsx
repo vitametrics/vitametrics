@@ -1,11 +1,14 @@
 import { useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
+import Navbar from "../components/Navbar";
 import axios from "axios";
+import { useAuth } from "../helpers/AuthContext";
 
 const SetPassword = () => {
   const [searchParams] = useSearchParams({
     token: "",
   });
+  const { login_from_set_password } = useAuth();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [debouncedPassword, setDebouncedPassword] = useState("");
@@ -53,18 +56,17 @@ const SetPassword = () => {
         token: searchParams.get("token"),
       });
 
-      console.log(response.data);
+      if (response.data) {
+        login_from_set_password(response.data.email, debouncedPassword);
+      }
     } catch (error) {
       console.log(error);
     }
   };
 
-  if (!searchParams.has("token")) {
-    return <div>Invalid token</div>;
-  }
-
   return (
-    <div className="">
+    <div className="bg-fixed w-full h-full">
+      <Navbar />
       {token ? (
         <div className="bg-glass">
           <input

@@ -10,6 +10,7 @@ interface AuthContextProps {
   isEmailVerified: boolean;
   login: () => void;
   logout: () => void;
+  login_from_set_password: (email: string, password: string) => void;
   userEmail: string;
 }
 
@@ -37,6 +38,11 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       ? import.meta.env.VITE_APP_LOGOUT_ENDPOINT
       : import.meta.env.VITE_APP_LOGOUT_DEV_ENDPOINT;
 
+  const LOGIN_ENDPOINT =
+    import.meta.env.VITE_APP_NODE_ENV === "production"
+      ? import.meta.env.VITE_APP_LOGIN_ENDPOINT
+      : import.meta.env.VITE_APP_LOGIN_DEV_ENDPOINT;
+
   //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT; //~ production
 
   const login = async () => {
@@ -59,6 +65,22 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     }
     return;
+  };
+
+  const login_from_set_password = async (email: string, password: string) => {
+    try {
+      const response = await axios.post(
+        LOGIN_ENDPOINT,
+        { email: email, password: password },
+        { withCredentials: true }
+      );
+
+      if (response.data) {
+        login();
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const logout = async () => {
@@ -87,6 +109,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         isEmailVerified,
         login,
         logout,
+        login_from_set_password,
         userEmail,
       }}
     >
