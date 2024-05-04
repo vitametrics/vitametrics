@@ -573,7 +573,7 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [deviceViewDevices, setDeviceViewDevices] = useState<Device[]>(
     localStorage.getItem("devices")
       ? JSON.parse(localStorage.getItem("devices")!)
-      : testDeviceViewDevices
+      : []
   );
 
   const AUTH_ENDPOINT =
