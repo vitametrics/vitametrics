@@ -187,13 +187,23 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
     deviceViewDevices.map((device) => device.id)
   );
 
-  const [devicesData, setDevicesData] = useState<DeviceData[]>(
-    JSON.parse(localStorage.getItem("devicesData")!) !== null
-      ? JSON.parse(localStorage.getItem("devicesData")!)
-      : []
-  );
-  //const [devicesData, setDevicesData] = useState<DeviceData[]>(testDevicesData);
-  console.log(devicesData);
+  const [devicesData, setDevicesData] = useState<DeviceData[]>(() => {
+    try {
+      // Using a lazy initializer to only perform this operation once
+      const data = localStorage.getItem("devicesData");
+      return data ? JSON.parse(data) : [];
+    } catch (error) {
+      console.error("Failed to load devices data from localStorage:", error);
+      return []; // Return empty array if there is an error
+    }
+  });
+
+  useEffect(() => {
+    // Example: You might want to update localStorage when devicesData changes
+    localStorage.setItem("devicesData", JSON.stringify(devicesData));
+  }, [devicesData]); // Only re-run this effect if devicesData changes
+
+  console.log("devicesData: ", devicesData);
 
   //const loadedDevicesRef = useRef<DeviceContext>({});
   const [showBackDrop, setShowBackDrop] = useState(false);
@@ -249,6 +259,7 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
       //update current id in devicesData
       const newDeviceData = response.data;
 
+      /*
       const deviceIndex = devicesData.findIndex(
         (device) => device.deviceId === deviceId
       );
@@ -263,7 +274,31 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
       }
 
       console.log("setting local storage");
-      localStorage.setItem("devicesData", JSON.stringify(devicesData));
+      localStorage.setItem("devicesData", JSON.stringify(devicesData));*/
+      setDevicesData((prevDevicesData) => {
+        const existingIndex = prevDevicesData.findIndex(
+          (device) => device.deviceId === deviceId
+        );
+
+        if (existingIndex !== -1) {
+          // Update existing device data
+          const updatedDevicesData = [...prevDevicesData];
+          updatedDevicesData[existingIndex] = newDeviceData;
+          localStorage.setItem(
+            "devicesData",
+            JSON.stringify(updatedDevicesData)
+          ); // Update localStorage here
+          return updatedDevicesData;
+        } else {
+          // Add new device data
+          const updatedDevicesData = [...prevDevicesData, newDeviceData];
+          localStorage.setItem(
+            "devicesData",
+            JSON.stringify(updatedDevicesData)
+          ); // Update localStorage here
+          return updatedDevicesData;
+        }
+      });
     } catch (error) {
       console.error(error);
       setDevicesData(testDevicesData);
