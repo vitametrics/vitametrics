@@ -188,7 +188,7 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   const [devicesData, setDevicesData] = useState<DeviceData[]>(
-    localStorage.getItem("devicesData")
+    JSON.parse(localStorage.getItem("devicesData")!) !== null
       ? JSON.parse(localStorage.getItem("devicesData")!)
       : []
   );

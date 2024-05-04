@@ -70,25 +70,6 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       mac: "123456789",
       type: "TRACKER",
     },
-    /*
-    {
-      id: "2570612417",
-      deviceVersion: "Fitbit Pro",
-      lastSyncTime: "2024-02-24T00:02:13.000",
-      batteryLevel: 10,
-      ownerName: "Angel Vazquez",
-      mac: "123456789",
-      type: "TRACKER",
-    },
-    {
-      id: "2570612989",
-      deviceVersion: "Alta HR 2",
-      lastSyncTime: "2024-02-24T00:02:13.000",
-      batteryLevel: 50,
-      ownerName: "Sean Cornell",
-      mac: "123456789",
-      type: "TRACKER",
-    },*/
   ];
 
   const testDevices = [

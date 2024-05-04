@@ -1,4 +1,5 @@
 import { useOrg } from "../../helpers/OrgContext";
+import { useAuth } from "../../helpers/AuthContext";
 import { useSearchParams } from "react-router-dom";
 import { useDashboard } from "../../helpers/DashboardContext";
 import { motion } from "framer-motion";
@@ -12,6 +13,10 @@ const Members = () => {
     import.meta.env.VITE_APP_NODE_ENV === "production"
       ? import.meta.env.VITE_APP_ADD_MEMBER_ENDPOINT
       : import.meta.env.VITE_APP_ADD_MEMBER_DEV_ENDPOINT;
+  const REMOVE_MEMBER_ENDPOINT =
+    import.meta.env.VITE_APP_NODE_ENV === "production"
+      ? import.meta.env.VITE_APP_REMOVE_MEMBER_ENDPOINT
+      : import.meta.env.VITE_APP_REMOVE_MEMBER_DEV_ENDPOINT;
   const fadeInItemVariants = {
     hidden: { opacity: 0 },
     show: { opacity: 1 },
@@ -21,6 +26,7 @@ const Members = () => {
     triggerOnce: true, // Ensures the animation only plays once
   });
   const { orgName, members } = useOrg();
+  const { isOrgOwner } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams({
     view: "members",
     showInviteMenu: "false",
@@ -35,7 +41,12 @@ const Members = () => {
   const [emailInput, setEmailInput] = useState(searchParams.get("email") || "");
   const [nameInput, setNameInput] = useState(searchParams.get("name") || "");
   const [msg, setMsg] = useState("");
+
   const invited = searchParams.get("invited") === "true";
+  const [confirmDelete, setConfirmDelete] = useState({
+    id: "",
+    confirm: false,
+  });
   const debouncedEmail = useDebounce(emailInput, 500);
   const debouncedName = useDebounce(nameInput, 500);
 
@@ -56,6 +67,26 @@ const Members = () => {
     event: React.ChangeEvent<HTMLInputElement>
   ): void => {
     setEmailInput(event.target.value);
+  };
+
+  const handleRemoveMember = async (memberId: string) => {
+    if (confirmDelete.confirm && confirmDelete.id === memberId) {
+      try {
+        const response = await axios.post(
+          REMOVE_MEMBER_ENDPOINT,
+          { userId: memberId },
+          { withCredentials: true }
+        );
+
+        console.log(response.data);
+
+        setConfirmDelete({ id: "", confirm: false });
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      setConfirmDelete({ id: memberId, confirm: true });
+    }
   };
 
   useEffect(() => {
@@ -94,24 +125,36 @@ const Members = () => {
   };
 
   const renderMemberInfo = () => {
+    const member = searchParams.get("member");
     if (member) {
       const user = members.find((m) => m.userId === member);
-      console.log("Showing member info");
+      if (!user) return null;
+
       return (
         <motion.div
           variants={fadeInItemVariants}
           initial="hidden"
           animate={inView ? "show" : "hidden"}
           ref={ref}
-          className={`opacity-transition ${showBackDrop ? "show" : ""} absolute w-full h-full p-10 z-20 bg-[#e8e8e8] flex flex-col left-0 md:left-1/2 md:top-1/2 transform-center md:h-[35%] md:w-[500px] rounded-xl`}
+          className="absolute w-full h-full p-10 z-20 bg-[#e8e8e8] flex flex-col left-0 md:left-1/2 md:top-1/2 transform-center md:h-[35%] md:w-[500px] rounded-xl"
         >
           <button
             onClick={() => toggleMemberInfo(false, "")}
-            className="item-3 ml-auto"
-          ></button>
-          <h1 className="text-2xl mb-3 text-center w-full">Member Info</h1>
-          <h1 className="text-xl mb-1">{user.name}</h1>
+            className="ml-auto"
+          >
+            Close
+          </button>
+          <h1 className="text-2xl text-center"> Member Info</h1>
+          <h1 className="text-2xl mb-3 text-center">{user.name}</h1>
           <h1 className="text-xl mb-1">{user.email}</h1>
+          <button
+            onClick={() => handleRemoveMember(user.userId)}
+            className={`w-full mt-auto ${confirmDelete.id === user.userId && confirmDelete.confirm ? "bg-yellow-500" : "bg-red-500"} text-white p-3 rounded-lg`}
+          >
+            {confirmDelete.id === user.userId && confirmDelete.confirm
+              ? "Confirm Remove"
+              : "Remove"}
+          </button>
         </motion.div>
       );
     }
@@ -160,8 +203,7 @@ const Members = () => {
             onClick={() => handleInvite()}
             className="w-full p-3 rounded-xl text-white bg-[#606060]"
           >
-            {" "}
-            Invite Member{" "}
+            Invite Member
           </button>
         </motion.div>
       );
@@ -236,14 +278,16 @@ const Members = () => {
       <h2 className="w-full text-4xl font-ralewayBold text-white p-5 pb-0">
         {orgName} Members
       </h2>
-      <div className="flex p-5 w-full">
-        <button
-          onClick={() => toggleInviteMenu(true)} // Close invite menu when clicking the button
-          className="p-2 text-2xl flex flex-row gap-2 justify-center items-center rounded-xl w-[230px] bg-[#606060] text-white"
-        >
-          Invite
-        </button>
-      </div>
+      {isOrgOwner && (
+        <div className="flex p-5 w-full">
+          <button
+            onClick={() => toggleInviteMenu(true)} // Close invite menu when clicking the button
+            className="p-2 text-2xl flex flex-row gap-2 justify-center items-center rounded-xl w-[230px] bg-[#606060] text-white"
+          >
+            Invite
+          </button>
+        </div>
+      )}
       <div className="flex flex-row flex-wrap gap-5 p-5">
         {members.length > 0 ? (
           members.map((member, index: number) => {
