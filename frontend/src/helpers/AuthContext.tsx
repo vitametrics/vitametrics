@@ -59,7 +59,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setIsOrgOwner(response.data.user.isOrgOwner);
         setIsEmailVerified(response.data.user.isEmailVerified);
         setUserEmail(response.data.user.email);
-        setUserId(response.data.user.userId);
+        setUserId(response.data.user.id);
         //setOrgId(response.data.user.orgId);
       } catch (error) {
         console.log(error);
