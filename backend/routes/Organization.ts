@@ -125,7 +125,7 @@ router.post('/remove-member', verifySession, checkOrgMembership as any, [
             return res.status(403).json({msg: 'Unauthorized'});
         }
 
-        const userToRemove = await User.findOne({removedMemberId});
+        const userToRemove = await User.findOne({ userId: removedMemberId });
         if (!userToRemove) {
             return res.status(404).json({msg: 'User not found'});
         }
