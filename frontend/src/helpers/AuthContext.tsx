@@ -12,6 +12,7 @@ interface AuthContextProps {
   logout: () => void;
   login_from_set_password: (email: string, password: string) => void;
   userEmail: string;
+  userId: string;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -26,6 +27,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isOrgOwner, setIsOrgOwner] = useState<boolean>(false);
   const [isEmailVerified, setIsEmailVerified] = useState<boolean>(false);
   const [userEmail, setUserEmail] = useState<string>("");
+  const [userId, setUserId] = useState<string>("");
   //const { setOrgId } = useOrg();
 
   const AUTH_ENDPOINT =
@@ -57,6 +59,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setIsOrgOwner(response.data.user.isOrgOwner);
         setIsEmailVerified(response.data.user.isEmailVerified);
         setUserEmail(response.data.user.email);
+        setUserId(response.data.user.userId);
         //setOrgId(response.data.user.orgId);
       } catch (error) {
         console.log(error);
@@ -111,6 +114,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         logout,
         login_from_set_password,
         userEmail,
+        userId,
       }}
     >
       {children}
