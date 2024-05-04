@@ -283,11 +283,19 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
       setDevicesData((prevDevicesData) => {
         console.log("previously was: " + prevDevicesData);
 
-        const existingIndex = -1;
+        let existingIndex = -1;
 
         for (const device of prevDevicesData) {
-          console.log(device);
-          console.log("from prev devices: " + device.deviceId);
+          console.log(device); //this works -- it outputs a device
+          if (device) {
+            console.log("from prev devices: " + device.deviceId);
+            if (device.deviceId === deviceId) {
+              console.log("found the device id: " + deviceId);
+              existingIndex++;
+              break;
+            }
+            console.log("from prev devices: " + device.deviceId);
+          }
         }
 
         if (existingIndex !== -1) {
