@@ -72,6 +72,7 @@ const Members = () => {
   const handleRemoveMember = async (memberId: string) => {
     if (confirmDelete.confirm && confirmDelete.id === memberId) {
       try {
+        console.log(memberId);
         const response = await axios.post(REMOVE_MEMBER_ENDPOINT, {
           params: {
             userId: memberId,
@@ -79,7 +80,6 @@ const Members = () => {
           withCredentials: true,
         });
         console.log(response.data);
-
         setConfirmDelete({ id: "", confirm: false });
       } catch (error) {
         console.log(error);
@@ -96,6 +96,11 @@ const Members = () => {
       return newParams;
     });
   }, [debouncedName]);
+
+  const handleClose = () => {
+    toggleMemberInfo(false, "");
+    setConfirmDelete({ id: "", confirm: false });
+  };
 
   const handleNameChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -139,22 +144,22 @@ const Members = () => {
           className="absolute w-full h-full p-10 z-20 bg-[#e8e8e8] flex flex-col left-0 md:left-1/2 md:top-1/2 transform-center md:h-[35%] md:w-[500px] rounded-xl"
         >
           <button
-            onClick={() => toggleMemberInfo(false, "")}
-            className="ml-auto"
-          >
-            Close
-          </button>
+            onClick={() => handleClose()}
+            className="item-3 ml-auto"
+          ></button>
           <h1 className="text-2xl text-center"> Member Info</h1>
           <h1 className="text-2xl mb-3 text-center">{user.name}</h1>
           <h1 className="text-xl mb-1">{user.email}</h1>
-          <button
-            onClick={() => handleRemoveMember(user.userId)}
-            className={`w-full mt-auto ${confirmDelete.id === user.userId && confirmDelete.confirm ? "bg-yellow-500" : "bg-red-500"} text-white p-3 rounded-lg`}
-          >
-            {confirmDelete.id === user.userId && confirmDelete.confirm
-              ? "Confirm Remove"
-              : "Remove"}
-          </button>
+          {isOrgOwner && (
+            <button
+              onClick={() => handleRemoveMember(user.userId)}
+              className={`w-full mt-auto ${confirmDelete.id === user.userId && confirmDelete.confirm ? "bg-yellow-500" : "bg-red-500"} text-white p-3 rounded-lg`}
+            >
+              {confirmDelete.id === user.userId && confirmDelete.confirm
+                ? "Confirm Remove"
+                : "Remove"}
+            </button>
+          )}
         </motion.div>
       );
     }
