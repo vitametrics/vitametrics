@@ -34,6 +34,7 @@ async function refreshToken(req: Request, res: Response, next: NextFunction) {
         if (response.status === 200) {
             return next();
         }
+        
     } catch (error: any) {
         if (error.response && error.response.data?.errors[0].errorType === 'expired_token') {
             const refreshResponse = await axios.post('https://api.fitbit.com/oauth2/token', `grant_type=refresh_token&refresh_token=${fitbitRefreshToken}`, {
@@ -50,8 +51,8 @@ async function refreshToken(req: Request, res: Response, next: NextFunction) {
                 fitbitRefreshToken: newRefreshToken
             });
 
-	    organization.lastTokenRefresh  = new Date();
-	    await organization.save();
+            organization.lastTokenRefresh  = new Date();
+            await organization.save();
             return next();
         } else {
             return res.status(500).json({ msg: 'Error refreshing Fitbit access token', error: error.response.data});
