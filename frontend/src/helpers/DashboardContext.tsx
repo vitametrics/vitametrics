@@ -63,6 +63,7 @@ interface StepsData {
 }
 
 interface DeviceData {
+  [x: string]: any;
   deviceId: string;
   deviceInfo: DeviceInfo;
   heartData: HeartData[];
@@ -275,6 +276,10 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
 
       console.log("setting local storage");
       localStorage.setItem("devicesData", JSON.stringify(devicesData));*/
+
+      console.log(
+        "searching through the previous devices data: " + devicesData
+      );
       setDevicesData((prevDevicesData) => {
         const existingIndex = prevDevicesData.findIndex(
           (device) => device.deviceId === deviceId

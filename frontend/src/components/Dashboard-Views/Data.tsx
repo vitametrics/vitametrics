@@ -218,10 +218,17 @@ const Data = () => {
 
     const labels = generateLabelsForRange(start, end);
     console.log("selected devices: " + selectedDevices);
+    console.log(
+      "iterating through devicesData in createRangeDataset(): " + devicesData
+    );
+
+    for (const device in devicesData) {
+      console.log("device: " + device);
+    }
 
     const datasets = selectedDevices
-      .map((deviceId, index: number) => {
-        const device = devicesData[index].find(
+      .map((deviceId) => {
+        const device = devicesData.find(
           (d: DeviceData) => d.deviceId === deviceId
         );
         if (!device) return null;
