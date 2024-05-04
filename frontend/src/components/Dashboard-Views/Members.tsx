@@ -25,7 +25,7 @@ const Members = () => {
     threshold: 0.1, // Adjust based on when you want the animation to trigger (1 = fully visible)
     triggerOnce: true, // Ensures the animation only plays once
   });
-  const { orgName, members } = useOrg();
+  const { orgName, members, fetchOrg } = useOrg();
   const { isOrgOwner } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams({
     view: "members",
@@ -72,13 +72,13 @@ const Members = () => {
   const handleRemoveMember = async (memberId: string) => {
     if (confirmDelete.confirm && confirmDelete.id === memberId) {
       try {
-        const response = await axios.post(REMOVE_MEMBER_ENDPOINT, {
+        await axios.post(REMOVE_MEMBER_ENDPOINT, {
           params: {
             userId: memberId,
           },
           withCredentials: true,
         });
-        console.log(response.data);
+        await fetchOrg();
         handleClose();
       } catch (error) {
         console.log(error);
