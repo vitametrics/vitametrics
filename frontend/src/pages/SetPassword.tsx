@@ -1,5 +1,5 @@
 import { useSearchParams } from "react-router-dom";
-import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 const SetPassword = () => {
@@ -66,7 +66,7 @@ const SetPassword = () => {
   return (
     <div className="">
       {token ? (
-        <Fragment>
+        <div className="bg-glass">
           <input
             type="password"
             placeholder="Enter new password"
@@ -78,7 +78,7 @@ const SetPassword = () => {
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
           <button onClick={handleSubmit}>Submit</button>
-        </Fragment>
+        </div>
       ) : (
         <div>Invalid token</div>
       )}

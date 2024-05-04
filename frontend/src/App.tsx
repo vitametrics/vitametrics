@@ -13,6 +13,7 @@ const FAQs = lazy(() => import("./pages/FAQs"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TOS = lazy(() => import("./pages/TOS"));
 const Demo = lazy(() => import("./pages/Demo"));
+const SetPassword = lazy(() => import("./pages/SetPassword"));
 import { useAuth } from "./helpers/AuthContext";
 const LoadingFallback = () => <div>Loading...</div>;
 interface AuthRouteProps {
@@ -101,6 +102,17 @@ function App() {
               <Suspense fallback={<LoadingFallback />}>
                 <Demo />
               </Suspense>
+            }
+          />
+
+          <Route
+            path="/set-password"
+            element={
+              <UnauthenticatedRoute redirectTo="/dashboard">
+                <Suspense fallback={<LoadingFallback />}>
+                  <SetPassword />
+                </Suspense>
+              </UnauthenticatedRoute>
             }
           />
         </Routes>
