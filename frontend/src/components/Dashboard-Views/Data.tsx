@@ -227,7 +227,11 @@ const Data = () => {
         const device = devicesData.find(
           (d: DeviceData) => d.deviceId === deviceId
         );
-        if (!device) return null;
+        if (!device) {
+          console.log("device " + deviceId + " not found");
+          return null;
+        }
+
         const label =
           device["deviceInfo"].deviceVersion + " " + device.deviceId;
         const borderColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
