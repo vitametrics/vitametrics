@@ -243,9 +243,9 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const shouldFetchDevice = (deviceId: string) => {
     for (const device of devicesData) {
-      console.log(device); //this works -- it outputs a device
+      console.log("inside of shouldFetchDevice:" + device); //this works -- it outputs a device
       if (device) {
-        console.log("from prev devices: " + device.deviceId);
+        console.log("in should fetch data: " + device.deviceId);
         if (device.deviceId === deviceId) {
           console.log("found the device id: " + deviceId);
 
@@ -266,9 +266,9 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
             return true;
           }
         }
-        console.log("from prev devices: " + device.deviceId);
       }
     }
+    console.log("need to fetch data for: " + deviceId);
     return true;
   };
 
@@ -327,7 +327,6 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
                 existingIndex++;
                 break;
               }
-              console.log("from prev devices: " + device.deviceId);
             }
           }
 
