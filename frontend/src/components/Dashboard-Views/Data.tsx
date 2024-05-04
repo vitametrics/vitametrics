@@ -57,16 +57,15 @@ interface HeartData {
   };
 }
 
-interface StepsData {
-  dateTime: string;
-  value: string;
-}
-
 interface DeviceData {
   deviceId: string;
   deviceInfo: DeviceInfo;
   heartData: HeartData[];
-  stepsData: StepsData[];
+  stepsData: DataItem[];
+  floorsData: DataItem[];
+  distanceData: DataItem[];
+  elevationData: DataItem[];
+  caloriesData: DataItem[];
 }
 interface DataItem {
   dateTime: string;
@@ -235,7 +234,7 @@ const Data = () => {
         const backgroundColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
 
         const dataByDate = new Map(
-          device[`${rangeDataType}`].map((item: DataItem) => [
+          device["stepsData"].map((item: DataItem) => [
             item.dateTime,
             item.value,
           ])

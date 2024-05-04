@@ -58,7 +58,7 @@ interface HeartData {
   };
 }
 
-interface StepsData {
+interface DataItem {
   dateTime: string;
   value: string;
 }
@@ -68,7 +68,11 @@ interface DeviceData {
   deviceId: string;
   deviceInfo: DeviceInfo;
   heartData: HeartData[];
-  stepsData: StepsData[];
+  stepsData: DataItem[];
+  floorsData: DataItem[];
+  distanceData: DataItem[];
+  elevationData: DataItem[];
+  caloriesData: DataItem[];
 }
 
 const DashboardContext = createContext<DashboardProps | undefined>(undefined);
@@ -86,6 +90,7 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
   /*const FETCH_INTRADAY_DATA_ENDPOINT =
     "https://vitametrics.org/api/org/fetch-intraday";*/
 
+  /*
   const testDevicesData: DeviceData[] = [
     {
       deviceId: "2570612980",
@@ -177,7 +182,7 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
         { dateTime: "2024-02-10", value: "2000" },
       ],
     },
-  ];
+  ];*/
 
   //const { deviceViewDevices } = useOrg();
   const [startDate, setStartDate] = useState(new Date("2024-02-09"));
@@ -345,7 +350,7 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
         });
       } catch (error) {
         console.error(error);
-        setDevicesData(testDevicesData);
+        //setDevicesData(testDevicesData);
       }
     }
   };
