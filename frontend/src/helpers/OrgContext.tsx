@@ -621,10 +621,10 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const dataType = "steps";
 
     const url = `${FETCH_DEVICE_DATA_ENDPOINT}`;
-    console.log(url);
+    //console.log(url);
 
     try {
-      const response = await axios.get(url, {
+      await axios.get(url, {
         params: {
           id,
           startDate,
@@ -633,7 +633,7 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         },
         withCredentials: true,
       });
-      console.log(response.data);
+      //console.log(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -657,7 +657,7 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const endDate = formatDate(end);
 
     try {
-      const response = await axios.get(url, {
+      await axios.get(url, {
         params: {
           id,
           startDate,
@@ -665,21 +665,19 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         },
         withCredentials: true,
       });
-      console.log(response.data);
-      console.log(response);
+      //console.log(response.data);
+      //console.log(response);
     } catch (error) {
       console.log(error);
     }
   };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchDevices = async () => {
-    console.log("fetching devices from " + FETCH_DEVICES_ENDPOINT);
     try {
       const response = await axios.post(FETCH_DEVICES_ENDPOINT, {
         withCredentials: true,
       });
 
-      console.log(response.data);
       if (!response.data) {
         return;
       }
@@ -704,7 +702,6 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
       setOrgName(response.data.organization.orgName);
       setMembers(response.data.members || []);
-      console.log(response.data);
       //await fetchDevices();
     } catch (error) {
       console.log(error);
@@ -719,7 +716,7 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         });
 
         if (auth_response.data.isAuthenticated === false) {
-          console.log("User is not authenticated");
+          //console.log("User is not authenticated");
           logout();
         } else {
           await login();
@@ -735,7 +732,7 @@ const OrgProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     const fetchOrgData = async () => {
-      console.log("fetching org " + orgId);
+      //console.log("fetching org " + orgId);
       try {
         const response = await axios.get(FETCH_ORG_ENDPOINT, {
           params: { orgId: orgId },

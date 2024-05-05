@@ -10,7 +10,7 @@ import { useSearchParams } from "react-router-dom";
 
 const Settings = () => {
   const { orgName } = useOrg();
-  const { isEmailVerified, userEmail } = useAuth();
+  const { isEmailVerified, userEmail, isOrgOwner } = useAuth();
   const { setShowBackDrop, showBackDrop } = useDashboard();
 
   const [changePasswordFlag, setChangePasswordFlag] = useState(false);
@@ -204,7 +204,7 @@ const Settings = () => {
     }
 
     try {
-      const response = await axios.post(
+      await axios.post(
         CHANGE_PASSWORD_ENDPOINT!,
         {
           password: debouncedPassword,
@@ -214,7 +214,7 @@ const Settings = () => {
         }
       );
 
-      console.log(response.data);
+      //console.log(response.data);
       passwordSuccess();
     } catch (error) {
       setChangePasswordFlag(false);
@@ -224,11 +224,10 @@ const Settings = () => {
 
   const sendVerificationLink = async () => {
     try {
-      const response = await axios.post(SEND_VERIFICATION_LINK_ENDPOINT!, {
+      await axios.post(SEND_VERIFICATION_LINK_ENDPOINT!, {
         withCredentials: true,
       });
 
-      console.log(response.data);
       setVerificationLinkMsg("Verification link sent!");
       setVerificationLinkFlag(true);
     } catch (error) {
@@ -344,12 +343,14 @@ const Settings = () => {
           Verify Email Address
         </button>
       </div>
-      <button
-        className="bg-red-400 p-4 text-xl w-full rounded-lg md:w-[350px]"
-        onClick={() => toggleDeleteMenu(true)}
-      >
-        Delete Account
-      </button>
+      {!isOrgOwner && (
+        <button
+          className="bg-red-400 p-4 text-xl w-full rounded-lg md:w-[350px]"
+          onClick={() => toggleDeleteMenu(true)}
+        >
+          Delete Account
+        </button>
+      )}
     </motion.div>
   );
 };
