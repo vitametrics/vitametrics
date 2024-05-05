@@ -5,7 +5,6 @@ import { commonMiddlewares } from './middleware/common';
 import passport from 'passport';
 import userRoute from './routes/User';
 import logoutRoute from './routes/Logout';
-import devRoute from './routes/Dev';
 import passportConfig from './util/passport-config';
 import authRoute from './routes/Auth';
 import loginRoute from './routes/Login';
@@ -32,7 +31,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 // TODO: Change to /auth
 app.use('/', authRoute);
-app.use('/dev', devRoute);
 app.use('/org', orgRoute);
 app.use('/user', userRoute);
 app.use('/login', loginRoute(passport));
