@@ -6,9 +6,12 @@ import argon2 from 'argon2';
 import { sendEmail } from './emailUtil';
 
 async function initializeDatabase() {
+
+    console.log('initializing DB');
+
     try {
         const isInitialized = await Setting.findOne({ type: 'initialized'});
-        if (!isInitialized && process.env.ADMIN_EMAIL && process.env.NODE_ENV === 'production') {
+        if (!isInitialized === true && process.env.ADMIN_EMAIL && process.env.NODE_ENV === 'production') {
             const newUserId = crypto.randomBytes(16).toString('hex');
             const newOrgId = crypto.randomBytes(16).toString('hex');
             const tempPassword = crypto.randomBytes(16).toString('hex');
