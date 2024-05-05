@@ -32,10 +32,11 @@ If you are using NGINX, here is an example configuration.
 server {
     listen 80;
     listen 443 ssl;
+    listen [::]:443 ssl;
     server_name example.com;
 
-    ssl_certificate /path/to/your/ssl/certificate.pem;
-    ssl_certificate_key /path/to/your/ssl/certificate.key.pem;
+    ssl_certificate /path/to/your/ssl/cert/site.pem;
+    ssl_certificate_key /path/to/your/ssl/cert/site.key.pem;
 
     location / {
         proxy_pass http://localhost:5173;
@@ -43,16 +44,17 @@ server {
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Proto https;
     }
 
     location /api/ {
-        proxy_pass http://localhost:7970; // change to PORT from API .env
+        proxy_pass http://localhost:7299/;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Proto https;
     }
 }
+
 ```

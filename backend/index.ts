@@ -44,6 +44,6 @@ app.get('/health', (_req: Request, res: Response) => {
     res.status(200).json({ status: 'success', message: 'Backend is healthy'});
 });
 
-app.listen(process.env.API_PORT || 3000, () => {
-    console.log('Listening on port', process.env.API_PORT || 3000);
+app.listen(7970, () => {
+    console.log('Listening on port', 7970);
 })

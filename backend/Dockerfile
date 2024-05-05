@@ -10,6 +10,4 @@ RUN yarn install
 
 RUN yarn build
 
-EXPOSE 7970
-
 CMD ["yarn", "start"]
