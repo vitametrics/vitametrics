@@ -322,17 +322,8 @@ router.post('/delete-account', verifySession, [
         const organization = await Organization.findOne({ ownerId: userId});
         if (organization) {
 
-            const members = organization.members;
+            return res.status(400).json({ msg: 'Cannot delete account. User is an organization owner' });
 
-            const deviceIds = organization.devices;
-
-            await Device.deleteMany({ deviceId: {$in: deviceIds }});
-
-            await Organization.deleteOne({ _id: organization._id});
-
-            for (const member of members) {
-                await User.deleteOne({ _id: member});
-            }
         } else {
 
             await Organization.updateOne(
