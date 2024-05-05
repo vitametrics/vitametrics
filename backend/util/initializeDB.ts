@@ -14,13 +14,11 @@ async function initializeDatabase() {
         if (!isInitialized === true && process.env.ADMIN_EMAIL && process.env.NODE_ENV === 'production') {
             const newUserId = crypto.randomBytes(16).toString('hex');
             const newOrgId = crypto.randomBytes(16).toString('hex');
-            const tempPassword = crypto.randomBytes(16).toString('hex');
             const passwordToken = crypto.randomBytes(32).toString('hex');
 
             const newUser = new User({
                 userId: newUserId,
                 email: process.env.ADMIN_EMAIL,
-                password: await argon2.hash(tempPassword),
                 emailVerfToken: crypto.randomBytes(32).toString('hex'),
                 emailVerified: false,
                 orgId: newOrgId,
