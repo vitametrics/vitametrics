@@ -57,7 +57,7 @@ const Devices = () => {
           { withCredentials: true }
         );
 
-        console.log(response.data);
+        //console.log(response.data);
         setDevices(response.data); //ask sean to return the updated devices
         setDeviceViewDevices(response.data);
         setEditingDevices((prevEditingDevices) => {

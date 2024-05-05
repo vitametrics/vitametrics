@@ -204,7 +204,7 @@ const Settings = () => {
     }
 
     try {
-      const response = await axios.post(
+      await axios.post(
         CHANGE_PASSWORD_ENDPOINT!,
         {
           password: debouncedPassword,
@@ -214,7 +214,7 @@ const Settings = () => {
         }
       );
 
-      console.log(response.data);
+      //console.log(response.data);
       passwordSuccess();
     } catch (error) {
       setChangePasswordFlag(false);

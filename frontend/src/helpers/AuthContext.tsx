@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-//import { useOrg } from "./OrgContext";
 import axios from "axios";
 
 interface AuthContextProps {
@@ -17,7 +16,6 @@ interface AuthContextProps {
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
-// AuthProvider component
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
@@ -28,7 +26,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isEmailVerified, setIsEmailVerified] = useState<boolean>(false);
   const [userEmail, setUserEmail] = useState<string>("");
   const [userId, setUserId] = useState<string>("");
-  //const { setOrgId } = useOrg();
 
   const AUTH_ENDPOINT =
     import.meta.env.VITE_APP_NODE_ENV === "production"
@@ -45,22 +42,18 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       ? import.meta.env.VITE_APP_LOGIN_ENDPOINT
       : import.meta.env.VITE_APP_LOGIN_DEV_ENDPOINT;
 
-  //const AUTH_ENDPOINT = import.meta.env.VITE_APP_AUTH_ENDPOINT; //~ production
-
   const login = async () => {
     if (!isAuthenticated) {
       try {
         const response = await axios.get(AUTH_ENDPOINT, {
           withCredentials: true,
         });
-        console.log(response.data);
         setIsAuthenticated(response.data.isAuthenticated);
         setIsAccountLinked(response.data.user.isAccountLinked);
         setIsOrgOwner(response.data.user.isOrgOwner);
         setIsEmailVerified(response.data.user.isEmailVerified);
         setUserEmail(response.data.user.email);
         setUserId(response.data.user.id);
-        //setOrgId(response.data.user.orgId);
       } catch (error) {
         console.log(error);
       } finally {
@@ -88,11 +81,10 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const logout = async () => {
     try {
-      const response = await axios.get(LOGOUT_ENDPOINT, {
+      await axios.get(LOGOUT_ENDPOINT, {
         withCredentials: true,
       });
       setIsAuthenticated(false);
-      console.log(response.data);
     } catch (error) {
       console.log(error);
     }
