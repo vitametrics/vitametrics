@@ -27,7 +27,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="bg-transparent px-32 py-5 nav fixed top-0 w-full z-50 animated-parent font-leagueSpartanBold">
+    <nav className="bg-transparent px-10 md:px-32 py-5 nav fixed top-0 w-full z-50 animated-parent font-leagueSpartanBold">
       <div className="flex flex-row w-full bg-glass rounded-xl top-0 flex-wrap items-center justify-between mx-auto p-3 animated-container">
         <a
           href="/"
@@ -70,23 +70,22 @@ const Navbar = () => {
             <div
               className={`${
                 isDropdownOpen ? "block" : "hidden"
-              } w-full md:hidden mt-4 border border-gray-100  rounded-lg bg-[#1F1C23] md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-[#1F1C23] md:dark:bg-[#1F1C23] dark:border-[#1F1C23]`}
+              } w-full md:hidden mt-4 border border-gray-100  rounded-lg bg-transparent md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-[#1F1C23] md:dark:bg-[#1F1C23] dark:border-[#1F1C23]`}
               id="navbar-dropdown"
             >
               <ul className="flex flex-col font-medium p-4 md:p-0">
                 <li>
-                  <a href="/" className="block py-2 px-3">
+                  <button
+                    onClick={() => navigate("/")}
+                    className="block py-2 px-3 text-xl"
+                  >
                     Home
-                  </a>
+                  </button>
                 </li>
-                <li>
-                  <a href="/FAQs" className="block py-2 px-3">
-                    FAQs
-                  </a>
-                </li>
+
                 {isAuthenticated ? (
                   <li>
-                    <a href="/dashboard" className="block py-2 px-3">
+                    <a href="/dashboard" className="block py-2 px-3  text-xl">
                       Dashboard
                     </a>
                   </li>
@@ -94,7 +93,7 @@ const Navbar = () => {
                   <li>
                     <button
                       onClick={() => navigate("/login")}
-                      className="block py-2 px-3"
+                      className="block py-2 px-3 text-xl"
                     >
                       Login
                     </button>
