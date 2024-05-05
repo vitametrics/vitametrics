@@ -3,24 +3,30 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
+import morgan from 'morgan';
 
-export const commonMiddlewares = (app: express.Application) => {
+export const commonMiddlewares = async (app: express.Application) => {
   app.use(express.json());
   app.use(cookieParser());
-  if (process.env.NODE_ENV === 'production') {
-    app.use(cors({
-      origin: process.env.BASE_URL as string,
-      credentials: true
-    }));
+  app.use(cors({
+    origin: process.env.NODE_ENV as string === 'production' ? process.env.BASE_URL as string : '127.0.0.1',
+    credentials: true
+  }));
+
+  if (process.env.NODE_ENV as string === 'dev') {
+    app.use(morgan('dev'));
   }
+  
   app.use(session({
     secret: process.env.SESSION_SECRET as string, 
     resave: false,
     saveUninitialized: true,
-    store: MongoStore.create({ mongoUrl: process.env.PROD_DB_URI as string }) as any,
-    cookie: { 
-      secure: process.env.NODE_ENV as string === 'production',
-      sameSite: process.env.NODE_ENV as string === "production" ? "none" : "lax"
+    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI as string}),
+    cookie: {
+      secure: process.env.NODE_ENV as string === 'production' ? true : false,
+      sameSite: process.env.NODE_ENV as string === 'production' ? 'none' : 'lax',
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 1 // 1 hour session expiry
     }
   }));
   app.set('trust proxy', 1);

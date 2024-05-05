@@ -1,28 +1,41 @@
 import axios from 'axios';
-import Device from '../models/Device';
 import Organization from '../models/Organization';
+import Device from '../models/Device';
 
-async function fetchAndStoreDevices(userId: string, accessToken: string, orgId: string) {
-    
+async function fetchDevices(userId: string, accessToken: string, orgId: string) {
+    //console.log('made it to fetch devices');
     const deviceResponse = await axios.get(`https://api.fitbit.com/1/user/${userId}/devices.json`, {
         headers: {'Authorization': `Bearer ${accessToken}`}
     });
+    const validDevices = [];
 
     for (const deviceData of deviceResponse.data) {
-        const updatedDevice = await Device.findOneAndUpdate(
+
+		if (deviceData.deviceVersion === "MobileTrack") {
+			continue;
+		}
+		validDevices.push({
+			id: deviceData.id,
+			name: deviceData.deviceVersion
+		});
+
+        await Device.findOneAndUpdate(
             { deviceId: deviceData.id },
-            { 
-                deviceType: deviceData.type,
-                lastSyncDate: deviceData.lastSyncTime ? new Date(deviceData.lastSyncTime) : undefined 
-            },
-            { upsert: true, new: true }
+            { deviceName: deviceData.deviceVersion },
+            { new: true, upsert: true }
         );
 
+		// add fetched devices to mongodb organization document
         await Organization.updateOne(
             { orgId: orgId },
-            { $addToSet: { devices: updatedDevice._id } }
+            { $addToSet: { devices: deviceData.id } }
         );
-    }
+
+	}
+
+    // console.log(validDevices);
+
+    return validDevices;
 }
 
-export default fetchAndStoreDevices;
+export default fetchDevices;

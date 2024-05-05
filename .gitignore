@@ -6,8 +6,6 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 *.local
-yarn.lock
-package-lock.json
 
 # Logs
 logs
@@ -26,6 +24,9 @@ frontend/dist-ssr
 
 # backend ignore
 backend/build
+backend/fitaddon/build
+.env
+.env.save # for server B)
 
 # Editor directories and files
 .vscode/*

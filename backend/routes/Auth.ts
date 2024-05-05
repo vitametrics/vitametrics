@@ -5,7 +5,6 @@ import CodeVerifier from '../models/CodeVerifier';
 import Organization from '../models/Organization';
 import { IUser } from '../models/User';
 import verifySession from '../middleware/verifySession';
-import fetchAndStoreDevices from '../util/fetchDevices';
 
 const router = express.Router();
 
@@ -29,7 +28,7 @@ router.get('/auth', async (_req: Request, res: Response) => {
 router.get('/callback', verifySession, async (req: Request, res: Response) => {
     const code = req.query.code as string;
     const userId = (req.user as IUser).userId;
-    
+
     try {
         const verifier = await CodeVerifier.findOne().sort({createdAt: -1}).limit(1);
         const codeVerifier = verifier?.value;
@@ -72,15 +71,12 @@ router.get('/callback', verifySession, async (req: Request, res: Response) => {
         organization.fitbitRefreshToken = refreshToken;
 
         await organization.save();
-
-        const orgId = organization.ownerId;
-
-        await fetchAndStoreDevices(fitbitUserID, accessToken, orgId);
+        
         // this should not handle redirects. fine for now i guess.
-	    return res.redirect('/dashboard');
+	    return res.redirect('/dashboard?view=data');
     } catch(err) {
         console.error(err);
-        res.status(500).send('Internal Server Error');
+        res.status(500).json({success: false, msg: 'Internal Server Error'});
     }
 
     return;

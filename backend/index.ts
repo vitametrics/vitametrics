@@ -1,19 +1,17 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
 dotenv.config({ path: '../.env' });
 import { commonMiddlewares } from './middleware/common';
 import passport from 'passport';
 import userRoute from './routes/User';
 import logoutRoute from './routes/Logout';
+import devRoute from './routes/Dev';
 import passportConfig from './util/passport-config';
 import authRoute from './routes/Auth';
 import loginRoute from './routes/Login';
-import adminRoute from './routes/Admin';
-import registerRoute from './routes/Register';
-import contactRoute from './routes/Contact';
+import orgRoute from './routes/Organization';
 import { connectDB } from './middleware/config';
 import sgMail from '@sendgrid/mail';
-import turnstileRoute from './routes/Turnstile';
 import mongoSanitize from 'express-mongo-sanitize';
 import helmet from 'helmet';
 
@@ -21,7 +19,11 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
 
 const app = express();
 app.use(helmet({
-    contentSecurityPolicy: false
+    contentSecurityPolicy: {
+        directives: {
+            "default-src": ["'self'", `'${process.env.BASE_URL}'`],
+        }
+    }
 }));
 app.use(mongoSanitize());
 commonMiddlewares(app);
@@ -30,16 +32,18 @@ app.use(passport.initialize());
 app.use(passport.session());
 // TODO: Change to /auth
 app.use('/', authRoute);
-app.use('/admin', adminRoute);
+app.use('/dev', devRoute);
+app.use('/org', orgRoute);
 app.use('/user', userRoute);
-app.use('/register', registerRoute);
 app.use('/login', loginRoute(passport));
 app.use('/logout', logoutRoute);
-app.use('/contact', contactRoute);
-app.use('/verify', turnstileRoute);
 
 connectDB();
 
-app.listen(process.env.PORT || 3000, () => {
-    console.log('Listening on port', process.env.PORT || 3000);
+app.get('/health', (_req: Request, res: Response) => {
+    res.status(200).json({ status: 'success', message: 'Backend is healthy'});
+});
+
+app.listen(7970, () => {
+    console.log('Listening on port', 7970);
 })

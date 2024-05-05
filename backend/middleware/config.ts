@@ -1,15 +1,17 @@
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import initDB from '../util/initializeDB';
 
 dotenv.config();
 
-const DB_URI = process.env.NODE_ENV === 'production' ? process.env.PROD_DB_URI as string : process.env.DEV_DB_URI as string;
-
 const connectDB = async () => {
   try {
-    await mongoose.connect(DB_URI);
-    console.log('Connected to database');
-  } catch (error) {
+    await mongoose.connect(process.env.MONGODB_URI as string)
+      .then(async () =>{
+        console.log('Connected to database');
+        await initDB();
+      })
+  } catch (error: any) {
     console.error(`Error: ${error.message}`);
     process.exit(1);
   }

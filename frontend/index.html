@@ -2,11 +2,24 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <link rel="stylesheet" href="./src/output.css">
+    <meta name="description" content="Start your fitness research today!">
 
+    <link rel="icon" type="image/svg+xml" href="/src/assets/logo.webp"/>
+    <link rel="preload" href="/src/output.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/src/output.css"></noscript>
+    <link rel="prefetch" fetchpriority="high" as="image" href="./src/assets/images/vitamix.webp" type="image/webp"/>
+    <link rel="prefetch" fetchpriority="high" as="image" href="./src/assets/images/home1.webp" type="image/webp"/>
+    <link rel="preload" href="./src/assets/fonts/LeagueSpartan-Regular.woff1" as="font" crossorigin="anonymous">   
+    <link rel="preload" href="./src/assets/fonts/LeagueSpartan-Bold.woff2" as="font" crossorigin="anonymous">
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Physiobit</title>
+    <title>Vitametrics</title>
+    <!--<script>
+      document.documentElement.classList.toggle(
+        'dark',
+        localStorage.getItem('darkMode') === 'true'
+      );
+    </script>-->
   </head>
   <body>
     <div id="root"></div>
