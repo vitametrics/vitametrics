@@ -14,13 +14,12 @@ async function initializeDatabase() {
         if (!isInitialized === true && process.env.ADMIN_EMAIL && process.env.NODE_ENV === 'production') {
             const newUserId = crypto.randomBytes(16).toString('hex');
             const newOrgId = crypto.randomBytes(16).toString('hex');
-            const tempPassword = crypto.randomBytes(16).toString('hex');
             const passwordToken = crypto.randomBytes(32).toString('hex');
 
             const newUser = new User({
                 userId: newUserId,
                 email: process.env.ADMIN_EMAIL,
-                password: await argon2.hash(tempPassword),
+                role: "owner",
                 emailVerfToken: crypto.randomBytes(32).toString('hex'),
                 emailVerified: false,
                 orgId: newOrgId,
@@ -30,17 +29,6 @@ async function initializeDatabase() {
             });
 
             await newUser.save();
-
-            const newOrganization = new Organization({
-                orgId: newOrgId,
-                orgName: "Admin Organization",
-                ownerId: newUserId,
-                ownerName: "Admin",
-                ownerEmail: process.env.ADMIN_EMAIL,
-                members: [newUser._id]
-            });
-
-            await newOrganization.save();
 
             await sendEmail({
                 to: process.env.ADMIN_EMAIL as string,
