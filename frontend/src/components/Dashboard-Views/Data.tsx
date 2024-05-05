@@ -80,7 +80,6 @@ const Data = () => {
     graphType: "bar",
     rangeGraphType: "bar",
     rangeDataType: "stepsData",
-    //rangeDetailLevel: "1min",
     downloadDataType: "steps",
     downloadDetailLevel: "1min",
   });
@@ -93,27 +92,18 @@ const Data = () => {
   const [downloadFlag, setDownloadFlag] = useState(false);
 
   const {
-    //startDate,
-    // setStartDate,
     setRangeStartDate,
     setRangeEndDate,
     rangeEndDate,
     rangeStartDate,
     selectedDevices,
     handleDeviceSelectionChange,
-    //fetchDevice,
     devicesData,
     downloadDate,
     setDownloadDate,
     fetchDevices,
   } = useDashboard();
-  //const [chartData, setChartData] = useState({});
   const [rangeChartData, setRangeChartData] = useState({});
-
-  /*
-  const handleFetchDevice = async () => {
-    await fetchDevice("2570612980");
-  };*/
 
   const detailLevelTypes = [
     {
@@ -216,21 +206,21 @@ const Data = () => {
     end.setHours(23, 59, 59, 999);
 
     const labels = generateLabelsForRange(start, end);
-    console.log("selected devices: " + selectedDevices);
-    console.log(
-      "iterating through devicesData in createRangeDataset(): " + devicesData
-    );
-    console.log("creating dataset type of: " + rangeDataType);
+    //console.log("selected devices: " + selectedDevices);
+    //console.log(
+    // "iterating through devicesData in createRangeDataset(): " + devicesData
+    //);
+    //console.log("creating dataset type of: " + rangeDataType);
 
     const datasets = selectedDevices
       .map((deviceId) => {
-        console.log("inside of mapping selected devices " + devicesData);
+        //console.log("inside of mapping selected devices " + devicesData);
 
         let device = undefined as DeviceData | undefined;
         for (const deviceData of devicesData) {
-          console.log(
-            "iterating inside of devicesData (for loop): " + deviceData
-          );
+          //console.log(
+          //   "iterating inside of devicesData (for loop): " + deviceData
+          //);
           if (deviceData[0].deviceId === deviceId) {
             device = deviceData[0];
             break;
@@ -238,10 +228,10 @@ const Data = () => {
         }
 
         if (!device) {
-          console.log("device " + deviceId + " not found");
+          //console.log("device " + deviceId + " not found");
           return null;
         }
-        console.log("device found: " + device.deviceId);
+        //console.log("device found: " + device.deviceId);
 
         const label =
           device["deviceInfo"].deviceVersion + " " + device.deviceId;
@@ -254,7 +244,7 @@ const Data = () => {
             item.value,
           ])
         );
-        console.log(dataByDate);
+        //console.log(dataByDate);
 
         const data = labels.map((dateLabel) => dataByDate.get(dateLabel) || 0);
 
@@ -273,8 +263,8 @@ const Data = () => {
       labels, // Use dates from the first device as labels
       datasets,
     });
-    console.log(labels);
-    console.log(datasets);
+    //console.log(labels);
+    //console.log(datasets);
   };
 
   /*
