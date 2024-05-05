@@ -15,6 +15,7 @@ async function initializeDatabase() {
             const newUserId = crypto.randomBytes(16).toString('hex');
             const newOrgId = crypto.randomBytes(16).toString('hex');
             const tempPassword = crypto.randomBytes(16).toString('hex');
+            const passwordToken = crypto.randomBytes(32).toString('hex');
 
             const newUser = new User({
                 userId: newUserId,
@@ -23,6 +24,7 @@ async function initializeDatabase() {
                 emailVerfToken: crypto.randomBytes(32).toString('hex'),
                 emailVerified: false,
                 orgId: newOrgId,
+                setPasswordToken: passwordToken,
                 languageLocale: 'en-US',
                 distanceUnit: 'en-US'
             });
@@ -43,7 +45,7 @@ async function initializeDatabase() {
             await sendEmail({
                 to: process.env.ADMIN_EMAIL as string,
                 subject: 'Your New Organization Account',
-                text: `Username: ${newUser.email}\nPassword: ${tempPassword}`
+                text: `An account has been created for you. Please login using this link: ${process.env.BASE_URL}/set-password?token=${passwordToken}`
             });
 
             await Setting.create({ type: 'initialized', value: true});
