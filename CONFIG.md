@@ -19,6 +19,7 @@ By default, your ```.env``` will look like this:
     NODE_ENV='production'
     WEB_PORT='5173'
     API_PORT='7970'
+    DB_PORT='32265'
     MONGODB_URI='mongodb://vitametrics:vitametrics@vitametrics-mongo:27017/vitametrics'
     FITBIT_CLIENT_ID='fitbitclientidhere'
     FITBIT_CLIENT_SECRET='fitbitclientsecrethere'
@@ -36,11 +37,15 @@ Should be ```production``` for a production setup.
 
 ### WEB_PORT
 
-The port you'd like the frontend container to run on. Will default to ```5173```.
+The port that will be mapped to the frontend on the host machine.
 
 ### API_PORT
 
-The port you'd like the backend to run on. Will default to ```7970```.
+The port that will be mapped to the API on the host machine.
+
+### DB_PORT
+
+The port that will be mapped to the database on your host machine.
 
 ### MONGODB_URI
 
