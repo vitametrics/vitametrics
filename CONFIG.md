@@ -59,10 +59,11 @@ The URL of your website.
 
 A secure random string that will be used for user authentication.
 
-### ADMIN_TOKEN
-
-A secure random string that will be used for user creation.
-
 ### SENDGRID_API_KEY, SENDGRID_FROM
 
 These can be configured if you would like to use [SendGrid](https://sendgrid.com) for email management.
+
+
+### ADMIN_EMAIL
+
+The email for the admin organization user (your email). This is the account that will receive login credentials once the instance is started.
