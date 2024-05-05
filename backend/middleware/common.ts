@@ -9,7 +9,7 @@ export const commonMiddlewares = async (app: express.Application) => {
   app.use(express.json());
   app.use(cookieParser());
   app.use(cors({
-    origin: process.env.NODE_ENV as string === 'production' ? process.env.BASE_URL as string : '127.0.0.1',
+    origin: process.env.BASE_URL as string,
     credentials: true
   }));
 
