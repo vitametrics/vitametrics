@@ -57,8 +57,7 @@ const Devices = () => {
           { withCredentials: true }
         );
 
-        //console.log(response.data);
-        setDevices(response.data); //ask sean to return the updated devices
+        setDevices(response.data);
         setDeviceViewDevices(response.data);
         setEditingDevices((prevEditingDevices) => {
           const { [device.id]: removed, ...rest } = prevEditingDevices;
@@ -68,7 +67,6 @@ const Devices = () => {
         console.log(error);
       }
 
-      //test code -- can be used for demo
       const updatedOwnerName = editingDevices[device.id];
       const updatedDevices = devices.map((d) =>
         d.id === device.id ? { ...d, ownerName: updatedOwnerName } : d
@@ -177,8 +175,8 @@ const Devices = () => {
   };
 
   const { ref, inView } = useInView({
-    threshold: 0.1, // Adjust based on when you want the animation to trigger (1 = fully visible)
-    triggerOnce: true, // Ensures the animation only plays once
+    threshold: 0.1,
+    triggerOnce: true,
   });
 
   return (

@@ -5,7 +5,6 @@ import { useState } from "react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import logo from "../assets/images/vitamix.webp";
-import Footer from "../components/Footer";
 import { useAuth } from "../helpers/AuthContext";
 import useDebounce from "../helpers/useDebounce";
 import { useNavigate } from "react-router-dom";
@@ -31,16 +30,19 @@ const Login = () => {
   };
 
   const handleLogin = async () => {
+    if (!debouncedEmail || !debouncedPassword) {
+      setMsg("Please enter both email and password");
+      return;
+    }
+
     try {
-      const response = await axios.post(
+      await axios.post(
         LOGIN_ENDPOINT,
         { email: debouncedEmail, password: debouncedPassword },
         { withCredentials: true }
       );
 
-      if (response.data) {
-        login();
-      }
+      login();
     } catch (error: any) {
       const errorMessage =
         error.response.data.message || "An unknown error occurred";
@@ -92,7 +94,6 @@ const Login = () => {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 };

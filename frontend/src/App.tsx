@@ -6,12 +6,9 @@ import {
   Navigate,
 } from "react-router-dom";
 import { DashboardProvider } from "./helpers/DashboardContext";
-import Home from "./pages/Home"; // Regular import for Home
+import Home from "./pages/Home";
 const Dashboard = lazy(() => import("./pages/UserDashboard"));
 const Login = lazy(() => import("./pages/Login"));
-const FAQs = lazy(() => import("./pages/FAQs"));
-const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
-const TOS = lazy(() => import("./pages/TOS"));
 const Demo = lazy(() => import("./pages/Demo"));
 const SetPassword = lazy(() => import("./pages/SetPassword"));
 import { useAuth } from "./helpers/AuthContext";
@@ -45,79 +42,53 @@ function App() {
   };
 
   return (
-    <div className="bg-white">
-      <Router>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route
-            path="/dashboard"
-            element={
-              <AuthenticatedRoute redirectTo="/login">
-                <Suspense fallback={<LoadingFallback />}>
-                  <DashboardProvider>
-                    <Dashboard />
-                  </DashboardProvider>
-                </Suspense>
-              </AuthenticatedRoute>
-            }
-          ></Route>
-          <Route
-            path="/login"
-            element={
-              <UnauthenticatedRoute redirectTo="/dashboard?view=data">
-                <Suspense fallback={<LoadingFallback />}>
-                  <Login />
-                </Suspense>
-              </UnauthenticatedRoute>
-            }
-          />
-          <Route
-            path="/FAQs"
-            element={
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route
+          path="/dashboard"
+          element={
+            <AuthenticatedRoute redirectTo="/login">
               <Suspense fallback={<LoadingFallback />}>
-                <FAQs />
+                <DashboardProvider>
+                  <Dashboard />
+                </DashboardProvider>
               </Suspense>
-            }
-          />
+            </AuthenticatedRoute>
+          }
+        ></Route>
+        <Route
+          path="/login"
+          element={
+            <UnauthenticatedRoute redirectTo="/dashboard?view=data">
+              <Suspense fallback={<LoadingFallback />}>
+                <Login />
+              </Suspense>
+            </UnauthenticatedRoute>
+          }
+        />
 
-          <Route
-            path="/privacy-policy"
-            element={
-              <Suspense fallback={<LoadingFallback />}>
-                <PrivacyPolicy />
-              </Suspense>
-            }
-          />
-          <Route
-            path="/tos"
-            element={
-              <Suspense fallback={<LoadingFallback />}>
-                <TOS />
-              </Suspense>
-            }
-          />
-          <Route
-            path="/demo"
-            element={
-              <Suspense fallback={<LoadingFallback />}>
-                <Demo />
-              </Suspense>
-            }
-          />
+        <Route
+          path="/demo"
+          element={
+            <Suspense fallback={<LoadingFallback />}>
+              <Demo />
+            </Suspense>
+          }
+        />
 
-          <Route
-            path="/set-password"
-            element={
-              <UnauthenticatedRoute redirectTo="/dashboard">
-                <Suspense fallback={<LoadingFallback />}>
-                  <SetPassword />
-                </Suspense>
-              </UnauthenticatedRoute>
-            }
-          />
-        </Routes>
-      </Router>
-    </div>
+        <Route
+          path="/set-password"
+          element={
+            <UnauthenticatedRoute redirectTo="/dashboard">
+              <Suspense fallback={<LoadingFallback />}>
+                <SetPassword />
+              </Suspense>
+            </UnauthenticatedRoute>
+          }
+        />
+      </Routes>
+    </Router>
   );
 }
 

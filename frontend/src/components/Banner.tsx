@@ -1,7 +1,5 @@
-//import { motion } from "framer-motion";
-//import { useInView } from "react-intersection-observer";
 import { useNavigate } from "react-router-dom";
-import fitbitlogo from "../assets/fitbit.webp";
+import fitbitlogo from "../assets/images/fitbit.webp";
 
 const Banner = () => {
   const history = useNavigate();
@@ -9,24 +7,12 @@ const Banner = () => {
     history(url);
   }
 
-  /*
-  const fadeInItemVariants = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1 },
-  };
-
-  
-  const { ref, inView } = useInView({
-    threshold: 0.1, // Adjust based on when you want the animation to trigger (1 = fully visible)
-    triggerOnce: true, // Ensures the animation only plays once
-  });
-*/
   return (
     <section
       id="#home"
-      className="w-full h-[700px] flex flex-row box-border p-20 mb-28 mt-24 items-center justify-center sm:flex-col bg-transparent font-bold"
+      className="w-full h-screen flex flex-row box-border p-20  items-center justify-center sm:flex-col bg-transparent font-bold"
     >
-      <div className="h-full flex flex-col p-[100px] lg:p-10 items-center justify-center">
+      <div className="h-full flex flex-col p-[11rem] lg:p-10 items-center justify-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="505"

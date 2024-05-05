@@ -153,7 +153,7 @@ const Settings = () => {
       prev.set("showDeleteMenu", show.toString());
       return prev;
     });
-    setShowBackDrop(show); // Show or hide backdrop when invite menu is toggled
+    setShowBackDrop(show);
   };
 
   const handleChangeEmail = async () => {
@@ -172,7 +172,6 @@ const Settings = () => {
         }
       );
 
-      //console.log(response.data);
       setNewEmail("");
       setChangeEmailFlag(true);
       setChangeEmailMsg("Email successfully changed!");
@@ -214,7 +213,6 @@ const Settings = () => {
         }
       );
 
-      //console.log(response.data);
       passwordSuccess();
     } catch (error) {
       setChangePasswordFlag(false);
@@ -242,8 +240,8 @@ const Settings = () => {
     show: { opacity: 1 },
   };
   const { ref, inView } = useInView({
-    threshold: 0.1, // Adjust based on when you want the animation to trigger (1 = fully visible)
-    triggerOnce: true, // Ensures the animation only plays once
+    threshold: 0.1,
+    triggerOnce: true,
   });
 
   return (

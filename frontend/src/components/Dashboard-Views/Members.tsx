@@ -22,8 +22,8 @@ const Members = () => {
     show: { opacity: 1 },
   };
   const { ref, inView } = useInView({
-    threshold: 0.1, // Adjust based on when you want the animation to trigger (1 = fully visible)
-    triggerOnce: true, // Ensures the animation only plays once
+    threshold: 0.1,
+    triggerOnce: true,
   });
   const { orgName, members, fetchOrg } = useOrg();
   const { isOrgOwner, userId } = useAuth();
@@ -120,7 +120,7 @@ const Members = () => {
       return prev;
     });
     setMsg("");
-    setShowBackDrop(show); // Show or hide backdrop when invite menu is toggled
+    setShowBackDrop(show);
   };
 
   const toggleMemberInfo = (show: boolean, id: string) => {
@@ -255,7 +255,6 @@ const Members = () => {
         { withCredentials: true }
       );
 
-      //console.log(response.data);
       setSearchParams((prev) => {
         prev.set("invited", "true");
         return prev;

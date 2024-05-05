@@ -1,5 +1,5 @@
 import { useAuth } from "../helpers/AuthContext";
-import logo from "../assets/logo.webp";
+import logo from "../assets/images/logo.webp";
 
 export const DashboardNavbar = () => {
   const { logout } = useAuth();
