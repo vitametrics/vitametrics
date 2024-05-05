@@ -14,6 +14,7 @@ const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TOS = lazy(() => import("./pages/TOS"));
 const Demo = lazy(() => import("./pages/Demo"));
 const SetPassword = lazy(() => import("./pages/SetPassword"));
+const PageNotFound = lazy(() => import("./pages/PageNotFound"));
 import { useAuth } from "./helpers/AuthContext";
 const LoadingFallback = () => <div>Loading...</div>;
 interface AuthRouteProps {
@@ -104,6 +105,7 @@ function App() {
               </Suspense>
             }
           />
+          <Route path="*" element={<PageNotFound />} />
 
           <Route
             path="/set-password"

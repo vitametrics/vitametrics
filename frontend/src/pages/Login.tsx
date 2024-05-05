@@ -43,7 +43,9 @@ const Login = () => {
       }
     } catch (error: any) {
       const errorMessage =
-        error.response.data.message || "An unknown error occurred";
+        error.response && error.response.data
+          ? error.response.data.message
+          : "An unknown error occurred";
       setMsg(errorMessage);
     }
   };
