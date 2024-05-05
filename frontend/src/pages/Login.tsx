@@ -24,6 +24,12 @@ const Login = () => {
   const [msg, setMsg] = useState("");
   const { login } = useAuth();
 
+  const handleKeyDown = (event: any) => {
+    if (event.key === "Enter") {
+      handleLogin();
+    }
+  };
+
   const handleLogin = async () => {
     try {
       const response = await axios.post(
@@ -66,15 +72,17 @@ const Login = () => {
               type="text"
               placeholder="Email"
               onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={handleKeyDown}
             />
             <input
               className="p-[10px] mt-5 w-72 bg-[#d2d1d1] text-black  rounded-lg border-[#6d6c6c]"
               type="password"
               placeholder="Password"
               onChange={(e) => setPassword(e.target.value)}
-              onKeyDown={handleLogin}
+              onKeyDown={handleKeyDown}
             />
             <button
+              onKeyDown={handleLogin}
               onClick={handleLogin}
               className="p-[10px] mt-5 bg-secondary w-72 rounded-lg cursor-pointer font-bold text-white"
             >
