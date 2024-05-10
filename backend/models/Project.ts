@@ -25,6 +25,7 @@ const projectSchema = new mongoose.Schema({
     fitbitAccessToken: {type: String, default: ""},
     fitbitRefreshToken: {type: String, default: ""},
     lastTokenRefresh: { type: Date, default: null},
+    creationDate: { type: Date, default: Date.now },
     inviteCode: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Invite' }],
     members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     devices: [{ type: String}]
