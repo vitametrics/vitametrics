@@ -1,0 +1,40 @@
+import passport from 'passport';
+import { Strategy as LocalStrategy } from 'passport-local';
+import User from '../../models/User';
+import argon2 from 'argon2';
+
+const passportConfig = (passport: passport.Authenticator) => {
+    passport.use(new LocalStrategy({ usernameField: 'email'}, async (email, password, done) => {
+        try {
+            const user = await User.findOne({ email }).exec();
+            if (!user) {
+                return done(null, false, { message: 'Incorrect email'});
+            }
+
+            const match = await argon2.verify(user.password, password);
+            if (!match) {
+                console.log('Password verification failed');
+                return done(null, false, { message: 'Incorrect password '});
+            }
+            return done(null, user);
+        } catch (error) {
+            return done(error);
+        }
+    }));
+
+    passport.serializeUser((user: Express.User, done) => {
+        done(null, user.userId);
+    });
+
+    passport.deserializeUser(async (id, done) => {
+        try {
+            const user = await User.findOne({ userId: id as string});
+            done(null, user);
+        } catch (error) {
+            console.error(error);
+            done(error, null);
+        }
+    });
+}
+
+export default passportConfig;

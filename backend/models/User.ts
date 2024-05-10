@@ -1,4 +1,5 @@
-import mongoose, { Document, Types } from 'mongoose';
+import argon2 from 'argon2';
+import mongoose, { Document, Schema, Types, model } from 'mongoose';
 
 export interface IUser extends Document {
     userId: string;
@@ -8,30 +9,30 @@ export interface IUser extends Document {
     role: string;
     emailVerfToken: string;
     emailVerified: boolean;
-    projects: Types.ObjectId[];
-    languageLocale: string;
-    distanceUnit: string;
     setPasswordToken: string | null;
     passwordTokenExpiry: Date | null;
-    lastInviteSent: Date | null;
+    projects: Types.ObjectId[];
 };
 
-const userSchema = new mongoose.Schema({
-    userId: {type: String, default: ""},
-    name: {type: String, default: ""},
-    email: {type: String, default: ""},
-    password: {type: String, default: ""},
-    role: {type: String, default: "user"},
-    emailVerfToken: {type: String, default: ""},
-    emailVerified: {type: Boolean, default: false},
-    projects: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Projects' }],
-    languageLocale: {type: String, default: 'en-US'},
-    distanceUnit: {type: String, default: 'en-US'},
-    setPasswordToken: {type: String, default: ""},
-    passwordTokenExpiry: {type: Date, default: null},
-    lastInviteSent: {type: Date, default: null}
+const userSchema = new Schema({
+    userId: { type: String, required: true, index: true},
+    email: { type: String, required: true, unique: true, index: true},
+    name: String,
+    password: String,
+    role: { type: String, default: "user"},
+    emailVerfToken: String,
+    emailVerified: { type: Boolean, default: false},
+    projects: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Projects'}],
+    setPasswordToken: String,
+    passwordTokenExpiry: Date
+}, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true }});
+
+userSchema.virtual('projectDetails', {
+    ref: 'Projects',
+    localField: 'projects',
+    foreignField: '_id'
 });
 
-const User = mongoose.model<IUser>('User', userSchema);
+const User = model<IUser>('User', userSchema);
 
 export default User;

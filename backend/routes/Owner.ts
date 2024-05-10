@@ -3,21 +3,18 @@ import User from '../models/User';
 import verifyRole from '../middleware/verifyRole';
 import verifySession from '../middleware/verifySession';
 import { validationResult } from 'express-validator';
-import { CustomReq } from '../types/custom';
-import { sendEmail } from '../util/emailUtil';
+import { sendEmail } from '../middleware/util/emailUtil';
 import crypto from 'crypto';
 
 const router = express.Router();
 
 
-router.post('/invite-admin', verifySession, verifyRole('owner'), async(expressReq: Request, res: Response) => {
+router.post('/invite-admin', verifySession, verifyRole('owner'), async(req: Request, res: Response) => {
 
-    const errors = validationResult(expressReq);
+    const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
-
-    const req = expressReq as CustomReq;
 
     if (!req.user) {
         return res.status(401).json({ msg: 'Unauthorized' });

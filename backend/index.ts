@@ -1,24 +1,21 @@
 import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
-dotenv.config({ path: '../.env' });
 import { commonMiddlewares } from './middleware/common';
 import passport from 'passport';
-import userRoute from './routes/User';
-import logoutRoute from './routes/Logout';
-import passportConfig from './util/passport-config';
-import authRoute from './routes/Auth';
-import loginRoute from './routes/Login';
-import ownerRoute from './routes/Owner';
-import adminRoute from './routes/Admin';
-import projectRoute from './routes/Project';
 import { connectDB } from './middleware/config';
 import sgMail from '@sendgrid/mail';
 import mongoSanitize from 'express-mongo-sanitize';
 import helmet from 'helmet';
+import configureRoutes from './routes';
+import passportConfig from './middleware/util/passport-config';
+import { errorHandler } from './middleware/errorHandler';
+
+dotenv.config({ path: '../.env' });
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
 
 const app = express();
+
 app.use(helmet({
     contentSecurityPolicy: {
         directives: {
@@ -26,19 +23,16 @@ app.use(helmet({
         }
     }
 }));
+
+
 app.use(mongoSanitize());
+
 commonMiddlewares(app);
 passportConfig(passport);
 app.use(passport.initialize());
 app.use(passport.session());
-// TODO: Change to /auth
-app.use('/', authRoute);
-app.use('/project', projectRoute);
-app.use('/user', userRoute);
-app.use('/owner', ownerRoute);
-app.use('/admin', adminRoute);
-app.use('/login', loginRoute(passport));
-app.use('/logout', logoutRoute);
+configureRoutes(app, passport);
+app.use(errorHandler);
 
 connectDB();
 

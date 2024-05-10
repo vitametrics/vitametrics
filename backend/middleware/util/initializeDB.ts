@@ -1,8 +1,6 @@
-import User from '../models/User';
-import Organization from '../models/Project';
-import Setting from "../models/Setting";
+import User from '../../models/User';
+import Setting from "../../models/Setting";
 import crypto from 'crypto';
-import argon2 from 'argon2';
 import { sendEmail } from './emailUtil';
 
 async function initializeDatabase() {
@@ -32,13 +30,13 @@ async function initializeDatabase() {
 
             await sendEmail({
                 to: process.env.ADMIN_EMAIL as string,
-                subject: 'Your New Organization Account',
+                subject: 'Your New Account',
                 text: `An account has been created for you. Please login using this link: ${process.env.BASE_URL}/set-password?token=${passwordToken}`
             });
 
             await Setting.create({ type: 'initialized', value: true});
 
-            console.log("Default organization and admin user have been created");
+            console.log("Default user has been created");
         } else {
             console.log("Database already initialized");
         }

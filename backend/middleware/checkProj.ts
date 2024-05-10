@@ -1,17 +1,16 @@
 import { Request, Response, NextFunction } from 'express';
 import Project, { IProject } from '../models/Project';
-import User from '../models/User';
-import { CustomReq } from '../types/custom';
+import User, { IUser } from '../models/User';
 
-const checkProjectMembership = async (expressReq: Request, res: Response, next: NextFunction) => {
+const checkProjectMembership = async (req: Request, res: Response, next: NextFunction) => {
+
+    const currentUser = req.user as IUser;
     
-    const req = expressReq as CustomReq;
-    
-    if (!req.user) {
+    if (!currentUser) {
         return res.status(401).json({ msg: 'Unauthorized - User not logged in' });
     }
 
-    const userId = req.user.userId;
+    const userId = currentUser.userId;
 
     try {
 

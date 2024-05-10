@@ -1,230 +1,63 @@
-import express, { Request, Response} from 'express';
+import express from 'express';
+import AdminController from '../controllers/AdminController';
 import verifySession from '../middleware/verifySession';
 import verifyRole from '../middleware/verifyRole';
-import Project, { IProject } from '../models/Project';
-import Device from '../models/Device';
-import User from '../models/User';
+import checkProjectMembership from '../middleware/checkProj';
 import { body, query, validationResult } from 'express-validator';
-import checkOrgMembership from '../middleware/checkProj';
-import { CustomReq } from '../types/custom';
-import crypto from 'crypto';
-import { sendEmail } from '../util/emailUtil';
+import { asyncHandler } from '../handlers/asyncHandler';
+import { validationHandler } from '../handlers/validationHandler';
 
 const router = express.Router();
 
-router.post('/create-project', verifySession, verifyRole('admin'), [
-    body('projectName').not().isEmpty().withMessage('Organization name is required')
-], async (expressReq: Request, res: Response) => {
+const createProjectValidation = [
+    body('projectName').not().isEmpty().withMessage('Project name is required')
+];
 
-    const errors = validationResult(expressReq);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
+const memberIdValidation = [
+    body('userId').not().isEmpty().withMessage('No userId provided')
+];
 
-    const req = expressReq as CustomReq;
+const projectIdValidation = [
+    query('projctId').not().isEmpty().withMessage('No projectId provided')
+];
 
-    const { projectName } = req.body;
-
-    try {
-
-        const existingProject = await Project.findOne({ projectName: projectName});
-        if (existingProject) {
-            return res.status(409).json({ msg: 'Project with that name already exists'});
-        }
-
-        const newProjectId = crypto.randomBytes(16).toString('hex');
-
-        const user = await User.findOne({ userId: req.user?.userId });
-
-        if (!user) {
-            return res.status(404).json({ msg: 'User not found' });
-        }
-
-        const newProject= new Project({
-            projectName: projectName,
-            projectId: newProjectId,
-            ownerId: user.userId,
-            ownerName: user.name,
-            ownerEmail: user.email,
-            members: [user._id]
-        });
-
-        const savedProject = await newProject.save();
-
-        user.projects.push(savedProject._id);
-
-        await user.save();
-
-        await sendEmail({
-            to: user.email,
-            subject: 'Your new project',
-            text: `You have created a new project: ${projectName}. You can access it using this link: ${process.env.BASE_URL}/user/projects/${newProjectId}`
-        });
-
-        return res.status(200).json({ msg: 'Project created successfully' });
-        
-
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({ msg: 'Internal server error' });
-    }
-});
-
-router.post('/delete-project', verifySession, checkOrgMembership, verifyRole('admin'), [
-    query('projectId').not().isEmpty().withMessage('No project id provided')
-],async (expressReq: Request, res: Response) => {
-
-    const errors = validationResult(expressReq);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
-
-    const req = expressReq as CustomReq;
-
-    if (!req.user) {
-        return res.status(401).json({ msg: 'Unauthorized'});
-    }
-
-    const userId = req.user.userId;
-    const projectId = req.query.projectId as string;
-
-    try {
-
-        const user = await User.findOne({ userId });
-        if (!user) {
-            return res.status(404).json({msg: 'User not found'});
-        }
-
-        const project = await Project.findOne({ projectId: projectId});
-
-        if (!project) {
-            return res.status(404).json({msg: 'Organization not found'});
-        }
-
-        const members = project.members;
-        const deviceIds = project.devices;
-
-        if (deviceIds && deviceIds.length > 0) {
-            await Device.deleteMany( { deviceId: { $in: deviceIds}});
-        }
-
-        if (members && members.length > 0) {
-            for (const member of members) {
-                await User.deleteOne({ _id: member});
-            }
-        }
-
-        return res.status(200).json({msg: 'Project deleted successfully'});
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({msg: 'Internal Server Error'});
-    }
-
-});
-
-router.post('/add-member', verifySession, checkOrgMembership, verifyRole('admin'), [
+const memberInfoValidations = [
     body('email').isEmail().withMessage('Invalid email'),
     body('name').not().isEmpty().withMessage('Name is required'),
     body('role').not().isEmpty().withMessage('Role is required'),
-    query('projectId').not().isEmpty().withMessage('No project id provided')
-], async (expressReq: Request, res: Response) => {
+    ...projectIdValidation
+];
 
-    const errors = validationResult(expressReq);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
+router.post('/create-project', 
+    verifySession,
+    verifyRole('admin'),
+    validationHandler(createProjectValidation),
+    asyncHandler(AdminController.createProject)
+);
 
-    const req = expressReq as CustomReq;
+router.post('/delete-project',
+    verifySession,
+    checkProjectMembership,
+    verifyRole('admin'),
+    validationHandler(projectIdValidation),
+    asyncHandler(AdminController.deleteProject)
+);
 
-    if (!req.user) {
-        return res.status(401).json({ msg: 'Unauthorized' });
-    }
+router.post('/add-member',
+    verifySession,
+    checkProjectMembership,
+    verifyRole('admin'),
+    validationHandler(memberInfoValidations),
+    asyncHandler(AdminController.addMember)
+);
 
-    const { email, name, role} = req.body;
-
-    const project: IProject = req.project as IProject;
-
-    try {
-        let user = await User.findOne({ email: email});
-        if (!user) {
-
-            const newUserId = crypto.randomBytes(16).toString('hex');
-            const passwordToken = crypto.randomBytes(32).toString('hex');
-            const tokenExpiry = new Date(Date.now() + 3600000); // 1 hour
-            
-            const newUser = new User({ 
-                userId: newUserId,
-                email: email,
-                name: name,
-                role: role,
-                setPasswordToken: passwordToken,
-                passwordTokenExpiry: tokenExpiry
-            });
-            await newUser.save();
-            user = newUser;
-        } 
-
-        await sendEmail({
-            to: email,
-            subject: 'You have been added to a project',
-            text: `You have been invites to the project: ${project.projectName}. Please set your password using this link to accept the invite: ${process.env.BASE_URL}/set-password?token=${user.setPasswordToken}&projectId=${project.projectId}`
-        })
-
-        return res.status(200).json({ msg: 'Member added successfully' });
-
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({ msg: 'Internal Server Error' });
-    
-    }
-
-});
-
-router.post('/remove-member', verifySession, checkOrgMembership, verifyRole('admin'), [
-    body('userId').not().isEmpty().withMessage('No userId provided')
-], async (expressReq: Request, res: Response) => {
-
-
-    const errors = validationResult(expressReq);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
-
-    const req = expressReq as CustomReq;
-    const { userId } = req.body;
-    const project = req.project as IProject;
-
-    try {
-        const user = await User.findOne({userId: userId});
-
-        if (!user) {
-            return res.status(404).json({ msg: 'User not found'});
-        }
-
-        if (!user.projects.includes(project._id)) {
-            return res.status(404).json({ msg: 'User not part of the organization'});
-        }
-
-        user.projects = user.projects.filter(projectId => !projectId.equals(project._id));
-        await user.save();
-
-        project.members = project.members.filter(memberId => !memberId.equals(user._id));
-        await project.save();
-
-        await sendEmail({
-            to: user.email,
-            subject: 'You have been removed from a project',
-            text: `You have been removed from ${project.projectName} by ${req.user?.name}`
-        });
-
-        return res.status(200).json({ msg: 'Member removed successfully' });
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({ msg: 'Internal Server Error'});
-    }
-});
+router.post('/remove-member',
+    verifySession,
+    checkProjectMembership,
+    verifyRole('admin'),
+    validationHandler(memberIdValidation),
+    asyncHandler(AdminController.removeMember)
+);
 
 export default router;
-
-
 

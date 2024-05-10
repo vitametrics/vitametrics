@@ -16,21 +16,18 @@ export interface IProject extends Document {
 };
 
 const projectSchema = new mongoose.Schema({
-    projectId: {type: String, default: ""},
-    projectName: {type: String, default: ""},
-    fitbitUserId: {type: String, default: ""}, // fitbit user id
-    ownerId: {type: String, default: ""},
-    ownerName: {type: String, default: ""},
-    ownerEmail: {type: String, default: ""},
-    fitbitAccessToken: {type: String, default: ""},
-    fitbitRefreshToken: {type: String, default: ""},
-    lastTokenRefresh: { type: Date, default: null},
-    creationDate: { type: Date, default: Date.now },
-    inviteCode: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Invite' }],
-    members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    devices: [{ type: String}]
-});
+    projectId: { type: String, required: true},
+    projectName: { type: String, required: true},
+    ownerId: { type: String, required: true},
+    fitbitUserId: { type: String, required: false },
+    fitbitAccessToken: { type: String, required: false },
+    fitbitRefreshToken: { type: String, required: false },
+    lastTokenRefresh: { type: Date, default: null },
+    creationDate: { type: Date, default: Date.now},
+    members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
+    devices: [{ type: String }]
+}, { timestamps: true});
 
-const projectModel = mongoose.model<IProject>('Organizations', projectSchema);
+const projectModel = mongoose.model<IProject>('Projects', projectSchema);
 
 export default projectModel;
