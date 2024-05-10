@@ -1,5 +1,5 @@
 import User from '../models/User';
-import Organization from '../models/Organization';
+import Organization from '../models/Project';
 import Setting from "../models/Setting";
 import crypto from 'crypto';
 import argon2 from 'argon2';

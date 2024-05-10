@@ -1,25 +1,21 @@
 import express, {Request, Response} from 'express';
 import { query, body, validationResult } from 'express-validator';
 import { DateTime } from 'luxon';
-// import multer from 'multer';
-import crypto from 'crypto';
 import verifySession from '../middleware/verifySession';
-import checkOrgMembership from '../middleware/checkOrg';
+import checkOrgMembership from '../middleware/checkProj';
 import refreshToken from '../middleware/refreshFitbitToken';
 import { CustomReq } from '../types/custom';
 import fetchDevices from '../util/fetchDevices';
 import fetchIntradayData from '../util/fetchIntraday';
-import { sendEmail } from '../util/emailUtil';
-import Organization, {IOrganization} from '../models/Organization';
+import Project, {IProject} from '../models/Project';
 import User, { IUser } from '../models/User';
 import fetchData from '../util/fetchData';
+import verifyRole from '../middleware/verifyRole';
 const router = express.Router();
-// const upload = multer({ dest: '../../uploads'});
-// const fitAddon = require('../fitaddon/build/Release/fitaddon.node')
 
 // get organization info
 router.get('/info', verifySession, checkOrgMembership as any, [
-    query('orgId').not().isEmpty().withMessage('No orgId provided')
+    query('projectId').not().isEmpty().withMessage('No projectId provided')
 ], async (expressReq: Request, res: Response) => {
 
     const errors = validationResult(expressReq);
@@ -29,11 +25,8 @@ router.get('/info', verifySession, checkOrgMembership as any, [
 
     const req = expressReq as CustomReq;
 
-    const { orgId } = req.query;
-
-
     const members = await User.find({
-        '_id': { $in: req.organization?.members }
+        '_id': { $in: req.project?.members }
     });
 
     return res.status(200).json({
@@ -42,62 +35,7 @@ router.get('/info', verifySession, checkOrgMembership as any, [
     });
 });
 
-router.post('/add-member', verifySession, checkOrgMembership as any, async(expressReq: Request, res: Response) => {
-
-    const req = expressReq as CustomReq;
-
-    if (!req.user || !req.organization) {
-        return res.status(401).json({ msg: 'Unauthorized' });
-    }
-    const { email, name} = req.body;
-    const organization: IOrganization = req.organization as IOrganization;
-
-    if (req.user.userId !== organization.ownerId) {
-        return res.status(403).json({ msg: 'Unauthorized' });
-    }
-
-    try {
-        const user = await User.findOne({email: email});
-        if (user) {
-            return res.status(400).json({msg: "User with that email already exists!"});
-        }
-
-        const passwordToken = crypto.randomBytes(32).toString('hex');
-        const tokenExpiry = new Date(Date.now() + 3600000); // 1 hour
-        const newUserId = crypto.randomBytes(16).toString('hex');
-
-        const newUser = new User({
-            userId: newUserId,
-            email,
-            name,
-            orgId: organization.orgId,
-            setPasswordToken: passwordToken,
-            passwordTokenExpiry: tokenExpiry
-        });
-
-        await newUser.save();
-
-        await Organization.updateOne(
-            {orgId: organization.orgId},
-            {$addToSet: {members: newUser._id}}
-        );
-
-        await sendEmail({
-            to: email,
-            subject: `You have been invited to ${organization.orgName}`,
-            text: `An account has been created for you. Please login using this link: ${process.env.BASE_URL}/set-password?token=${passwordToken}`
-        });
-
-        return res.status(200).json({msg: 'User successfully invited'});
-
-    } catch(err) {
-        console.error(err);
-        return res.status(500).json({msg: 'Internal Server Error'});
-    }
-
-});
-
-router.post('/remove-member', verifySession, checkOrgMembership as any, [
+router.post('/remove-member', verifySession, checkOrgMembership, verifyRole('admin'), [
     body('userId').not().isEmpty().withMessage('No userId provided')
 ], async (expressReq: Request, res: Response) => {
 
@@ -111,7 +49,7 @@ router.post('/remove-member', verifySession, checkOrgMembership as any, [
     try {
 
         const removedMemberId = req.body.userId as string;
-        const organization = req.organization as IOrganization;
+        const project = req.project as IProject;
 
         const user = req.user as IUser;
 
@@ -119,9 +57,9 @@ router.post('/remove-member', verifySession, checkOrgMembership as any, [
             return res.status(401).json({msg: 'Unauthorized'});
         }
         
-        if (organization.ownerId === removedMemberId) {
-            return res.status(400).json({msg: 'Cannot remove owner from organization'});
-        } else if (user.userId !== organization.ownerId) {
+        if (project.ownerId === removedMemberId) {
+            return res.status(400).json({msg: 'Cannot remove owner from project'});
+        } else if (user.userId !== project.ownerId) {
             return res.status(403).json({msg: 'Unauthorized'});
         }
 
@@ -132,8 +70,8 @@ router.post('/remove-member', verifySession, checkOrgMembership as any, [
 
         await userToRemove.deleteOne();
 
-        await Organization.updateOne(
-            { orgId: organization.orgId },
+        await Project.updateOne(
+            { projectId: project.projectId },
             { $pull: { members: userToRemove._id }}
         );
 
@@ -147,7 +85,7 @@ router.post('/remove-member', verifySession, checkOrgMembership as any, [
 });
 
 // fetch devices from fitbit
-router.post('/fetch-devices', verifySession, checkOrgMembership as any, refreshToken, async (expressReq: Request, res: Response) => {
+router.post('/fetch-devices', verifySession, checkOrgMembership, refreshToken, async (expressReq: Request, res: Response) => {
 
     const req = expressReq as CustomReq;
 
@@ -156,11 +94,11 @@ router.post('/fetch-devices', verifySession, checkOrgMembership as any, refreshT
     }
 
     try {
-        const orgId = req.organization.orgId;
-        const orgUserId = req.organization.userId;
-        const accessToken = req.organization.fitbitAccessToken;
+        const projectId = req.project.projectId;
+        const projectUserId = req.project.userId;
+        const accessToken = req.project.fitbitAccessToken;
 
-        const deviceResponse = await fetchDevices(orgUserId, accessToken, orgId);
+        const deviceResponse = await fetchDevices(projectUserId, accessToken, projectId);
 
         return res.status(200).json(deviceResponse);
 
@@ -170,19 +108,8 @@ router.post('/fetch-devices', verifySession, checkOrgMembership as any, refreshT
     }
 });
 
-// router.post('/upload', upload.single('fitfile'), (req: Request, res: Response) => {
-
-//     if (req.file) {
-//         const decodedData = fitAddon.decodeFIT(req.file.path);
-//         return res.json({success: true, decodedData});
-//     } else {
-//         return res.status(400).send('no file uploaded');
-//     }
-
-// })
-
 // fetch data from fitbit by device id
-router.get('/fetch-data', verifySession, checkOrgMembership as any, refreshToken, [
+router.get('/fetch-data', verifySession, checkOrgMembership, refreshToken, [
     query('id').not().isEmpty().withMessage('Device ID is required'),
     query('startDate').not().isEmpty().withMessage('You must specify a start date'),
     query('endDate').not().isEmpty().withMessage('You must specify an end date')
@@ -196,9 +123,9 @@ router.get('/fetch-data', verifySession, checkOrgMembership as any, refreshToken
     const req = expressReq as CustomReq;
 
     try {
-        const organization = req.organization as IOrganization;
+        const project = req.project as IProject;
         const deviceId = typeof req.query.id === 'string' ? req.query.id : undefined;
-        const orgUserId = organization.userId;
+        const projectUserId = project.userId;
         const startDate = typeof req.query.startDate === 'string' ? req.query.startDate: undefined;
         const endDate = typeof req.query.endDate === 'string' ? req.query.endDate: undefined;
 
@@ -206,7 +133,7 @@ router.get('/fetch-data', verifySession, checkOrgMembership as any, refreshToken
             return res.status(500).json({msg: 'Please provide a device id'});
         }
 
-        const data = await fetchData(orgUserId, organization.fitbitAccessToken, startDate, endDate);
+        const data = await fetchData(projectUserId, project.fitbitAccessToken, startDate, endDate);
 
         return res.status(200).json(data);
     } catch (err) {
@@ -216,7 +143,7 @@ router.get('/fetch-data', verifySession, checkOrgMembership as any, refreshToken
 });
 
 // fetch intraday data from fitbit by device id
-router.get('/fetch-intraday', verifySession, checkOrgMembership as any, refreshToken, [
+router.get('/fetch-intraday', verifySession, checkOrgMembership, refreshToken, [
     query('deviceId').not().isEmpty().withMessage('Device ID is required'),
     query('dataType').not().isEmpty().withMessage('You must specify which data to download'),
     query('date').not().isEmpty().withMessage('You must specify a date'),
@@ -234,19 +161,19 @@ router.get('/fetch-intraday', verifySession, checkOrgMembership as any, refreshT
         return res.status(401).json({ msg: 'Unauthorized' });
     }
 
-    const organization: IOrganization = req.organization as IOrganization;
+    const project: IProject = req.project as IProject;
 
     try {
         const deviceId = req.query.deviceId;
 
-        const orgId = organization.orgId;
+        const projectId = project.projectId;
 
-        const orgDeviceId = await Organization.findOne({ orgId, devices: deviceId }).lean();
-        if (!orgDeviceId) {
+        const projectDeviceId = await Project.findOne({ projectId, devices: deviceId }).lean();
+        if (!projectDeviceId) {
             return res.status(404).json({ msg: 'Device not found in organization' });
         }
 
-        const data = await fetchIntradayData(organization.userId, organization.fitbitAccessToken, req.query.dataType as string, req.query.date as string, req.query.detailLevel as string);
+        const data = await fetchIntradayData(project.userId, project.fitbitAccessToken, req.query.dataType as string, req.query.date as string, req.query.detailLevel as string);
 
         return res.status(200).json(data);
 
@@ -257,7 +184,7 @@ router.get('/fetch-intraday', verifySession, checkOrgMembership as any, refreshT
 });
 
 // download data from fitbit by device id
-router.get('/download-data', verifySession, checkOrgMembership as any, refreshToken, [
+router.get('/download-data', verifySession, checkOrgMembership, refreshToken, [
     query('deviceId').not().isEmpty().withMessage('Device ID is required'),
     query('dataType').not().isEmpty().withMessage('You must specify which data to download'),
     query('date').not().isEmpty().withMessage('You must specify a date'),
@@ -275,19 +202,19 @@ router.get('/download-data', verifySession, checkOrgMembership as any, refreshTo
         return res.status(401).json({ msg: 'Unauthorized' });
     }
 
-    const organization: IOrganization = req.organization as IOrganization;
+    const project: IProject = req.project as IProject;
 
     try {
         const deviceId = req.query.deviceId;
 
-        const orgId = organization.orgId;
+        const projectId = project.projectId;
 
-        const orgDeviceId = await Organization.findOne({ orgId, devices: deviceId }).lean();
-        if (!orgDeviceId) {
+        const projectDeviceId = await Project.findOne({ projectId, devices: deviceId }).lean();
+        if (!projectDeviceId) {
             return res.status(404).json({ msg: 'Device not found in organization' });
         }
 
-        const data = await fetchIntradayData(organization.userId, organization.fitbitAccessToken, req.query.dataType as string, req.query.date as string, req.query.detailLevel as string);
+        const data = await fetchIntradayData(project.userId, project.fitbitAccessToken, req.query.dataType as string, req.query.date as string, req.query.detailLevel as string);
 
 
         const header = "Timestamp,Value\n";

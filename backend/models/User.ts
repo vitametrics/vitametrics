@@ -8,8 +8,7 @@ export interface IUser extends Document {
     role: string;
     emailVerfToken: string;
     emailVerified: boolean;
-    organizations: Types.ObjectId[];
-    orgId: string;
+    projects: Types.ObjectId[];
     languageLocale: string;
     distanceUnit: string;
     setPasswordToken: string | null;
@@ -25,7 +24,7 @@ const userSchema = new mongoose.Schema({
     role: {type: String, default: "user"},
     emailVerfToken: {type: String, default: ""},
     emailVerified: {type: Boolean, default: false},
-    organizations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Organizations' }],
+    projects: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Projects' }],
     languageLocale: {type: String, default: 'en-US'},
     distanceUnit: {type: String, default: 'en-US'},
     setPasswordToken: {type: String, default: ""},

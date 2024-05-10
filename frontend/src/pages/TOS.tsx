@@ -5,9 +5,9 @@ const TOS = () => {
   return (
     <div className="font-leagueSpartan bg-fixed ">
       <Navbar />
-      <div className="py-10 px-32">
+      <div className="py-10 md:px-32">
         <div className="bg-glass p-10 rounded-xl mt-20">
-          <h1 className="text-6xl">Terms and Conditions</h1>
+          <h1 className=" text-5xl md:text-6xl">Terms and Conditions</h1>
           <p>Last updated: February 16, 2024</p>
           <p>
             Please read these terms and conditions carefully before using Our
@@ -26,6 +26,7 @@ const TOS = () => {
           <br />
           <h3 className="text-3xl">Definitions</h3>
           <p>For the purposes of these Terms and Conditions:</p>
+          <br />
           <ul>
             <li>
               <p>
@@ -36,12 +37,14 @@ const TOS = () => {
                 election of directors or other managing authority.
               </p>
             </li>
+            <br />
             <li>
               <p>
                 <strong>Country</strong> refers to: California, United States
               </p>
             </li>
             <li>
+              <br />
               <p>
                 <strong>Company</strong> (referred to as either &quot;the
                 Company&quot;, &quot;We&quot;, &quot;Us&quot; or &quot;Our&quot;
@@ -49,17 +52,20 @@ const TOS = () => {
                 Monterey, CA 93940.
               </p>
             </li>
+            <br />
             <li>
               <p>
                 <strong>Device</strong> means any device that can access the
                 Service such as a computer, a cellphone or a digital tablet.
               </p>
             </li>
+            <br />
             <li>
               <p>
                 <strong>Service</strong> refers to the Website.
               </p>
             </li>
+            <br />
             <li>
               <p>
                 <strong>Terms and Conditions</strong> (also referred as
@@ -76,6 +82,7 @@ const TOS = () => {
                 .
               </p>
             </li>
+            <br />
             <li>
               <p>
                 <strong>Third-party Social Media Service</strong> means any
@@ -97,6 +104,7 @@ const TOS = () => {
                 </a>
               </p>
             </li>
+            <br />
             <li>
               <p>
                 <strong>You</strong> means the individual accessing or using the
@@ -114,21 +122,25 @@ const TOS = () => {
             Terms and Conditions set out the rights and obligations of all users
             regarding the use of the Service.
           </p>
+          <br />
           <p>
             Your access to and use of the Service is conditioned on Your
             acceptance of and compliance with these Terms and Conditions. These
             Terms and Conditions apply to all visitors, users and others who
             access or use the Service.
           </p>
+          <br />
           <p>
             By accessing or using the Service You agree to be bound by these
             Terms and Conditions. If You disagree with any part of these Terms
             and Conditions then You may not access the Service.
           </p>
+          <br />
           <p>
             You represent that you are over the age of 18. The Company does not
             permit those under 18 to use the Service.
           </p>
+          <br />
           <p>
             Your access to and use of the Service is also conditioned on Your
             acceptance of and compliance with the Privacy Policy of the Company.
@@ -138,11 +150,14 @@ const TOS = () => {
             rights and how the law protects You. Please read Our Privacy Policy
             carefully before using Our Service.
           </p>
-          <h2>Links to Other Websites</h2>
+          <br />
+          <h2 className="text-4xl">Links to Other Websites</h2>
+          <br />
           <p>
             Our Service may contain links to third-party web sites or services
             that are not owned or controlled by the Company.
           </p>
+          <br />
           <p>
             The Company has no control over, and assumes no responsibility for,
             the content, privacy policies, or practices of any third party web
@@ -152,21 +167,25 @@ const TOS = () => {
             connection with the use of or reliance on any such content, goods or
             services available on or through any such web sites or services.
           </p>
+          <br />
           <p>
             We strongly advise You to read the terms and conditions and privacy
             policies of any third-party web sites or services that You visit.
           </p>
-          <h2>Termination</h2>
+          <br />
+          <h2 className="text-4xl">Termination</h2>
           <p>
             We may terminate or suspend Your access immediately, without prior
             notice or liability, for any reason whatsoever, including without
             limitation if You breach these Terms and Conditions.
           </p>
+          <br />
           <p>
             Upon termination, Your right to use the Service will cease
             immediately.
           </p>
-          <h2>Limitation of Liability</h2>
+          <br />
+          <h2 className="text-4xl">Limitation of Liability</h2>
           <p>
             Notwithstanding any damages that You might incur, the entire
             liability of the Company and any of its suppliers under any
@@ -175,6 +194,7 @@ const TOS = () => {
             through the Service or 100 USD if You haven't purchased anything
             through the Service.
           </p>
+          <br />
           <p>
             To the maximum extent permitted by applicable law, in no event shall
             the Company or its suppliers be liable for any special, incidental,
@@ -188,6 +208,7 @@ const TOS = () => {
             any supplier has been advised of the possibility of such damages and
             even if the remedy fails of its essential purpose.
           </p>
+          <br />
           <p>
             Some states do not allow the exclusion of implied warranties or
             limitation of liability for incidental or consequential damages,
@@ -195,7 +216,12 @@ const TOS = () => {
             these states, each party's liability will be limited to the greatest
             extent permitted by law.
           </p>
-          <h2>&quot;AS IS&quot; and &quot;AS AVAILABLE&quot; Disclaimer</h2>
+          <br />
+
+          <h2 className="text-4xl">
+            &quot;AS IS&quot; and &quot;AS AVAILABLE&quot; Disclaimer
+          </h2>
+          <br />
           <p>
             The Service is provided to You &quot;AS IS&quot; and &quot;AS
             AVAILABLE&quot; and with all faults and defects without warranty of
@@ -215,6 +241,7 @@ const TOS = () => {
             meet any performance or reliability standards or be error free or
             that any errors or defects can or will be corrected.
           </p>
+          <br />
           <p>
             Without limiting the foregoing, neither the Company nor any of the
             company's provider makes any representation or warranty of any kind,
@@ -227,6 +254,7 @@ const TOS = () => {
             on behalf of the Company are free of viruses, scripts, trojan
             horses, worms, malware, timebombs or other harmful components.
           </p>
+          <br />
           <p>
             Some jurisdictions do not allow the exclusion of certain types of
             warranties or limitations on applicable statutory rights of a
@@ -235,26 +263,33 @@ const TOS = () => {
             set forth in this section shall be applied to the greatest extent
             enforceable under applicable law.
           </p>
-          <h2>Governing Law</h2>
+          <br />
+          <h2 className="text-4xl">Governing Law</h2>
           <p>
             The laws of the Country, excluding its conflicts of law rules, shall
             govern this Terms and Your use of the Service. Your use of the
             Application may also be subject to other local, state, national, or
             international laws.
           </p>
-          <h2>Disputes Resolution</h2>
+          <br />
+          <h2 className="text-4xl">Disputes Resolution</h2>
+          <br />
           <p>
             If You have any concern or dispute about the Service, You agree to
             first try to resolve the dispute informally by contacting the
             Company.
           </p>
-          <h2>For European Union (EU) Users</h2>
+          <br />
+          <h2 className="text-4xl">For European Union (EU) Users</h2>
+          <br />
           <p>
             If You are a European Union consumer, you will benefit from any
             mandatory provisions of the law of the country in which You are
             resident.
           </p>
-          <h2>United States Legal Compliance</h2>
+          <br />
+          <h2 className="text-4xl">United States Legal Compliance</h2>
+          <br />
           <p>
             You represent and warrant that (i) You are not located in a country
             that is subject to the United States government embargo, or that has
@@ -262,8 +297,9 @@ const TOS = () => {
             supporting&quot; country, and (ii) You are not listed on any United
             States government list of prohibited or restricted parties.
           </p>
-          <h2>Severability and Waiver</h2>
-          <h3>Severability</h3>
+          <br />
+          <h2 className="text-4xl">Severability and Waiver</h2>
+          <h3 className="text-3xl">Severability</h3>
           <p>
             If any provision of these Terms is held to be unenforceable or
             invalid, such provision will be changed and interpreted to
@@ -271,7 +307,9 @@ const TOS = () => {
             possible under applicable law and the remaining provisions will
             continue in full force and effect.
           </p>
-          <h3>Waiver</h3>
+          <br />
+          <h3 className="text-3xl">Waiver</h3>
+          <br />
           <p>
             Except as provided herein, the failure to exercise a right or to
             require performance of an obligation under these Terms shall not
@@ -279,13 +317,17 @@ const TOS = () => {
             performance at any time thereafter nor shall the waiver of a breach
             constitute a waiver of any subsequent breach.
           </p>
-          <h2>Translation Interpretation</h2>
+          <br />
+          <h2 className="text-4xl">Translation Interpretation</h2>
+          <br />
           <p>
             These Terms and Conditions may have been translated if We have made
             them available to You on our Service. You agree that the original
             English text shall prevail in the case of a dispute.
           </p>
-          <h2>Changes to These Terms and Conditions</h2>
+          <br />
+          <h2 className="text-4xl">Changes to These Terms and Conditions</h2>
+          <br />
           <p>
             We reserve the right, at Our sole discretion, to modify or replace
             these Terms at any time. If a revision is material We will make
