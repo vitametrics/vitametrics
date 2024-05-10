@@ -35,6 +35,7 @@ router.get('/auth/status', async (expressReq: Request, res: Response) => {
             user: {
                 id: req.user.userId,
                 email: req.user.email,
+                role: req.user.role,
                 orgId: req.user.orgId,
                 isEmailVerified: emailVerified,
                 isOrgOwner: isOrgOwner,
@@ -122,7 +123,8 @@ router.post('/check-password-token', [
 // user password setting
 router.post('/set-password', [
     body('token').not().isEmpty().withMessage('Token is required'),
-    body('password').not().isEmpty().withMessage('Password is required')
+    body('password').not().isEmpty().withMessage('Password is required'),
+    query('projectId').optional().isString().withMessage('Invalid project id')
 ], async (expressReq: Request, res: Response) => {
 
     const errors = validationResult(expressReq);
@@ -133,19 +135,36 @@ router.post('/set-password', [
     const req = expressReq as CustomReq;
 
     const {token, password} = req.body;
+    const projectId = req.query.projectId as string;
     
     try {
         const user = await User.findOne({setPasswordToken: token});
+        const project = await Organization.findOne({ orgId: projectId });
 
         if (!user) {
             return res.status(400).json({msg: 'Invalid or expired token'});
+        }
+
+        if (!project && user.role === 'admin') {
+            user.password = await argon2.hash(password);
+            user.emailVerified = true;
+            user.setPasswordToken = null;
+            user.passwordTokenExpiry = null;
+            await user.save();
+            return res.status(200).json({msg: 'Password has been set successfully', email: user.email});
+        } else if (!project){
+            return res.status(404).json({msg: 'Project not found'});
         }
 
         user.password = await argon2.hash(password);
         user.emailVerified = true;
         user.setPasswordToken = null;
         user.passwordTokenExpiry = null;
+        user.organizations.push(project._id);
         await user.save();
+
+        project.members.push(user._id);
+        await project.save();
 
         return res.status(200).json({msg: 'Password has been set successfully', email: user.email});
     } catch (err) {

@@ -19,6 +19,7 @@ async function initializeDatabase() {
             const newUser = new User({
                 userId: newUserId,
                 email: process.env.ADMIN_EMAIL,
+                role: "owner",
                 emailVerfToken: crypto.randomBytes(32).toString('hex'),
                 emailVerified: false,
                 orgId: newOrgId,
@@ -28,17 +29,6 @@ async function initializeDatabase() {
             });
 
             await newUser.save();
-
-            const newOrganization = new Organization({
-                orgId: newOrgId,
-                orgName: "Admin Organization",
-                ownerId: newUserId,
-                ownerName: "Admin",
-                ownerEmail: process.env.ADMIN_EMAIL,
-                members: [newUser._id]
-            });
-
-            await newOrganization.save();
 
             await sendEmail({
                 to: process.env.ADMIN_EMAIL as string,
