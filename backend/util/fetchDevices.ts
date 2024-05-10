@@ -1,5 +1,5 @@
 import axios from 'axios';
-import Organization from '../models/Organization';
+import Organization from '../models/Project';
 import Device from '../models/Device';
 
 async function fetchDevices(userId: string, accessToken: string, orgId: string) {

@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-import Organization from '../models/Organization';
 import { CustomReq } from '../types/custom';
 import User from '../models/User';
 

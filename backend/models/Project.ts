@@ -1,12 +1,12 @@
 import mongoose, { Document, Types } from 'mongoose';
 
-export interface IOrganization extends Document {
-    orgId: string;
-    orgName: string;
+export interface IProject extends Document {
+    projectId: string;
+    projectName: string;
     ownerId: string;
     ownerName: string;
     ownerEmail: string;
-    userId: string;
+    fibitUserId: string;
     fitbitAccessToken: string;
     fitbitRefreshToken: string;
     lastTokenRefresh: Date;
@@ -15,21 +15,22 @@ export interface IOrganization extends Document {
     devices: string[];
 };
 
-const organizationSchema = new mongoose.Schema({
-    orgId: {type: String, default: ""},
-    orgName: {type: String, default: ""},
-    userId: {type: String, default: ""}, // fitbit user id
+const projectSchema = new mongoose.Schema({
+    projectId: {type: String, default: ""},
+    projectName: {type: String, default: ""},
+    fitbitUserId: {type: String, default: ""}, // fitbit user id
     ownerId: {type: String, default: ""},
     ownerName: {type: String, default: ""},
     ownerEmail: {type: String, default: ""},
     fitbitAccessToken: {type: String, default: ""},
     fitbitRefreshToken: {type: String, default: ""},
     lastTokenRefresh: { type: Date, default: null},
+    creationDate: { type: Date, default: Date.now },
     inviteCode: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Invite' }],
     members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     devices: [{ type: String}]
 });
 
-const orgModel = mongoose.model<IOrganization>('Organizations', organizationSchema);
+const projectModel = mongoose.model<IProject>('Organizations', projectSchema);
 
-export default orgModel;
+export default projectModel;

@@ -1,11 +1,8 @@
 import express, { Request, Response } from 'express';
-import Organization, { IOrganization } from '../models/Organization';
 import User from '../models/User';
-import Device from '../models/Device';
 import verifyRole from '../middleware/verifyRole';
-import checkOrgMembership from '../middleware/checkOrg';
 import verifySession from '../middleware/verifySession';
-import { body, validationResult } from 'express-validator';
+import { validationResult } from 'express-validator';
 import { CustomReq } from '../types/custom';
 import { sendEmail } from '../util/emailUtil';
 import crypto from 'crypto';

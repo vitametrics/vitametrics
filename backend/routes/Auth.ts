@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import axios from 'axios';
 import crypto from 'crypto';
 import CodeVerifier from '../models/CodeVerifier';
-import Organization from '../models/Organization';
+import Project from '../models/Project';
 import { IUser } from '../models/User';
 import verifySession from '../middleware/verifySession';
 
@@ -31,7 +31,7 @@ router.get('/auth/:orgId', async (req: Request, res: Response) => {
 router.get('/callback', verifySession, async (req: Request, res: Response) => {
     const state = req.query.state as string;
     const decodedState = JSON.parse(Buffer.from(state as string, 'base64').toString('utf-8'));
-    const orgId = decodedState.orgId;
+    const projectId = decodedState.orgId;
     const code = req.query.code as string;
     const userId = (req.user as IUser).userId;
 
@@ -65,18 +65,18 @@ router.get('/callback', verifySession, async (req: Request, res: Response) => {
 
         const refreshToken = tokenResponse.data.refresh_token;
 
-        const organization = await Organization.findById(orgId);
+        const project = await Project.findById(projectId);
 
-        if (!organization) {
+        if (!project) {
             console.error('Organization not found');
             return res.status(404).send('Organization not found');
         }
 
-        organization.userId = fitbitUserID;
-        organization.fitbitAccessToken = accessToken;
-        organization.fitbitRefreshToken = refreshToken;
+        project.fibitUserId = fitbitUserID;
+        project.fitbitAccessToken = accessToken;
+        project.fitbitRefreshToken = refreshToken;
 
-        await organization.save();
+        await project.save();
         
         // this should not handle redirects. fine for now i guess.
 	    return res.redirect('/dashboard?view=data');

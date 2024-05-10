@@ -21,8 +21,7 @@ const loginRoute = (passport: PassportStatic): Router => {
                 return res.json({
                     user: {
                         id: user.userId,
-                        email: user.email,
-                        orgId: user.orgId
+                        email: user.email
                     },
                     msg: 'Logged in successfully'
                 });
