@@ -125,7 +125,7 @@ router.get('/fetch-data', verifySession, checkOrgMembership, refreshToken, [
     try {
         const project = req.project as IProject;
         const deviceId = typeof req.query.id === 'string' ? req.query.id : undefined;
-        const projectUserId = project.userId;
+        const projectUserId = project.fibitUserId;
         const startDate = typeof req.query.startDate === 'string' ? req.query.startDate: undefined;
         const endDate = typeof req.query.endDate === 'string' ? req.query.endDate: undefined;
 
@@ -173,7 +173,7 @@ router.get('/fetch-intraday', verifySession, checkOrgMembership, refreshToken, [
             return res.status(404).json({ msg: 'Device not found in organization' });
         }
 
-        const data = await fetchIntradayData(project.userId, project.fitbitAccessToken, req.query.dataType as string, req.query.date as string, req.query.detailLevel as string);
+        const data = await fetchIntradayData(project.fibitUserId, project.fitbitAccessToken, req.query.dataType as string, req.query.date as string, req.query.detailLevel as string);
 
         return res.status(200).json(data);
 
@@ -214,7 +214,7 @@ router.get('/download-data', verifySession, checkOrgMembership, refreshToken, [
             return res.status(404).json({ msg: 'Device not found in organization' });
         }
 
-        const data = await fetchIntradayData(project.userId, project.fitbitAccessToken, req.query.dataType as string, req.query.date as string, req.query.detailLevel as string);
+        const data = await fetchIntradayData(project.fibitUserId, project.fitbitAccessToken, req.query.dataType as string, req.query.date as string, req.query.detailLevel as string);
 
 
         const header = "Timestamp,Value\n";

@@ -72,7 +72,7 @@ router.get('/callback', verifySession, async (req: Request, res: Response) => {
             return res.status(404).send('Organization not found');
         }
 
-        project.userId = fitbitUserID;
+        project.fibitUserId = fitbitUserID;
         project.fitbitAccessToken = accessToken;
         project.fitbitRefreshToken = refreshToken;
 

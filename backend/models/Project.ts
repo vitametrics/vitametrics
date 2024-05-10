@@ -6,7 +6,7 @@ export interface IProject extends Document {
     ownerId: string;
     ownerName: string;
     ownerEmail: string;
-    userId: string;
+    fibitUserId: string;
     fitbitAccessToken: string;
     fitbitRefreshToken: string;
     lastTokenRefresh: Date;
@@ -18,7 +18,7 @@ export interface IProject extends Document {
 const projectSchema = new mongoose.Schema({
     projectId: {type: String, default: ""},
     projectName: {type: String, default: ""},
-    userId: {type: String, default: ""}, // fitbit user id
+    fitbitUserId: {type: String, default: ""}, // fitbit user id
     ownerId: {type: String, default: ""},
     ownerName: {type: String, default: ""},
     ownerEmail: {type: String, default: ""},
