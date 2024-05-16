@@ -24,9 +24,9 @@ app.use(helmet({
 }));
 
 commonMiddlewares(app);
+passportConfig(passport);
 app.use(passport.initialize());
 app.use(passport.session());
-passportConfig(passport);
 configureRoutes(app, passport);
 app.use(handleResponse);
 
