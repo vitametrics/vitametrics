@@ -28,7 +28,20 @@ const UserDashboard = () => {
     createProject: "false",
   });
   const [projectName, setProjectName] = useState("");
+  const [debouncedProjectName, setDebouncedProjectName] = useState("");
   const itemsPerPageOptions = [5, 10, 15, 20];
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedProjectName(projectName);
+    }, 1000);
+
+    console.log(debouncedProjectName);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [projectName]);
 
   const handleItemsPerPageChange = (event) => {
     setItemsPerPage(Number(event.target.value));
@@ -65,18 +78,17 @@ const UserDashboard = () => {
   };
 
   const handleProjectClick = (projectId: string) => {
-    navigate(`/project/${projectId}?view=data`);
+    navigate(`/dashboard/project?id=${projectId}&&view=data`);
   };
 
   const handleCreateProject = async () => {
     try {
-      const response = await axios.post(
-        CREATE_PROJECT_ENDPOINT,
-        {
-          name: projectName,
+      const response = await axios.post(CREATE_PROJECT_ENDPOINT, {
+        params: {
+          projectName: debouncedProjectName,
         },
-        { withCredentials: true }
-      );
+        withCredentials: true,
+      });
 
       console.log(response.data);
 
@@ -95,18 +107,24 @@ const UserDashboard = () => {
         initial="hidden"
         animate={inView ? "show" : "hidden"}
         ref={ref}
-        className={`opacity-transition ${showBackDrop ? "show" : ""} absolute w-full  p-10 z-20 bg-[#e8e8e8] flex flex-col left-0 md:left-1/2 md:top-1/2 transform-center md:w-[500px] rounded-xl text-black`}
+        className={`font-libreFranklinBold opacity-transition ${showBackDrop ? "show" : ""} absolute w-full  p-10 z-20 bg-[#e8e8e8] flex flex-col left-0 md:left-1/2 md:top-1/2 transform-center md:w-[500px] rounded-xl text-primary shadow-lg`}
       >
         <button
           onClick={() => toggleCreateProjectMenu(false)}
           className="item-3 ml-auto"
         ></button>
-        <h1 className="text-3xl mb-3 text-center w-full">Create New Project</h1>
-
-        <h1 className="text-xl mb-1"></h1>
+        <h1 className="text-3xl mb-10 text-center w-full text-primary font-bold">
+          Create New Project
+        </h1>
+        <p className="text-primary"> Enter New Project Name</p>
+        <input
+          type="text"
+          className="p-3 mb-3 rounded-lg border-b-1 text-primary"
+          onChange={(e) => setProjectName(e.target.value)}
+        />
 
         <button
-          className="bg-tertiary p-4 text-xl w-full rounded-lg"
+          className="bg-tertiary p-4 text-xl w-full rounded-lg text-white font-bold"
           onClick={handleCreateProject}
         >
           Create
@@ -130,13 +148,12 @@ const UserDashboard = () => {
       <div className={`backdrop ${showBackDrop ? "show" : ""}`}></div>
 
       {renderCreateProjectMenu()}
-      <div className="p-20 bg-lightmodeSecondary">
+      <div className="p-20 bg-lightmodeSecondary h-full">
         <h1 className="text-4xl mb-5 font-libreFranklin font-bold text-primary">
-          {" "}
-          Welcome back{" "}
+          Welcome back
         </h1>
 
-        <div className="flex flex-col bg-white rounded-xl h-screen shadow-lg font-libreFranklin p-10">
+        <div className="flex flex-col bg-white rounded-xl shadow-lg font-libreFranklin p-10">
           <div className=" flex flex-col items-center pb-0">
             <span className="text-left text-primary text-2xl mr-auto mb-3 font-bold">
               Projects

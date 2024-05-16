@@ -12,6 +12,7 @@ import axios from "axios";
 
 interface DashboardProps {
   projects: any[];
+  isOwner: boolean;
 }
 
 /*
@@ -144,6 +145,7 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
   ];
 
   const [projects, setProjects] = useState<any[]>([]);
+  const [isOwner, setIsOwner] = useState(false);
 
   const AUTH_ENDPOINT =
     import.meta.env.VITE_APP_NODE_ENV === "production"
@@ -156,7 +158,9 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
         withCredentials: true,
       });
       setProjects(response.data.user.projects);
-      setProjects(testProjects);
+      setIsOwner(response.data.user.role === "owner" ? true : false);
+
+      //setProjects(testProjects);
     } catch (error) {
       console.log(error);
       setProjects(testProjects);
@@ -168,7 +172,7 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   return (
-    <DashboardContext.Provider value={{ projects }}>
+    <DashboardContext.Provider value={{ projects, isOwner }}>
       {children}
     </DashboardContext.Provider>
   );

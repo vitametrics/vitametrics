@@ -4,8 +4,6 @@ import axios from "axios";
 interface AuthContextProps {
   isAuthenticated: boolean;
   isLoadingAuth: boolean;
-  isAccountLinked: boolean;
-  isOrgOwner: boolean;
   isEmailVerified: boolean;
   login: () => void;
   logout: () => void;
@@ -21,8 +19,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoadingAuth, setIsLoadingAuth] = useState<boolean>(true);
-  const [isAccountLinked, setIsAccountLinked] = useState<boolean>(false);
-  const [isOrgOwner, setIsOrgOwner] = useState<boolean>(false);
   const [isEmailVerified, setIsEmailVerified] = useState<boolean>(false);
   const [userEmail, setUserEmail] = useState<string>("");
   const [userId, setUserId] = useState<string>("");
@@ -49,8 +45,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           withCredentials: true,
         });
         setIsAuthenticated(response.data.isAuthenticated);
-        setIsAccountLinked(response.data.user.isAccountLinked);
-        setIsOrgOwner(response.data.user.isOrgOwner);
         setIsEmailVerified(response.data.user.isEmailVerified);
         setUserEmail(response.data.user.email);
         setUserId(response.data.user.id);
@@ -99,8 +93,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       value={{
         isAuthenticated,
         isLoadingAuth,
-        isAccountLinked,
-        isOrgOwner,
         isEmailVerified,
         login,
         logout,

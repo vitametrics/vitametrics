@@ -13,6 +13,7 @@ interface StickySidebarProps {
 const StickySidebar: React.FC<StickySidebarProps> = ({ setPage, path }) => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState("Data");
+  const id = new URLSearchParams(window.location.search).get("id");
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const view = urlParams.get("view") || "data";
@@ -25,7 +26,7 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage, path }) => {
     if (newPage !== currentPage) {
       setPage(newPage);
       setCurrentPage(newPage);
-      navigate(`/${path}?view=${newPage.toLowerCase()}`);
+      navigate(`/${path}?id=${id}&&view=${newPage.toLowerCase()}`);
     }
   };
 

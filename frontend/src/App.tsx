@@ -8,6 +8,7 @@ import {
 import { DashboardProvider } from "./helpers/DashboardContext";
 import Home from "./pages/Home"; // Regular import for Home
 const Dashboard = lazy(() => import("./pages/UserDashboard"));
+const ProjectDashboard = lazy(() => import("./pages/ProjectDashboard")); // Regular import for UserDashboard
 const Login = lazy(() => import("./pages/Login"));
 const FAQs = lazy(() => import("./pages/FAQs"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
@@ -16,6 +17,7 @@ const Demo = lazy(() => import("./pages/Demo"));
 const SetPassword = lazy(() => import("./pages/SetPassword"));
 const PageNotFound = lazy(() => import("./pages/PageNotFound"));
 import { useAuth } from "./helpers/AuthContext";
+import { ProjectProvider } from "./helpers/ProjectContext";
 const LoadingFallback = () => <div>Loading...</div>;
 interface AuthRouteProps {
   children: ReactNode;
@@ -50,22 +52,39 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route
-            path="/dashboard"
-            element={
-              <AuthenticatedRoute redirectTo="/login">
-                <Suspense fallback={<LoadingFallback />}>
-                  <DashboardProvider>
-                    <Dashboard />
-                  </DashboardProvider>
-                </Suspense>
-              </AuthenticatedRoute>
-            }
-          ></Route>
+          <Route path="/dashboard">
+            <Route
+              index={true}
+              element={
+                <AuthenticatedRoute redirectTo="/login">
+                  <Suspense fallback={<LoadingFallback />}>
+                    <DashboardProvider>
+                      <Dashboard />
+                    </DashboardProvider>
+                  </Suspense>
+                </AuthenticatedRoute>
+              }
+            />
+            <Route
+              path="project"
+              element={
+                <AuthenticatedRoute redirectTo="/login">
+                  <Suspense fallback={<LoadingFallback />}>
+                    <DashboardProvider>
+                      <ProjectProvider>
+                        <ProjectDashboard />
+                      </ProjectProvider>
+                    </DashboardProvider>
+                  </Suspense>
+                </AuthenticatedRoute>
+              }
+            />
+          </Route>
+
           <Route
             path="/login"
             element={
-              <UnauthenticatedRoute redirectTo="/dashboard?view=data">
+              <UnauthenticatedRoute redirectTo="/dashboard">
                 <Suspense fallback={<LoadingFallback />}>
                   <Login />
                 </Suspense>

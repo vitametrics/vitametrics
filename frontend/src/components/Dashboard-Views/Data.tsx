@@ -4,7 +4,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useState, lazy, Suspense, useEffect } from "react";
 import axios from "axios";
-import { useOrg } from "../../helpers/OrgContext";
+//import { useDashboard } from "../../helpers/DashboardContext";
 import { useSearchParams } from "react-router-dom";
 
 const LazyBarChart = lazy(() =>
@@ -15,7 +15,7 @@ const LazyLineChart = lazy(() =>
   import("react-chartjs-2").then((module) => ({ default: module.Line }))
 );
 import "chart.js/auto";
-import { useDashboard } from "../../helpers/DashboardContext";
+import { useProject } from "../../helpers/ProjectContext";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 
@@ -73,7 +73,7 @@ interface DataItem {
 }
 
 const Data = () => {
-  const { deviceViewDevices, orgName } = useOrg();
+  const { deviceViewDevices, projectName } = useProject();
   const [searchParams, setSearchParams] = useSearchParams({
     detailLevel: "1min",
     dataType: "steps",
@@ -102,7 +102,7 @@ const Data = () => {
     downloadDate,
     setDownloadDate,
     fetchDevices,
-  } = useDashboard();
+  } = useProject();
   const [rangeChartData, setRangeChartData] = useState({});
 
   const detailLevelTypes = [
@@ -522,7 +522,7 @@ const Data = () => {
         Test Fetch Data{" "}
   </button>*/}
       <h2 className="w-full text-4xl font-ralewayBold text-white p-5 pb-0 mb-5">
-        {orgName} Overview
+        {projectName} Overview
       </h2>
       <span className="p-5">
         <button

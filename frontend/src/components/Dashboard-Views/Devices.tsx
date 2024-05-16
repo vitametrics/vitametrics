@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useOrg } from "../../helpers/OrgContext";
+import { useProject } from "../../helpers/ProjectContext";
 import axios from "axios";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
@@ -18,11 +18,10 @@ const Devices = () => {
   const {
     devices,
     setDevices,
-    orgName,
     deviceViewDevices,
     setDeviceViewDevices,
     fetchDevices,
-  } = useOrg();
+  } = useProject();
   const [editingDevices, setEditingDevices] = useState<{
     [key: string]: string;
   }>({});
@@ -190,7 +189,7 @@ const Devices = () => {
       className="w-full h-full flex flex-col p-10 "
     >
       <h2 className="w-full text-4xl font-ralewayBold text-white p-5 pb-0">
-        {orgName} Devices
+        {} Devices
       </h2>
       <div className="flex p-5 w-full">
         <button

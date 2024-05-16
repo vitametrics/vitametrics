@@ -9,11 +9,10 @@ import logo from "../assets/images/vitamix.webp";
 const SetPassword = () => {
   const [searchParams] = useSearchParams({
     token: "",
-    projectId: ""
+    projectId: "",
   });
 
   const navigate = useNavigate();
-
   const { login_from_set_password } = useAuth();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -82,14 +81,18 @@ const SetPassword = () => {
     }
 
     try {
-      const response = await axios.post(SET_PASSWORD_ENDPOINT, {
-        password: debouncedPassword,
-        token: searchParams.get("token")
-      }, {
-        params: {
-          projectId: searchParams.get("projectId")
+      const response = await axios.post(
+        SET_PASSWORD_ENDPOINT,
+        {
+          password: debouncedPassword,
+          token: searchParams.get("token"),
+        },
+        {
+          params: {
+            projectId: searchParams.get("projectId"),
+          },
         }
-      });
+      );
 
       if (response.data) {
         login_from_set_password(response.data.email, debouncedPassword);

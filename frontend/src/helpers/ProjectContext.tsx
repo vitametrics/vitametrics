@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
+import { useDashboard } from "./DashboardContext";
 
 interface Member {
   distanceUnit: string;
@@ -101,6 +102,7 @@ interface ProjectContextProps {
   setDetailLevel: (arg0: string) => void;
   fetchDevice: (deviceId: string) => void;
   isOwner: boolean;
+  isAccountLinked: boolean;
 }
 
 const ProjectContext = createContext<ProjectContextProps | undefined>(
@@ -110,6 +112,7 @@ const ProjectContext = createContext<ProjectContextProps | undefined>(
 const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const { projects } = useDashboard();
   const [projectName, setprojectName] = useState<string>("");
   const [projectId, setProjectId] = useState<string>("");
   const [ownerEmail, setOwnerEmail] = useState<string>("");
@@ -125,7 +128,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   const [detailLevel, setDetailLevel] = useState<string>("1min");
   const [selectedDevices, setSelectedDevices] = useState<string[]>([]);
   const [showBackDrop, setShowBackDrop] = useState(false);
-
+  const [isAccountLinked, setIsAccountLinked] = useState<boolean>(false);
   const [devices, setDevices] = useState<DeviceData[]>(
     localStorage.getItem("devices")
       ? JSON.parse(localStorage.getItem("devices")!)
@@ -136,6 +139,30 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       ? JSON.parse(localStorage.getItem("devices")!)
       : []
   );
+
+  useEffect(() => {
+    //check the url parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get("id");
+    if (id) {
+      setProjectId(id);
+      fetch_project();
+    }
+  }, [projectId]);
+
+  const fetch_project = () => {
+    for (const project of projects) {
+      if (project.projectId === projectId) {
+        setprojectName(project.projectName);
+        setOwnerEmail(project.ownerEmail);
+        setOwnerName(project.ownerName);
+        setOwnerId(project.ownerId);
+        setMembers(project.members);
+        setDeviceIds(project.devices);
+        setIsAccountLinked(project.fitbitAccessToken !== "");
+      }
+    }
+  };
 
   const FETCH_DEVICE_DATA_ENDPOINT =
     "https://vitametrics.org/api/org/fetch-data";
@@ -174,16 +201,6 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         : prev.filter((id) => id !== deviceId);
     });
   };
-
-  /*
-  const shouldFetchDeviceData = (deviceId: string) => {
-    const loadedData = loadedDevicesRef.current[deviceId];
-    return (
-      !loadedData ||
-      loadedData.rangeStartDate !== rangeStartDate ||
-      loadedData.rangeEndDate !== rangeEndDate
-    );
-  };*/
 
   const shouldFetchDevice = (deviceId: string) => {
     for (const device of devicesData) {
@@ -358,6 +375,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         setDetailLevel,
         fetchDevice,
         isOwner,
+        isAccountLinked,
       }}
     >
       {children}

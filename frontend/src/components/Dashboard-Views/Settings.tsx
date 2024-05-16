@@ -1,6 +1,6 @@
 import { useOrg } from "../../helpers/OrgContext";
 import { useAuth } from "../../helpers/AuthContext";
-import { useDashboard } from "../../helpers/DashboardContext";
+import { useProject } from "../../helpers/ProjectContext";
 import { useState, useEffect } from "react";
 import { WarningIcon } from "../../assets/WarningIcon";
 import { motion } from "framer-motion";
@@ -11,7 +11,7 @@ import { useSearchParams } from "react-router-dom";
 const Settings = () => {
   const { orgName } = useOrg();
   const { isEmailVerified, userEmail, isOrgOwner } = useAuth();
-  const { setShowBackDrop, showBackDrop } = useDashboard();
+  const { setShowBackDrop, showBackDrop } = useProject();
 
   const [changePasswordFlag, setChangePasswordFlag] = useState(false);
   const [changePasswordMsg, setChangePasswordMsg] = useState("");

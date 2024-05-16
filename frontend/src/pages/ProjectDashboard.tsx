@@ -15,6 +15,8 @@ const ProjectDashboard = () => {
   const { showBackDrop } = useProject();
   const [searchParams, setSearchParams] = useSearchParams({ view: "data" });
   const view = searchParams.get("view") || "data";
+  const id = searchParams.get("id");
+  console.log(id);
   const setPage = (newView: string) => {
     setSearchParams({ view: newView }, { replace: true });
   };
@@ -40,7 +42,7 @@ const ProjectDashboard = () => {
       <div className={`backdrop ${showBackDrop ? "show" : ""}`}></div>
       <div className="flex flex-row">
         <div className="w-[125px]">
-          <StickySidebar setPage={setPage} path="dashboard" />
+          <StickySidebar setPage={setPage} path="dashboard/project" />
         </div>
         <div className="flex w-full h-full flex-col ">
           <AuthenticationBanner />
