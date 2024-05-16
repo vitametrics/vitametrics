@@ -22,13 +22,13 @@ const passportConfig = (passport: passport.Authenticator) => {
         }
     }));
 
-    passport.serializeUser((user: Express.User, done) => {
+    passport.serializeUser((user: any, done) => {
         done(null, user.userId);
     });
 
-    passport.deserializeUser(async (id, done) => {
+    passport.deserializeUser(async (id: string, done) => {
         try {
-            const user = await User.findOne({ userId: id as string});
+            const user = await User.findOne({ userId: id}).exec();
             done(null, user);
         } catch (error) {
             console.error(error);
