@@ -15,8 +15,8 @@ interface IErrorResponse {
  */
 export function handleResponse(err: HandleResponse, req: Request, res: Response, next: NextFunction) {
 
-    const statusCode: number = err.statusCode || 500;
-    const message: string = err.message || 'Something went wrong on our end';
+    const statusCode: number = err.statusCode;
+    const message: string = err.message;
 
     console.error(err);
 
