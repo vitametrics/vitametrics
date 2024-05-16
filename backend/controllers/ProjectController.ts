@@ -6,12 +6,22 @@ import fetchIntradayData from '../middleware/util/fetchIntraday';
 import fetchData from '../middleware/util/fetchData';
 
 export async function getProjectInfo(req: Request, res: Response) {
-    const project = await Project.findOne({ projectId: req.query.projectId as string}).populate('members');
-    if (!project) {
-        throw { status: 404, message: 'Project not found'};
+    try {
+        const project = await Project.findOne({ projectId: req.query.projectId as string})
+                                     .populate('members', 'userId email name role');
+        
+        if (!project) {
+            res.status(404).json({ message: 'Project not found'});
+            return;
+        }
+
+        res.json({ project, members: project.members});
+        return;
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error'});
+        return;
     }
-    res.json({ project, members: project.members});
-    return;
 }
 
 export async function removeMember(req: Request, res: Response) {
@@ -21,12 +31,10 @@ export async function removeMember(req: Request, res: Response) {
         const userToRemove = await User.findOne({ userId });
         if (!userToRemove) {
             throw { status: 404, message: 'User not found'};
-            return;
         }
 
         if (project.ownerId === userToRemove.userId) {
             throw { status: 400, message: 'Cannot remove owner from project'};
-            return;
         }
 
         await project.updateOne({ $pull: { members: userToRemove._id}});
