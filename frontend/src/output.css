@@ -664,6 +664,10 @@ video {
   margin-right: 0.75rem;
 }
 
+.mr-5 {
+  margin-right: 1.25rem;
+}
+
 .mr-auto {
   margin-right: auto;
 }
@@ -698,6 +702,10 @@ video {
 
 .mt-auto {
   margin-top: auto;
+}
+
+.ml-2 {
+  margin-left: 0.5rem;
 }
 
 .box-border {
@@ -746,6 +754,14 @@ video {
 
 .h-\[0\.25px\] {
   height: 0.25px;
+}
+
+.h-\[0\.75px\] {
+  height: 0.75px;
+}
+
+.h-\[1px\] {
+  height: 1px;
 }
 
 .h-\[250px\] {
@@ -824,8 +840,16 @@ video {
   width: 250px;
 }
 
+.w-\[300px\] {
+  width: 300px;
+}
+
 .w-\[400px\] {
   width: 400px;
+}
+
+.w-\[40px\] {
+  width: 40px;
 }
 
 .w-full {
@@ -834,6 +858,10 @@ video {
 
 .w-screen {
   width: 100vw;
+}
+
+.w-\[35px\] {
+  width: 35px;
 }
 
 .min-w-\[500px\] {
@@ -974,6 +1002,10 @@ video {
   border-width: 1px;
 }
 
+.border-2 {
+  border-width: 2px;
+}
+
 .border-none {
   border-style: none;
 }
@@ -1002,19 +1034,9 @@ video {
   background-color: #00000080;
 }
 
-.bg-\[\#161616\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(22 22 22 / var(--tw-bg-opacity));
-}
-
 .bg-\[\#1E1D20\] {
   --tw-bg-opacity: 1;
   background-color: rgb(30 29 32 / var(--tw-bg-opacity));
-}
-
-.bg-\[\#1F1C23\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(31 28 35 / var(--tw-bg-opacity));
 }
 
 .bg-\[\#222223\] {
@@ -1077,6 +1099,11 @@ video {
   background-color: rgb(210 209 209 / var(--tw-bg-opacity));
 }
 
+.bg-\[\#d3d7df\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(211 215 223 / var(--tw-bg-opacity));
+}
+
 .bg-\[\#e8e8e8\] {
   --tw-bg-opacity: 1;
   background-color: rgb(232 232 232 / var(--tw-bg-opacity));
@@ -1085,6 +1112,26 @@ video {
 .bg-gray-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+}
+
+.bg-gray-200 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+}
+
+.bg-lightmodePrimary {
+  --tw-bg-opacity: 1;
+  background-color: rgb(245 245 245 / var(--tw-bg-opacity));
+}
+
+.bg-lightmodeSecondary {
+  --tw-bg-opacity: 1;
+  background-color: rgb(247 250 255 / var(--tw-bg-opacity));
+}
+
+.bg-primary {
+  --tw-bg-opacity: 1;
+  background-color: rgb(69 73 106 / var(--tw-bg-opacity));
 }
 
 .bg-quaternary {
@@ -1219,11 +1266,6 @@ video {
   padding-right: 0.75rem;
 }
 
-.px-32 {
-  padding-left: 8rem;
-  padding-right: 8rem;
-}
-
 .px-5 {
   padding-left: 1.25rem;
   padding-right: 1.25rem;
@@ -1249,11 +1291,6 @@ video {
   padding-bottom: 1.25rem;
 }
 
-.px-20 {
-  padding-left: 5rem;
-  padding-right: 5rem;
-}
-
 .pb-0 {
   padding-bottom: 0px;
 }
@@ -1262,8 +1299,16 @@ video {
   padding-left: 2.5rem;
 }
 
+.pt-0 {
+  padding-top: 0px;
+}
+
 .pt-32 {
   padding-top: 8rem;
+}
+
+.text-left {
+  text-align: left;
 }
 
 .text-center {
@@ -1278,8 +1323,16 @@ video {
   font-family: LeagueSpartan-Bold, sans-serif;
 }
 
+.font-libreFranklinBold {
+  font-family: Libre Franklin, sans-serif;
+}
+
 .font-ralewayBold {
   font-family: Raleway-Bold, sans-serif;
+}
+
+.font-libreFranklin {
+  font-family: Libre Franklin, sans-serif;
 }
 
 .text-2xl {
@@ -1299,11 +1352,6 @@ video {
 
 .text-5xl {
   font-size: 3rem;
-  line-height: 1;
-}
-
-.text-6xl {
-  font-size: 3.75rem;
   line-height: 1;
 }
 
@@ -1389,8 +1437,18 @@ video {
   color: rgb(234 179 8 / var(--tw-text-opacity));
 }
 
+.underline {
+  text-decoration-line: underline;
+}
+
 .accent-\[\#606060\] {
   accent-color: #606060;
+}
+
+.shadow-lg {
+  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
 .filter {
@@ -1483,6 +1541,23 @@ html {
   font-display: swap;
 
   /* This will use fallback font until the font is fully loaded */
+}
+
+.font-libreFranklinBold {
+  font-family: "Libre Franklin", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Libre Franklin", sans-serif;
+
+  font-optical-sizing: auto;
+
+  font-weight: 400;
+
+  font-style: normal;
 }
 
 @font-face {
@@ -1996,19 +2071,14 @@ nav.animated-parent {
     padding: 2.5rem;
   }
 
-  .md\:py-5 {
-    padding-top: 1.25rem;
-    padding-bottom: 1.25rem;
+  .md\:px-32 {
+    padding-left: 8rem;
+    padding-right: 8rem;
   }
 
   .md\:py-8 {
     padding-top: 2rem;
     padding-bottom: 2rem;
-  }
-
-  .md\:px-32 {
-    padding-left: 8rem;
-    padding-right: 8rem;
   }
 
   .md\:pt-20 {

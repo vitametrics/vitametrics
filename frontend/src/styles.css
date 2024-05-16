@@ -80,6 +80,20 @@ html {
   font-display: swap; /* This will use fallback font until the font is fully loaded */
 }
 
+.font-libreFranklinBold {
+  font-family: "Libre Franklin", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Libre Franklin", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
 @font-face {
   font-family: "LeagueSpartan-Regular";
   src:
