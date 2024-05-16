@@ -10,7 +10,6 @@ export interface IProject extends Document {
     fitbitAccessToken: string;
     fitbitRefreshToken: string;
     lastTokenRefresh: Date;
-    inviteCode: Types.ObjectId[];
     members: Types.ObjectId[];
     devices: string[];
 };
