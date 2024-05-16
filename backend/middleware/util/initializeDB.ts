@@ -9,7 +9,7 @@ async function initializeDatabase() {
 
     try {
         const isInitialized = await Setting.findOne({ type: 'initialized'});
-        if (!isInitialized === true && process.env.ADMIN_EMAIL && process.env.NODE_ENV === 'production') {
+        if (!isInitialized === true && process.env.ADMIN_EMAIL) {
             const newUserId = crypto.randomBytes(16).toString('hex');
             const newOrgId = crypto.randomBytes(16).toString('hex');
             const passwordToken = crypto.randomBytes(32).toString('hex');
@@ -28,11 +28,15 @@ async function initializeDatabase() {
 
             await newUser.save();
 
-            await sendEmail({
-                to: process.env.ADMIN_EMAIL as string,
-                subject: 'Your New Account',
-                text: `An account has been created for you. Please login using this link: ${process.env.BASE_URL}/set-password?token=${passwordToken}`
-            });
+            if (process.env.NODE_ENV === 'production') {
+                await sendEmail({
+                    to: process.env.ADMIN_EMAIL as string,
+                    subject: 'Your New Account',
+                    text: `An account has been created for you. Please login using this link: ${process.env.BASE_URL}/set-password?token=${passwordToken}`
+                });
+            } else {
+                console.log(`[INFO] Account created for ${process.env.ADMIN_EMAIL}. Password reset link: ${process.env.BASE_URL}/set-password?token=${passwordToken}`)
+            }
 
             await Setting.create({ type: 'initialized', value: true});
 
