@@ -2,21 +2,24 @@ import express, { Request, Response } from 'express';
 import axios from 'axios';
 import crypto from 'crypto';
 import CodeVerifier from '../models/CodeVerifier';
-import Organization from '../models/Organization';
+import Project from '../models/Project';
 import { IUser } from '../models/User';
 import verifySession from '../middleware/verifySession';
 
 const router = express.Router();
 
-router.get('/auth', async (_req: Request, res: Response) => {
+router.get('/auth/:orgId', async (req: Request, res: Response) => {
+    const { orgId } = req.params;
     const codeVerifier = crypto.randomBytes(32).toString('hex');
     const hash = crypto.createHash('sha256').update(codeVerifier).digest('base64');
     const codeChallenge = hash.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
 
     try {
-        await new CodeVerifier({ value: codeVerifier}).save();
+        await new CodeVerifier({ value: codeVerifier, orgId}).save();
 
-        const authUrl = `https://www.fitbit.com/oauth2/authorize?client_id=${process.env.FITBIT_CLIENT_ID}&response_type=code&code_challenge=${codeChallenge}&code_challenge_method=S256&scope=activity%20heartrate%20location%20nutrition%20oxygen_saturation%20respiratory_rate%20settings%20sleep%20social%20temperature%20weight%20profile&redirect_uri=${process.env.REDIRECT_URI}`;
+        const state = Buffer.from(JSON.stringify({ orgId})).toString('base64');
+
+        const authUrl = `https://www.fitbit.com/oauth2/authorize?client_id=${process.env.FITBIT_CLIENT_ID}&response_type=code&state=${state}&code_challenge=${codeChallenge}&code_challenge_method=S256&scope=activity%20heartrate%20location%20nutrition%20oxygen_saturation%20respiratory_rate%20settings%20sleep%20social%20temperature%20weight%20profile&redirect_uri=${process.env.REDIRECT_URI}`;
 
         res.redirect(authUrl);
     } catch(err) {
@@ -26,6 +29,9 @@ router.get('/auth', async (_req: Request, res: Response) => {
 });
 
 router.get('/callback', verifySession, async (req: Request, res: Response) => {
+    const state = req.query.state as string;
+    const decodedState = JSON.parse(Buffer.from(state as string, 'base64').toString('utf-8'));
+    const projectId = decodedState.orgId;
     const code = req.query.code as string;
     const userId = (req.user as IUser).userId;
 
@@ -59,18 +65,18 @@ router.get('/callback', verifySession, async (req: Request, res: Response) => {
 
         const refreshToken = tokenResponse.data.refresh_token;
 
-        const organization = await Organization.findOne({ ownerId: userId });
+        const project = await Project.findById(projectId);
 
-        if (!organization) {
+        if (!project) {
             console.error('Organization not found');
             return res.status(404).send('Organization not found');
         }
 
-        organization.userId = fitbitUserID;
-        organization.fitbitAccessToken = accessToken;
-        organization.fitbitRefreshToken = refreshToken;
+        project.fibitUserId = fitbitUserID;
+        project.fitbitAccessToken = accessToken;
+        project.fitbitRefreshToken = refreshToken;
 
-        await organization.save();
+        await project.save();
         
         // this should not handle redirects. fine for now i guess.
 	    return res.redirect('/dashboard?view=data');

@@ -8,7 +8,9 @@ import logoutRoute from './routes/Logout';
 import passportConfig from './util/passport-config';
 import authRoute from './routes/Auth';
 import loginRoute from './routes/Login';
-import orgRoute from './routes/Organization';
+import ownerRoute from './routes/Owner';
+import adminRoute from './routes/Admin';
+import projectRoute from './routes/Project';
 import { connectDB } from './middleware/config';
 import sgMail from '@sendgrid/mail';
 import mongoSanitize from 'express-mongo-sanitize';
@@ -31,8 +33,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 // TODO: Change to /auth
 app.use('/', authRoute);
-app.use('/org', orgRoute);
+app.use('/project', projectRoute);
 app.use('/user', userRoute);
+app.use('/owner', ownerRoute);
+app.use('/admin', adminRoute);
 app.use('/login', loginRoute(passport));
 app.use('/logout', logoutRoute);
 

@@ -1,10 +1,12 @@
-import { IOrganization } from "../models/Organization";
+import { IOrganization } from "../models/Project";
 import { IUser } from "../models/User";
 import { Request } from "express";
 
 export interface CustomReq extends Request {
+    [x: string]: import("mongoose").Types.ObjectId;
+    req: import("mongoose").Types.ObjectId;
     user?: IUser;
-    organization?: IOrganization;
+    project?: IOrganization;
 }
 
 declare global {

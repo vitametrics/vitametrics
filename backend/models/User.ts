@@ -1,12 +1,14 @@
-import mongoose, { Document } from 'mongoose';
+import mongoose, { Document, Types } from 'mongoose';
 
 export interface IUser extends Document {
     userId: string;
     email: string;
+    name: string;
     password: string;
+    role: string;
     emailVerfToken: string;
     emailVerified: boolean;
-    orgId: string;
+    projects: Types.ObjectId[];
     languageLocale: string;
     distanceUnit: string;
     setPasswordToken: string | null;
@@ -16,11 +18,13 @@ export interface IUser extends Document {
 
 const userSchema = new mongoose.Schema({
     userId: {type: String, default: ""},
+    name: {type: String, default: ""},
     email: {type: String, default: ""},
     password: {type: String, default: ""},
+    role: {type: String, default: "user"},
     emailVerfToken: {type: String, default: ""},
     emailVerified: {type: Boolean, default: false},
-    orgId: {type: String, default: ""},
+    projects: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Projects' }],
     languageLocale: {type: String, default: 'en-US'},
     distanceUnit: {type: String, default: 'en-US'},
     setPasswordToken: {type: String, default: ""},

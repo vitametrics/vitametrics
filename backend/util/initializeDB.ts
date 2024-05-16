@@ -1,5 +1,5 @@
 import User from '../models/User';
-import Organization from '../models/Organization';
+import Organization from '../models/Project';
 import Setting from "../models/Setting";
 import crypto from 'crypto';
 import argon2 from 'argon2';
@@ -19,6 +19,7 @@ async function initializeDatabase() {
             const newUser = new User({
                 userId: newUserId,
                 email: process.env.ADMIN_EMAIL,
+                role: "owner",
                 emailVerfToken: crypto.randomBytes(32).toString('hex'),
                 emailVerified: false,
                 orgId: newOrgId,
@@ -28,17 +29,6 @@ async function initializeDatabase() {
             });
 
             await newUser.save();
-
-            const newOrganization = new Organization({
-                orgId: newOrgId,
-                orgName: "Admin Organization",
-                ownerId: newUserId,
-                ownerName: "Admin",
-                ownerEmail: process.env.ADMIN_EMAIL,
-                members: [newUser._id]
-            });
-
-            await newOrganization.save();
 
             await sendEmail({
                 to: process.env.ADMIN_EMAIL as string,

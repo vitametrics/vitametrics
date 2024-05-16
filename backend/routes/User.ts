@@ -3,8 +3,7 @@ import argon2, { verify } from 'argon2';
 import crypto from 'crypto';
 import verifySession from '../middleware/verifySession';
 import User from '../models/User';
-import Organization from "../models/Organization"
-import Device from '../models/Device';
+import Project from "../models/Project"
 import { sendEmail } from '../util/emailUtil';
 import { query, validationResult, body } from 'express-validator';
 import { CustomReq } from '../types/custom';
@@ -17,30 +16,34 @@ router.get('/auth/status', async (expressReq: Request, res: Response) => {
 
     if (req.isAuthenticated && req.isAuthenticated()) {
 
-        let hasFitbitAccountLinked = false;
-        let isOrgOwner = false;
-        const emailVerified = req.user.emailVerified;
+        const userId = req.user.userId;
 
-        await Organization.findOne({ orgId: req.user.orgId }).then(found => {
-            if (found && found.fitbitAccessToken !== "" && found.ownerId == req.user.userId) {
-                hasFitbitAccountLinked = true;
-                isOrgOwner = true;
-            } else if (found && found.fitbitAccessToken !== "") {
-                hasFitbitAccountLinked = true;
-            }
-        })
+        try {
+            const projects = await Project.find({
+                members: {$in: [userId]}
+            }).lean();
 
-        return res.json({
-            isAuthenticated: true,
-            user: {
-                id: req.user.userId,
-                email: req.user.email,
-                orgId: req.user.orgId,
-                isEmailVerified: emailVerified,
-                isOrgOwner: isOrgOwner,
-                isAccountLinked: hasFitbitAccountLinked
-            }
-        });
+            const userProjects = projects.map(project => ({
+                projectId: project.projectId,
+                projectName: project.projectName,
+                isOwner: project.ownerId === userId,
+                hasFitbitAccountLinked: project.fitbitAccessToken !== ""
+            }));
+
+            return res.json({
+                isAuthenticated: true,
+                user: {
+                    id: userId,
+                    email: req.user.email,
+                    role: req.user.role,
+                    isEmailVerified: req.user.emailVerified,
+                    projects: userProjects
+                }
+            });
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ msg: 'Internal Server Error'});
+        }
     } else {
         return res.json({ isAuthenticated: false });
     }
@@ -122,7 +125,8 @@ router.post('/check-password-token', [
 // user password setting
 router.post('/set-password', [
     body('token').not().isEmpty().withMessage('Token is required'),
-    body('password').not().isEmpty().withMessage('Password is required')
+    body('password').not().isEmpty().withMessage('Password is required'),
+    query('projectId').optional().isString().withMessage('Invalid project id')
 ], async (expressReq: Request, res: Response) => {
 
     const errors = validationResult(expressReq);
@@ -133,19 +137,36 @@ router.post('/set-password', [
     const req = expressReq as CustomReq;
 
     const {token, password} = req.body;
+    const projectId = req.query.projectId as string;
     
     try {
         const user = await User.findOne({setPasswordToken: token});
+        const project = await Project.findOne({ orgId: projectId });
 
         if (!user) {
             return res.status(400).json({msg: 'Invalid or expired token'});
+        }
+
+        if (!project && user.role === 'admin') {
+            user.password = await argon2.hash(password);
+            user.emailVerified = true;
+            user.setPasswordToken = null;
+            user.passwordTokenExpiry = null;
+            await user.save();
+            return res.status(200).json({msg: 'Password has been set successfully', email: user.email});
+        } else if (!project){
+            return res.status(404).json({msg: 'Project not found'});
         }
 
         user.password = await argon2.hash(password);
         user.emailVerified = true;
         user.setPasswordToken = null;
         user.passwordTokenExpiry = null;
+        user.projects.push(project._id);
         await user.save();
+
+        project.members.push(user._id);
+        await project.save();
 
         return res.status(200).json({msg: 'Password has been set successfully', email: user.email});
     } catch (err) {
@@ -217,10 +238,10 @@ router.post('/change-email', verifySession, [
         user.emailVerfToken = crypto.randomBytes(32).toString('hex');
         await user.save();
         
-        const organization = await Organization.findOne({ ownerId: userId});
-        if (organization) {
-            organization.ownerEmail = email;
-            await organization.save();
+        const project = await Project.findOne({ ownerId: userId});
+        if (project) {
+            project.ownerEmail = email;
+            await project.save();
         }
 
         return res.status(200).json({ msg: 'Email changed!' });
@@ -319,14 +340,14 @@ router.post('/delete-account', verifySession, [
             return res.status(401).json({ msg: 'Incorrect Password'});
         }
 
-        const organization = await Organization.findOne({ ownerId: userId});
-        if (organization) {
+        const project = await Project.findOne({ ownerId: userId});
+        if (project) {
 
             return res.status(400).json({ msg: 'Cannot delete account. User is an organization owner' });
 
         } else {
 
-            await Organization.updateOne(
+            await Project.updateOne(
                 { members: user._id },
                 { $pull: { members: user._id } }
             );
