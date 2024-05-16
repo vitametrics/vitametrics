@@ -18,7 +18,7 @@ const memberIdValidation = [
 ];
 
 const projectIdValidation = [
-    query('projctId').not().isEmpty().withMessage('No projectId provided')
+    query('projectId').not().isEmpty().withMessage('No projectId provided')
 ];
 
 const memberInfoValidations = [
