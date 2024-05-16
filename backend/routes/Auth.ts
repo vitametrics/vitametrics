@@ -8,18 +8,30 @@ import verifySession from '../middleware/verifySession';
 
 const router = express.Router();
 
-router.get('/auth/:orgId', async (req: Request, res: Response) => {
-    const { orgId } = req.params;
-    const codeVerifier = crypto.randomBytes(32).toString('hex');
+function createCodeChallenge(codeVerifier: string): string {
     const hash = crypto.createHash('sha256').update(codeVerifier).digest('base64');
-    const codeChallenge = hash.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+    return hash.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+}
+
+router.get('/auth', async (req: Request, res: Response) => {
+    const { projectId } = req.query;
+    const codeVerifier = crypto.randomBytes(32).toString('hex');
+    const codeChallenge = createCodeChallenge(codeVerifier);
 
     try {
-        await new CodeVerifier({ value: codeVerifier, orgId}).save();
+        await new CodeVerifier({ value: codeVerifier, projectId}).save();
+        const state = Buffer.from(JSON.stringify({ projectId })).toString('base64');
+        const queryParams = new URLSearchParams({
+            client_id: process.env.FITBIT_CLIENT_ID as string,
+            response_type: 'code',
+            state,
+            code_challenge: codeChallenge,
+            code_challenge_method: 'S256',
+            scope: 'activity heartrate location nutrition oxygen_saturation respiratory_rate settings sleep social temperature weight profile',
+            redirect_uri: process.env.REDIRECT_URI as string
+        });
 
-        const state = Buffer.from(JSON.stringify({ orgId})).toString('base64');
-
-        const authUrl = `https://www.fitbit.com/oauth2/authorize?client_id=${process.env.FITBIT_CLIENT_ID}&response_type=code&state=${state}&code_challenge=${codeChallenge}&code_challenge_method=S256&scope=activity%20heartrate%20location%20nutrition%20oxygen_saturation%20respiratory_rate%20settings%20sleep%20social%20temperature%20weight%20profile&redirect_uri=${process.env.REDIRECT_URI}`;
+        const authUrl = `https://www.fitbit.com/oauth2/authorize?${queryParams.toString()}`;
 
         res.redirect(authUrl);
     } catch(err) {
@@ -31,24 +43,26 @@ router.get('/auth/:orgId', async (req: Request, res: Response) => {
 router.get('/callback', verifySession, async (req: Request, res: Response) => {
     const state = req.query.state as string;
     const decodedState = JSON.parse(Buffer.from(state as string, 'base64').toString('utf-8'));
-    const projectId = decodedState.orgId;
+    const { projectId } = decodedState;
     const code = req.query.code as string;
-    const userId = (req.user as IUser).userId;
 
     try {
         const verifier = await CodeVerifier.findOne().sort({createdAt: -1}).limit(1);
-        const codeVerifier = verifier?.value;
-        // cleanup verifier from db
-        await CodeVerifier.findOneAndDelete(verifier?._id);
+        if (!verifier) {
+            return res.status(400).send('Invalid session or code verifier not found');
+        }
+        const codeVerifier = verifier.value;
+        await CodeVerifier.findOneAndDelete(verifier._id); // cleanup verifier from db
 
-        const params = new URLSearchParams();
-        params.append('client_id', process.env.FITBIT_CLIENT_ID as string);
-        params.append('grant_type', 'authorization_code');
-        params.append('code', code);
-        params.append('redirect_uri', process.env.REDIRECT_URI as string);
-        params.append('code_verifier', codeVerifier as string);
+        const params = new URLSearchParams({
+            client_id: process.env.FITBIT_CLIENT_ID as string,
+            grant_type: 'authorization_code',
+            code,
+            redirect_uri: process.env.REDIRECT_URI as string,
+            code_verifier: codeVerifier
+        });
 
-        const tokenResponse = await axios.post('https://api.fitbit.com/oauth2/token', params, {
+        const tokenResponse = await axios.post('https://api.fitbit.com/oauth2/token', params.toString(), {
             headers: {
                 'Authorization': `Basic ${Buffer.from(`${process.env.FITBIT_CLIENT_ID}:${process.env.FITBIT_CLIENT_SECRET}`).toString('base64')}`,
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -56,20 +70,18 @@ router.get('/callback', verifySession, async (req: Request, res: Response) => {
         });
 
         const accessToken = tokenResponse.data.access_token;
+        const refreshToken = tokenResponse.data.refresh_token;
 
         const profileResponse = await axios.get('https://api.fitbit.com/1/user/-/profile.json', {
             headers: {'Authorization': `Bearer ${accessToken}`}    
         });
 
         const fitbitUserID = profileResponse.data.user.encodedId;
-
-        const refreshToken = tokenResponse.data.refresh_token;
-
-        const project = await Project.findById(projectId);
+        const project = await Project.findOne({projectId});
 
         if (!project) {
-            console.error('Organization not found');
-            return res.status(404).send('Organization not found');
+            console.error('Project not found');
+            return res.status(404).send('Project not found');
         }
 
         project.fibitUserId = fitbitUserID;
@@ -79,9 +91,9 @@ router.get('/callback', verifySession, async (req: Request, res: Response) => {
         await project.save();
         
         // this should not handle redirects. fine for now i guess.
-	    return res.redirect('/dashboard?view=data');
+	    res.redirect('/dashboard?view=data');
     } catch(err) {
-        console.error(err);
+        console.error('Error handling OAuth callback:', err);
         res.status(500).json({success: false, msg: 'Internal Server Error'});
     }
 

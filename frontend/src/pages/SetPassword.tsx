@@ -9,6 +9,7 @@ import logo from "../assets/images/vitamix.webp";
 const SetPassword = () => {
   const [searchParams] = useSearchParams({
     token: "",
+    projectId: ""
   });
 
   const navigate = useNavigate();
@@ -83,7 +84,11 @@ const SetPassword = () => {
     try {
       const response = await axios.post(SET_PASSWORD_ENDPOINT, {
         password: debouncedPassword,
-        token: searchParams.get("token"),
+        token: searchParams.get("token")
+      }, {
+        params: {
+          projectId: searchParams.get("projectId")
+        }
       });
 
       if (response.data) {
