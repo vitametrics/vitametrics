@@ -24,6 +24,8 @@ export default {
         hoverTertiary: "#CE776E",
         hoverQuaternary: "#D8A0A0",
         hoverQuinary: "#D0B7B3",
+        lightmodePrimary: "#f5f5f5",
+        lightmodeSecondary: "#F7FAFF",
       },
       textColor: {
         primary: "#45496a",
@@ -41,6 +43,8 @@ export default {
       leagueSpartanBold: ["LeagueSpartan-Bold", "sans-serif"],
       leagueSpartan: ["LeagueSpartan-Regular", "sans-serif"],
       leagueSpartanLight: ["LeagueSpartan-Light", "sans-serif"],
+      libreFranklinBold: ["Libre Franklin", "sans-serif"],
+      libreFranklin: ["Libre Franklin", "sans-serif"],
     },
   },
   plugins: ["@tailwindcss/forms"],
