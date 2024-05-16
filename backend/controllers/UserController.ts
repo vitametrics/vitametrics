@@ -4,6 +4,7 @@ import Project from '../models/Project';
 import { sendEmail } from '../middleware/util/emailUtil';
 import argon2, { verify } from 'argon2';
 import crypto from 'crypto';
+import HandleResponse from '../types/response';
 
 class UserController {
     static async authStatus(req: Request, res: Response) {
@@ -14,8 +15,7 @@ class UserController {
 
                 const user = await User.findOne({ userId: currentUser.userId });
                 if (!user) {
-                    res.status(404).json({ msg: 'User not found'});
-                    return;
+                    throw new HandleResponse('User not found', 404);  
                 }
 
                 const projects = await Project.find({
@@ -41,8 +41,7 @@ class UserController {
                 return;
             } catch (error) {
                 console.error(error);
-                res.status(500).json({ msg: 'Internal Server Error'});
-                return;
+                throw new HandleResponse();
             }
         } else {
             res.json({ isAuthenticated: false });
@@ -55,15 +54,13 @@ class UserController {
         try {
             const user = await User.findOne({ setPasswordToken: token});
             if (!user) {
-                res.status(500).json({ msg: 'Invalid token'});
-                return;
+                throw new HandleResponse("Invalid token", 500);
             }
-            res.status(200).json({ msg: 'Token is valid'});
+            throw new HandleResponse("Token is valid", 200);
             
         } catch (error) {
             console.error(error);
-            res.status(500).json({ msg: 'Internal Server Error'});
-            return;
+            throw new HandleResponse();
         }
     }
 
@@ -74,8 +71,7 @@ class UserController {
             const user = await User.findOne({ setPasswordToken: token });
             const project = await Project.findOne({ projectId });
             if (!user) {
-                res.status(400).json({ msg: 'Invalid or expired token'});
-                return;
+                throw new HandleResponse("Invalid or expired token", 400);
             }
 
             if (!project && user.role === 'admin' || user.role === 'owner') {
@@ -84,11 +80,9 @@ class UserController {
                 user.setPasswordToken = null;
                 user.passwordTokenExpiry = null;
                 await user.save();
-                res.status(200).json({ msg: 'Password has been set successfully', email: user.email});
-                return;
+                throw new HandleResponse("Password set successfully", 200);
             } else if (!project) {
-                res.status(404).json({ msg: 'Project not found'});
-                return;
+                throw new HandleResponse("Project not found", 404);
             }
 
             user.password = await argon2.hash(password);
@@ -105,8 +99,7 @@ class UserController {
             return;
         } catch (error) {
             console.error(error);
-            res.status(500).json({ msg: 'Internal Server Error'});
-            return;
+            throw new HandleResponse();
         }
     }
 
@@ -117,17 +110,14 @@ class UserController {
         try {
             const user = await User.findOne({ userId });
             if (!user) {
-                res.status(404).json({ msg: 'User not found'});
-                return;
+                throw new HandleResponse("User not found", 404);
             }
             user.password = await argon2.hash(password);
             await user.save();
-            res.status(200).json({ msg: 'Password changed successfully'});
-            return;
+            throw new HandleResponse("Password changed successfully", 200);
         } catch (error) {
             console.error(error);
-            res.status(500).json({ msg: 'Internal Server Error'});
-            return;
+            throw new HandleResponse();
         }
     }
 
@@ -138,8 +128,7 @@ class UserController {
         try {
             const user = await User.findOne({ userId });
             if (!user) {
-                res.status(404).json({ msg: 'User not found'});
-                return;
+                throw new HandleResponse("User not found", 404);
             }
             user.email = email;
             user.emailVerified = false;
@@ -150,12 +139,10 @@ class UserController {
                 project.ownerEmail = email
                 await project.save();
             }
-            res.status(200).json({ msg: 'Email changed successfully'});
-            return;
+            throw new HandleResponse("Email changed successfully", 200);
         } catch (error) {
             console.error(error);
-            res.status(500).json({ msg: 'Internal Server Error'});
-            return;
+            throw new HandleResponse();
         }
     }
 
@@ -164,8 +151,7 @@ class UserController {
         try {
             const user = await User.findOne({ email: currentUser.email });
             if (!user) {
-                res.status(401).json({ msg: 'Unauthorized'});
-                return;
+                throw new HandleResponse("User not found", 404);
             }
             const verificationLink = `https://${process.env.BASE_URL}/api/user/verify-email?token=${user.emailVerfToken}`;
             await sendEmail({
@@ -173,12 +159,10 @@ class UserController {
                 subject: 'Vitametrics Email Verification',
                 text: `Please verify your email using this link ${verificationLink}`
             });
-            res.status(200).json({msg: 'Email sent successfully'});
-            return;
+            throw new HandleResponse("Email sent successfully", 200);
         } catch (error) {
             console.error(error);
-            res.status(500).json({ msg: 'Internal Server Error'});
-            return;
+            throw new HandleResponse();
         }
     }
 
@@ -187,8 +171,7 @@ class UserController {
         try {
             const user = await User.findOne({ emailVerificationToken: req.query.token as string });
             if (!user) {
-                res.status(400).json({ msg: 'Invalid or expired verification token'});
-                return;
+                throw new HandleResponse("Invalid or expired verification token", 400);
             }
             if (!currentUser || currentUser.id !== user._id.toString()) {
                 return res.redirect('/dashboard');
@@ -200,8 +183,7 @@ class UserController {
             return;
         } catch (error) {
             console.error(error);
-            res.status(500).json({ msg: 'Internal Server Error'});
-            return;
+            throw new HandleResponse();
         }
     }
 
@@ -212,18 +194,15 @@ class UserController {
         try {
             const user = await User.findOne({ userId });
             if (!user) {
-                res.status(404).json({ msg: 'User not found'});
-                return;
+                throw new HandleResponse("User not found", 404);
             }
             const passMatch = await verify(user.password, password);
             if (!passMatch) {
-                res.status(401).json({ msg: 'Incorrect Password'});
-                return;
+                throw new HandleResponse("Incorrect password", 401);
             }
             const project = await Project.findOne({ ownerId: userId});
             if (project) {
-                res.status(400).json({ msg: 'Cannot delete account as owner of the project.'});
-                return;
+                throw new HandleResponse("Cannot delete account as owner of the project", 400);
             } else {
                 await Project.updateOne(
                     {members: user._id},
@@ -231,12 +210,10 @@ class UserController {
                 );
                 await User.deleteOne({ userId });
             }
-            res.status(200).json({ msg: 'Account deleted'});
-            return;
+            throw new HandleResponse("Account deleted successfully", 200);
         } catch (error) {
             console.error(error);
-            res.status(500).json({ msg: 'Internal Server Error'});
-            return;
+            throw new HandleResponse();
         }
     }
 }

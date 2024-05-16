@@ -4,11 +4,10 @@ import { commonMiddlewares } from './middleware/common';
 import passport from 'passport';
 import { connectDB } from './middleware/config';
 import sgMail from '@sendgrid/mail';
-import mongoSanitize from 'express-mongo-sanitize';
 import helmet from 'helmet';
 import configureRoutes from './routes';
 import passportConfig from './middleware/util/passport-config';
-import { errorHandler } from './middleware/errorHandler';
+import { handleResponse } from './middleware/responseHandler';
 
 dotenv.config({ path: '../.env' });
 
@@ -24,15 +23,12 @@ app.use(helmet({
     }
 }));
 
-
-app.use(mongoSanitize());
-
 commonMiddlewares(app);
 passportConfig(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 configureRoutes(app, passport);
-app.use(errorHandler);
+app.use(handleResponse);
 
 connectDB();
 

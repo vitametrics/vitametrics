@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
+import HandleResponse from '../types/response';
 
 const verifySession = (req: Request, res: Response, next: NextFunction) => {
     if (req.isAuthenticated()) {
         return next();
     }
 
-    return res.status(401).json({ message: 'Unauthorized: Please log in.' });
+    throw new HandleResponse("Unauthorized: Please log in.", 401)
 };
 
 export default verifySession;

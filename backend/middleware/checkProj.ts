@@ -1,13 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
 import Project, { IProject } from '../models/Project';
 import User, { IUser } from '../models/User';
+import HandleResponse from '../types/response';
 
 const checkProjectMembership = async (req: Request, res: Response, next: NextFunction) => {
 
     const currentUser = req.user as IUser;
     
     if (!currentUser) {
-        return res.status(401).json({ msg: 'Unauthorized - User not logged in' });
+        throw new HandleResponse("Unauthorized - User not logged in", 401);
     }
 
     const userId = currentUser.userId;
@@ -17,11 +18,11 @@ const checkProjectMembership = async (req: Request, res: Response, next: NextFun
         const user = await User.findOne({ userId: userId}).populate('projects');
 
         if (!user) {
-            return res.status(404).json({msg: 'User not found'});
+            throw new HandleResponse("User not found", 404);
         }
 
         if (!user.projects.length && user.role !== 'owner') {
-            return res.status(403).json({ msg: 'Access denied - User not a member of any project' });
+            throw new HandleResponse("Access denied - User not a member of any project", 403);
         }
 
         const projectId = req.body.projectId || req.query.projectId;
@@ -34,7 +35,7 @@ const checkProjectMembership = async (req: Request, res: Response, next: NextFun
         });
 
         if (!matchingProject && user.role !== 'owner') {
-            return res.status(403).json({ msg: 'Access denied - User not a member of the project' });
+            throw new HandleResponse("Access denied - User not a member of the project", 403);
         }
 
         req.project = matchingProject as IProject;
@@ -42,9 +43,9 @@ const checkProjectMembership = async (req: Request, res: Response, next: NextFun
         console.log('was in org');
         return next();
         
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({ msg: 'Internal server error' });
+    } catch (error) {
+        console.error(error);
+        throw new HandleResponse();
     }
 };
 

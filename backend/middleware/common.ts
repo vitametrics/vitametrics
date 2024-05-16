@@ -1,13 +1,16 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import mongoSanitize from 'express-mongo-sanitize';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import morgan from 'morgan';
 
 export const commonMiddlewares = async (app: express.Application) => {
   app.use(express.json());
+  app.use(express.urlencoded({ extended: false }));
   app.use(cookieParser());
+  app.use(mongoSanitize());
   app.use(cors({
     origin: process.env.BASE_URL,
     credentials: true
