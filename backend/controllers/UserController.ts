@@ -25,6 +25,8 @@ class UserController {
                 const userProjects = projects.map(project => ({
                     projectId: project.projectId,
                     projectName: project.projectName,
+                    memberCount: project.members.length,
+                    deviceCount: project.devices.length,
                     isOwner: project.ownerId === user.userId,
                     hasFitbitAccountLinked: project.fitbitAccessToken !== ""
                 }));
@@ -50,7 +52,8 @@ class UserController {
     }
 
     static async checkPasswordToken(req: Request, res: Response) {
-        const { token } = req.body;
+        const token = req.body.token as string;
+        console.log("Token from checkPasswordToken: ", token);
         try {
             const user = await User.findOne({ setPasswordToken: token});
             if (!user) {
@@ -80,7 +83,8 @@ class UserController {
                 user.setPasswordToken = null;
                 user.passwordTokenExpiry = null;
                 await user.save();
-                throw new HandleResponse("Password set successfully", 200);
+                res.status(200).json({ msg: 'Password has been set successfully', email: user.email});
+                return;
             } else if (!project) {
                 throw new HandleResponse("Project not found", 404);
             }
@@ -140,7 +144,7 @@ class UserController {
                 project.ownerEmail = email
                 await project.save();
             }
-            res.status(200).json({ msg: 'Email changed successfully'});
+            throw new HandleResponse("Email changed successfully", 200);
         } catch (error) {
             console.error(error);
             throw new HandleResponse();
@@ -155,17 +159,12 @@ class UserController {
                 throw new HandleResponse("User not found", 404);
             }
             const verificationLink = `https://${process.env.BASE_URL}/api/user/verify-email?token=${user.emailVerfToken}`;
-            
-            if (process.env.NODE_ENV === 'production') {
-                await sendEmail({
-                    to: user.email,
-                    subject: 'Vitametrics Email Verification',
-                    text: `Please verify your email using this link ${verificationLink}`
-                });
-            } else {
-                console.log(`[INFO] Email verification link: ${verificationLink}`);
-            }
-            res.status(200).json({ msg: 'Email sent successfully'});
+            await sendEmail({
+                to: user.email,
+                subject: 'Vitametrics Email Verification',
+                text: `Please verify your email using this link ${verificationLink}`
+            });
+            throw new HandleResponse("Email sent successfully", 200);
         } catch (error) {
             console.error(error);
             throw new HandleResponse();
@@ -216,7 +215,8 @@ class UserController {
                 );
                 await User.deleteOne({ userId });
             }
-            throw new HandleResponse("Account deleted successfully", 200);
+            res.status(200).json({ msg: 'Account deleted'});
+            return;
         } catch (error) {
             console.error(error);
             throw new HandleResponse();

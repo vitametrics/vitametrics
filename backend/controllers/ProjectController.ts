@@ -7,9 +7,12 @@ import fetchData from '../middleware/util/fetchData';
 
 export async function getProjectInfo(req: Request, res: Response) {
     try {
-        const project = await Project.findOne({ projectId: req.query.projectId as string})
-                                     .populate('members', 'userId email name role');
         
+        const project = await Project.findOne({ projectId: req.query.projectId as string})
+                                     .select('-fitbitUserId -fitbitAccessToken -fitbitRefreshToken -lastTokenRefresh')
+                                     .populate('members', 'userId email name role emailVerified')
+                                     .populate('devices')
+
         if (!project) {
             res.status(404).json({ message: 'Project not found'});
             return;

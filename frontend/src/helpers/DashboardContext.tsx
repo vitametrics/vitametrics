@@ -158,9 +158,8 @@ const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
         withCredentials: true,
       });
       setProjects(response.data.user.projects);
+      console.log(response.data.user.projects);
       setIsOwner(response.data.user.role === "owner" ? true : false);
-
-      //setProjects(testProjects);
     } catch (error) {
       console.log(error);
       setProjects(testProjects);

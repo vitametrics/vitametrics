@@ -464,21 +464,6 @@ const Data = () => {
     setDownloadMsg("Data downloaded successfully");
   };
 
-  /*
-
-  const renderStatistics = () => {
-    const mean = 
-    const median =
-    const mode =
-    const stdev = 
-
-    == to do ==
-
-
-
-    
-  }*/
-
   const formatDate = (date: Date) => {
     const month =
       date.getMonth() + 1 < 10
@@ -514,19 +499,14 @@ const Data = () => {
       initial="hidden"
       animate={inView ? "show" : "hidden"}
       ref={ref}
-      className="w-full h-full flex flex-col p-10 bg-[#1E1D20] dark:bg-hero-texture"
+      className="w-full h-full flex flex-col p-10 bg-whitePrimary font-libreFranklin"
     >
-      {/*
-      <button className="text-white" onClick={handleFetchDevice}>
-        {" "}
-        Test Fetch Data{" "}
-  </button>*/}
-      <h2 className="w-full text-4xl font-ralewayBold text-white p-5 pb-0 mb-5">
-        {projectName} Overview
+      <h2 className="w-full text-4xl text-black p-5 pb-0 mb-5 font-bold">
+        {projectName} Data
       </h2>
       <span className="p-5">
         <button
-          className="mr-auto p-3 bg-white rounded-xl hover:bg-slate-200"
+          className="mr-auto p-3 bg-secondary text-white font-bold rounded-xl hover:bg-hoverSecondary shadow-lg"
           onClick={() => fetchDevices()}
         >
           Fetch Data{" "}
@@ -543,7 +523,7 @@ const Data = () => {
             <div className="flex flex-col">
               <label
                 htmlFor="dataType"
-                className="block text-sm font-medium  text-white"
+                className="block text-sm font-medium"
               >
                 Select Data Type:
               </label>
@@ -575,7 +555,7 @@ const Data = () => {
             <div className="flex flex-col">
               <label
                 htmlFor="graphType"
-                className="block text-sm font-medium  text-white"
+                className="block text-sm font-medium"
               >
                 Select Graph Type:
               </label>
@@ -608,7 +588,7 @@ const Data = () => {
             <div className="flex flex-col">
               <label
                 htmlFor="detailLevelType"
-                className="block text-sm font-medium w-full text-white"
+                className="block text-sm font-medium w-ful"
               >
                 Select Detail Level:
               </label>
@@ -643,7 +623,7 @@ const Data = () => {
             <div className="ml-auto">
               <label
                 htmlFor="startDate"
-                className="block text-sm font-medium  text-white"
+                className="block text-sm font-medium"
               >
                 Select Date:
               </label>
@@ -657,13 +637,13 @@ const Data = () => {
             </div>
           </div>
         </div>
-        <div className="w-full h-[500px] p-5 text-white bg-[#2F2D2D] rounded-xl flex justify-center items-center mb-10">
+        <div className="w-full h-[500px] p- bg-[#2F2D2D] rounded-xl flex justify-center items-center mb-10">
           {/*renderGraph()}
         </div>
 
         */}
 
-        <h1 className="text-2xl text-yellow-500 mb-2">
+        <h1 className="text-2xl text-yellow-500 mb-2 font-bold">
           {" "}
           Data from {formatDate(rangeStartDate)} to {formatDate(rangeEndDate)}
         </h1>
@@ -672,10 +652,7 @@ const Data = () => {
           {/* Data & Graph Type Dropdown */}
           <div className="mr-auto flex flex-row gap-5">
             <div className="flex flex-col">
-              <label
-                htmlFor="dataType"
-                className="block text-sm font-medium  text-white"
-              >
+              <label htmlFor="dataType" className="block text-sm font-medium ">
                 Select Data Type:
               </label>
               <select
@@ -704,10 +681,7 @@ const Data = () => {
               </select>
             </div>
             <div className="flex flex-col">
-              <label
-                htmlFor="graphType"
-                className="block text-sm font-medium  text-white"
-              >
+              <label htmlFor="graphType" className="block text-sm font-medium">
                 Select Graph Type:
               </label>
               <select
@@ -739,10 +713,7 @@ const Data = () => {
 
           <div className="flex flex-row w-full gap-5 items-center">
             <div className="ml-auto">
-              <label
-                htmlFor="startDate"
-                className="block text-sm font-medium  text-white"
-              >
+              <label htmlFor="startDate" className="block text-sm font-medium">
                 Select Start Date:
               </label>
               <DatePicker
@@ -756,10 +727,7 @@ const Data = () => {
               />
             </div>
             <div>
-              <label
-                htmlFor="startDate"
-                className="block text-sm font-medium  text-white"
-              >
+              <label htmlFor="startDate" className="block text-sm font-medium">
                 Select End Date:
               </label>
               <DatePicker
@@ -775,20 +743,18 @@ const Data = () => {
           </div>
         </div>
 
-        <div className="w-full h-[500px] p-5 text-white bg-[#2F2D2D] rounded-xl flex justify-center items-center mb-10">
+        <div className="w-full h-[500px] p- bg-white shadow-lg rounded-xl flex justify-center items-center mb-10">
           {renderRangeGraph()}
           {/*renderStatistics()*/}
         </div>
         {/*
-        <div className="w-full h-[500px] p-5 text-white bg-[#2F2D2D] rounded-xl flex justify-center items-center mb-10">
+        <div className="w-full h-[500px] p- bg-[#2F2D2D] rounded-xl flex justify-center items-center mb-10">
           {/*renderRangeGraph()
            /*renderStatistics()
             </div>   
             */}
-        <div className="w-full h-[400px] text-white bg-[#2F2D2D] rounded-xl flex flex-col mb-10">
-          <h2 className="text-center w-full text-white p-5 text-4xl">
-            Devices
-          </h2>
+        <div className="w-full h-[400px bg-white shadow-lg rounded-xl flex flex-col mb-10">
+          <h2 className="text-center w-ful p-5 text-4xl font-bold">Devices</h2>
           <div className="flex flex-row justify-between h-full w-full p-5 gap-5">
             {deviceViewDevices && deviceViewDevices.length > 0 ? (
               deviceViewDevices.map(
@@ -818,7 +784,7 @@ const Data = () => {
                           checked={selectedDevices.includes(device.id)}
                           className="w-9 h-[44px] mr-2  bg-gray-100 accent-[#606060] border-gray-300 rounded-xl focus:ring-transparent "
                         />
-                        <p className="text-2xl font-bold text-white mr-auto ">
+                        <p className="text-2xl font-bol mr-auto ">
                           {device.deviceVersion} &nbsp;
                           {device.id}
                         </p>
@@ -839,10 +805,7 @@ const Data = () => {
         <div className="flex-col">
           <div className="flex flex-row gap-5">
             <div className="flex flex-col">
-              <label
-                htmlFor="dataType"
-                className="block text-sm font-medium  text-white"
-              >
+              <label htmlFor="dataType" className="block text-sm font-medium">
                 Select Data Type:
               </label>
               <select
@@ -874,7 +837,7 @@ const Data = () => {
             <div className="flex flex-col mb-5">
               <label
                 htmlFor="detailLevelType"
-                className="block text-sm font-medium w-full text-white"
+                className="block text-sm font-medium w-ful"
               >
                 Select Detail Level:
               </label>
@@ -906,7 +869,7 @@ const Data = () => {
             <div className="flex flex-col">
               <label
                 htmlFor="downloadDate"
-                className="block text-sm font-medium  text-white"
+                className="block text-sm font-medium"
               >
                 Select Start Date:
               </label>
@@ -929,7 +892,7 @@ const Data = () => {
             </p>
           )}
           <button
-            className="p-5 text-2xl rounded-xl w-[250px] bg-[#606060] text-white"
+            className="p-5 text-2xl rounded-xl w-[250px] bg-primary text-white font-bold"
             onClick={() => downloadData()}
           >
             Download Data

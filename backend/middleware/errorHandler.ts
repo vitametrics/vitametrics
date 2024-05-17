@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import HandleResponse from '../types/response';
+import HandleError from '../types/response';
 
 interface IErrorResponse {
     status: number;
@@ -13,7 +13,7 @@ interface IErrorResponse {
  * @param res - response object
  * @param next - next function
  */
-export function handleResponse(err: HandleResponse, req: Request, res: Response, next: NextFunction) {
+export function handleError(err: HandleError, req: Request, res: Response, next: NextFunction) {
 
     const statusCode: number = err.statusCode;
     const message: string = err.message;

@@ -1,4 +1,3 @@
-import argon2 from 'argon2';
 import mongoose, { Document, Schema, Types, model } from 'mongoose';
 
 export interface IUser extends Document {
@@ -16,7 +15,7 @@ export interface IUser extends Document {
 
 const userSchema = new Schema({
     userId: { type: String, required: true, index: true},
-    email: { type: String, required: true, unique: true, index: true},
+    email: { type: String, required: true, unique: true},
     name: String,
     password: String,
     role: { type: String, default: "user"},
