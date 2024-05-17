@@ -85,10 +85,10 @@ const Devices = () => {
 
     return (
       <div className="grid grid-cols-4 w-full h-[70px] bg-[#2E2E2E] rounded-xl p-5">
-        <p className="text-2xl font-bold text-white mr-auto overflow-fix">
+        <p className="text-2xl font-bold  mr-auto overflow-fix">
           {device.name || ""}
         </p>
-        <h2 className="text-2xl font-bold text-white align flex items-center mr-3 overflow-fix">
+        <h2 className="text-2xl font-bold  align flex items-center mr-3 overflow-fix">
           ID: {device.id || ""}
         </h2>
         <div className="flex flex-row items-center gap-2">
@@ -119,13 +119,13 @@ const Devices = () => {
                   <path d="M 26.980469 5.9902344 A 1.0001 1.0001 0 0 0 26.292969 6.2929688 L 11 21.585938 L 4.7070312 15.292969 A 1.0001 1.0001 0 1 0 3.2929688 16.707031 L 10.292969 23.707031 A 1.0001 1.0001 0 0 0 11.707031 23.707031 L 27.707031 7.7070312 A 1.0001 1.0001 0 0 0 26.980469 5.9902344 z"></path>
                 </svg>
               </button>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-2xl font-bold ">
                 {MAX_NAME_LENGTH - (editingDevices[device.id] || "").length}
               </p>
             </Fragment>
           ) : (
             <Fragment>
-              <h2 className="text-2xl font-bold text-white align flex items-center overflow-fix">
+              <h2 className="text-2xl font-bold  align flex items-center overflow-fix">
                 Owner: {"" || ""}
               </h2>
               <a
@@ -148,7 +148,7 @@ const Devices = () => {
             </Fragment>
           )}
         </div>
-        <p className="text-2xl font-bold text-white ml-auto flex flex-row gap-3">
+        <p className="text-2xl font-bold  ml-auto flex flex-row gap-3">
           {device.batteryLevel || ""}%
           <svg
             width={46}
@@ -186,15 +186,15 @@ const Devices = () => {
       initial="hidden"
       animate={inView ? "show" : "hidden"}
       ref={ref}
-      className="w-full h-full flex flex-col p-10 "
+      className="w-full h-full flex flex-col p-10 whitePrimary"
     >
-      <h2 className="w-full text-4xl font-ralewayBold text-white p-5 pb-0">
-        {} Devices
+      <h2 className="w-full text-4xl font-bold p-5 text-primary pb-0">
+        Devices
       </h2>
       <div className="flex p-5 w-full">
         <button
           onClick={handleFetchDevices}
-          className="p-2 text-2xl flex flex-row gap-2 justify-center items-center rounded-xl w-[150px] bg-[#606060] text-white"
+          className="p-2 text-xl flex flex-row gap-2 justify-center items-center rounded-xl w-[150px] bg-primary text-white shadow-lg font-bold"
         >
           Fetch
         </button>
@@ -205,7 +205,7 @@ const Devices = () => {
             return Device(device);
           })
         ) : (
-          <h2 className="text-2xl font-bold text-white">No Devices Found.</h2>
+          <h2 className="text-2xl font-bold text-primary">No Devices Found.</h2>
         )}
       </div>
     </motion.div>
