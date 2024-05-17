@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
-import { useDashboard } from "./DashboardContext";
 
 interface Member {
   distanceUnit: string;
@@ -103,6 +102,7 @@ interface ProjectContextProps {
   fetchDevice: (deviceId: string) => void;
   isOwner: boolean;
   isAccountLinked: boolean;
+  fetchProject: () => void;
 }
 
 const ProjectContext = createContext<ProjectContextProps | undefined>(
@@ -112,7 +112,6 @@ const ProjectContext = createContext<ProjectContextProps | undefined>(
 const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { projects } = useDashboard();
   const [projectName, setprojectName] = useState<string>("");
   const [projectId, setProjectId] = useState<string>("");
   const [ownerEmail, setOwnerEmail] = useState<string>("");
@@ -140,27 +139,49 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       : []
   );
 
+  const GET_PROJECT_ENDPOINT =
+    import.meta.env.NODE_ENV === "production"
+      ? import.meta.env.VITE_APP_GET_PROJECT_ENDPOINT
+      : import.meta.env.VITE_APP_GET_PROJECT_DEV_ENDPOINT;
+
   useEffect(() => {
-    //check the url parameters
+    // Check the URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get("id");
     if (id) {
       setProjectId(id);
-      fetch_project();
+    } else {
+      console.log("No project ID found");
     }
-  }, [projectId]);
+  }, [window.location.search]);
 
-  const fetch_project = () => {
-    for (const project of projects) {
-      if (project.projectId === projectId) {
-        setprojectName(project.projectName);
-        setOwnerEmail(project.ownerEmail);
-        setOwnerName(project.ownerName);
-        setOwnerId(project.ownerId);
-        setMembers(project.members);
-        setDeviceIds(project.devices);
-        setIsAccountLinked(project.fitbitAccessToken !== "");
-      }
+  useEffect(() => {
+    if (projectId) {
+      fetchProject();
+    }
+  }, [projectId]); // Add projectId as a dependency
+
+  const fetchProject = async () => {
+    try {
+      const response = await axios.get(GET_PROJECT_ENDPOINT, {
+        params: {
+          projectId: projectId,
+        },
+        withCredentials: true,
+      });
+
+      const project = response.data.project;
+      setMembers(response.data.members);
+      setDevices(project.devices);
+      setprojectName(project.projectName);
+      setOwnerEmail(project.ownerEmail);
+      setOwnerId(project.ownerId);
+      setOwnerName(project.ownerName);
+      setDeviceIds(project.devices.map((device) => device.id));
+
+      console.log(response);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -376,6 +397,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         fetchDevice,
         isOwner,
         isAccountLinked,
+        fetchProject,
       }}
     >
       {children}
