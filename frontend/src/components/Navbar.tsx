@@ -121,7 +121,7 @@ const Navbar = () => {
               {isAuthenticated ? (
                 <li>
                   <a
-                    href="/dashboard?view=data"
+                    href="/dashboard"
                     className="block py-2 px-3 text-2xl  rounded hover:text-gray-300 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0  md:dark:hover:text-grey-200 dark:hover:bg-gray-700 dark:hover: md:dark:hover:bg-transparent"
                   >
                     <svg
