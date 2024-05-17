@@ -31,12 +31,12 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage, path }) => {
   };
 
   return (
-    <div className="sticky z-5 top-0 h-screen bg-[#222223]">
+    <div className="sticky z-5 top-0 h-screen bg-primary">
       <ul className="flex flex-col">
         <li
           className={`${
-            currentPage === "Data" ? " bg-[#303030]" : ""
-          } flex-col flex justify-center items-center text-white bg-[#222223] hover:bg-[#303030] p-4 hover:cursor-pointer`}
+            currentPage === "Data" ? " bg-secondary2" : ""
+          } flex-col flex justify-center items-center text-white hover:bg-secondary2 p-4 hover:cursor-pointer`}
           onClick={() => handlePageChange("Data")}
         >
           <DataIcon />
@@ -44,8 +44,8 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage, path }) => {
         </li>
         <li
           className={`${
-            currentPage === "Devices" ? " bg-[#303030]" : ""
-          } flex-col flex justify-center items-center text-white hover:bg-[#303030] p-4 hover:cursor-pointer`}
+            currentPage === "Devices" ? " bg-secondary2" : ""
+          } flex-col flex justify-center items-center text-white hover:bg-secondary2 p-4 hover:cursor-pointer`}
           onClick={() => handlePageChange("Devices")}
         >
           <DeviceIcon />
@@ -53,8 +53,8 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage, path }) => {
         </li>
         <li
           className={`${
-            currentPage === "Members" ? " bg-[#303030]" : ""
-          } flex-col flex justify-center items-center text-white hover:bg-[#303030] p-4 hover:cursor-pointer`}
+            currentPage === "Members" ? " bg-secondary2" : ""
+          } flex-col flex justify-center items-center text-white hover:bg-secondary2 p-4 hover:cursor-pointer`}
           onClick={() => handlePageChange("Members")}
         >
           <MembersIcon />
@@ -62,8 +62,8 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage, path }) => {
         </li>
         <li
           className={`${
-            currentPage === "Settings" ? "bg-[#303030]" : ""
-          } flex-col flex justify-center items-center text-white hover:bg-[#303030] p-4 hover:cursor-pointer`}
+            currentPage === "Settings" ? "bg-secondary2" : ""
+          } flex-col flex justify-center items-center text-white hover:bg-secondary2 p-4 hover:cursor-pointer`}
           onClick={() => handlePageChange("Settings")}
         >
           <SettingsIcon />
