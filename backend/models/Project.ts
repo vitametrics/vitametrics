@@ -7,7 +7,7 @@ export interface IProject extends Document {
     ownerId: string;
     ownerName: string;
     ownerEmail: string;
-    fibitUserId: string;
+    fitbitUserId: string;
     fitbitAccessToken: string;
     fitbitRefreshToken: string;
     lastTokenRefresh: Date;
