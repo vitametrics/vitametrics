@@ -10,7 +10,7 @@ import {
 import { asyncHandler} from '../handlers/asyncHandler';
 import { validationHandler } from '../handlers/validationHandler';
 import { query, body } from 'express-validator';
-import checkProjectMembership from '../middleware/checkProj';
+import checkProjectMembership from '../middleware/checkProjectMembership';
 import verifySession from '../middleware/verifySession';
 
 const router = express.Router();

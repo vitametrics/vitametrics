@@ -60,8 +60,7 @@ class UserController {
                 throw new HandleResponse("Invalid token", 500);
             }
             res.status(200).json({ msg: 'Token is valid'});
-            return;
-            
+            return;            
         } catch (error) {
             console.error(error);
             throw new HandleResponse();
@@ -145,8 +144,7 @@ class UserController {
                 project.ownerEmail = email
                 await project.save();
             }
-            res.status(200).json({ msg: 'Email changed successfully'});
-            return;
+            throw new HandleResponse("Email changed successfully", 200);
         } catch (error) {
             console.error(error);
             throw new HandleResponse();
@@ -166,8 +164,7 @@ class UserController {
                 subject: 'Vitametrics Email Verification',
                 text: `Please verify your email using this link ${verificationLink}`
             });
-            res.status(200).json({msg: 'Email sent successfully'});
-            return;
+            throw new HandleResponse("Email sent successfully", 200);
         } catch (error) {
             console.error(error);
             throw new HandleResponse();

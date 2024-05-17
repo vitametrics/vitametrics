@@ -42,11 +42,15 @@ router.post('/invite-admin', verifySession, verifyRole('owner'), async(req: Requ
 
         await newUser.save();
 
-        await sendEmail({
-            to: email,
-            subject: 'You have been invited as an admin',
-            text: `An account has been created for you. Please login using this link: ${process.env.BASE_URL}/set-password?token=${passwordToken}`
-        });
+        if (process.env.NODE_ENV === 'production') {
+            await sendEmail({
+                to: email,
+                subject: 'You have been invited as an admin',
+                text: `An account has been created for you. Please login using this link: ${process.env.BASE_URL}/set-password?token=${passwordToken}`
+            });
+        } else {
+            console.log(`[INFO] An account has been created for you. Please login using this link: ${process.env.BASE_URL}/set-password?token=${passwordToken}`);
+        }
 
         return res.status(200).json({msg: 'User successfully invited'});
 
