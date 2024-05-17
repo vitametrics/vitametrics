@@ -34,7 +34,7 @@ const UserDashboard = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedProjectName(projectName);
-    }, 1000);
+    }, 100);
 
     console.log(debouncedProjectName);
 
@@ -214,10 +214,10 @@ const UserDashboard = () => {
                 >
                   <label className="text-center"> {project.projectName}</label>
                   <label className="text-center">
-                    {project.devices.length}{" "}
+                    {project.devices ? project.devices.length : 0}
                   </label>
                   <label className="text-center">
-                    {project.members.length}{" "}
+                    {project.members ? project.members.length : 0}
                   </label>
                   <button className="p-2 bg-transparent text-white rounded-lg flex items-center justify-center">
                     <svg
