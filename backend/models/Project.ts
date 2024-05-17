@@ -3,6 +3,7 @@ import mongoose, { Document, Types } from 'mongoose';
 export interface IProject extends Document {
     projectId: string;
     projectName: string;
+    projectDescription: string;
     ownerId: string;
     ownerName: string;
     ownerEmail: string;
@@ -17,6 +18,7 @@ export interface IProject extends Document {
 const projectSchema = new mongoose.Schema({
     projectId: { type: String, required: true},
     projectName: { type: String, required: true},
+    projectDescription: { type: String, default: "No Description"},
     ownerId: { type: String, required: true},
     fitbitUserId: { type: String, required: false },
     fitbitAccessToken: { type: String, required: false },

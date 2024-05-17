@@ -2,15 +2,16 @@ import express from 'express';
 import AdminController from '../controllers/AdminController';
 import verifySession from '../middleware/verifySession';
 import verifyRole from '../middleware/verifyRole';
-import checkProjectMembership from '../middleware/checkProj';
-import { body, query, validationResult } from 'express-validator';
+import checkProjectMembership from '../middleware/checkProjectMembership';
+import { body, query } from 'express-validator';
 import { asyncHandler } from '../handlers/asyncHandler';
 import { validationHandler } from '../handlers/validationHandler';
 
 const router = express.Router();
 
 const createProjectValidation = [
-    body('projectName').not().isEmpty().withMessage('Project name is required')
+    body('projectName').not().isEmpty().withMessage('Project name is required'),
+    body('projectDescription').optional()
 ];
 
 const memberIdValidation = [

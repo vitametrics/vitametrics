@@ -56,8 +56,8 @@ class UserController {
             if (!user) {
                 throw new HandleResponse("Invalid token", 500);
             }
-            throw new HandleResponse("Token is valid", 200);
-            
+            res.status(200).json({ msg: 'Token is valid'});
+            return;            
         } catch (error) {
             console.error(error);
             throw new HandleResponse();
@@ -114,7 +114,8 @@ class UserController {
             }
             user.password = await argon2.hash(password);
             await user.save();
-            throw new HandleResponse("Password changed successfully", 200);
+            res.status(200).json({ msg: 'Password changed successfully'});
+            return;
         } catch (error) {
             console.error(error);
             throw new HandleResponse();
@@ -139,7 +140,7 @@ class UserController {
                 project.ownerEmail = email
                 await project.save();
             }
-            throw new HandleResponse("Email changed successfully", 200);
+            res.status(200).json({ msg: 'Email changed successfully'});
         } catch (error) {
             console.error(error);
             throw new HandleResponse();
@@ -154,12 +155,17 @@ class UserController {
                 throw new HandleResponse("User not found", 404);
             }
             const verificationLink = `https://${process.env.BASE_URL}/api/user/verify-email?token=${user.emailVerfToken}`;
-            await sendEmail({
-                to: user.email,
-                subject: 'Vitametrics Email Verification',
-                text: `Please verify your email using this link ${verificationLink}`
-            });
-            throw new HandleResponse("Email sent successfully", 200);
+            
+            if (process.env.NODE_ENV === 'production') {
+                await sendEmail({
+                    to: user.email,
+                    subject: 'Vitametrics Email Verification',
+                    text: `Please verify your email using this link ${verificationLink}`
+                });
+            } else {
+                console.log(`[INFO] Email verification link: ${verificationLink}`);
+            }
+            res.status(200).json({ msg: 'Email sent successfully'});
         } catch (error) {
             console.error(error);
             throw new HandleResponse();

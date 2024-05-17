@@ -7,7 +7,8 @@ import { sendEmail } from '../middleware/util/emailUtil';
 
 class AdminController {
     static async createProject(req: Request, res: Response) {
-        const { projectName } = req.body;
+        const projectName = req.body.projectName as string;
+        const projectDescription = req.body.projectDescription as string;
         const user = req.user as IUser;
 
         try {
@@ -29,17 +30,25 @@ class AdminController {
                 members: [user._id]
              });
 
+            if (projectDescription) {
+                newProject.projectDescription = projectDescription;
+            }
+
              const savedProject = await newProject.save();
 
              user.projects.push(savedProject._id);
 
              await user.save();
 
-             await sendEmail({
-                to: user.email,
-                subject: 'Your new project',
-                text: `You have created a new project: ${projectName}. Access it here: ${process.env.BASE_URL}/user/projects/${newProjectId}`
-             });
+             if (process.env.NODE_ENV === 'production') {
+                await sendEmail({
+                    to: user.email,
+                    subject: 'Your new project',
+                    text: `You have created a new project: ${projectName}. Access it here: ${process.env.BASE_URL}/user/projects/${newProjectId}`
+                 });
+             } else {
+                console.log('Project created successfully');
+             }
 
              res.status(201).json({ msg: 'Project created successfully', project: savedProject});
              return;
@@ -124,11 +133,15 @@ class AdminController {
                 user = newUser;
             }
 
-            await sendEmail({ 
-                to: email,
-                subject: 'Invitation to join a project',
-                text: `You have been invited to join the project: ${project.projectName}. Please set your password by following this link: ${process.env.BASE_URL}/set-password?token=${user.setPasswordToken}`
-            });
+            if (process.env.NODE_ENV === 'production') {
+                await sendEmail({ 
+                    to: email,
+                    subject: 'Invitation to join a project',
+                    text: `You have been invited to join the project: ${project.projectName}. Please set your password by following this link: ${process.env.BASE_URL}/set-password?token=${user.setPasswordToken}`
+                });
+            } else {
+                console.log(`[INFO] User invited to join project: ${project.projectName}. They can set their password by following this link: ${process.env.BASE_URL}/set-password?token=${user.setPasswordToken}`);
+            }
 
             res.status(200).json({ msg: 'Member added successfully', project});
             return;
