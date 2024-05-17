@@ -9,15 +9,15 @@ const router = express.Router();
 
 router.get('/auth/status', asyncHandler(UserController.authStatus));
 
-router.post('/check-password-token', verifySession, validationHandler([
+router.post('/check-password-token', validationHandler([
     body('token').not().isEmpty().withMessage('Token is required')
 ]), asyncHandler(UserController.checkPasswordToken));
 
-router.post('/set-password', verifySession, validationHandler([
+router.post('/set-password', validationHandler([
     body('token').not().isEmpty().withMessage('Token is required'),
     body('password').isLength({ min: 6}).withMessage('Password must be at least 6 characters'),
     query('projectId').optional().isString().withMessage('Invalid project ID')
-]), verifySession, asyncHandler(UserController.setPassword));
+]), asyncHandler(UserController.setPassword));
 
 router.post('/change-password', verifySession, validationHandler([
     body('email').isEmail().withMessage('Valid email is required')

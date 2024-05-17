@@ -6,7 +6,9 @@ import argon2 from 'argon2';
 const passportConfig = (passport: passport.Authenticator) => {
     passport.use(new LocalStrategy({ usernameField: 'email' }, async (email, password, done) => {
         try {
-            const user = await User.findOne({ email }).exec();
+            console.log("email: ", email);
+            const user = await User.findOne({ email: email });
+            console.log("User: ", user);
             if (!user) {
                 return done(null, false, { message: 'Incorrect email' });
             }
