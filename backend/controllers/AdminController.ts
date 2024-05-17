@@ -94,7 +94,7 @@ class AdminController {
     }
 
     static async addMember(req: Request, res: Response) {
-        const { email, name, role } = req.body;
+        const { email, name } = req.body;
         const projectId = req.query.projectId as string;
 
         try {
@@ -115,7 +115,6 @@ class AdminController {
                     userId: newUserId,
                     email: email,
                     name: name,
-                    role: role,
                     passwordToken: passwordToken,
                     passwordTokenExpiry: tokenExpiry
                 });

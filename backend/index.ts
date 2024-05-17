@@ -7,7 +7,7 @@ import sgMail from '@sendgrid/mail';
 import helmet from 'helmet';
 import configureRoutes from './routes';
 import passportConfig from './middleware/util/passport-config';
-import { handleResponse } from './middleware/responseHandler';
+import { handleError } from './middleware/errorHandler';
 
 dotenv.config({ path: '../.env' });
 
@@ -28,7 +28,7 @@ passportConfig(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 configureRoutes(app, passport);
-app.use(handleResponse);
+app.use(handleError);
 
 connectDB();
 
