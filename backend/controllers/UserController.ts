@@ -25,6 +25,8 @@ class UserController {
                 const userProjects = projects.map(project => ({
                     projectId: project.projectId,
                     projectName: project.projectName,
+                    memberCount: project.members.length,
+                    deviceCount: project.devices.length,
                     isOwner: project.ownerId === user.userId,
                     hasFitbitAccountLinked: project.fitbitAccessToken !== ""
                 }));
