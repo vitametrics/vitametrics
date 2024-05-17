@@ -18,6 +18,7 @@ async function initializeDatabase() {
                 userId: newUserId,
                 email: process.env.ADMIN_EMAIL,
                 role: "owner",
+                name: "Owner",
                 emailVerfToken: crypto.randomBytes(32).toString('hex'),
                 emailVerified: false,
                 orgId: newOrgId,

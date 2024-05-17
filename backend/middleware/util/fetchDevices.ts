@@ -19,7 +19,7 @@ async function fetchDevices(projectFitbitUserId: string, projectFitbitAccessToke
         for (const device of validDevices) {
             const updatedDevice = await Device.findOneAndUpdate(
                 { deviceId: device.id },
-                { deviceName: device.deviceVersion},
+                { deviceVersion: device.deviceVersion},
                 { new: true, upsert: true }
             );
 
