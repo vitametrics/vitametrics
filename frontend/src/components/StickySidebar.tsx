@@ -1,4 +1,5 @@
 import DataIcon from "../assets/DataIcon";
+import OverviewIcon from "../assets/OverviewIcon";
 import DeviceIcon from "../assets/DeviceIcon";
 import MembersIcon from "../assets/MembersIcon";
 import SettingsIcon from "../assets/SettingsIcon";
@@ -33,6 +34,15 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage, path }) => {
   return (
     <div className="sticky z-5 top-0 h-screen bg-primary">
       <ul className="flex flex-col">
+        <li
+          className={`${
+            currentPage === "Overview" ? " bg-secondary2" : ""
+          } flex-col flex justify-center items-center text-white hover:bg-secondary2 p-4 hover:cursor-pointer`}
+          onClick={() => handlePageChange("Overview")}
+        >
+          <OverviewIcon />
+          Overview
+        </li>
         <li
           className={`${
             currentPage === "Data" ? " bg-secondary2" : ""

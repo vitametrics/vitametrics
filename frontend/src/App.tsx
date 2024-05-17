@@ -5,7 +5,6 @@ import {
   Routes,
   Navigate,
 } from "react-router-dom";
-import { DashboardProvider } from "./helpers/DashboardContext";
 import Home from "./pages/Home"; // Regular import for Home
 const Dashboard = lazy(() => import("./pages/UserDashboard"));
 const ProjectDashboard = lazy(() => import("./pages/ProjectDashboard")); // Regular import for UserDashboard
@@ -58,9 +57,7 @@ function App() {
               element={
                 <AuthenticatedRoute redirectTo="/login">
                   <Suspense fallback={<LoadingFallback />}>
-                    <DashboardProvider>
-                      <Dashboard />
-                    </DashboardProvider>
+                    <Dashboard />
                   </Suspense>
                 </AuthenticatedRoute>
               }
@@ -70,11 +67,9 @@ function App() {
               element={
                 <AuthenticatedRoute redirectTo="/login">
                   <Suspense fallback={<LoadingFallback />}>
-                    <DashboardProvider>
-                      <ProjectProvider>
-                        <ProjectDashboard />
-                      </ProjectProvider>
-                    </DashboardProvider>
+                    <ProjectProvider>
+                      <ProjectDashboard />
+                    </ProjectProvider>
                   </Suspense>
                 </AuthenticatedRoute>
               }

@@ -4,6 +4,7 @@ import StickySidebar from "../components/StickySidebar";
 import { useCallback } from "react";
 import Data from "../components/Dashboard-Views/Data";
 import Devices from "../components/Dashboard-Views/Devices";
+import Overview from "../components/Dashboard-Views/Overview";
 import Members from "../components/Dashboard-Views/Members";
 import Settings from "../components/Dashboard-Views/Settings";
 import Footer from "../components/Footer";
@@ -23,6 +24,8 @@ const ProjectDashboard = () => {
 
   const renderComponent = useCallback(() => {
     switch (view) {
+      case "overview":
+        return <Overview />;
       case "data":
         return <Data />;
       case "devices":
