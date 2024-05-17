@@ -1,5 +1,4 @@
 import { useProject } from "../../helpers/ProjectContext";
-import { useDashboard } from "../../helpers/DashboardContext";
 import { useAuth } from "../../helpers/AuthContext";
 import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -26,8 +25,7 @@ const Members = () => {
     triggerOnce: true, // Ensures the animation only plays once
   });
   const { projectName, members, fetchProject } = useProject();
-  const { isOwner } = useDashboard();
-  const { userId } = useAuth();
+  const { userId, isOwner } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams({
     view: "members",
     showInviteMenu: "false",

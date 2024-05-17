@@ -1,4 +1,4 @@
-import { useDashboard } from "../helpers/DashboardContext";
+import { useAuth } from "../helpers/AuthContext";
 import { DashboardNavbar } from "../components/DashboardNavbar";
 import { useState, useEffect, Fragment } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -19,7 +19,7 @@ interface project {
 }
 
 const UserDashboard = () => {
-  const { projects } = useDashboard();
+  const { projects } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
   const [itemsPerPage, setItemsPerPage] = useState(10);

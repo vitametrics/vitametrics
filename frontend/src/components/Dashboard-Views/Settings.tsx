@@ -1,4 +1,3 @@
-import { useOrg } from "../../helpers/OrgContext";
 import { useAuth } from "../../helpers/AuthContext";
 import { useProject } from "../../helpers/ProjectContext";
 import { useState, useEffect } from "react";
@@ -9,8 +8,8 @@ import axios from "axios";
 import { useSearchParams } from "react-router-dom";
 
 const Settings = () => {
-  const { orgName } = useOrg();
-  const { isEmailVerified, userEmail, isOrgOwner } = useAuth();
+  const { projectName } = useProject();
+  const { isEmailVerified, userEmail, isOwner } = useAuth();
   const { setShowBackDrop, showBackDrop } = useProject();
 
   const [changePasswordFlag, setChangePasswordFlag] = useState(false);
@@ -256,7 +255,7 @@ const Settings = () => {
     >
       {renderDeleteMenu()}
       <h2 className="w-full text-4xl font-ralewayBold text-white mb-10">
-        {orgName} Settings
+        {projectName} Settings
       </h2>
 
       {!isEmailVerified ? (
@@ -343,7 +342,7 @@ const Settings = () => {
           Verify Email Address
         </button>
       </div>
-      {!isOrgOwner && (
+      {!isOwner && (
         <button
           className="bg-red-400 p-4 text-xl w-full rounded-lg md:w-[350px]"
           onClick={() => toggleDeleteMenu(true)}

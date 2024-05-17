@@ -21,6 +21,7 @@ const Devices = () => {
     deviceViewDevices,
     setDeviceViewDevices,
     fetchDevices,
+    projectName,
   } = useProject();
   const [editingDevices, setEditingDevices] = useState<{
     [key: string]: string;
@@ -189,7 +190,7 @@ const Devices = () => {
       className="w-full h-full flex flex-col p-10 whitePrimary"
     >
       <h2 className="w-full text-4xl font-bold p-5 text-primary pb-0">
-        Devices
+        {projectName} Devices
       </h2>
       <div className="flex p-5 w-full">
         <button

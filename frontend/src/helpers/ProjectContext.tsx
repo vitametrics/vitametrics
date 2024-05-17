@@ -74,7 +74,7 @@ interface ProjectContextProps {
   setOwnerName: (arg0: string) => void;
   setOwnerId: (arg0: string) => void;
   setprojectName: (arg0: string) => void;
-  setMembers: (arg0: Member[]) => void;
+  setMembers: (arg0: any[]) => void;
   members: any[];
   deviceIds: string[];
   setDeviceIds: (arg0: string[]) => void;
@@ -103,6 +103,9 @@ interface ProjectContextProps {
   isOwner: boolean;
   isAccountLinked: boolean;
   fetchProject: () => void;
+  description: string;
+  setDescription: (arg0: string) => void;
+  projectDevices: any[];
 }
 
 const ProjectContext = createContext<ProjectContextProps | undefined>(
@@ -118,7 +121,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   const [ownerName, setOwnerName] = useState<string>("");
   const [isOwner] = useState<boolean>(false);
   const [ownerId, setOwnerId] = useState<string>("");
-  const [members, setMembers] = useState<Member[]>([]);
+  const [members, setMembers] = useState<any[]>([]);
   const [deviceIds, setDeviceIds] = useState<string[]>([]);
   const [startDate, setStartDate] = useState(new Date("2024-02-09"));
   const [rangeStartDate, setRangeStartDate] = useState(new Date("2024-02-10"));
@@ -127,7 +130,9 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   const [detailLevel, setDetailLevel] = useState<string>("1min");
   const [selectedDevices, setSelectedDevices] = useState<string[]>([]);
   const [showBackDrop, setShowBackDrop] = useState(false);
-  const [isAccountLinked, setIsAccountLinked] = useState<boolean>(false);
+  const [isAccountLinked] = useState<boolean>(false);
+  const [description, setDescription] = useState<string>("");
+  const [projectDevices, setProjectDevices] = useState<any[]>([]);
   const [devices, setDevices] = useState<DeviceData[]>(
     localStorage.getItem("devices")
       ? JSON.parse(localStorage.getItem("devices")!)
@@ -138,6 +143,98 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       ? JSON.parse(localStorage.getItem("devices")!)
       : []
   );
+  const testDescription = "No description provided";
+
+  const testDevices = [
+    {
+      id: "531590",
+      name: "Device #1",
+      deviceVersion: "Charge 4",
+    },
+    {
+      id: "124811",
+      name: "Device #2",
+      deviceVersion: "Charge 4",
+    },
+  ];
+
+  const testMembers = [
+    {
+      name: "John Doe",
+      email: "johndoe831@gmail.com",
+      role: "Owner",
+    },
+    {
+      name: "Jane Doe",
+      email: "janedoe831@gmail.com",
+      role: "Member",
+    },
+    {
+      name: "Brandon Le",
+      email: "brandonle831@gmail.com",
+      role: "Member",
+    },
+    {
+      name: "Emily Zhang",
+      email: "emilyzhang831@gmail.com",
+      role: "Member",
+    },
+    {
+      name: "Michael Smith",
+      email: "michaelsmith831@gmail.com",
+      role: "Admin",
+    },
+    {
+      name: "Sara Connor",
+      email: "saraconnor831@gmail.com",
+      role: "Member",
+    },
+    {
+      name: "Will Johnson",
+      email: "willjohnson831@gmail.com",
+      role: "Member",
+    },
+    {
+      name: "Grace Lee",
+      email: "gracelee831@gmail.com",
+      role: "Member",
+    },
+    {
+      name: "Samuel Jackson",
+      email: "samueljackson831@gmail.com",
+      role: "Member",
+    },
+    {
+      name: "Lily Evans",
+      email: "lilyevans831@gmail.com",
+      role: "Member",
+    },
+    {
+      name: "James Potter",
+      email: "jamespotter831@gmail.com",
+      role: "Member",
+    },
+    {
+      name: "Olivia Rodrigo",
+      email: "oliviarodrigo831@gmail.com",
+      role: "Member",
+    },
+    {
+      name: "Tony Stark",
+      email: "tonystark831@gmail.com",
+      role: "Member",
+    },
+    {
+      name: "Bruce Wayne",
+      email: "brucewayne831@gmail.com",
+      role: "Member",
+    },
+    {
+      name: "Clark Kent",
+      email: "clarkkent831@gmail.com",
+      role: "Admin",
+    },
+  ];
 
   const GET_PROJECT_ENDPOINT =
     import.meta.env.NODE_ENV === "production"
@@ -171,13 +268,19 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       });
 
       const project = response.data.project;
-      setMembers(response.data.members);
-      setDevices(project.devices);
+      //setMembers(response.data.members);
+
+      setMembers(project.members);
+      setProjectDevices(testDevices);
+      //setDevices(project.devices);
       setprojectName(project.projectName);
       setOwnerEmail(project.ownerEmail);
       setOwnerId(project.ownerId);
       setOwnerName(project.ownerName);
       setDeviceIds(project.devices.map((device) => device.id));
+      setDescription(
+        project.description ? project.description : testDescription
+      );
 
       console.log(response);
     } catch (error) {
@@ -225,13 +328,8 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const shouldFetchDevice = (deviceId: string) => {
     for (const device of devicesData) {
-      console.log("inside of shouldFetchDevice:" + device); //this works -- it outputs a device
       if (device) {
-        console.log("in should fetch data: " + device[0].deviceId);
         if (device.deviceId === deviceId) {
-          console.log("found the device id: " + deviceId);
-
-          //check if the date range is the same or within the range
           const deviceStartDate = new Date(device.stepsData[0].dateTime);
           const deviceEndDate = new Date(
             device.stepsData[device.stepsData.length - 1].dateTime
@@ -274,23 +372,6 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         //setDevicesData((prev) => [...prev, response.data]);
         //update current id in devicesData
         const newDeviceData = response.data;
-
-        /*
-      const deviceIndex = devicesData.findIndex(
-        (device) => device.deviceId === deviceId
-      );
-      console.log("deviceIndex: " + deviceIndex);
-
-      if (deviceIndex !== -1) {
-        const newDevicesData = [...devicesData];
-        newDevicesData[deviceIndex] = newDeviceData;
-        setDevicesData(newDevicesData);
-      } else {
-        setDevicesData((prev) => [...prev, newDeviceData]);
-      }
-
-      console.log("setting local storage");
-      localStorage.setItem("devicesData", JSON.stringify(devicesData));*/
 
         console.log(
           "searching through the previous devices data: " + devicesData
@@ -398,6 +479,9 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         isOwner,
         isAccountLinked,
         fetchProject,
+        description,
+        setDescription,
+        projectDevices,
       }}
     >
       {children}

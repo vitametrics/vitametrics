@@ -501,7 +501,7 @@ const Data = () => {
       ref={ref}
       className="w-full h-full flex flex-col p-10 bg-whitePrimary font-libreFranklin"
     >
-      <h2 className="w-full text-4xl text-black p-5 pb-0 mb-5 font-bold">
+      <h2 className="w-full text-4xl text-primary p-5 pb-0 mb-5 font-bold">
         {projectName} Data
       </h2>
       <span className="p-5">
