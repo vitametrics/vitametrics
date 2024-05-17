@@ -175,11 +175,15 @@ class AdminController {
             user.projects = user.projects.filter(pid => !pid.equals(project._id));
             await user.save();
 
-            await sendEmail({
-                to: user.email,
-                subject: 'Removal from project',
-                text: `You have been removed from the project: ${project.projectName}.`
-            });
+            if (process.env.NODE_ENV === 'production') {
+                await sendEmail({
+                    to: user.email,
+                    subject: 'Removal from project',
+                    text: `You have been removed from the project: ${project.projectName}.`
+                });
+            } else {
+                console.log(`[INFO] User ${user.name} removed from project: ${project.projectName}`);
+            }
 
             res.status(200).json({ msg: 'Member removed successfully'});
             return;
