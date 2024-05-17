@@ -704,6 +704,14 @@ video {
   margin-top: auto;
 }
 
+.ml-2 {
+  margin-left: 0.5rem;
+}
+
+.mb-12 {
+  margin-bottom: 3rem;
+}
+
 .box-border {
   box-sizing: border-box;
 }
@@ -794,6 +802,10 @@ video {
 
 .h-screen {
   height: 100vh;
+}
+
+.h-\[0\.5px\] {
+  height: 0.5px;
 }
 
 .w-10 {
@@ -890,6 +902,10 @@ video {
 
 .grid-cols-4 {
   grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .flex-row {
@@ -1150,6 +1166,11 @@ video {
   background-color: rgb(125 139 174 / var(--tw-bg-opacity));
 }
 
+.bg-secondary2 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(107 111 142 / var(--tw-bg-opacity));
+}
+
 .bg-tertiary {
   --tw-bg-opacity: 1;
   background-color: rgb(229 133 123 / var(--tw-bg-opacity));
@@ -1172,11 +1193,6 @@ video {
 .bg-yellow-500 {
   --tw-bg-opacity: 1;
   background-color: rgb(234 179 8 / var(--tw-bg-opacity));
-}
-
-.bg-secondary2 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(107 111 142 / var(--tw-bg-opacity));
 }
 
 .bg-hero-texture {
@@ -1860,11 +1876,6 @@ nav.animated-parent {
   background-color: rgb(206 119 110 / var(--tw-bg-opacity));
 }
 
-.hover\:bg-secondary:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(125 139 174 / var(--tw-bg-opacity));
-}
-
 .hover\:bg-secondary2:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(107 111 142 / var(--tw-bg-opacity));
@@ -2009,8 +2020,8 @@ nav.animated-parent {
     height: 35%;
   }
 
-  .md\:h-\[450px\] {
-    height: 450px;
+  .md\:h-\[500px\] {
+    height: 500px;
   }
 
   .md\:h-\[600px\] {
