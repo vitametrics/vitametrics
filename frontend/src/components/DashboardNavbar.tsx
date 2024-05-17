@@ -4,8 +4,8 @@ import logo from "../assets/logo.webp";
 export const DashboardNavbar = () => {
   const { logout } = useAuth();
   return (
-    <nav className="bg-secondary px-2">
-      <div className="flex flex-row w-full bg-secondary top-0 flex-wrap items-center justify-between mx-auto py-3">
+    <nav className="bg-primary2 px-2">
+      <div className="flex flex-row w-full bg-primary2 top-0 flex-wrap items-center justify-between mx-auto py-3">
         <a
           href="/"
           className="flex items-center space-x-3 rtl:space-x-reverse mr-auto"
