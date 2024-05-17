@@ -16,7 +16,10 @@ export default {
       },
       backgroundColor: {
         primary: "#45496a",
+        primary2: "#32354f",
+        whitePrimary: "#f7faff",
         secondary: "#7d8bae",
+        secondary2: "#6b6f8e",
         tertiary: "#e5857b",
         quaternary: "#f1b2b2",
         quinary: "#e8ccc7",
