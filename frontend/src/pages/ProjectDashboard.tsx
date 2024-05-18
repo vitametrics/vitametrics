@@ -43,7 +43,7 @@ const ProjectDashboard = () => {
       <DashboardNavbar />
       <div className={`backdrop ${showBackDrop ? "show" : ""}`}></div>
       <div className="flex flex-row">
-        <div className="w-[100px]">
+        <div className="w-[75px]">
           <StickySidebar setPage={setPage} path="dashboard/project" />
         </div>
         <div className="flex w-full h-full flex-col ">
