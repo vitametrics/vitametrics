@@ -8,6 +8,7 @@ import Pagination from "../components/Pagination";
 import CreateProjectMenu from "../components/Dashboard/CreateProjectMenu";
 import DeleteProjectMenu from "../components/Dashboard/DeleteProjectMenu";
 import useDebounce from "../helpers/useDebounce";
+import { deleteProjectService } from "../services/projectService";
 
 interface project {
   projectId: string;
@@ -32,6 +33,7 @@ const UserDashboard = () => {
   });
   const [projectName, setProjectName] = useState("");
   const debouncedProjectName = useDebounce(projectName, 200);
+  const [projectIdToDelete, setProjectIdToDelete] = useState<string>("");
   const itemsPerPageOptions = [5, 10, 15, 20];
 
   const handleItemsPerPageChange = (
@@ -55,12 +57,6 @@ const UserDashboard = () => {
     import.meta.env.VITE_APP_NODE_ENV === "production"
       ? import.meta.env.VITE_APP_CREATE_PROJECT_ENDPOINT
       : import.meta.env.VITE_APP_CREATE_PROJECT_DEV_ENDPOINT;
-
-  /*
-  const DELETE_PROJECT_ENDPOINT =
-    import.meta.env.VITE_APP_NODE_ENV === "production"
-      ? import.meta.env.VITE_APP_DELETE_PROJECT_ENDPOINT
-      : import.meta.env.VITE_APP_DELETE_PROJECT_DEV_ENDPOINT;*/
 
   const createProject = searchParams.get("createProject") === "true";
   const deleteProject = searchParams.get("deleteProject") === "true";
@@ -102,33 +98,30 @@ const UserDashboard = () => {
     }
   };
 
-  /*
-  const handleDeleteProject = async (projectId: string) => {
-    try {
-      await axios.post(
-        DELETE_PROJECT_ENDPOINT,
-        {
-          projectId,
-        },
-        {
-          withCredentials: true,
-        }
-      );
+  const handleDeleteProject = async () => {
+    console.log("deleting project: " + projectIdToDelete);
+    if (!projectIdToDelete) return;
 
+    try {
+      await deleteProjectService(projectIdToDelete);
       setProjects(
-        projects.filter((project) => project.projectId !== projectId)
+        projects.filter((project) => project.projectId !== projectIdToDelete)
       );
+      console.log("deleted project: " + projectIdToDelete);
+      setProjectIdToDelete("");
     } catch (error) {
       console.error(error);
     }
-  };*/
+  };
 
-  const toggleDeleteProjectMenu = (show: boolean) => {
+  const toggleDeleteProjectMenu = (show: boolean, projectId?: string) => {
     setSearchParams((prev) => {
       prev.set("deleteProject", show.toString());
       return prev;
     });
-    setShowBackDrop(show); // Show or hide backdrop when invite menu is toggled
+    console.log("project id to delete: " + projectId);
+    setProjectIdToDelete(projectId || ""); // Save or clear the project ID
+    setShowBackDrop(show);
   };
 
   return (
@@ -147,6 +140,7 @@ const UserDashboard = () => {
       <DeleteProjectMenu
         show={deleteProject}
         toggleMenu={toggleDeleteProjectMenu}
+        handleDelete={handleDeleteProject}
       />
       <div className="p-20 bg-lightmodeSecondary h-full">
         <h1 className="text-4xl mb-5 font-libreFranklin font-bold text-primary">
@@ -229,7 +223,9 @@ const UserDashboard = () => {
                   </label>
                   <button
                     className="p-2 bg-transparent text-white rounded-lg flex items-center justify-center hover:cursor-pointer"
-                    onClick={() => toggleDeleteProjectMenu(true)}
+                    onClick={() =>
+                      toggleDeleteProjectMenu(true, project.projectId)
+                    }
                   >
                     <svg
                       viewBox="0 0 24 24"
