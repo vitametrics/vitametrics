@@ -32,7 +32,7 @@ class AdminController {
         members: [user._id],
       });
 
-      console.log('user email: ', user.email);
+      //console.log('user email: ', user.email);
 
       if (projectDescription) {
         newProject.projectDescription = projectDescription;

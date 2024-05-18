@@ -33,8 +33,6 @@ const checkProjectMembership = async (
 
     const projectId = req.body.projectId || req.query.projectId;
     const projectIds = user.projects.map((project) => project._id);
-    console.log(projectIds);
-    console.log(projectId);
     const matchingProject = await Project.findOne({
       projectId: projectId,
       _id: { $in: projectIds },
@@ -49,7 +47,6 @@ const checkProjectMembership = async (
 
     req.project = matchingProject as IProject;
 
-    console.log('was in org');
     return next();
   } catch (error) {
     console.error(error);

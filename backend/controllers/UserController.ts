@@ -55,7 +55,7 @@ class UserController {
 
   static async checkPasswordToken(req: Request, res: Response) {
     const token = req.body.token as string;
-    console.log('Token from checkPasswordToken: ', token);
+    //console.log('Token from checkPasswordToken: ', token);
     try {
       const user = await User.findOne({ setPasswordToken: token });
       if (!user) {

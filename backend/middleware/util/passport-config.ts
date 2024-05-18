@@ -10,16 +10,13 @@ const passportConfig = (passport: passport.Authenticator) => {
       { usernameField: 'email' },
       async (email, password, done) => {
         try {
-          console.log('email: ', email);
           const user = await User.findOne({ email: email });
-          console.log('User: ', user);
           if (!user) {
             return done(null, false, { message: 'Incorrect email' });
           }
 
           const match = await argon2.verify(user.password, password);
           if (!match) {
-            console.log('Password verification failed');
             return done(null, false, { message: 'Incorrect password' });
           }
           return done(null, user);
