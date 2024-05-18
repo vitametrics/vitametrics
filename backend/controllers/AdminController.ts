@@ -32,6 +32,8 @@ class AdminController {
         members: [user._id],
       });
 
+      console.log('user email: ', user.email);
+
       if (projectDescription) {
         newProject.projectDescription = projectDescription;
       }
@@ -73,7 +75,7 @@ class AdminController {
 
   static async deleteProject(req: Request, res: Response) {
     const currentUser = req.user as IUser;
-    const projectId = req.query.projectId as string;
+    const projectId = req.body.projectId;
     const userId = currentUser.userId;
 
     try {
