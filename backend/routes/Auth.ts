@@ -17,17 +17,6 @@ function createCodeChallenge(codeVerifier: string): string {
   return hash.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
 }
 
-// this is bad
-router.post('/auth/setProjectId', async (req: Request, res: Response) => {
-  const { projectId } = req.body;
-  if (!projectId) {
-    return res.status(400).json({ success: false});
-  } else {
-    res.cookie('projectId', projectId);
-    return res.status(200).json({ success: true });
-  }
-});
-
 router.get('/auth', async (req: Request, res: Response) => {
   const projectId = req.cookies.projectId;
 
@@ -119,7 +108,6 @@ router.get('/callback', verifySession, async (req: Request, res: Response) => {
 
     await project.save();
 
-    res.clearCookie('projectId');
     // this should not handle redirects. fine for now i guess.
     res.redirect('/dashboard');
   } catch (err) {

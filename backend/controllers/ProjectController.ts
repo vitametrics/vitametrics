@@ -23,7 +23,7 @@ export async function getProjectInfo(req: Request, res: Response) {
       res.status(404).json({ message: 'Project not found' });
       return;
     }
-
+    res.cookie('projectId', project.projectId);
     res.json({ project, members: project.members });
     return;
   } catch (error) {
