@@ -3,7 +3,6 @@ import axios from 'axios';
 import crypto from 'crypto';
 import CodeVerifier from '../models/CodeVerifier';
 import Project from '../models/Project';
-import { IUser } from '../models/User';
 import verifySession from '../middleware/verifySession';
 
 const router = express.Router();
