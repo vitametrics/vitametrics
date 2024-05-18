@@ -17,8 +17,20 @@ function createCodeChallenge(codeVerifier: string): string {
   return hash.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
 }
 
+// this is bad
+router.post('/auth/setProjectId', async (req: Request, res: Response) => {
+  const { projectId } = req.body;
+  if (!projectId) {
+    return res.status(400).send('projectId is required');
+  } else {
+    res.cookie('projectId', projectId, { httpOnly: true, secure: true, sameSite: 'strict'});
+    return res.redirect('/api/auth');
+  }
+});
+
 router.get('/auth', async (req: Request, res: Response) => {
-  const { projectId } = req.query;
+  console.log('auth called');
+  const projectId = req.cookies.projectId;
   const codeVerifier = crypto.randomBytes(32).toString('hex');
   const codeChallenge = createCodeChallenge(codeVerifier);
 
@@ -40,16 +52,14 @@ router.get('/auth', async (req: Request, res: Response) => {
 
     res.redirect(authUrl);
   } catch (err) {
+    console.error(err);
     res.status(500).send('Internal Server Error');
   }
 });
 
 router.get('/callback', verifySession, async (req: Request, res: Response) => {
-  const state = req.query.state as string;
-  const decodedState = JSON.parse(
-    Buffer.from(state as string, 'base64').toString('utf-8')
-  );
-  const { projectId } = decodedState;
+  console.log('callback called')
+  const projectId = req.cookies.projectId;
   const code = req.query.code as string;
 
   try {
@@ -105,6 +115,7 @@ router.get('/callback', verifySession, async (req: Request, res: Response) => {
 
     await project.save();
 
+    res.clearCookie('projectId');
     // this should not handle redirects. fine for now i guess.
     res.redirect('/dashboard');
   } catch (err) {

@@ -15,7 +15,9 @@ export async function getProjectInfo(req: Request, res: Response) {
         '-fitbitUserId -fitbitAccessToken -fitbitRefreshToken -lastTokenRefresh'
       )
       .populate('members', 'userId email name role emailVerified')
-      .populate('devices');
+      .populate('devices', 'deviceId deviceName deviceVersion');
+
+    console.log(project);
 
     if (!project) {
       res.status(404).json({ message: 'Project not found' });

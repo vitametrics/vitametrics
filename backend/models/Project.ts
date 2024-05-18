@@ -21,13 +21,14 @@ const projectSchema = new mongoose.Schema(
     projectName: { type: String, required: true },
     projectDescription: { type: String, default: 'No Description' },
     ownerId: { type: String, required: true },
+    ownerEmail: { type: String, required: true },
     fitbitUserId: { type: String, required: false },
     fitbitAccessToken: { type: String, required: false },
     fitbitRefreshToken: { type: String, required: false },
     lastTokenRefresh: { type: Date, default: null },
     creationDate: { type: Date, default: Date.now },
     members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    devices: [{ type: String }],
+    devices: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Devices'}],
   },
   { timestamps: true }
 );
