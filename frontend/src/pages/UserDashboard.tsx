@@ -89,7 +89,6 @@ const UserDashboard = () => {
         }
       );
 
-      console.log(response.data);
       toggleCreateProjectMenu(false);
       setProjectName("");
       setProjects([...projects, response.data.project]);
@@ -99,7 +98,6 @@ const UserDashboard = () => {
   };
 
   const handleDeleteProject = async () => {
-    console.log("deleting project: " + projectIdToDelete);
     if (!projectIdToDelete) return;
 
     try {
@@ -107,7 +105,6 @@ const UserDashboard = () => {
       setProjects(
         projects.filter((project) => project.projectId !== projectIdToDelete)
       );
-      console.log("deleted project: " + projectIdToDelete);
       setProjectIdToDelete("");
     } catch (error) {
       console.error(error);
@@ -119,7 +116,6 @@ const UserDashboard = () => {
       prev.set("deleteProject", show.toString());
       return prev;
     });
-    console.log("project id to delete: " + projectId);
     setProjectIdToDelete(projectId || ""); // Save or clear the project ID
     setShowBackDrop(show);
   };

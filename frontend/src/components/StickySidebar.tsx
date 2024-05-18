@@ -13,11 +13,11 @@ interface StickySidebarProps {
 
 const StickySidebar: React.FC<StickySidebarProps> = ({ setPage, path }) => {
   const navigate = useNavigate();
-  const [currentPage, setCurrentPage] = useState("Data");
+  const [currentPage, setCurrentPage] = useState("overview");
   const id = new URLSearchParams(window.location.search).get("id");
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const view = urlParams.get("view") || "data";
+    const view = urlParams.get("view") || "overview";
     if (view !== currentPage) {
       setCurrentPage(view);
     }
@@ -37,9 +37,9 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage, path }) => {
         <li className="px-2 pt-2">
           <div
             className={`${
-              currentPage === "Overview" ? " bg-secondary2" : ""
+              currentPage === "overview" ? " bg-secondary2" : ""
             } flex-col flex text-[0.75rem] px-4 py-2 justify-center rounded-xl items-center text-white hover:bg-secondary2 p-4 hover:cursor-pointer`}
-            onClick={() => handlePageChange("Overview")}
+            onClick={() => handlePageChange("overview")}
           >
             <OverviewIcon />
             Home
@@ -49,9 +49,9 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage, path }) => {
         <li className="px-2 pt-2">
           <div
             className={`${
-              currentPage === "Data" ? " bg-secondary2" : ""
+              currentPage === "data" ? " bg-secondary2" : ""
             } flex-col flex justify-center text-[0.75rem] px-4 py-2 rounded-xl items-center text-white hover:bg-secondary2 hover:cursor-pointer`}
-            onClick={() => handlePageChange("Data")}
+            onClick={() => handlePageChange("data")}
           >
             <DataIcon />
             Data
@@ -60,9 +60,9 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage, path }) => {
         <li className="px-2 pt-2">
           <div
             className={`${
-              currentPage === "Devices" ? " bg-secondary2" : ""
+              currentPage === "devices" ? " bg-secondary2" : ""
             } flex-col flex justify-center text-[0.75rem] px-4 py-2 rounded-xl items-center text-white hover:bg-secondary2 p-4 hover:cursor-pointer`}
-            onClick={() => handlePageChange("Devices")}
+            onClick={() => handlePageChange("devices")}
           >
             <DeviceIcon />
             Devices
@@ -71,9 +71,9 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage, path }) => {
         <li className="px-2 pt-2">
           <div
             className={`${
-              currentPage === "Members" ? " bg-secondary2" : ""
+              currentPage === "members" ? " bg-secondary2" : ""
             } flex-col flex justify-center text-[0.75rem] px-4 py-2 rounded-xl items-center text-white hover:bg-secondary2 p-4 hover:cursor-pointer`}
-            onClick={() => handlePageChange("Members")}
+            onClick={() => handlePageChange("members")}
           >
             <MembersIcon />
             Members
@@ -82,9 +82,9 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage, path }) => {
         <li className="px-2 pt-2">
           <div
             className={`${
-              currentPage === "Settings" ? "bg-secondary2" : ""
+              currentPage === "settings" ? "bg-secondary2" : ""
             } flex-col flex justify-center text-[0.75rem] px-4 py-2 rounded-xl items-center text-white hover:bg-secondary2 p-4 hover:cursor-pointer`}
-            onClick={() => handlePageChange("Settings")}
+            onClick={() => handlePageChange("settings")}
           >
             <SettingsIcon />
             Settings
