@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { body, query } from 'express-validator';
+import { body } from 'express-validator';
 
 import AdminController from '../controllers/AdminController';
 import { asyncHandler } from '../handlers/asyncHandler';
@@ -21,7 +21,7 @@ const memberIdValidation = [
 ];
 
 const projectIdValidation = [
-  query('projectId').not().isEmpty().withMessage('No projectId provided'),
+  body('projectId').not().isEmpty().withMessage('No projectId provided'),
 ];
 
 const memberInfoValidations = [
