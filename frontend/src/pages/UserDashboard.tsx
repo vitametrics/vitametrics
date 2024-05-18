@@ -64,7 +64,7 @@ const UserDashboard = () => {
   );
 
   const CREATE_PROJECT_ENDPOINT =
-    import.meta.env.NODE_ENV === "production"
+    import.meta.env.VITE_APP_NODE_ENV === "production"
       ? import.meta.env.VITE_APP_CREATE_PROJECT_ENDPOINT
       : import.meta.env.VITE_APP_CREATE_PROJECT_DEV_ENDPOINT;
 
