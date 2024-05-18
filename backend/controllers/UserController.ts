@@ -7,6 +7,7 @@ import { sendEmail } from '../middleware/util/emailUtil';
 import Project from '../models/Project';
 import User, { IUser } from '../models/User';
 import HandleResponse from '../types/response';
+import { Types } from 'mongoose';
 
 class UserController {
   static async authStatus(req: Request, res: Response) {
@@ -97,10 +98,10 @@ class UserController {
       user.emailVerified = true;
       user.setPasswordToken = null;
       user.passwordTokenExpiry = null;
-      user.projects.push(project._id);
+      user.projects.push(project._id as Types.ObjectId);
       await user.save();
 
-      project.members.push(user._id);
+      project.members.push(user._id as Types.ObjectId);
       await project.save();
 
       res
@@ -186,7 +187,7 @@ class UserController {
       if (!user) {
         throw new HandleResponse('Invalid or expired verification token', 400);
       }
-      if (!currentUser || currentUser.id !== user._id.toString()) {
+      if (!currentUser || currentUser.id !== (user._id as Types.ObjectId).toString()) {
         return res.redirect('/dashboard');
       }
       user.emailVerified = true;
