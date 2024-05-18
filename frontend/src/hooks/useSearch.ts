@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 
-const useSearch = (items, setCurrentPage) => {
+const useSearch = (items: any[], setCurrentPage: (page: number) => void) => {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const handleSearchChange = (event) => {
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
     setCurrentPage(1); // Reset to the first page when search changes
   };

@@ -136,6 +136,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   );
   const testDescription = "No description provided";
 
+  /*
   const testDevices = [
     {
       id: "531590",
@@ -225,7 +226,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       email: "clarkkent831@gmail.com",
       role: "Admin",
     },
-  ];
+  ];*/
 
   const GET_PROJECT_ENDPOINT =
     import.meta.env.NODE_ENV === "production"
@@ -267,7 +268,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       setOwnerEmail(project.ownerEmail);
       setOwnerId(project.ownerId);
       setOwnerName(project.ownerName);
-      setDeviceIds(project.devices.map((device) => device.id));
+      setDeviceIds(project.devices.map((device: DeviceInfo) => device.id));
       setDescription(
         project.description ? project.description : testDescription
       );

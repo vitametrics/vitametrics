@@ -2,7 +2,6 @@
 import { useProject } from "../../helpers/ProjectContext";
 import axios from "axios";
 import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
 import { Fragment, useState } from "react";
 import { fadeInItemVariants } from "../../hooks/animationVariant";
 import useCustomInView from "../../hooks/useCustomInView";
