@@ -8,7 +8,7 @@ const AuthenticationBanner = () => {
   const oAuthLogin = async () => {
     try {
       await axios.post(
-        `/api/auth/${projectId}`,
+        import.meta.env.VITE_APP_OAUTH_LOGIN_ENDPOINT + { projectId },
         {
           projectId: projectId,
         },
