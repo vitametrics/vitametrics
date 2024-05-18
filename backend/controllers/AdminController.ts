@@ -6,6 +6,7 @@ import { sendEmail } from '../middleware/util/emailUtil';
 import Device from '../models/Device';
 import Project from '../models/Project';
 import User, { IUser } from '../models/User';
+import { Types } from 'mongoose';
 
 class AdminController {
   static async createProject(req: Request, res: Response) {
@@ -37,7 +38,7 @@ class AdminController {
 
       const savedProject = await newProject.save();
 
-      user.projects.push(savedProject._id);
+      user.projects.push(savedProject._id as Types.ObjectId);
 
       await user.save();
 
@@ -45,7 +46,7 @@ class AdminController {
         await sendEmail({
           to: user.email,
           subject: 'Your new project',
-          text: `You have created a new project: ${projectName}. Access it here: ${process.env.BASE_URL}/user/projects/${newProjectId}`,
+          text: `You have created a new project: ${projectName}. Access it here: ${process.env.BASE_URL}/dashboard/project?id=${newProjectId}`,
         });
       } else {
         console.log('Project created successfully');
@@ -183,7 +184,7 @@ class AdminController {
         return;
       }
 
-      user.projects = user.projects.filter((pid) => !pid.equals(project._id));
+      user.projects = user.projects.filter((pid) => !pid.equals(project._id as Types.ObjectId));
       await user.save();
 
       if (process.env.NODE_ENV === 'production') {
