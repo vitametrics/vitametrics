@@ -14,7 +14,7 @@ export default function configureRoutes(
   app: Express,
   passport: PassportStatic
 ) {
-  app.use('/auth', authRoute);
+  app.use('/', authRoute);
   app.use('/project', projectRoute);
   app.use('/user', userRoute);
   app.use('/owner', ownerRoute);
