@@ -4,6 +4,8 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Fragment, useState } from "react";
+import { fadeInItemVariants } from "../../hooks/animationVariant";
+import useCustomInView from "../../hooks/useCustomInView";
 
 const MAX_NAME_LENGTH = 15;
 interface Device {
@@ -35,6 +37,7 @@ const Devices = () => {
   const handleFetchDevices = async () => {
     fetchDevices();
   };
+  const { ref, inView } = useCustomInView();
 
   const toggleEdit = (deviceId: string) => {
     setEditingDevices((prevEditingDevices) => ({
@@ -170,16 +173,6 @@ const Devices = () => {
       </div>
     );
   };
-
-  const fadeInItemVariants = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1 },
-  };
-
-  const { ref, inView } = useInView({
-    threshold: 0.1, // Adjust based on when you want the animation to trigger (1 = fully visible)
-    triggerOnce: true, // Ensures the animation only plays once
-  });
 
   return (
     <motion.div

@@ -1,13 +1,13 @@
 import { motion } from "framer-motion";
 import { fadeInItemVariants } from "../../hooks/animationVariant"; // Adjust the path as necessary
-import useCustomInView from "../../hooks/useCustomInView"; // Adjust the path to your custom hook
+import useCustomInView from "../../hooks/useCustomInView";
 import { useProject } from "../../helpers/ProjectContext"; // Adjust the path as necessary
 import OverviewMembers from "../Dashboard/OverviewMembers";
 import OverviewDevices from "../Dashboard/OverviewDevices";
 
 const Overview = () => {
-  const { ref, inView } = useCustomInView();
   const { projectName, description } = useProject();
+  const { inView, ref } = useCustomInView();
 
   return (
     <motion.div

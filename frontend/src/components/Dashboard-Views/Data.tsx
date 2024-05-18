@@ -643,16 +643,16 @@ const Data = () => {
 
         */}
 
-        <h1 className="text-2xl text-yellow-500 mb-2 font-bold">
+        <h1 className="text-2xl text-primary mb-2 font-bold">
           {" "}
           Data from {formatDate(rangeStartDate)} to {formatDate(rangeEndDate)}
         </h1>
 
         <div className="flex flex-row w-full gap-5 mb-5">
           {/* Data & Graph Type Dropdown */}
-          <div className="mr-auto flex flex-row gap-5">
+          <div className="mr-auto flex flex-row gap-5 text-secondary">
             <div className="flex flex-col">
-              <label htmlFor="dataType" className="block text-sm font-medium ">
+              <label htmlFor="dataType" className="block text-sm font-medium">
                 Select Data Type:
               </label>
               <select
@@ -680,7 +680,7 @@ const Data = () => {
                 ))}
               </select>
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col ">
               <label htmlFor="graphType" className="block text-sm font-medium">
                 Select Graph Type:
               </label>
@@ -711,7 +711,7 @@ const Data = () => {
             </div>
           </div>
 
-          <div className="flex flex-row w-full gap-5 items-center">
+          <div className="flex flex-row w-full gap-5 items-center text-secondary">
             <div className="ml-auto">
               <label htmlFor="startDate" className="block text-sm font-medium">
                 Select Start Date:
@@ -754,7 +754,9 @@ const Data = () => {
             </div>   
             */}
         <div className="w-full h-[400px bg-white shadow-lg rounded-xl flex flex-col mb-10">
-          <h2 className="text-center w-ful p-5 text-4xl font-bold">Devices</h2>
+          <h2 className="text-center w-ful p-5 text-4xl font-bold text-primary">
+            Devices
+          </h2>
           <div className="flex flex-row justify-between h-full w-full p-5 gap-5">
             {deviceViewDevices && deviceViewDevices.length > 0 ? (
               deviceViewDevices.map(
@@ -794,7 +796,7 @@ const Data = () => {
                 }
               )
             ) : (
-              <div className="text-center items-center w-full h-full">
+              <div className="text-center items-center w-full h-full text-secondary">
                 {" "}
                 No Devices Found
               </div>
@@ -802,7 +804,7 @@ const Data = () => {
           </div>
         </div>
 
-        <div className="flex-col">
+        <div className="flex-col text-secondary">
           <div className="flex flex-row gap-5">
             <div className="flex flex-col">
               <label htmlFor="dataType" className="block text-sm font-medium">

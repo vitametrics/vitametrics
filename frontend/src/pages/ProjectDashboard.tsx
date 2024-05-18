@@ -7,15 +7,14 @@ import Devices from "../components/Dashboard-Views/Devices";
 import Overview from "../components/Dashboard-Views/Overview";
 import Members from "../components/Dashboard-Views/Members";
 import Settings from "../components/Dashboard-Views/Settings";
-import Footer from "../components/Footer";
 import AuthenticationBanner from "../components/Dashboard/AuthenticationBanner";
 import { useSearchParams } from "react-router-dom";
 import { useProject } from "../helpers/ProjectContext";
 
 const ProjectDashboard = () => {
   const { showBackDrop } = useProject();
-  const [searchParams, setSearchParams] = useSearchParams({ view: "data" });
-  const view = searchParams.get("view") || "data";
+  const [searchParams, setSearchParams] = useSearchParams({ view: "overview" });
+  const view = searchParams.get("view") || "overview";
   const id = searchParams.get("id");
   console.log(id);
   const setPage = (newView: string) => {
@@ -52,7 +51,6 @@ const ProjectDashboard = () => {
           {renderComponent()}
         </div>
       </div>
-      <Footer />
     </div>
   );
 };
