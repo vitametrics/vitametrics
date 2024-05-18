@@ -21,26 +21,28 @@ function createCodeChallenge(codeVerifier: string): string {
 router.post('/auth/setProjectId', async (req: Request, res: Response) => {
   const { projectId } = req.body;
   if (!projectId) {
-    return res.status(400).send('projectId is required');
+    return res.status(400).json({ success: false});
   } else {
-    res.cookie('projectId', projectId, { httpOnly: true, secure: true, sameSite: 'strict'});
-    return res.redirect('/api/auth');
+    res.cookie('projectId', projectId);
+    return res.status(200).json({ success: true });
   }
 });
 
 router.get('/auth', async (req: Request, res: Response) => {
-  console.log('auth called');
   const projectId = req.cookies.projectId;
+
+  if (!projectId) {
+    return res.status(400).send('projectId cookie is missing');
+  }
+
   const codeVerifier = crypto.randomBytes(32).toString('hex');
   const codeChallenge = createCodeChallenge(codeVerifier);
 
   try {
     await new CodeVerifier({ value: codeVerifier, projectId }).save();
-    const state = Buffer.from(JSON.stringify({ projectId })).toString('base64');
     const queryParams = new URLSearchParams({
       client_id: process.env.FITBIT_CLIENT_ID as string,
       response_type: 'code',
-      state,
       code_challenge: codeChallenge,
       code_challenge_method: 'S256',
       scope:
@@ -58,9 +60,12 @@ router.get('/auth', async (req: Request, res: Response) => {
 });
 
 router.get('/callback', verifySession, async (req: Request, res: Response) => {
-  console.log('callback called')
   const projectId = req.cookies.projectId;
   const code = req.query.code as string;
+
+  if (!projectId) {
+    return res.status(400).send('projectId cookie is missing');
+  }
 
   try {
     const verifier = await CodeVerifier.findOne()
@@ -105,7 +110,6 @@ router.get('/callback', verifySession, async (req: Request, res: Response) => {
     const project = await Project.findOne({ projectId });
 
     if (!project) {
-      console.error('Project not found');
       return res.status(404).send('Project not found');
     }
 
