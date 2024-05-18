@@ -87,7 +87,7 @@ const Devices = () => {
     };
 
     return (
-      <div className="grid grid-cols-4 w-full h-[70px] bg-[#2E2E2E] rounded-xl p-5">
+      <div className="grid grid-cols-4 w-full h-[70px] bg-primary shadow-lg rounded-xl text-white p-5">
         <p className="text-2xl font-bold  mr-auto overflow-fix">
           {device.name || ""}
         </p>
