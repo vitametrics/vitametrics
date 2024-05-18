@@ -1,62 +1,29 @@
-import { useAuth } from "../helpers/AuthContext";
 import logo from "../assets/logo.webp";
+import ProfileIcon from "../assets/ProfileIcon";
+import Dropdown from "./Dropdown";
+import { useState } from "react";
 
 export const DashboardNavbar = () => {
-  const { logout } = useAuth();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
+
   return (
-    <nav className="bg-primary2 px-2">
+    <nav className="bg-primary2 px-5">
       <div className="flex flex-row w-full bg-primary2 top-0 flex-wrap items-center justify-between mx-auto py-3">
         <a
           href="/"
           className="flex items-center space-x-3 rtl:space-x-reverse mr-auto"
         >
-          <img src={logo} className="h-[2rem]" alt="vitametrics Logo" />
+          <img src={logo} className="h-[35px]" alt="vitametrics Logo" />
         </a>
         <div className="flex items-center space-x-3">
           <a
-            href="/"
             className="text-white hover:cursor-pointer"
-            onClick={() => logout()}
+            onClick={toggleDropdown}
           >
-            <svg
-              width="25px"
-              height="25px"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-              <g
-                id="SVGRepo_tracerCarrier"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              ></g>
-              <g id="SVGRepo_iconCarrier">
-                {" "}
-                <path
-                  d="M21 12L13 12"
-                  stroke="white"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                ></path>
-                <path
-                  d="M18 15L20.913 12.087V12.087C20.961 12.039 20.961 11.961 20.913 11.913V11.913L18 9"
-                  stroke="white"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                ></path>
-                <path
-                  d="M16 5V4.5V4.5C16 3.67157 15.3284 3 14.5 3H5C3.89543 3 3 3.89543 3 5V19C3 20.1046 3.89543 21 5 21H14.5C15.3284 21 16 20.3284 16 19.5V19.5V19"
-                  stroke="white"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                ></path>
-              </g>
-            </svg>
+            <ProfileIcon />
           </a>
+          {dropdownOpen && <Dropdown />}
         </div>
       </div>
     </nav>

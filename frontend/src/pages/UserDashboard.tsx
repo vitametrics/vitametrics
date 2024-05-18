@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useAuth } from "../helpers/AuthContext";
 import { DashboardNavbar } from "../components/DashboardNavbar";
 import { useState, useEffect, Fragment } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
+import { fadeInItemVariants } from "../hooks/animationVariant";
 import axios from "axios";
 import Pagination from "../components/Pagination";
+import useCustomInView from "../hooks/useCustomInView";
 
 interface project {
   projectId: string;
@@ -14,12 +16,13 @@ interface project {
   ownerName: string;
   ownerEmail: string;
   userId: string;
-  members: string[];
-  devices: string[];
+  deviceCount: number;
+  memberCount: number;
 }
 
 const UserDashboard = () => {
-  const { projects } = useAuth();
+  const { ref, inView } = useCustomInView();
+  const { projects, setProjects } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -43,7 +46,9 @@ const UserDashboard = () => {
     };
   }, [projectName]);
 
-  const handleItemsPerPageChange = (event) => {
+  const handleItemsPerPageChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setItemsPerPage(Number(event.target.value));
     setCurrentPage(1); // Reset to the first page after changing the number of items per page
   };
@@ -78,22 +83,25 @@ const UserDashboard = () => {
   };
 
   const handleProjectClick = (projectId: string) => {
-    navigate(`/dashboard/project?id=${projectId}&&view=data`);
+    navigate(`/dashboard/project?id=${projectId}&&view=overview`);
   };
 
   const handleCreateProject = async () => {
     try {
-      const response = await axios.post(CREATE_PROJECT_ENDPOINT, {
-        params: {
+      const response = await axios.post(
+        CREATE_PROJECT_ENDPOINT,
+        {
           projectName: debouncedProjectName,
         },
-        withCredentials: true,
-      });
+        {
+          withCredentials: true,
+        }
+      );
 
       console.log(response.data);
-
       toggleCreateProjectMenu(false);
       setProjectName("");
+      setProjects([...projects, response.data.project]);
     } catch (error) {
       console.error(error);
     }
@@ -132,15 +140,6 @@ const UserDashboard = () => {
       </motion.div>
     );
   };
-
-  const fadeInItemVariants = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1 },
-  };
-  const { ref, inView } = useInView({
-    threshold: 0.1, // Adjust based on when you want the animation to trigger (1 = fully visible)
-    triggerOnce: true, // Ensures the animation only plays once
-  });
 
   return (
     <div className="h-screen bg-lightmodePrimary font-ralewayBold">
@@ -210,16 +209,18 @@ const UserDashboard = () => {
                 <span className="h-[0.75px] rounded-xl w-full bg-gray-200"></span>
                 <div
                   onClick={() => handleProjectClick(project.projectId)}
-                  className="grid grid-cols-4 w-full items-center"
+                  className="grid grid-cols-4 w-full items-center hover:cursor-pointer"
                 >
-                  <label className="text-center"> {project.projectName}</label>
-                  <label className="text-center">
-                    {project.devices ? project.devices.length : 0}
+                  <label className="text-center hover:cursor-pointer">
+                    {project.projectName}
                   </label>
-                  <label className="text-center">
-                    {project.members ? project.members.length : 0}
+                  <label className="text-center hover:cursor-pointer">
+                    {project.deviceCount}
                   </label>
-                  <button className="p-2 bg-transparent text-white rounded-lg flex items-center justify-center">
+                  <label className="text-center hover:cursor-pointer">
+                    {project.memberCount}
+                  </label>
+                  <button className="p-2 bg-transparent text-white rounded-lg flex items-center justify-center hover:cursor-pointer">
                     <svg
                       viewBox="0 0 24 24"
                       fill="none"

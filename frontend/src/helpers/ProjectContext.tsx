@@ -1,16 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
-
-interface Member {
-  distanceUnit: string;
-  email: string;
-  emailVerified: boolean;
-  languageLocale: string;
-  lastInviteSent: any; //fix this
-  projectId: string;
-  userId: string;
-}
 
 interface HeartData {
   dateTime: string;
@@ -268,11 +259,10 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       });
 
       const project = response.data.project;
-      //setMembers(response.data.members);
 
+      console.log(project.members);
       setMembers(project.members);
-      setProjectDevices(testDevices);
-      //setDevices(project.devices);
+      setProjectDevices(project.devices);
       setprojectName(project.projectName);
       setOwnerEmail(project.ownerEmail);
       setOwnerId(project.ownerId);

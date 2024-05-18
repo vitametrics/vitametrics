@@ -319,14 +319,14 @@ const Members = () => {
     >
       {renderInviteMenu()}
       {renderMemberInfo()}
-      <h2 className="w-full text-4xl font-bold p-5 pb-0">
+      <h2 className="w-full text-4xl font-bold p-5 pb-0 text-primary">
         {projectName} Members
       </h2>
       {isOwner && (
         <div className="flex p-5 w-full">
           <button
             onClick={() => toggleInviteMenu(true)} // Close invite menu when clicking the button
-            className="p-2 text-2xl flex flex-row gap-2 justify-center items-center rounded-xl w-[230px] bg-primary font-bold text-white"
+            className="p-2 text-2xl flex flex-row gap-2 justify-center items-center rounded-xl w-[230px] bg-primary font-bold text-white shadow-lg"
           >
             Invite
           </button>

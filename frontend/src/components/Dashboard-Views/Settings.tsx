@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { WarningIcon } from "../../assets/WarningIcon";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import useDebounce from "../../helpers/useDebounce";
 import axios from "axios";
 import { useSearchParams } from "react-router-dom";
 
@@ -16,21 +17,20 @@ const Settings = () => {
   const [changePasswordMsg, setChangePasswordMsg] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [debouncedPassword, setDebouncedPassword] = useState("");
-  const [debouncedConfirmPassword, setDebouncedConfirmPassword] = useState("");
+  const [debouncedPassword, setDebouncedPassword] = useDebounce(password, 200);
+  const debouncedConfirmPassword = useDebounce(confirmPassword, 200);
 
   const [changeEmailMsg, setChangeEmailMsg] = useState("");
   const [changeEmailFlag, setChangeEmailFlag] = useState(false);
 
   const [deletePassword, setDeletePassword] = useState("");
-  const [debounceDeleteConfirmPassword, setDebounceDeleteConfirmPassword] =
-    useState("");
+  const debounceDeleteConfirmPassword = useDebounce(deletePassword, 200);
   const [deletePasswordMsg, setDeletePasswordMsg] = useState("");
 
   const [verificationLinkMsg, setVerificationLinkMsg] = useState("");
   const [verificationLinkFlag, setVerificationLinkFlag] = useState(false);
   const [newEmail, setNewEmail] = useState("");
-  const [debouncedEmail, setDebouncedEmail] = useState("");
+  const debouncedEmail = useDebounce(newEmail, 200);
 
   const [searchParams, setSearchParams] = useSearchParams({
     view: "settings",
@@ -57,35 +57,6 @@ const Settings = () => {
     import.meta.env.VITE_APP_NODE_ENV === "production"
       ? import.meta.env.VITE_APP_SEND_EMAIL_VERIFICATION_ENDPOINT
       : import.meta.env.VITE_APP_SEND_EMAIL_VERIFICATION_DEV_ENDPOINT;
-
-  useEffect(() => {
-    const delayInputTimeoutId = setTimeout(() => {
-      setDebouncedPassword(password);
-    }, 200);
-    return () => clearTimeout(delayInputTimeoutId);
-  }, [password]);
-
-  useEffect(() => {
-    const timerId = setTimeout(() => {
-      setDebouncedConfirmPassword(confirmPassword);
-    }, 200);
-    return () => clearTimeout(timerId);
-  }, [confirmPassword]);
-
-  useEffect(() => {
-    const timerId = setTimeout(() => {
-      setDebouncedEmail(newEmail);
-    }, 200);
-    return () => clearTimeout(timerId);
-  }, [newEmail]);
-
-  useEffect(() => {
-    const timerId = setTimeout(() => {
-      setDebounceDeleteConfirmPassword(deletePassword);
-      console.log(debounceDeleteConfirmPassword);
-    }, 200);
-    return () => clearTimeout(timerId);
-  }, [deletePassword]);
 
   const handleAccountDeletion = async () => {
     if (deletePassword === "") {
@@ -171,7 +142,6 @@ const Settings = () => {
         }
       );
 
-      //console.log(response.data);
       setNewEmail("");
       setChangeEmailFlag(true);
       setChangeEmailMsg("Email successfully changed!");
@@ -186,7 +156,6 @@ const Settings = () => {
     setDebouncedPassword("");
     setPassword("");
     setConfirmPassword("");
-    setDebouncedConfirmPassword("");
     setChangePasswordFlag(true);
     setChangePasswordMsg("Password changed successfully");
   }
@@ -251,15 +220,15 @@ const Settings = () => {
       initial="hidden"
       animate={inView ? "show" : "hidden"}
       ref={ref}
-      className="w-full h-full flex flex-col p-[3.75rem] text-white  "
+      className="w-full h-full flex flex-col p-[3.75rem] text-primary "
     >
       {renderDeleteMenu()}
-      <h2 className="w-full text-4xl font-ralewayBold text-white mb-10">
+      <h2 className="w-full text-4xl font-libreFranklin font-bold mb-10">
         {projectName} Settings
       </h2>
 
       {!isEmailVerified ? (
-        <div className="flex-col my-3">
+        <div className="flex-col my-3 text-primary">
           <div className="flex flex-col md:flex-row md:items-center gap-2 mb-2">
             <div className="flex flex-row items-center gap-2">
               <WarningIcon />
@@ -284,11 +253,11 @@ const Settings = () => {
       ) : (
         <div className="flex flex-row gap-2">
           <span className="check" />
-          <p className="text-lg text-white"> {userEmail} </p>
+          <p className="text-lg text-secondary"> {userEmail} </p>
         </div>
       )}
       <div className="flex-col flex mt-10 mb-10">
-        <h2 className="w-full text-3xl font-ralewayBold text-white">
+        <h2 className="w-full text-3xl font-ralewayBold text-primary">
           Change Password
         </h2>
         {changePasswordFlag ? (
@@ -311,14 +280,14 @@ const Settings = () => {
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
         <button
-          className="w-full md:w-[500px] h-12 mt-5 bg-[#585858] text-white text-lg font-ralewayBold rounded-lg"
+          className="w-full md:w-[500px] h-12 mt-5 bg-primary text-white text-lg font-ralewayBold rounded-lg"
           onClick={changePassword}
         >
           Change Password
         </button>
       </div>
       <div className="flex-col flex mt-10 mb-10">
-        <h2 className="w-full text-3xl font-ralewayBold text-white">
+        <h2 className="w-full text-3xl font-ralewayBold text-primary">
           Change Email
         </h2>
         {changeEmailFlag ? (
@@ -336,7 +305,7 @@ const Settings = () => {
         />
 
         <button
-          className="w-full md:w-[500px] h-12 mt-5 bg-[#585858] text-white text-lg font-ralewayBold rounded-lg"
+          className="w-full md:w-[500px] h-12 mt-5 bg-primary text-white text-lg font-ralewayBold rounded-lg"
           onClick={handleChangeEmail}
         >
           Verify Email Address
