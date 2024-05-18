@@ -1,16 +1,15 @@
-import { IUser } from "../models/User";
-import { IProject } from "../models/Project";
-import { Request } from 'express';
+import { IProject } from '../models/Project';
+import { IUser } from '../models/User';
 
 declare global {
-    namespace Express {
-        interface User extends IUser {}
-    }
+  namespace Express {
+    interface User extends IUser {}
+  }
 }
 
 declare module 'express-serve-static-core' {
-    interface Request {
-        user?: Express.User;
-        project?: IProject;
-    }
+  interface Request {
+    user?: Express.User;
+    project?: IProject;
+  }
 }

@@ -1,14 +1,19 @@
 import { Express } from 'express';
+
 import { PassportStatic } from 'passport';
-import userRoute from './User';
-import logoutRoute from './Logout';
+
+import adminRoute from './Admin';
 import authRoute from './Auth';
 import loginRoute from './Login';
+import logoutRoute from './Logout';
 import ownerRoute from './Owner';
-import adminRoute from './Admin';
 import projectRoute from './Project';
+import userRoute from './User';
 
-export default function configureRoutes(app: Express, passport: PassportStatic) {
+export default function configureRoutes(
+  app: Express,
+  passport: PassportStatic
+) {
   app.use('/auth', authRoute);
   app.use('/project', projectRoute);
   app.use('/user', userRoute);
