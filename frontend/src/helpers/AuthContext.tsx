@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
@@ -12,6 +13,7 @@ interface AuthContextProps {
   userId: string;
   isOwner: boolean;
   projects: any[];
+  setProjects: (auth0: any[]) => void;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -210,6 +212,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         userId,
         isOwner,
         projects,
+        setProjects,
       }}
     >
       {children}
