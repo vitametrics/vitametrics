@@ -357,9 +357,6 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         });
 
         console.log(response.data);
-        //console.log("fetched device range data for: " + deviceId);
-        //setDevicesData((prev) => [...prev, response.data]);
-        //update current id in devicesData
         const newDeviceData = response.data;
 
         console.log(
