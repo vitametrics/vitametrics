@@ -98,9 +98,11 @@ class AdminController {
         await Device.deleteMany({ deviceId: { $in: deviceIds } });
       }
 
-      if (members && members.length > 0) {
+      if (members && members.length > 1) {
         for (const member of members) {
-          await User.deleteOne({ _id: member });
+          if (member._id != user._id) {
+            await User.deleteOne({ _id: member });
+          }
         }
       }
 
