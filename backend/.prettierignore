@@ -1,0 +1,6 @@
+node_modules
+build
+Dockerfile
+tsconfig.json
+package.json
+.eslintrc.json
