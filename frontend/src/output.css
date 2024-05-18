@@ -880,6 +880,10 @@ video {
   width: 100vw;
 }
 
+.w-\[200px\] {
+  width: 200px;
+}
+
 .min-w-\[500px\] {
   min-width: 500px;
 }

@@ -1,13 +1,15 @@
 import { Fragment } from "react";
 import { useProject } from "../../helpers/ProjectContext";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const AuthenticationBanner = () => {
   const { projectId } = useProject();
+  const navigate = useNavigate();
 
   const oAuthLogin = async () => {
     try {
-      await axios.post(
+      const response = await axios.post(
         import.meta.env.VITE_APP_OAUTH_LOGIN_ENDPOINT,
         {
           projectId: projectId,
@@ -16,6 +18,9 @@ const AuthenticationBanner = () => {
           withCredentials: true,
         }
       );
+      if (response.data.success) {
+        navigate("/api/auth");
+      }
     } catch (error) {
       console.log(error);
     }
