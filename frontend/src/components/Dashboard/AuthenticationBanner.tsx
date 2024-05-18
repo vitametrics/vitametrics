@@ -1,11 +1,11 @@
 import { Fragment } from "react";
 import { useProject } from "../../helpers/ProjectContext";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 
 const AuthenticationBanner = () => {
   const { projectId } = useProject();
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
   const oAuthLogin = async () => {
     try {
@@ -18,8 +18,8 @@ const AuthenticationBanner = () => {
           withCredentials: true,
         }
       );
-      if (response.data.success) {
-        navigate("/api/auth");
+      if (response.data.success === true) {
+        window.location.href = "https://vitametrics.org/api/auth";
       }
     } catch (error) {
       console.log(error);
