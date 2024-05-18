@@ -84,7 +84,7 @@ router.get('/callback', verifySession, async (req: Request, res: Response) => {
             return res.status(404).send('Project not found');
         }
 
-        project.fibitUserId = fitbitUserID;
+        project.fitbitUserId = fitbitUserID;
         project.fitbitAccessToken = accessToken;
         project.fitbitRefreshToken = refreshToken;
 
