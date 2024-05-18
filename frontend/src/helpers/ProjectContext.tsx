@@ -229,7 +229,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   ];*/
 
   const GET_PROJECT_ENDPOINT =
-    import.meta.env.NODE_ENV === "production"
+    import.meta.env.VITE_APP_NODE_ENV === "production"
       ? import.meta.env.VITE_APP_GET_PROJECT_ENDPOINT
       : import.meta.env.VITE_APP_GET_PROJECT_DEV_ENDPOINT;
 
