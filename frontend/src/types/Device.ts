@@ -1,6 +1,6 @@
 interface OverviewDevice {
-    id: string;
-    name: string;
+    deviceId: string;
+    deviceName: string;
     deviceVersion: string;
 }
 
