@@ -2,8 +2,8 @@ const OverviewIcon = () => {
   return (
     <svg
       fill="#FFFF"
-      width="40px"
-      height="50px"
+      width="30px"
+      height="30px"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
     >
