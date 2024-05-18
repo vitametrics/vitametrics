@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
+import {OverviewDevice} from "../types/Device";
 
 const useSearch = (items: any[], setCurrentPage: (page: number) => void) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -10,8 +11,8 @@ const useSearch = (items: any[], setCurrentPage: (page: number) => void) => {
   };
 
   // Filter members based on the search term
-  const filteredItems = items.filter((item) =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredItems = items.filter((item: OverviewDevice) =>
+    item.deviceName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return { searchTerm, handleSearchChange, filteredItems };

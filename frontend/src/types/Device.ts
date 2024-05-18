@@ -1,4 +1,4 @@
-interface OverviewDevice {
+export interface OverviewDevice {
     deviceId: string;
     deviceName: string;
     deviceVersion: string;

@@ -4,6 +4,7 @@ import { OverviewMembersListProps } from "../../types/Device";
 const OverviewDevicesList: React.FC<OverviewMembersListProps> = ({
   devices,
 }) => {
+  console.log(devices);
   return (
     <Fragment>
       <div

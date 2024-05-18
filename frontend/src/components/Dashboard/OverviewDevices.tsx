@@ -4,7 +4,7 @@ import Pagination from "../Pagination";
 import usePagination from "../../hooks/usePagination";
 import PaginationControls from "./PaginationControls";
 import OverviewDevicesList from "./OverviewDevicesList";
-import useSearch from "../../hooks/useSearch"; // Ensure correct path
+import useSearch from "../../hooks/useDeviceSearch"; // Ensure correct path
 
 const OverviewDevices = () => {
   const { projectDevices } = useProject();

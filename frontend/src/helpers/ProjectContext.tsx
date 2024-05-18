@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
+import { OverviewDevice } from "../types/Device";
 
 interface HeartData {
   dateTime: string;
@@ -67,8 +68,6 @@ interface ProjectContextProps {
   setprojectName: (arg0: string) => void;
   setMembers: (arg0: any[]) => void;
   members: any[];
-  deviceIds: string[];
-  setDeviceIds: (arg0: string[]) => void;
   devices: DeviceData[];
   setDevices: (arg0: DeviceData[]) => void;
   deviceViewDevices: Device[];
@@ -113,7 +112,6 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isOwner] = useState<boolean>(false);
   const [ownerId, setOwnerId] = useState<string>("");
   const [members, setMembers] = useState<any[]>([]);
-  const [deviceIds, setDeviceIds] = useState<string[]>([]);
   const [startDate, setStartDate] = useState(new Date("2024-02-09"));
   const [rangeStartDate, setRangeStartDate] = useState(new Date("2024-02-10"));
   const [rangeEndDate, setRangeEndDate] = useState(new Date("2024-02-11"));
@@ -123,7 +121,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   const [showBackDrop, setShowBackDrop] = useState(false);
   const [isAccountLinked] = useState<boolean>(false);
   const [description, setDescription] = useState<string>("");
-  const [projectDevices, setProjectDevices] = useState<any[]>([]);
+  const [projectDevices, setProjectDevices] = useState<OverviewDevice[]>([]);
   const [devices, setDevices] = useState<DeviceData[]>(
     localStorage.getItem("devices")
       ? JSON.parse(localStorage.getItem("devices")!)
@@ -264,11 +262,11 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       console.log(project.members);
       setMembers(project.members);
       setProjectDevices(project.devices);
+      console.log("from projectcontext" + project.devices);
       setprojectName(project.projectName);
       setOwnerEmail(project.ownerEmail);
       setOwnerId(project.ownerId);
       setOwnerName(project.ownerName);
-      setDeviceIds(project.devices.map((device: DeviceInfo) => device.id));
       setDescription(
         project.description ? project.description : testDescription
       );
@@ -439,8 +437,6 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         ownerEmail,
         ownerName,
         ownerId,
-        deviceIds,
-        setDeviceIds,
         setOwnerEmail,
         setOwnerName,
         setOwnerId,

@@ -3,11 +3,11 @@ import { useAuth } from "../helpers/AuthContext";
 import { DashboardNavbar } from "../components/DashboardNavbar";
 import { useState, useEffect, Fragment } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { motion } from "framer-motion";
-import { fadeInItemVariants } from "../hooks/animationVariant";
 import axios from "axios";
 import Pagination from "../components/Pagination";
-import useCustomInView from "../hooks/useCustomInView";
+import CreateProjectMenu from "../components/Dashboard/CreateProjectMenu";
+import DeleteProjectMenu from "../components/Dashboard/DeleteProjectMenu";
+import useDebounce from "../helpers/useDebounce";
 
 interface project {
   projectId: string;
@@ -21,7 +21,6 @@ interface project {
 }
 
 const UserDashboard = () => {
-  const { ref, inView } = useCustomInView();
   const { projects, setProjects } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
@@ -29,22 +28,11 @@ const UserDashboard = () => {
   const [showBackDrop, setShowBackDrop] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams({
     createProject: "false",
+    deleteProject: "false",
   });
   const [projectName, setProjectName] = useState("");
-  const [debouncedProjectName, setDebouncedProjectName] = useState("");
+  const debouncedProjectName = useDebounce(projectName, 200);
   const itemsPerPageOptions = [5, 10, 15, 20];
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedProjectName(projectName);
-    }, 100);
-
-    console.log(debouncedProjectName);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [projectName]);
 
   const handleItemsPerPageChange = (
     event: React.ChangeEvent<HTMLSelectElement>
@@ -68,7 +56,14 @@ const UserDashboard = () => {
       ? import.meta.env.VITE_APP_CREATE_PROJECT_ENDPOINT
       : import.meta.env.VITE_APP_CREATE_PROJECT_DEV_ENDPOINT;
 
+  /*
+  const DELETE_PROJECT_ENDPOINT =
+    import.meta.env.VITE_APP_NODE_ENV === "production"
+      ? import.meta.env.VITE_APP_DELETE_PROJECT_ENDPOINT
+      : import.meta.env.VITE_APP_DELETE_PROJECT_DEV_ENDPOINT;*/
+
   const createProject = searchParams.get("createProject") === "true";
+  const deleteProject = searchParams.get("deleteProject") === "true";
 
   useEffect(() => {
     if (createProject) setShowBackDrop(createProject);
@@ -107,38 +102,33 @@ const UserDashboard = () => {
     }
   };
 
-  const renderCreateProjectMenu = () => {
-    if (!createProject) return null;
-    return (
-      <motion.div
-        variants={fadeInItemVariants}
-        initial="hidden"
-        animate={inView ? "show" : "hidden"}
-        ref={ref}
-        className={`font-libreFranklinBold opacity-transition ${showBackDrop ? "show" : ""} absolute w-full  p-10 z-20 bg-[#e8e8e8] flex flex-col left-0 md:left-1/2 md:top-1/2 transform-center md:w-[500px] rounded-xl text-primary shadow-lg`}
-      >
-        <button
-          onClick={() => toggleCreateProjectMenu(false)}
-          className="item-3 ml-auto"
-        ></button>
-        <h1 className="text-3xl mb-10 text-center w-full text-primary font-bold">
-          Create New Project
-        </h1>
-        <p className="text-primary"> Enter New Project Name</p>
-        <input
-          type="text"
-          className="p-3 mb-3 rounded-lg border-b-1 text-primary"
-          onChange={(e) => setProjectName(e.target.value)}
-        />
+  /*
+  const handleDeleteProject = async (projectId: string) => {
+    try {
+      await axios.post(
+        DELETE_PROJECT_ENDPOINT,
+        {
+          projectId,
+        },
+        {
+          withCredentials: true,
+        }
+      );
 
-        <button
-          className="bg-tertiary p-4 text-xl w-full rounded-lg text-white font-bold"
-          onClick={handleCreateProject}
-        >
-          Create
-        </button>
-      </motion.div>
-    );
+      setProjects(
+        projects.filter((project) => project.projectId !== projectId)
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };*/
+
+  const toggleDeleteProjectMenu = (show: boolean) => {
+    setSearchParams((prev) => {
+      prev.set("deleteProject", show.toString());
+      return prev;
+    });
+    setShowBackDrop(show); // Show or hide backdrop when invite menu is toggled
   };
 
   return (
@@ -146,7 +136,18 @@ const UserDashboard = () => {
       <DashboardNavbar />
       <div className={`backdrop ${showBackDrop ? "show" : ""}`}></div>
 
-      {renderCreateProjectMenu()}
+      <CreateProjectMenu
+        show={createProject}
+        toggleMenu={toggleCreateProjectMenu}
+        projectName={projectName}
+        setProjectName={setProjectName}
+        handleCreateProject={handleCreateProject}
+      />
+
+      <DeleteProjectMenu
+        show={deleteProject}
+        toggleMenu={toggleDeleteProjectMenu}
+      />
       <div className="p-20 bg-lightmodeSecondary h-full">
         <h1 className="text-4xl mb-5 font-libreFranklin font-bold text-primary">
           Welcome back
@@ -207,20 +208,29 @@ const UserDashboard = () => {
             {currentProjects.map((project: project) => (
               <Fragment key={project.projectId}>
                 <span className="h-[0.75px] rounded-xl w-full bg-gray-200"></span>
-                <div
-                  onClick={() => handleProjectClick(project.projectId)}
-                  className="grid grid-cols-4 w-full items-center hover:cursor-pointer"
-                >
-                  <label className="text-center hover:cursor-pointer">
+                <div className="grid grid-cols-4 w-full items-center hover:cursor-pointer">
+                  <label
+                    className="text-center hover:cursor-pointer"
+                    onClick={() => handleProjectClick(project.projectId)}
+                  >
                     {project.projectName}
                   </label>
-                  <label className="text-center hover:cursor-pointer">
+                  <label
+                    className="text-center hover:cursor-pointer"
+                    onClick={() => handleProjectClick(project.projectId)}
+                  >
                     {project.deviceCount}
                   </label>
-                  <label className="text-center hover:cursor-pointer">
+                  <label
+                    className="text-center hover:cursor-pointer"
+                    onClick={() => handleProjectClick(project.projectId)}
+                  >
                     {project.memberCount}
                   </label>
-                  <button className="p-2 bg-transparent text-white rounded-lg flex items-center justify-center hover:cursor-pointer">
+                  <button
+                    className="p-2 bg-transparent text-white rounded-lg flex items-center justify-center hover:cursor-pointer"
+                    onClick={() => toggleDeleteProjectMenu(true)}
+                  >
                     <svg
                       viewBox="0 0 24 24"
                       fill="none"
