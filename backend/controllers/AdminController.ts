@@ -50,7 +50,14 @@ class AdminController {
                 console.log('Project created successfully');
              }
 
-             res.status(201).json({ msg: 'Project created successfully', project: savedProject});
+             const projectResponse = {
+                projectId: savedProject.projectId,
+                projectName: savedProject.projectName,
+                membersCount: savedProject.members.length,
+                deviceCount: savedProject.devices ? savedProject.devices.length : 0,
+             };
+
+             res.status(201).json({ msg: 'Project created successfully', project: projectResponse});
              return;
 
         } catch (error) {
