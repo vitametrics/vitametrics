@@ -35,7 +35,7 @@ async function fetchDevices(
       if (updatedDevice) {
         await Project.updateOne(
           { projectId },
-          { $addToSet: { devices: device.id } }
+          { $addToSet: { devices: updatedDevice._id } }
         );
       } else {
         console.error('Device not created or not found for ID: ', device.id);
