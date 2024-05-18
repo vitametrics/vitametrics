@@ -1,10 +1,24 @@
 import { Fragment } from "react";
 import { useProject } from "../../helpers/ProjectContext";
+import axios from "axios";
 
 const AuthenticationBanner = () => {
   const { projectId } = useProject();
+
   const oAuthLogin = async () => {
-    window.location.href = `https://vitametrics.org/api/auth?projectId=${projectId}`;
+    try {
+      await axios.post(
+        `/api/auth/${projectId}`,
+        {
+          projectId: projectId,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
