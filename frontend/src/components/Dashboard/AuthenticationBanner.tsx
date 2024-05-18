@@ -1,8 +1,10 @@
 import { Fragment } from "react";
+import { useProject } from "../../helpers/ProjectContext";
 
 const AuthenticationBanner = () => {
+  const { projectId } = useProject();
   const oAuthLogin = async () => {
-    window.location.href = "https://vitametrics.org/api/auth";
+    window.location.href = `https://vitametrics.org/api/auth?projectId=${projectId}`;
   };
 
   return (
