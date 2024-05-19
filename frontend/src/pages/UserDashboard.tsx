@@ -53,10 +53,7 @@ const UserDashboard = () => {
     indexOfLastProject
   );
 
-  const CREATE_PROJECT_ENDPOINT =
-    import.meta.env.VITE_APP_NODE_ENV === "production"
-      ? import.meta.env.VITE_APP_CREATE_PROJECT_ENDPOINT
-      : import.meta.env.VITE_APP_CREATE_PROJECT_DEV_ENDPOINT;
+  const CREATE_PROJECT_ENDPOINT = `${import.meta.env.VITE_API_URL}/admin/create-project`;
 
   const createProject = searchParams.get("createProject") === "true";
   const deleteProject = searchParams.get("deleteProject") === "true";

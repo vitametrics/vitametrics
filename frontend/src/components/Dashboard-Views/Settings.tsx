@@ -43,20 +43,9 @@ const Settings = () => {
     if (showDeleteMenu) setShowBackDrop(showDeleteMenu);
   }, []);
 
-  const CHANGE_PASSWORD_ENDPOINT =
-    import.meta.env.VITE_APP_NODE_ENV === "production"
-      ? import.meta.env.VITE_APP_CHANGE_PASSWORD_ENDPOINT
-      : import.meta.env.VITE_APP_CHANGE_PASSWORD_DEV_ENDPOINT;
-
-  const CHANGE_EMAIL_ENDPOINT =
-    import.meta.env.VITE_APP_NODE_ENV === "production"
-      ? import.meta.env.VITE_APP_CHANGE_EMAIL_ENDPOINT
-      : import.meta.env.VITE_APP_CHANGE_EMAIL_DEV_ENDPOINT;
-
-  const SEND_VERIFICATION_LINK_ENDPOINT =
-    import.meta.env.VITE_APP_NODE_ENV === "production"
-      ? import.meta.env.VITE_APP_SEND_EMAIL_VERIFICATION_ENDPOINT
-      : import.meta.env.VITE_APP_SEND_EMAIL_VERIFICATION_DEV_ENDPOINT;
+  const CHANGE_PASSWORD_ENDPOINT = `${import.meta.env.VITE_API_URL}/user/change-password`;
+  const CHANGE_EMAIL_ENDPOINT = `${import.meta.env.VITE_API_URL}/user/change-email`;
+  const SEND_VERIFICATION_LINK_ENDPOINT = `${import.meta.env.VITE_API_URL}/user/send-email-verification`;
 
   const handleAccountDeletion = async () => {
     if (deletePassword === "") {

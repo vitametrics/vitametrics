@@ -55,6 +55,10 @@ const ProjectContext = createContext<ProjectContextProps | undefined>(
 const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const GET_PROJECT_ENDPOINT = `${import.meta.env.VITE_API_URL}/project/info`;
+  const FETCH_DEVICE_DATA_ENDPOINT = `${import.meta.env.VITE_API_URL}/project/fetch-data`;
+  const FETCH_PROJECT_DEVICES_ENDPOINT = `${import.meta.env.VITE_API_URL}/project/fetch-devices`;
+
   const [projectName, setprojectName] = useState<string>("");
   const [projectId, setProjectId] = useState<string>("");
   const [ownerEmail, setOwnerEmail] = useState<string>("");
@@ -84,7 +88,6 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       : []
   );
   const testDescription = "No description provided";
-  const FETCH_PROJECT_DEVICES_ENDPOINT = `${import.meta.env.API_URL}/project/fetch-devices`;
 
   /*
   const testDevices = [
@@ -178,11 +181,6 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
     },
   ];*/
 
-  const GET_PROJECT_ENDPOINT =
-    import.meta.env.VITE_APP_NODE_ENV === "production"
-      ? import.meta.env.VITE_APP_GET_PROJECT_ENDPOINT
-      : import.meta.env.VITE_APP_GET_PROJECT_DEV_ENDPOINT;
-
   useEffect(() => {
     // Check the URL parameters
     const urlParams = new URLSearchParams(window.location.search);
@@ -228,9 +226,6 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       console.log(error);
     }
   };
-
-  const FETCH_DEVICE_DATA_ENDPOINT =
-    "https://vitametrics.org/api/project/fetch-data";
 
   const [devicesData, setDevicesData] = useState<DeviceData[]>(() => {
     try {

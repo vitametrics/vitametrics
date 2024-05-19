@@ -18,6 +18,7 @@ import "chart.js/auto";
 import { useProject } from "../../helpers/ProjectContext";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import { Device } from "../../types/Device";
 
 /*
 type DataItem = {
@@ -73,6 +74,7 @@ interface DataItem {
 }
 
 const Data = () => {
+  const DOWNLOAD_DATA_ENDPOINT = `${import.meta.env.VITE_API_URL}/project/download-data`;
   const { deviceViewDevices, projectName } = useProject();
   const [searchParams, setSearchParams] = useSearchParams({
     detailLevel: "1min",
@@ -430,18 +432,15 @@ const Data = () => {
     for (const deviceId of selectedDevices) {
       try {
         const date = formatDate(downloadDate);
-        const response = await axios.get(
-          "https://vitametrics.org/api/org/download-data",
-          {
-            params: {
-              deviceId: deviceId,
-              dataType: downloadDataType,
-              date: date,
-              detailLevel: downloadDetailLevel,
-            },
-            withCredentials: true,
-          }
-        );
+        const response = await axios.get(DOWNLOAD_DATA_ENDPOINT, {
+          params: {
+            deviceId: deviceId,
+            dataType: downloadDataType,
+            date: date,
+            detailLevel: downloadDetailLevel,
+          },
+          withCredentials: true,
+        });
 
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement("a");
@@ -759,42 +758,32 @@ const Data = () => {
           </h2>
           <div className="flex flex-row justify-between h-full w-full p-5 gap-5">
             {deviceViewDevices && deviceViewDevices.length > 0 ? (
-              deviceViewDevices.map(
-                (
-                  device: {
-                    id: string;
-                    deviceVersion: string;
-                    lastSyncTime: string;
-                    batteryLevel: number;
-                  },
-                  index: number
-                ) => {
-                  return (
-                    <div
-                      key={index}
-                      className="flex flex-row gap-5 items-center w-full h-[70px] bg-[#434040] p-5 rounded-xl"
-                    >
-                      <div className="flex flex-row mr-3 items-center justify-center">
-                        <input
-                          type="checkbox"
-                          onChange={(e) =>
-                            handleDeviceSelectionChange(
-                              device.id,
-                              e.target.checked
-                            )
-                          }
-                          checked={selectedDevices.includes(device.id)}
-                          className="w-9 h-[44px] mr-2  bg-gray-100 accent-[#606060] border-gray-300 rounded-xl focus:ring-transparent "
-                        />
-                        <p className="text-2xl font-bol mr-auto ">
-                          {device.deviceVersion} &nbsp;
-                          {device.id}
-                        </p>
-                      </div>
+              deviceViewDevices.map((device: Device, index: number) => {
+                return (
+                  <div
+                    key={index}
+                    className="flex flex-row gap-5 items-center w-full h-[70px] bg-[#434040] p-5 rounded-xl"
+                  >
+                    <div className="flex flex-row mr-3 items-center justify-center">
+                      <input
+                        type="checkbox"
+                        onChange={(e) =>
+                          handleDeviceSelectionChange(
+                            device.deviceId,
+                            e.target.checked
+                          )
+                        }
+                        checked={selectedDevices.includes(device.deviceId)}
+                        className="w-9 h-[44px] mr-2  bg-gray-100 accent-[#606060] border-gray-300 rounded-xl focus:ring-transparent "
+                      />
+                      <p className="text-2xl font-bol mr-auto ">
+                        {device.deviceVersion} &nbsp;
+                        {device.deviceId}
+                      </p>
                     </div>
-                  );
-                }
-              )
+                  </div>
+                );
+              })
             ) : (
               <div className="text-center items-center w-full h-full text-secondary">
                 {" "}

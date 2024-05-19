@@ -21,6 +21,9 @@ const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const AUTH_ENDPOINT = `${import.meta.env.VITE_API_URL}/user/auth/status`;
+  const LOGOUT_ENDPOINT = `${import.meta.env.VITE_API_URL}/logout`;
+  const LOGIN_ENDPOINT = `${import.meta.env.VITE_API_URL}/login`;
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoadingAuth, setIsLoadingAuth] = useState<boolean>(true);
   const [isEmailVerified, setIsEmailVerified] = useState<boolean>(false);
@@ -130,21 +133,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       devices: [],
     },
   ];
-
-  const AUTH_ENDPOINT =
-    import.meta.env.VITE_APP_NODE_ENV === "production"
-      ? import.meta.env.VITE_APP_AUTH_ENDPOINT
-      : import.meta.env.VITE_APP_AUTH_DEV_ENDPOINT;
-
-  const LOGOUT_ENDPOINT =
-    import.meta.env.VITE_APP_NODE_ENV === "production"
-      ? import.meta.env.VITE_APP_LOGOUT_ENDPOINT
-      : import.meta.env.VITE_APP_LOGOUT_DEV_ENDPOINT;
-
-  const LOGIN_ENDPOINT =
-    import.meta.env.VITE_APP_NODE_ENV === "production"
-      ? import.meta.env.VITE_APP_LOGIN_ENDPOINT
-      : import.meta.env.VITE_APP_LOGIN_DEV_ENDPOINT;
 
   const login = async () => {
     if (!isAuthenticated) {
