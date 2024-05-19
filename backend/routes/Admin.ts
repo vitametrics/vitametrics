@@ -66,6 +66,42 @@ router.post(
   asyncHandler(AdminController.removeMember)
 );
 
+router.post(
+  '/change-project-email',
+  verifySession,
+  checkProjectMembership,
+  verifyRole('admin'),
+  validationHandler([
+    body('newOwnerEmail').isEmail().withMessage('Invalid email'),
+    ...projectIdValidation
+  ]),
+  asyncHandler(AdminController.changeProjectOwnerEmail)
+);
+
+router.post(
+  '/change-project-name',
+  verifySession,
+  checkProjectMembership,
+  verifyRole('admin'),
+  validationHandler([
+    body('newProjectName').not().isEmpty().withMessage('Project name is required'),
+    ...projectIdValidation
+  ]),
+  asyncHandler(AdminController.changeProjectName)
+);
+
+router.post(
+  '/change-project-description',
+  verifySession,
+  checkProjectMembership,
+  verifyRole('admin'),
+  validationHandler([
+    body('newProjectDescription').not().isEmpty().withMessage('Project description is required'),
+    ...projectIdValidation
+  ]),
+  asyncHandler(AdminController.changeProjectDescription)
+);
+
 router.get(
   '/download-log',
   verifySession,

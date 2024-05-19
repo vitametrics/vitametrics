@@ -88,6 +88,7 @@ export async function fetchDevicesHandler(req: Request, res: Response) {
       currentProject.fitbitAccessToken,
       currentProject.projectId
     );
+    
     logger.info(
       `Devices fetched successfully for project: ${currentProject.projectId}`
     );
