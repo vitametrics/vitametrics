@@ -1,9 +1,21 @@
 // projectService.ts
 import axios from "axios";
 
-const DELETE_PROJECT_ENDPOINT =  `${import.meta.env.VITE_API_URL}/admin/delete-project`;
+const CREATE_PROJECT_ENDPOINT = `${import.meta.env.VITE_API_URL}/admin/create-project`;
+const DELETE_PROJECT_ENDPOINT = `${import.meta.env.VITE_API_URL}/admin/delete-project`;
 
-
+export const createProjectService = async (projectName: string) => {
+  try {
+    const response = await axios.post(
+      CREATE_PROJECT_ENDPOINT,
+      { projectName: projectName },
+      { withCredentials: true }
+    );
+    return response.data.project;  // Assuming the API returns the newly created project object
+  } catch (error) {
+    throw new Error('Failed to create the project: ' + error);
+  }
+};
 export const deleteProjectService = async (projectId: string) => {
   try {
     const response = await axios.post(

@@ -3,12 +3,14 @@ import { useAuth } from "../helpers/AuthContext";
 import { DashboardNavbar } from "../components/DashboardNavbar";
 import { useState, useEffect, Fragment } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import axios from "axios";
 import Pagination from "../components/Pagination";
 import CreateProjectMenu from "../components/Dashboard/CreateProjectMenu";
 import DeleteProjectMenu from "../components/Dashboard/DeleteProjectMenu";
 import useDebounce from "../helpers/useDebounce";
-import { deleteProjectService } from "../services/projectService";
+import {
+  deleteProjectService,
+  createProjectService,
+} from "../services/projectService";
 
 interface Project {
   projectId: string;
@@ -49,8 +51,6 @@ const UserDashboard = () => {
     indexOfLastProject
   );
 
-  const CREATE_PROJECT_ENDPOINT = `${import.meta.env.VITE_API_URL}/admin/create-project`;
-
   const createProject = searchParams.get("createProject") === "true";
   const deleteProject = searchParams.get("deleteProject") === "true";
 
@@ -72,21 +72,11 @@ const UserDashboard = () => {
 
   const handleCreateProject = async () => {
     try {
-      const response = await axios.post(
-        CREATE_PROJECT_ENDPOINT,
-        {
-          projectName: debouncedProjectName,
-        },
-        {
-          withCredentials: true,
-        }
-      );
-
-      console.log(response.data.project);
+      const project = await createProjectService(debouncedProjectName);
 
       toggleCreateProjectMenu(false);
       setProjectName("");
-      setProjects([...projects, response.data.project]);
+      setProjects([...projects, project]);
     } catch (error) {
       console.error(error);
     }
