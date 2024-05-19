@@ -11,7 +11,7 @@
     "lint": "eslint . --quiet",
     "format": "prettier --write .",
     "test": "jest",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "lint-staged": {
     "**/*.ts": [
@@ -26,7 +26,6 @@
     "preset": "ts-jest",
     "testEnvironment": "node"
   },
-  
   "dependencies": {
     "argon2": "^0.31.2",
     "axios": "^1.6.5",
