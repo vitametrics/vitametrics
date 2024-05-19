@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
-
 import mongoose from 'mongoose';
-
 import {
   getProjectInfo,
   removeMember,
@@ -21,6 +19,7 @@ jest.mock('../models/User');
 jest.mock('../middleware/util/fetchDevices');
 jest.mock('../middleware/util/fetchIntraday');
 jest.mock('../middleware/util/fetchData');
+jest.mock('../middleware/logger');
 
 interface CustomRequest extends Request {
   user?: IUser;
@@ -43,7 +42,9 @@ describe('ProjectController', () => {
       setHeader: jest.fn(),
       set: jest.fn(),
       send: jest.fn(),
+      cookie: jest.fn()
     };
+    jest.clearAllMocks();
   });
 
   describe('getProjectInfo', () => {
@@ -167,12 +168,18 @@ describe('ProjectController', () => {
     });
 
     it('should return 404 if user is not found', async () => {
+      const mockProject = {
+        _id: new mongoose.Types.ObjectId(),
+        ownerId: 'owner123',
+      } as unknown as IProject;
+      req.project = mockProject;
       req.body = { userId: 'user123' };
 
       (User.findOne as jest.Mock).mockResolvedValue(null);
 
       await removeMember(req as Request, res as Response);
 
+      expect(User.findOne).toHaveBeenCalledWith({ userId: 'user123' });
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({ msg: 'User not found' });
     });
