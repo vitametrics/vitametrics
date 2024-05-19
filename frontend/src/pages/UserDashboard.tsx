@@ -30,7 +30,9 @@ const UserDashboard = () => {
     deleteProject: "false",
   });
   const [projectName, setProjectName] = useState("");
-  const debouncedProjectName = useDebounce(projectName, 200);
+  const debouncedProjectName = useDebounce(projectName, 100);
+  const [projectDescription, setProjectDescription] = useState("");
+  const debouncedProjectDescription = useDebounce(projectDescription, 100);
   const [projectIdToDelete, setProjectIdToDelete] = useState<string>("");
   const itemsPerPageOptions = [5, 10, 15, 20];
 
@@ -72,7 +74,10 @@ const UserDashboard = () => {
 
   const handleCreateProject = async () => {
     try {
-      const project = await createProjectService(debouncedProjectName);
+      const project = await createProjectService(
+        debouncedProjectName,
+        debouncedProjectDescription
+      );
 
       toggleCreateProjectMenu(false);
       setProjectName("");
@@ -115,6 +120,7 @@ const UserDashboard = () => {
         toggleMenu={toggleCreateProjectMenu}
         projectName={projectName}
         setProjectName={setProjectName}
+        setProjectDescription={setProjectDescription}
         handleCreateProject={handleCreateProject}
       />
 

@@ -4,11 +4,13 @@ import axios from "axios";
 const CREATE_PROJECT_ENDPOINT = `${import.meta.env.VITE_API_URL}/admin/create-project`;
 const DELETE_PROJECT_ENDPOINT = `${import.meta.env.VITE_API_URL}/admin/delete-project`;
 
-export const createProjectService = async (projectName: string) => {
+export const createProjectService = async (projectName: string, projectDescription: string) => {
   try {
     const response = await axios.post(
       CREATE_PROJECT_ENDPOINT,
-      { projectName: projectName },
+      { projectName: projectName,
+        projectDescription: projectDescription,
+       },
       { withCredentials: true }
     );
     return response.data.project;  // Assuming the API returns the newly created project object
