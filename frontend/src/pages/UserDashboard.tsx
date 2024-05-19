@@ -10,15 +10,11 @@ import DeleteProjectMenu from "../components/Dashboard/DeleteProjectMenu";
 import useDebounce from "../helpers/useDebounce";
 import { deleteProjectService } from "../services/projectService";
 
-interface project {
+interface Project {
   projectId: string;
   projectName: string;
-  ownerId: string;
-  ownerName: string;
-  ownerEmail: string;
-  userId: string;
   deviceCount: number;
-  memberCount: number;
+  membersCount: number;
 }
 
 const UserDashboard = () => {
@@ -85,6 +81,8 @@ const UserDashboard = () => {
           withCredentials: true,
         }
       );
+
+      console.log(response.data.project);
 
       toggleCreateProjectMenu(false);
       setProjectName("");
@@ -192,7 +190,7 @@ const UserDashboard = () => {
               <label className="text-center">ACTION</label>
             </div>
 
-            {currentProjects.map((project: project) => (
+            {currentProjects.map((project: Project) => (
               <Fragment key={project.projectId}>
                 <span className="h-[0.75px] rounded-xl w-full bg-gray-200"></span>
                 <div className="grid grid-cols-4 w-full items-center hover:cursor-pointer">
@@ -212,7 +210,7 @@ const UserDashboard = () => {
                     className="text-center hover:cursor-pointer"
                     onClick={() => handleProjectClick(project.projectId)}
                   >
-                    {project.memberCount}
+                    {project.membersCount}
                   </label>
                   <button
                     className="p-2 bg-transparent text-white rounded-lg flex items-center justify-center hover:cursor-pointer"

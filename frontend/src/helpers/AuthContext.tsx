@@ -16,6 +16,13 @@ interface AuthContextProps {
   setProjects: (auth0: any[]) => void;
 }
 
+interface Project {
+  projectId: string;
+  projectName: string;
+  deviceCount: number;
+  membersCount: number;
+}
+
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -30,8 +37,9 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [userEmail, setUserEmail] = useState<string>("");
   const [userId, setUserId] = useState<string>("");
-  const [projects, setProjects] = useState<any[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
 
+  /*
   const testProjects = [
     {
       projectId: "1",
@@ -133,7 +141,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       devices: [],
     },
   ];
-
+*/
   const login = async () => {
     if (!isAuthenticated) {
       try {
@@ -148,7 +156,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setProjects(response.data.user.projects);
       } catch (error) {
         console.log(error);
-        setProjects(testProjects);
+        //setProjects(testProjects);
       } finally {
         setIsLoadingAuth(false);
       }
