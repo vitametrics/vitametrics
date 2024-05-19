@@ -2,58 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
-import { OverviewDevice } from "../types/Device";
-
-interface HeartData {
-  dateTime: string;
-  value: {
-    customHeartRateZones: any[];
-    heartRateZones: any[];
-    restingHeartRate: number;
-  };
-}
-interface DeviceInfo {
-  battery: string;
-  batteryLevel: number;
-  deviceVersion: string;
-  features: string[];
-  id: string;
-}
-
-interface DataItem {
-  dateTime: string;
-  value: string;
-}
-
-interface DeviceData {
-  deviceId: string;
-  deviceInfo: DeviceInfo;
-  heartData: HeartData[];
-  stepsData: DataItem[];
-  floorsData: DataItem[];
-  distanceData: DataItem[];
-  elevationData: DataItem[];
-  caloriesData: DataItem[];
-}
-
-interface DeviceData {
-  id: string;
-  name: string;
-  deviceVersion: string;
-  lastSyncTime: string;
-  batteryLevel: number;
-  [key: string]: any; // This line is the index signature
-}
-
-interface Device {
-  id: string;
-  deviceVersion: string;
-  lastSyncTime: string;
-  batteryLevel: number;
-  ownerName: string;
-  mac: string;
-  type: string;
-}
+import { OverviewDevice, DeviceData, Device } from "../types/Device";
 
 interface ProjectContextProps {
   projectName: string;
@@ -96,6 +45,7 @@ interface ProjectContextProps {
   description: string;
   setDescription: (arg0: string) => void;
   projectDevices: any[];
+  fetchDeviceViewDevices: () => void;
 }
 
 const ProjectContext = createContext<ProjectContextProps | undefined>(
@@ -127,12 +77,14 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       ? JSON.parse(localStorage.getItem("devices")!)
       : []
   );
+
   const [deviceViewDevices, setDeviceViewDevices] = useState<Device[]>(
     localStorage.getItem("devices")
       ? JSON.parse(localStorage.getItem("devices")!)
       : []
   );
   const testDescription = "No description provided";
+  const FETCH_PROJECT_DEVICES_ENDPOINT = `${import.meta.env.API_URL}/project/fetch-devices`;
 
   /*
   const testDevices = [
@@ -262,7 +214,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       console.log(project.members);
       setMembers(project.members);
       setProjectDevices(project.devices);
-      console.log("from projectcontext" + project.devices);
+      console.log("from ProjectContext: " + project.devices);
       setprojectName(project.projectName);
       setOwnerEmail(project.ownerEmail);
       setOwnerId(project.ownerId);
@@ -278,7 +230,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const FETCH_DEVICE_DATA_ENDPOINT =
-    "https://vitametrics.org/api/org/fetch-data";
+    "https://vitametrics.org/api/project/fetch-data";
 
   const [devicesData, setDevicesData] = useState<DeviceData[]>(() => {
     try {
@@ -423,6 +375,19 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const fetchDeviceViewDevices = async () => {
+    try {
+      const response = await axios.get(FETCH_PROJECT_DEVICES_ENDPOINT, {
+        withCredentials: true,
+      });
+
+      console.log(response.data);
+      setDeviceViewDevices(response.data.devices);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <ProjectContext.Provider
       value={{
@@ -466,6 +431,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         description,
         setDescription,
         projectDevices,
+        fetchDeviceViewDevices,
       }}
     >
       {children}
