@@ -2,58 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
-import { OverviewDevice } from "../types/Device";
-
-interface HeartData {
-  dateTime: string;
-  value: {
-    customHeartRateZones: any[];
-    heartRateZones: any[];
-    restingHeartRate: number;
-  };
-}
-interface DeviceInfo {
-  battery: string;
-  batteryLevel: number;
-  deviceVersion: string;
-  features: string[];
-  id: string;
-}
-
-interface DataItem {
-  dateTime: string;
-  value: string;
-}
-
-interface DeviceData {
-  deviceId: string;
-  deviceInfo: DeviceInfo;
-  heartData: HeartData[];
-  stepsData: DataItem[];
-  floorsData: DataItem[];
-  distanceData: DataItem[];
-  elevationData: DataItem[];
-  caloriesData: DataItem[];
-}
-
-interface DeviceData {
-  id: string;
-  name: string;
-  deviceVersion: string;
-  lastSyncTime: string;
-  batteryLevel: number;
-  [key: string]: any; // This line is the index signature
-}
-
-interface Device {
-  id: string;
-  deviceVersion: string;
-  lastSyncTime: string;
-  batteryLevel: number;
-  ownerName: string;
-  mac: string;
-  type: string;
-}
+import { OverviewDevice, DeviceData, Device } from "../types/Device";
 
 interface ProjectContextProps {
   projectName: string;
@@ -96,6 +45,7 @@ interface ProjectContextProps {
   description: string;
   setDescription: (arg0: string) => void;
   projectDevices: any[];
+  fetchDeviceViewDevices: () => void;
 }
 
 const ProjectContext = createContext<ProjectContextProps | undefined>(
@@ -127,6 +77,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       ? JSON.parse(localStorage.getItem("devices")!)
       : []
   );
+
   const [deviceViewDevices, setDeviceViewDevices] = useState<Device[]>(
     localStorage.getItem("devices")
       ? JSON.parse(localStorage.getItem("devices")!)
@@ -424,14 +375,14 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const fetchProjectDevices = async () => {
+  const fetchDeviceViewDevices = async () => {
     try {
       const response = await axios.get(FETCH_PROJECT_DEVICES_ENDPOINT, {
         withCredentials: true,
       });
 
       console.log(response.data);
-      setDevices(response.data.devices);
+      setDeviceViewDevices(response.data.devices);
     } catch (error) {
       console.error(error);
     }
@@ -480,6 +431,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         description,
         setDescription,
         projectDevices,
+        fetchDeviceViewDevices,
       }}
     >
       {children}
