@@ -7,6 +7,9 @@ import { useAuth } from "../helpers/AuthContext";
 import logo from "../assets/images/vitamix.webp";
 
 const SetPassword = () => {
+  const SET_PASSWORD_ENDPOINT = `${import.meta.env.VITE_API_URL}/user/set-password`;
+  const CHECK_PASSWORD_TOKEN_ENDPOINT = `${import.meta.env.VITE_API_URL}/user/check-password-token`;
+
   const [searchParams] = useSearchParams({
     token: "",
     projectId: "",
@@ -19,15 +22,6 @@ const SetPassword = () => {
   const [debouncedPassword, setDebouncedPassword] = useState("");
   const [debouncedConfirmPassword, setDebouncedConfirmPassword] = useState("");
   const [isTokenValid, setIsTokenValid] = useState(false);
-  const SET_PASSWORD_ENDPOINT =
-    import.meta.env.VITE_APP_NODE_ENV === "production"
-      ? import.meta.env.VITE_APP_SET_PASSWORD_ENDPOINT
-      : import.meta.env.VITE_APP_SET_PASSWORD_DEV_ENDPOINT;
-
-  const CHECK_PASSWORD_TOKEN_ENDPOINT =
-    import.meta.env.VITE_APP_NODE_ENV === "production"
-      ? import.meta.env.VITE_APP_CHECK_PASSWORD_TOKEN_ENDPOINT
-      : import.meta.env.VITE_APP_CHECK_PASSWORD_TOKEN_DEV_ENDPOINT;
 
   const check_password = async () => {
     try {

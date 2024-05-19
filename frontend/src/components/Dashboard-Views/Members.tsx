@@ -8,14 +8,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 const Members = () => {
-  const ADD_MEMBER_ENDPOINT =
-    import.meta.env.VITE_APP_NODE_ENV === "production"
-      ? import.meta.env.VITE_APP_ADD_MEMBER_ENDPOINT
-      : import.meta.env.VITE_APP_ADD_MEMBER_DEV_ENDPOINT;
-  const REMOVE_MEMBER_ENDPOINT =
-    import.meta.env.VITE_APP_NODE_ENV === "production"
-      ? import.meta.env.VITE_APP_REMOVE_MEMBER_ENDPOINT
-      : import.meta.env.VITE_APP_REMOVE_MEMBER_DEV_ENDPOINT;
+  const ADD_MEMBER_ENDPOINT = `${import.meta.env.VITE_API_URL}/admin/add-member`;
+  const REMOVE_MEMBER_ENDPOINT = `${import.meta.env.VITE_API_URL}/admin/remove-member`;
   const fadeInItemVariants = {
     hidden: { opacity: 0 },
     show: { opacity: 1 },

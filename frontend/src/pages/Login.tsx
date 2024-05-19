@@ -11,10 +11,8 @@ import useDebounce from "../helpers/useDebounce";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const LOGIN_ENDPOINT =
-    import.meta.env.VITE_APP_NODE_ENV === "production"
-      ? import.meta.env.VITE_APP_LOGIN_ENDPOINT
-      : import.meta.env.VITE_APP_LOGIN_DEV_ENDPOINT;
+  console.log(import.meta.env);
+  const LOGIN_ENDPOINT = `${import.meta.env.VITE_API_URL}/login`;
 
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
