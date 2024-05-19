@@ -382,8 +382,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         }
       );
 
-      console.log(response.data);
-      setDeviceViewDevices(response.data.devices);
+      setDeviceViewDevices(response.data);
     } catch (error) {
       console.error(error);
     }
