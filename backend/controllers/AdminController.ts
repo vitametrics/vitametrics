@@ -238,7 +238,7 @@ class AdminController {
 
   static async changeProjectOwnerEmail(req: Request, res: Response) {
     const newOwnerEmail = req.body.newOwnerEmail as string;
-    const projectId = req.query.projectId as string;
+    const projectId = req.body.projectId as string;
 
     try {
       logger.info(
@@ -265,7 +265,7 @@ class AdminController {
 
   static async changeProjectName(req: Request, res: Response) {
     const newProjectName = req.body.newProjectName as string;
-    const projectId = req.query.projectId as string;
+    const projectId = req.body.projectId as string;
 
     try {
       logger.info(
@@ -292,7 +292,7 @@ class AdminController {
 
   static async changeProjectDescription(req: Request, res: Response) {
     const newProjectDescription = req.body.newProjectDescription as string;
-    const projectId = req.query.projectId as string;
+    const projectId = req.body.projectId as string;
 
     try {
       logger.info(
