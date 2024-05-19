@@ -52,9 +52,9 @@ export interface HeartData {
   }
   
   export interface Device {
-    id: string;
+    deviceId: string;
+    deviceName: string;
     deviceVersion: string;
     batteryLevel: number;
-    deviceName: string;
   }
   
