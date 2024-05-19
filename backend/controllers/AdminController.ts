@@ -64,7 +64,7 @@ class AdminController {
         const projectResponse = {
           projectId: savedProject.projectId,
           projectName: savedProject.projectName,
-          membersCount: savedProject.members.length,
+          memberCount: savedProject.members.length,
           deviceCount: savedProject.devices ? savedProject.devices.length : 0,
         };
 

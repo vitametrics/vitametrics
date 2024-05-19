@@ -20,7 +20,7 @@ interface Project {
   projectId: string;
   projectName: string;
   deviceCount: number;
-  membersCount: number;
+  memberCount: number;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -154,6 +154,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setUserId(response.data.user.id);
         setIsOwner(response.data.user.role === "owner" ? true : false);
         setProjects(response.data.user.projects);
+        console.log(response.data.user.projects);
       } catch (error) {
         console.log(error);
         //setProjects(testProjects);

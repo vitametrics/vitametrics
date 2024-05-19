@@ -14,7 +14,7 @@ interface Project {
   projectId: string;
   projectName: string;
   deviceCount: number;
-  membersCount: number;
+  memberCount: number;
 }
 
 const UserDashboard = () => {
@@ -210,7 +210,7 @@ const UserDashboard = () => {
                     className="text-center hover:cursor-pointer"
                     onClick={() => handleProjectClick(project.projectId)}
                   >
-                    {project.membersCount}
+                    {project.memberCount}
                   </label>
                   <button
                     className="p-2 bg-transparent text-white rounded-lg flex items-center justify-center hover:cursor-pointer"
