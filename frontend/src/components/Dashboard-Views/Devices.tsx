@@ -24,6 +24,8 @@ const Devices = () => {
   const [editingDevices, setEditingDevices] = useState<Record<string, string>>(
     {}
   );
+
+  console.log(deviceViewDevices);
   const { ref, inView } = useCustomInView();
 
   const handleOwnerNameChange = useCallback(
