@@ -31,6 +31,7 @@ router.post(
   '/fetch-devices',
   verifySession,
   checkProjectMembership,
+  refreshFitbitToken,
   asyncHandler(fetchDevicesHandler)
 );
 

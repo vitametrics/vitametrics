@@ -52,12 +52,13 @@ const checkProjectMembership = async (
         .status(403)
         .json({ msg: `Access denied - User not a member of the project` });
       return;
+    } else {
+      logger.info('[checkProjectMembership] Project membership verified');
+      req.project = matchingProject as IProject;
+  
+      return next();
     }
-
-    logger.info('[checkProjectMembership] Project membership verified');
-    req.project = matchingProject as IProject;
-
-    next();
+ 
   } catch (error) {
     logger.error(
       `[checkProjectMembership] Error checking project membership: ${error}`
