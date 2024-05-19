@@ -5,9 +5,12 @@ import fetchDevices from '../middleware/util/fetchDevices';
 import fetchIntradayData from '../middleware/util/fetchIntraday';
 import Project, { IProject } from '../models/Project';
 import User from '../models/User';
+import logger from '../middleware/logger';
 
 export async function getProjectInfo(req: Request, res: Response) {
   try {
+    logger.info(`Fetching project info with projectId: ${req.query.projectId}`);
+
     const project = await Project.findOne({
       projectId: req.query.projectId as string,
     })
@@ -17,17 +20,17 @@ export async function getProjectInfo(req: Request, res: Response) {
       .populate('members', 'userId email name role emailVerified')
       .populate('devices', 'deviceId deviceName deviceVersion');
 
-    //console.log(project);
-
     if (!project) {
+      logger.error(`Project: ${req.query.projectId} not found`);
       res.status(404).json({ message: 'Project not found' });
       return;
     }
+    logger.info(`Project info fetched successfully: ${project.projectId}`);
     res.cookie('projectId', project.projectId);
     res.json({ project, members: project.members });
     return;
   } catch (error) {
-    console.error(error);
+    logger.error(`Error fetching project info: ${error}`);
     res.status(500).json({ message: 'Internal Server Error' });
     return;
   }
@@ -37,23 +40,28 @@ export async function removeMember(req: Request, res: Response) {
   const { userId } = req.body;
   const project = req.project as IProject;
   try {
+    logger.info(`Removing member: ${userId} from project: ${project.projectId}`);
+
     const userToRemove = await User.findOne({ userId });
     if (!userToRemove) {
+      logger.error(`User: ${userId} not found`);
       res.status(404).json({ msg: 'User not found' });
       return;
     }
 
     if (project.ownerId === userToRemove.userId) {
+      logger.error(`Cannot remove owner from project`);
       res.status(400).json({ msg: 'Cannot remove owner from project' });
       return;
     }
 
     await project.updateOne({ $pull: { members: userToRemove._id } });
     await userToRemove.deleteOne();
+    logger.info(`Member: ${userId} removed successfully from project: ${project.projectId}`);
     res.status(200).json({ message: 'Member removed successfully' });
     return;
   } catch (error) {
-    console.error(error);
+    logger.error(`Error removing member: ${error}`);
     res.status(500).json({ msg: 'Internal Server Error' });
     return;
   }
@@ -62,7 +70,10 @@ export async function removeMember(req: Request, res: Response) {
 export async function fetchDevicesHandler(req: Request, res: Response) {
   const currentProject = req.project as IProject;
   try {
+    logger.info(`Fetching devices for project: ${currentProject.projectId}`);
+
     if (!currentProject.fitbitUserId || !currentProject.fitbitAccessToken) {
+      logger.error(`Fitbit account not linked to project: ${currentProject.projectId}`);
       res.status(400).json({ message: 'Fitbit account not linked to project' });
       return;
     }
@@ -71,10 +82,11 @@ export async function fetchDevicesHandler(req: Request, res: Response) {
       currentProject.fitbitAccessToken,
       currentProject.projectId
     );
+    logger.info(`Devices fetched successfully for project: ${currentProject.projectId}`);
     res.json(devices);
     return;
   } catch (error) {
-    console.error(error);
+    logger.error(`Error fetching devices: ${error}`);
     res.status(500).json({ msg: 'Internal Server Error' });
     return;
   }
@@ -83,8 +95,11 @@ export async function fetchDevicesHandler(req: Request, res: Response) {
 export async function fetchIntradayDataHandler(req: Request, res: Response) {
   const currentProject = req.project as IProject;
   try {
+    logger.info(`Fetching intraday data for project: ${currentProject.projectId}`);
+
     const { dataType, date, detailLevel } = req.query;
     if (!currentProject.fitbitUserId || !currentProject.fitbitAccessToken) {
+      logger.error(`Fitbit account not linked to project: ${currentProject.projectId}`);
       res.status(400).json({ message: 'Fitbit account not linked to project' });
       return;
     }
@@ -95,10 +110,11 @@ export async function fetchIntradayDataHandler(req: Request, res: Response) {
       date as string,
       detailLevel as string
     );
+    logger.info(`Intraday data fetched successfully for project: ${currentProject.projectId}`);
     res.json(data);
     return;
   } catch (error) {
-    console.error(error);
+    logger.error(`Error fetching intraday data: ${error}`);
     res.status(500).json({ msg: 'Internal Server Error' });
     return;
   }
@@ -108,7 +124,10 @@ export async function fetchDataHandler(req: Request, res: Response) {
   const currentProject = req.project as IProject;
   const { startDate, endDate } = req.query;
   try {
+    logger.info(`Fetching data for project: ${currentProject.projectId}`);
+
     if (!currentProject.fitbitUserId || !currentProject.fitbitAccessToken) {
+      logger.error(`Fitbit account not linked to project: ${currentProject.projectId}`);
       res.status(400).json({ message: 'Fitbit account not linked to project' });
       return;
     }
@@ -118,10 +137,11 @@ export async function fetchDataHandler(req: Request, res: Response) {
       startDate as string,
       endDate as string
     );
+    logger.info(`Data fetched successfully for project: ${currentProject.projectId}`);
     res.json(data);
     return;
   } catch (error) {
-    console.error(error);
+    logger.error(`Error fetching data: ${error}`);
     res.status(500).json({ msg: 'Internal Server Error' });
     return;
   }
@@ -131,7 +151,10 @@ export async function downloadDataHandler(req: Request, res: Response) {
   const currentProject = req.project as IProject;
   const { deviceId, dataType, date, detailLevel } = req.query;
   try {
+    logger.info(`Downloading data for project: ${currentProject.projectId}`);
+
     if (!currentProject.fitbitUserId || !currentProject.fitbitAccessToken) {
+      logger.error(`Fitbit account not linked to project: ${currentProject.projectId}`);
       res.status(400).json({ message: 'Fitbit account not linked to project' });
       return;
     }
@@ -148,9 +171,12 @@ export async function downloadDataHandler(req: Request, res: Response) {
       `attachment; filename="${deviceId}-${date}-${detailLevel}.csv"`
     );
     res.set('Content-Type', 'text/csv');
+    logger.info(`Data downloaded successfully for project: ${currentProject.projectId}`);
     res.send(csv);
+    return;
   } catch (error) {
-    console.error(error);
+    logger.error(`Error downloading data: ${error}`);
     res.status(500).json({ msg: 'Internal Server Error' });
+    return;
   }
 }

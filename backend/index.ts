@@ -7,7 +7,7 @@ import passport from 'passport';
 
 import { commonMiddlewares } from './middleware/common';
 import { connectDB } from './middleware/config';
-import { handleError } from './middleware/errorHandler';
+import logger from './middleware/logger';
 import passportConfig from './middleware/util/passport-config';
 import configureRoutes from './routes';
 
@@ -32,7 +32,6 @@ passportConfig(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 configureRoutes(app, passport);
-app.use(handleError);
 
 connectDB();
 
@@ -41,5 +40,5 @@ app.get('/health', (_req: Request, res: Response) => {
 });
 
 app.listen(7970, () => {
-  console.log('Listening on port', 7970);
+  logger.info('Listening on port 7970');
 });

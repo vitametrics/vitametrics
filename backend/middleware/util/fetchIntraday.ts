@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { DateTime } from 'luxon';
+import logger from '../logger';
 
 interface IntradayEntry {
   time: string;
@@ -14,9 +15,11 @@ interface IntradayData {
 function validateDetailLevel(detailLevel: string, dataType: string): void {
   const validDetails = ['1sec', '1min', '5min', '15min'];
   if (!validDetails.includes(detailLevel)) {
+    logger.error('Invalid detail level');
     throw new Error('Invalid detail level');
   }
   if (detailLevel === '1sec' && dataType !== 'heart') {
+    logger.error('Invalid detail level');
     throw new Error('Invalid detail level');
   }
 }
@@ -31,6 +34,7 @@ function validateDataType(dataType: string): void {
     'floors',
   ];
   if (!validDataTypes.includes(dataType)) {
+    logger.error('Invalid data type')
     throw new Error('Invalid data type');
   }
 }
@@ -64,9 +68,9 @@ async function fetchIntradayData(
         value: entry.value,
       })
     );
-  } catch (err) {
-    console.error('Error fetching data from Fitbit: ', err);
-    throw err;
+  } catch (error) {
+    logger.error(`[fetchIntraday] Error fetching data from Fitbit: ${error}`);
+    throw error;
   }
 }
 

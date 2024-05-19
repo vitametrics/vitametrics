@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 
 import Project, { IProject } from '../models/Project';
 import User, { IUser } from '../models/User';
-import HandleResponse from '../types/response';
+import logger from './logger';
 
 const checkProjectMembership = async (
   req: Request,
@@ -12,23 +12,27 @@ const checkProjectMembership = async (
   const currentUser = req.user as IUser;
 
   if (!currentUser) {
-    throw new HandleResponse('Unauthorized - User not logged in', 401);
+    logger.error('[checkProjectMembership] User not logged in');
+    res.status(401).json({ msg: 'Unauthorized - User not logged in' });
+    return;
   }
 
   const userId = currentUser.userId;
 
   try {
+    logger.info('[checkProjectMembership] Checking project membership')
+
     const user = await User.findOne({ userId: userId }).populate('projects');
 
     if (!user) {
-      throw new HandleResponse('User not found', 404);
+      logger.error('[checkProjectMembership] User not found');
+      res.status(404).json({ msg: 'User not found' });
+      return;
     }
 
     if (!user.projects.length && user.role !== 'owner') {
-      throw new HandleResponse(
-        'Access denied - User not a member of any project',
-        403
-      );
+      res.status(403).json({msg: `Access denied - User not a member of any project`});
+      return;
     }
 
     const projectId = req.body.projectId || req.query.projectId;
@@ -39,18 +43,19 @@ const checkProjectMembership = async (
     });
 
     if (!matchingProject && user.role !== 'owner') {
-      throw new HandleResponse(
-        'Access denied - User not a member of the project',
-        403
-      );
+      logger.error('[checkProjectMembership] Access denied - User not a member of the project')
+      res.status(403).json({msg: `Access denied - User not a member of the project`});
+      return;
     }
 
+    logger.info('[checkProjectMembership] Project membership verified');
     req.project = matchingProject as IProject;
 
-    return next();
+    next();
   } catch (error) {
-    console.error(error);
-    throw new HandleResponse();
+    logger.error(`[checkProjectMembership] Error checking project membership: ${error}`);
+    res.status(500).json({ msg: 'Internal Server Error' });
+    return;
   }
 };
 

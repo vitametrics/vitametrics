@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
+import logger from './logger';
 
-import HandleResponse from '../types/response';
 
 const verifySession = (req: Request, res: Response, next: NextFunction) => {
 
@@ -8,7 +8,8 @@ const verifySession = (req: Request, res: Response, next: NextFunction) => {
     return next();
   }
 
-  res.status(401).json(new HandleResponse('Unauthorized: Please log in.', 401));
+  logger.info('[verifySession] User not logged in')
+  res.status(401).json({ msg: 'Unauthorized - User not logged in' });
 };
 
 export default verifySession;

@@ -1,8 +1,12 @@
 import { Request, Response } from 'express';
 
 import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
+import moment from 'moment';
 
 import { sendEmail } from '../middleware/util/emailUtil';
+import logger from '../middleware/logger';
 import Device from '../models/Device';
 import Project from '../models/Project';
 import User, { IUser } from '../models/User';
@@ -15,8 +19,11 @@ class AdminController {
     const user = req.user as IUser;
 
     try {
+      logger.info(`Creating project with name: ${projectName} by user: ${user.email}`);
+
       const existingProject = await Project.findOne({ projectName });
       if (existingProject) {
+        logger.error(`Project with name: ${projectName} already exists`);
         res.status(409).json({ msg: 'Project with that name already exists!' });
         return;
       }
@@ -32,8 +39,6 @@ class AdminController {
         members: [user._id],
       });
 
-      //console.log('user email: ', user.email);
-
       if (projectDescription) {
         newProject.projectDescription = projectDescription;
       }
@@ -45,29 +50,29 @@ class AdminController {
       await user.save();
 
       if (process.env.NODE_ENV === 'production') {
+        logger.info(`Sending email to user: email: ${user.email}, link: ${process.env.BASE_URL}/dashboard/project?id=${newProjectId}`)
         await sendEmail({
           to: user.email,
           subject: 'Your new project',
           text: `You have created a new project: ${projectName}. Access it here: ${process.env.BASE_URL}/dashboard/project?id=${newProjectId}`,
         });
       } else {
-        console.log('Project created successfully');
+        const projectResponse = {
+          projectId: savedProject.projectId,
+          projectName: savedProject.projectName,
+          membersCount: savedProject.members.length,
+          deviceCount: savedProject.devices ? savedProject.devices.length : 0,
+        };
+
+        logger.info(`Project created successfully: ${projectResponse}`)
+        res.status(201).json({
+          msg: 'Project created successfully',
+          project: projectResponse,
+        });
+        return;
       }
-
-      const projectResponse = {
-        projectId: savedProject.projectId,
-        projectName: savedProject.projectName,
-        membersCount: savedProject.members.length,
-        deviceCount: savedProject.devices ? savedProject.devices.length : 0,
-      };
-
-      res.status(201).json({
-        msg: 'Project created successfully',
-        project: projectResponse,
-      });
-      return;
     } catch (error) {
-      console.error(error);
+      logger.error(`Error creating project ${error}`);
       res.status(500).json({ msg: 'Internal Server Error' });
       return;
     }
@@ -79,6 +84,9 @@ class AdminController {
     const userId = currentUser.userId;
 
     try {
+
+      logger.info(`User: ${currentUser.email} attempting to delete project: ${projectId}`);
+
       const user = await User.findOne({ userId });
       if (!user) {
         res.status(404).json({ msg: 'User not found' });
@@ -87,6 +95,7 @@ class AdminController {
 
       const project = await Project.findOne({ projectId });
       if (!project) {
+        logger.error(`Project: ${projectId} not found`);
         res.status(404).json({ msg: 'Project not found' });
         return;
       }
@@ -107,10 +116,11 @@ class AdminController {
       }
 
       await Project.findOneAndDelete({ projectId });
+      logger.info(`Project: ${projectId} deleted successfully by user: ${currentUser.email}`);
       res.status(200).json({ msg: 'Project deleted successfully' });
       return;
     } catch (error) {
-      console.error(error);
+      logger.error(`Error deleting project: ${error}`);
       res.status(500).json({ msg: 'Internal Server Error' });
       return;
     }
@@ -121,8 +131,11 @@ class AdminController {
     const projectId = req.query.projectId as string;
 
     try {
+      logger.info(`Adding member: ${email} to project: ${projectId}`);
+
       const project = await Project.findOne({ projectId });
       if (!project) {
+        logger.error(`Project: ${projectId} not found`);
         res.status(404).json({ msg: 'Project not found' });
         return;
       }
@@ -152,15 +165,14 @@ class AdminController {
           text: `You have been invited to join the project: ${project.projectName}. Please set your password by following this link: ${process.env.BASE_URL}/set-password?token=${user.setPasswordToken}`,
         });
       } else {
-        console.log(
-          `[INFO] User invited to join project: ${project.projectName}. They can set their password by following this link: ${process.env.BASE_URL}/set-password?token=${user.setPasswordToken}`
+        logger.info(
+          `User invited to join project: ${project.projectName}. They can set their password by following this link: ${process.env.BASE_URL}/set-password?token=${user.setPasswordToken}`
         );
+        res.status(200).json({ msg: 'Member added successfully', project });
+        return;
       }
-
-      res.status(200).json({ msg: 'Member added successfully', project });
-      return;
     } catch (error) {
-      console.error(error);
+      logger.error(`Error adding member: ${error}`);
       res.status(500).json({ msg: 'Internal server error' });
       return;
     }
@@ -171,8 +183,11 @@ class AdminController {
     const projectId = req.query.projectId as string;
 
     try {
+      logger.info(`Removing member: ${userId} from project: ${projectId}`);
+
       const project = await Project.findOne({ projectId });
       if (!project) {
+        logger.error(`Project: ${projectId} not found`);
         res.status(404).json({ msg: 'Project not found' });
         return;
       }
@@ -184,6 +199,7 @@ class AdminController {
 
       const user = await User.findOne({ userId });
       if (!user) {
+        logger.error(`User: ${userId} not found`);
         res.status(404).json({ msg: 'User not found' });
         return;
       }
@@ -198,18 +214,37 @@ class AdminController {
           text: `You have been removed from the project: ${project.projectName}.`,
         });
       } else {
-        console.log(
-          `[INFO] User ${user.name} removed from project: ${project.projectName}`
-        );
+        logger.info(
+          `User ${user.name} removed from project: ${project.projectName}`
+        )
+        res.status(200).json({ msg: 'Member removed successfully' });
+        return;
       }
-
-      res.status(200).json({ msg: 'Member removed successfully' });
-      return;
     } catch (error) {
-      console.error(error);
+      logger.error(`Error removing member: ${error}`);
       res.status(500).json({ msg: 'Internal Server Error' });
       return;
     }
+  }
+
+  static async downloadLog(req: Request, res: Response) {
+    const currentDate = moment().format('YYYY-MM-DD');
+    const logFileName = `${currentDate}-vitametrics.log`;
+    const logFilePath = path.join(__dirname, '..', 'logs', logFileName);
+
+    if (!fs.existsSync(logFilePath)) {
+      logger.error('Log file not found');
+      res.status(404).json({ msg: 'Log file not found'});
+      return;
+    }
+
+    res.download(logFilePath, logFileName, ( error ) => {
+      if (error) {
+        logger.error(`Error downloading log file: ${error}`);
+        res.status(500).json({ msg: 'Error downloading log file' });
+        return;
+      }
+    })
   }
 }
 

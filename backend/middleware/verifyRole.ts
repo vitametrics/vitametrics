@@ -1,20 +1,21 @@
 import { Request, Response, NextFunction } from 'express';
 
 import { IUser } from '../models/User';
-import HandleResponse from '../types/response';
+import logger from './logger';
 
 const verifyRole = (role: string) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user as IUser;
     if (!user) {
-      throw new HandleResponse('Unauthorized - User not logged in', 401);
+      logger.error('[verifyRole] User not logged in');
+      res.status(401).json({ msg: 'Unauthorized - User not logged in' });
+      return;
     }
 
     if (user.role !== role && user.role !== 'owner') {
-      throw new HandleResponse(
-        'Access denied - User does not have the required role',
-        403
-      );
+      logger.error('[verifyRole] Access denied - User does not have the required role');
+      res.status(403).json({ msg: 'Access denied - User does not have the required role' });
+      return;
     }
     next();
   };

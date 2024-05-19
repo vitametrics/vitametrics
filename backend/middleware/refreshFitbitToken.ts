@@ -4,12 +4,14 @@ import axios from 'axios';
 
 import Project from '../models/Project';
 import { IUser } from '../models/User';
-import HandleResponse from '../types/response';
+import logger from './logger';
 
 async function refreshToken(req: Request, res: Response, next: NextFunction) {
   const user = req.user as IUser;
   if (!user || !user.projects?.length) {
-    throw new HandleResponse('Unauthorized - User not found', 401);
+    logger.info('[refreshToken] User not found');
+    res.status(401).json({ msg: 'Unauthorized - User not found' });
+    return;
   }
 
   try {
@@ -69,10 +71,14 @@ async function refreshToken(req: Request, res: Response, next: NextFunction) {
     // if no projects, skip middleware
     next();
   } catch (error) {
-    throw new HandleResponse();
+    logger.error(`[refreshToken] Error: ${error}`);
+    res.status(500).json({ msg: 'Internal Server Error' });
+    return;
   }
 
-  throw new HandleResponse('No valid Fitbit access token available', 403);
+  logger.error('[refreshToken] No valid Fitbit access token available');
+  res.status(403).json({ msg: 'No valid Fitbit access token available' });
+  return;
 }
 
 export default refreshToken;

@@ -66,4 +66,11 @@ router.post(
   asyncHandler(AdminController.removeMember)
 );
 
+router.get(
+  '/download-log',
+  verifySession,
+  verifyRole('admin'),
+  asyncHandler(AdminController.downloadLog)
+)
+
 export default router;

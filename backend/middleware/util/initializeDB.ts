@@ -1,11 +1,12 @@
 import crypto from 'crypto';
 
 import { sendEmail } from './emailUtil';
+import logger from '../logger';
 import Setting from '../../models/Setting';
 import User from '../../models/User';
 
 async function initializeDatabase() {
-  console.log('initializing DB');
+  logger.info('Initializing the database');
 
   try {
     const isInitialized = await Setting.findOne({ type: 'initialized' });
@@ -36,19 +37,17 @@ async function initializeDatabase() {
           text: `An account has been created for you. Please login using this link: ${process.env.BASE_URL}/set-password?token=${passwordToken}`,
         });
       } else {
-        console.log(
-          `[INFO] Account created for ${process.env.ADMIN_EMAIL}. Password reset link: ${process.env.BASE_URL}/set-password?token=${passwordToken}`
-        );
+        logger.info(`Account created for ${process.env.ADMIN_EMAIL}. Password reset link: ${process.env.BASE_URL}/set-password?token=${passwordToken}`)
       }
 
       await Setting.create({ type: 'initialized', value: true });
 
-      console.log('Default user has been created');
+      logger.info('Default user has been created');
     } else {
-      console.log('Database already initialized');
+      logger.info('Database already initialized');
     }
-  } catch (err) {
-    console.error('Failed to initialized DB: ', err);
+  } catch (error) {
+    logger.error(`Failed to initialize database: ${error}`);
   }
 }
 

@@ -3,6 +3,7 @@ import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 
 import User from '../../models/User';
+import logger from '../logger';
 
 const passportConfig = (passport: passport.Authenticator) => {
   passport.use(
@@ -36,7 +37,7 @@ const passportConfig = (passport: passport.Authenticator) => {
       const user = await User.findOne({ userId: id }).exec();
       done(null, user);
     } catch (error) {
-      console.error(error);
+      logger.error(`Error deserializing user: ${error}`)
       done(error, null);
     }
   });

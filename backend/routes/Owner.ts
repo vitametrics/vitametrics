@@ -1,12 +1,14 @@
 import express, { Request, Response } from 'express';
 
 import crypto from 'crypto';
-import { validationResult } from 'express-validator';
+import { body } from 'express-validator';
 
 import { sendEmail } from '../middleware/util/emailUtil';
+import logger from '../middleware/logger';
 import verifyRole from '../middleware/verifyRole';
 import verifySession from '../middleware/verifySession';
 import User from '../models/User';
+import { validationHandler } from '../handlers/validationHandler';
 
 const router = express.Router();
 
@@ -14,13 +16,15 @@ router.post(
   '/invite-admin',
   verifySession,
   verifyRole('owner'),
+  validationHandler([
+    body('email').isEmail().withMessage('Valid email is required'),
+    body('name').isString().withMessage('Name is required'),
+  ]),
   async (req: Request, res: Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
+    logger.info('Inviting admin');
 
     if (!req.user) {
+      logger.error('User not logged in');
       return res.status(401).json({ msg: 'Unauthorized' });
     }
     const { email, name } = req.body;
@@ -59,10 +63,10 @@ router.post(
           `[INFO] An account has been created for you. Please login using this link: ${process.env.BASE_URL}/set-password?token=${passwordToken}`
         );
       }
-
+      logger.info(`User invited as admin: ${newUser.email}, ${newUser.name}`);
       return res.status(200).json({ msg: 'User successfully invited' });
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      logger.error(`Error inviting admin: ${error}`);
       return res.status(500).json({ msg: 'Internal Server Error' });
     }
   }

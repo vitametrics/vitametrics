@@ -1,4 +1,5 @@
 import axios from 'axios';
+import logger from '../logger';
 
 async function fetchData(
   orgUserId: string,
@@ -55,18 +56,15 @@ async function fetchData(
           })
         );
 
+        logger.info(`[fetchData] Fetched data for device: ${device.id}`);
         results.push(result);
       } catch (error) {
-        console.error(
-          'Error fetching activity data for device: ',
-          device.id,
-          error
-        );
+        logger.error(`[fetchData] Error fetching activity data for device: ${device.id}. Error: ${error}`);
       }
     }
-  } catch (err) {
-    console.error('Error fetching device information from Fitbit: ', err);
-    throw err;
+  } catch (error) {
+    logger.error(`[fetchData] Error fetching device information from Fitbit: ${error}`);
+    throw error;
   }
 
   return results;

@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 
 import Device from '../../models/Device';
 import Project from '../../models/Project';
+import logger from '../logger';
 
 interface DeviceInfo {
   id: string;
@@ -38,13 +39,13 @@ async function fetchDevices(
           { $addToSet: { devices: updatedDevice._id } }
         );
       } else {
-        console.error('Device not created or not found for ID: ', device.id);
+        logger.error(`[fetchDevices] Device not created or not found for ID: ${device.id}`)
       }
     }
 
     return validDevices;
   } catch (error) {
-    console.error('Error fetching devices from Fitbit: ', error);
+    logger.error(`[fetchDevices] Error fetching devices from Fitbit: ${error}`);
     throw error;
   }
 }
