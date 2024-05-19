@@ -133,6 +133,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       : []
   );
   const testDescription = "No description provided";
+  const FETCH_PROJECT_DEVICES_ENDPOINT = `${import.meta.env.API_URL}/project/fetch-devices`;
 
   /*
   const testDevices = [
@@ -262,7 +263,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       console.log(project.members);
       setMembers(project.members);
       setProjectDevices(project.devices);
-      console.log("from projectcontext" + project.devices);
+      console.log("from ProjectContext: " + project.devices);
       setprojectName(project.projectName);
       setOwnerEmail(project.ownerEmail);
       setOwnerId(project.ownerId);
@@ -278,7 +279,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const FETCH_DEVICE_DATA_ENDPOINT =
-    "https://vitametrics.org/api/org/fetch-data";
+    "https://vitametrics.org/api/project/fetch-data";
 
   const [devicesData, setDevicesData] = useState<DeviceData[]>(() => {
     try {
@@ -420,6 +421,19 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
     } catch (error) {
       console.error(error);
       //setDevicesData(testDevicesData);
+    }
+  };
+
+  const fetchProjectDevices = async () => {
+    try {
+      const response = await axios.get(FETCH_PROJECT_DEVICES_ENDPOINT, {
+        withCredentials: true,
+      });
+
+      console.log(response.data);
+      setDevices(response.data.devices);
+    } catch (error) {
+      console.error(error);
     }
   };
 
