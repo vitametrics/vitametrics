@@ -6,7 +6,7 @@ import Data from "../components/Dashboard-Views/Data";
 import Devices from "../components/Dashboard-Views/Devices";
 import Overview from "../components/Dashboard-Views/Overview";
 import Members from "../components/Dashboard-Views/Members";
-import Settings from "../components/Dashboard-Views/Settings";
+import DashboardSettings from "../components/Dashboard-Views/DashboardSettings";
 import AuthenticationBanner from "../components/Dashboard/AuthenticationBanner";
 import { useSearchParams } from "react-router-dom";
 import { useProject } from "../helpers/ProjectContext";
@@ -32,7 +32,7 @@ const ProjectDashboard = () => {
       case "members":
         return <Members />;
       case "settings":
-        return <Settings />;
+        return <DashboardSettings />;
       default:
         return <Data />;
     }
@@ -46,7 +46,7 @@ const ProjectDashboard = () => {
         <div className="w-[75px]">
           <StickySidebar setPage={setPage} path="dashboard/project" />
         </div>
-        <div className="flex w-full h-full flex-col ">
+        <div className="flex w-full h-full flex-col">
           <AuthenticationBanner />
           {renderComponent()}
         </div>
