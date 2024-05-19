@@ -372,9 +372,15 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const fetchDeviceViewDevices = async () => {
     try {
-      const response = await axios.post(FETCH_PROJECT_DEVICES_ENDPOINT, {
-        withCredentials: true,
-      });
+      const response = await axios.post(
+        FETCH_PROJECT_DEVICES_ENDPOINT,
+        {
+          projectId: projectId,
+        },
+        {
+          withCredentials: true,
+        }
+      );
 
       console.log(response.data);
       setDeviceViewDevices(response.data.devices);
