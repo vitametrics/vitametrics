@@ -2,8 +2,8 @@ import { motion } from "framer-motion";
 import { fadeInItemVariants } from "../../hooks/animationVariant"; // Adjust the path as necessary
 import useCustomInView from "../../hooks/useCustomInView";
 import { useProject } from "../../helpers/ProjectContext"; // Adjust the path as necessary
-import OverviewMembers from "../Dashboard/OverviewMembers";
-import OverviewDevices from "../Dashboard/OverviewDevices";
+import OverviewMembers from "../Dashboard/Overview/OverviewMembers";
+import OverviewDevices from "../Dashboard/Overview/OverviewDevices";
 
 const Overview = () => {
   const { projectName, description } = useProject();
