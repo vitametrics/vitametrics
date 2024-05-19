@@ -189,6 +189,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       await axios.get(LOGOUT_ENDPOINT, {
         withCredentials: true,
       });
+      localStorage.setItem("devices", JSON.stringify([]));
+      localStorage.setItem("devicesData", JSON.stringify([]));
       setIsAuthenticated(false);
     } catch (error) {
       console.log(error);
