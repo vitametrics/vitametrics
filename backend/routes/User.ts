@@ -35,7 +35,7 @@ router.post(
   '/change-password',
   verifySession,
   validationHandler([
-    body('email').isEmail().withMessage('Valid email is required'),
+    body('password').not().isEmpty().withMessage('Password is required'),
   ]),
   asyncHandler(UserController.changePassword)
 );
