@@ -114,5 +114,9 @@
   "include": [
     "./**/*.ts",
     "./types/*.d.ts"
+  ],
+  "exclude": [
+    "__mocks__",
+    "__tests__"
   ]
 }
