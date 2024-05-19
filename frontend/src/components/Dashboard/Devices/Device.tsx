@@ -22,7 +22,7 @@ const Device = ({
       {device.deviceName || ""}
     </p>
     <h2 className="text-2xl font-bold align flex items-center mr-3 overflow-fix">
-      ID: {device.id || ""}
+      ID: {device.deviceId || ""}
     </h2>
     <div className="flex flex-row items-center gap-2">
       {isEditing ? (
@@ -30,21 +30,21 @@ const Device = ({
           <input
             type="text"
             placeholder="Enter new owner name..."
-            value={editingDevices[device.id]}
+            value={editingDevices[device.deviceId]}
             maxLength={MAX_NAME_LENGTH}
             className="text-black rounded-lg"
             onChange={(e) =>
               setEditingDevices((prev) => ({
                 ...prev,
-                [device.id]: e.target.value,
+                [device.deviceId]: e.target.value,
               }))
             }
           />
-          <button onClick={() => handleOwnerNameChange(device.id)}>
+          <button onClick={() => handleOwnerNameChange(device.deviceId)}>
             {/* SVG Icon */}
           </button>
           <p className="text-2xl font-bold">
-            {MAX_NAME_LENGTH - (editingDevices[device.id] || "").length}
+            {MAX_NAME_LENGTH - (editingDevices[device.deviceId] || "").length}
           </p>
         </Fragment>
       ) : (

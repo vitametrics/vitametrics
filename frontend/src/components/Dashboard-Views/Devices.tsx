@@ -75,9 +75,9 @@ const Devices = () => {
         {deviceViewDevices && deviceViewDevices.length > 0 ? (
           deviceViewDevices.map((device: DeviceType) => (
             <Device
-              key={device.id}
+              key={device.deviceId}
               device={device}
-              isEditing={editingDevices[device.id] !== undefined}
+              isEditing={editingDevices[device.deviceId] !== undefined}
               editingDevices={editingDevices}
               setEditingDevices={setEditingDevices}
               handleOwnerNameChange={handleOwnerNameChange}
