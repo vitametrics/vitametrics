@@ -28,7 +28,7 @@ const projectSchema = new mongoose.Schema(
     lastTokenRefresh: { type: Date, default: null },
     creationDate: { type: Date, default: Date.now },
     members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    devices: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Devices'}],
+    devices: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Devices' }],
   },
   { timestamps: true }
 );

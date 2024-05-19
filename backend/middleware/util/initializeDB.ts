@@ -1,9 +1,9 @@
 import crypto from 'crypto';
 
 import { sendEmail } from './emailUtil';
-import logger from '../logger';
 import Setting from '../../models/Setting';
 import User from '../../models/User';
+import logger from '../logger';
 
 async function initializeDatabase() {
   logger.info('Initializing the database');
@@ -37,7 +37,9 @@ async function initializeDatabase() {
           text: `An account has been created for you. Please login using this link: ${process.env.BASE_URL}/set-password?token=${passwordToken}`,
         });
       } else {
-        logger.info(`Account created for ${process.env.ADMIN_EMAIL}. Password reset link: ${process.env.BASE_URL}/set-password?token=${passwordToken}`)
+        logger.info(
+          `Account created for ${process.env.ADMIN_EMAIL}. Password reset link: ${process.env.BASE_URL}/set-password?token=${passwordToken}`
+        );
       }
 
       await Setting.create({ type: 'initialized', value: true });

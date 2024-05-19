@@ -3,12 +3,12 @@ import express, { Request, Response } from 'express';
 import crypto from 'crypto';
 import { body } from 'express-validator';
 
-import { sendEmail } from '../middleware/util/emailUtil';
+import { validationHandler } from '../handlers/validationHandler';
 import logger from '../middleware/logger';
+import { sendEmail } from '../middleware/util/emailUtil';
 import verifyRole from '../middleware/verifyRole';
 import verifySession from '../middleware/verifySession';
 import User from '../models/User';
-import { validationHandler } from '../handlers/validationHandler';
 
 const router = express.Router();
 

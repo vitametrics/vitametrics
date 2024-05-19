@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { DateTime } from 'luxon';
+
 import logger from '../logger';
 
 interface IntradayEntry {
@@ -34,7 +35,7 @@ function validateDataType(dataType: string): void {
     'floors',
   ];
   if (!validDataTypes.includes(dataType)) {
-    logger.error('Invalid data type')
+    logger.error('Invalid data type');
     throw new Error('Invalid data type');
   }
 }

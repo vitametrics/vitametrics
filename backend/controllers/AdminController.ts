@@ -2,15 +2,15 @@ import { Request, Response } from 'express';
 
 import crypto from 'crypto';
 import fs from 'fs';
-import path from 'path';
 import moment from 'moment';
+import { Types } from 'mongoose';
+import path from 'path';
 
-import { sendEmail } from '../middleware/util/emailUtil';
 import logger from '../middleware/logger';
+import { sendEmail } from '../middleware/util/emailUtil';
 import Device from '../models/Device';
 import Project from '../models/Project';
 import User, { IUser } from '../models/User';
-import { Types } from 'mongoose';
 
 class AdminController {
   static async createProject(req: Request, res: Response) {
@@ -19,7 +19,9 @@ class AdminController {
     const user = req.user as IUser;
 
     try {
-      logger.info(`Creating project with name: ${projectName} by user: ${user.email}`);
+      logger.info(
+        `Creating project with name: ${projectName} by user: ${user.email}`
+      );
 
       const existingProject = await Project.findOne({ projectName });
       if (existingProject) {
@@ -50,7 +52,9 @@ class AdminController {
       await user.save();
 
       if (process.env.NODE_ENV === 'production') {
-        logger.info(`Sending email to user: email: ${user.email}, link: ${process.env.BASE_URL}/dashboard/project?id=${newProjectId}`)
+        logger.info(
+          `Sending email to user: email: ${user.email}, link: ${process.env.BASE_URL}/dashboard/project?id=${newProjectId}`
+        );
         await sendEmail({
           to: user.email,
           subject: 'Your new project',
@@ -64,7 +68,7 @@ class AdminController {
           deviceCount: savedProject.devices ? savedProject.devices.length : 0,
         };
 
-        logger.info(`Project created successfully: ${projectResponse}`)
+        logger.info(`Project created successfully: ${projectResponse}`);
         res.status(201).json({
           msg: 'Project created successfully',
           project: projectResponse,
@@ -84,8 +88,9 @@ class AdminController {
     const userId = currentUser.userId;
 
     try {
-
-      logger.info(`User: ${currentUser.email} attempting to delete project: ${projectId}`);
+      logger.info(
+        `User: ${currentUser.email} attempting to delete project: ${projectId}`
+      );
 
       const user = await User.findOne({ userId });
       if (!user) {
@@ -116,7 +121,9 @@ class AdminController {
       }
 
       await Project.findOneAndDelete({ projectId });
-      logger.info(`Project: ${projectId} deleted successfully by user: ${currentUser.email}`);
+      logger.info(
+        `Project: ${projectId} deleted successfully by user: ${currentUser.email}`
+      );
       res.status(200).json({ msg: 'Project deleted successfully' });
       return;
     } catch (error) {
@@ -204,7 +211,9 @@ class AdminController {
         return;
       }
 
-      user.projects = user.projects.filter((pid) => !pid.equals(project._id as Types.ObjectId));
+      user.projects = user.projects.filter(
+        (pid) => !pid.equals(project._id as Types.ObjectId)
+      );
       await user.save();
 
       if (process.env.NODE_ENV === 'production') {
@@ -216,7 +225,7 @@ class AdminController {
       } else {
         logger.info(
           `User ${user.name} removed from project: ${project.projectName}`
-        )
+        );
         res.status(200).json({ msg: 'Member removed successfully' });
         return;
       }
@@ -234,17 +243,17 @@ class AdminController {
 
     if (!fs.existsSync(logFilePath)) {
       logger.error('Log file not found');
-      res.status(404).json({ msg: 'Log file not found'});
+      res.status(404).json({ msg: 'Log file not found' });
       return;
     }
 
-    res.download(logFilePath, logFileName, ( error ) => {
+    res.download(logFilePath, logFileName, (error) => {
       if (error) {
         logger.error(`Error downloading log file: ${error}`);
         res.status(500).json({ msg: 'Error downloading log file' });
         return;
       }
-    })
+    });
   }
 }
 

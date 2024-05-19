@@ -37,7 +37,7 @@ const passportConfig = (passport: passport.Authenticator) => {
       const user = await User.findOne({ userId: id }).exec();
       done(null, user);
     } catch (error) {
-      logger.error(`Error deserializing user: ${error}`)
+      logger.error(`Error deserializing user: ${error}`);
       done(error, null);
     }
   });

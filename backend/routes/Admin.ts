@@ -71,6 +71,6 @@ router.get(
   verifySession,
   verifyRole('admin'),
   asyncHandler(AdminController.downloadLog)
-)
+);
 
 export default router;

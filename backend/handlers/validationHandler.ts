@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
 import { ValidationChain, validationResult } from 'express-validator';
+
 import logger from '../middleware/logger';
 
 export const validationHandler = (validations: ValidationChain[]) => {
