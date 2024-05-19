@@ -2,9 +2,9 @@ import { Request, Response, NextFunction } from 'express';
 
 import axios from 'axios';
 
+import logger from './logger';
 import Project from '../models/Project';
 import { IUser } from '../models/User';
-import logger from './logger';
 
 async function refreshToken(req: Request, res: Response, next: NextFunction) {
   const user = req.user as IUser;

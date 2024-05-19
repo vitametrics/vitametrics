@@ -10,7 +10,17 @@
     "dev": "nodemon --exec ts-node index.ts",
     "lint": "eslint . --quiet",
     "format": "prettier --write .",
-    "test": "jest"
+    "test": "jest",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "**/*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "**/*.{json,md}": [
+      "prettier --write"
+    ]
   },
   "jest": {
     "preset": "ts-jest",
@@ -32,6 +42,7 @@
     "express-validator": "^7.0.1",
     "helmet": "^7.1.0",
     "json2csv": "^6.0.0-alpha.2",
+    "lint-staged": "^15.2.2",
     "luxon": "^3.4.4",
     "moment": "^2.30.1",
     "mongoose": "^8.0.4",

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
-import { IUser } from '../models/User';
 import logger from './logger';
+import { IUser } from '../models/User';
 
 const verifyRole = (role: string) => {
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -13,8 +13,12 @@ const verifyRole = (role: string) => {
     }
 
     if (user.role !== role && user.role !== 'owner') {
-      logger.error('[verifyRole] Access denied - User does not have the required role');
-      res.status(403).json({ msg: 'Access denied - User does not have the required role' });
+      logger.error(
+        '[verifyRole] Access denied - User does not have the required role'
+      );
+      res
+        .status(403)
+        .json({ msg: 'Access denied - User does not have the required role' });
       return;
     }
     next();

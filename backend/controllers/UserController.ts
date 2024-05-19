@@ -2,12 +2,12 @@ import { Request, Response } from 'express';
 
 import argon2, { verify } from 'argon2';
 import crypto from 'crypto';
+import { Types } from 'mongoose';
 
-import { sendEmail } from '../middleware/util/emailUtil';
 import logger from '../middleware/logger';
+import { sendEmail } from '../middleware/util/emailUtil';
 import Project from '../models/Project';
 import User, { IUser } from '../models/User';
-import { Types } from 'mongoose';
 
 class UserController {
   static async authStatus(req: Request, res: Response) {
@@ -49,7 +49,7 @@ class UserController {
         return;
       } catch (error) {
         logger.error(`Error fetching user: ${error}`);
-        res.status(500).json({ msg: 'Internal Server Error'});
+        res.status(500).json({ msg: 'Internal Server Error' });
         return;
       }
     } else {
@@ -148,7 +148,9 @@ class UserController {
       }
       user.password = await argon2.hash(password);
       await user.save();
-      logger.info(`Password changed successfully for user: ${currentUser.email}`);
+      logger.info(
+        `Password changed successfully for user: ${currentUser.email}`
+      );
       res.status(200).json({ msg: 'Password changed successfully' });
       return;
     } catch (error) {
@@ -207,7 +209,9 @@ class UserController {
         subject: 'Vitametrics Email Verification',
         text: `Please verify your email using this link ${verificationLink}`,
       });
-      logger.info(`Email verification sent successfully for user: ${currentUser.email}`);
+      logger.info(
+        `Email verification sent successfully for user: ${currentUser.email}`
+      );
       res.status(200).json({ msg: 'Email sent successfully' });
       return;
     } catch (error) {
@@ -230,7 +234,10 @@ class UserController {
         res.status(400).json({ msg: 'Invalid or expired verification token' });
         return;
       }
-      if (!currentUser || currentUser.id !== (user._id as Types.ObjectId).toString()) {
+      if (
+        !currentUser ||
+        currentUser.id !== (user._id as Types.ObjectId).toString()
+      ) {
         logger.error(`Unauthorized access`);
         res.redirect('/dashboard');
         return;
@@ -270,7 +277,9 @@ class UserController {
       const project = await Project.findOne({ ownerId: userId });
       if (project) {
         logger.error(`Cannot delete account as owner of the project`);
-        res.status(400).json({ msg: 'Cannot delete account as owner of the project' });
+        res
+          .status(400)
+          .json({ msg: 'Cannot delete account as owner of the project' });
         return;
       } else {
         await Project.updateOne(
@@ -279,7 +288,9 @@ class UserController {
         );
         await User.deleteOne({ userId });
 
-        logger.info(`Account deleted successfully for user: ${currentUser.email}`);
+        logger.info(
+          `Account deleted successfully for user: ${currentUser.email}`
+        );
         res.status(200).json({ msg: 'Account deleted' });
         return;
       }

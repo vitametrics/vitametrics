@@ -39,7 +39,9 @@ async function fetchDevices(
           { $addToSet: { devices: updatedDevice._id } }
         );
       } else {
-        logger.error(`[fetchDevices] Device not created or not found for ID: ${device.id}`)
+        logger.error(
+          `[fetchDevices] Device not created or not found for ID: ${device.id}`
+        );
       }
     }
 

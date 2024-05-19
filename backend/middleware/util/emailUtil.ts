@@ -1,4 +1,5 @@
 import sgMail from '@sendgrid/mail';
+
 import logger from '../logger';
 
 interface EmailOptions {
@@ -21,7 +22,7 @@ export const sendEmail = async (options: EmailOptions): Promise<void> => {
     await sgMail.send(msg);
     logger.info('Email sent');
   } catch (error: any) {
-    logger.error(`[emailUtil] Error sending email: ${error}`)
+    logger.error(`[emailUtil] Error sending email: ${error}`);
     if (error.response) {
       logger.error(error.response.body);
       console.error(error.response.body);

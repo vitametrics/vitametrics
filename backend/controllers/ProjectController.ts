@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 
+import logger from '../middleware/logger';
 import fetchData from '../middleware/util/fetchData';
 import fetchDevices from '../middleware/util/fetchDevices';
 import fetchIntradayData from '../middleware/util/fetchIntraday';
 import Project, { IProject } from '../models/Project';
 import User from '../models/User';
-import logger from '../middleware/logger';
 
 export async function getProjectInfo(req: Request, res: Response) {
   try {
@@ -40,7 +40,9 @@ export async function removeMember(req: Request, res: Response) {
   const { userId } = req.body;
   const project = req.project as IProject;
   try {
-    logger.info(`Removing member: ${userId} from project: ${project.projectId}`);
+    logger.info(
+      `Removing member: ${userId} from project: ${project.projectId}`
+    );
 
     const userToRemove = await User.findOne({ userId });
     if (!userToRemove) {
@@ -57,7 +59,9 @@ export async function removeMember(req: Request, res: Response) {
 
     await project.updateOne({ $pull: { members: userToRemove._id } });
     await userToRemove.deleteOne();
-    logger.info(`Member: ${userId} removed successfully from project: ${project.projectId}`);
+    logger.info(
+      `Member: ${userId} removed successfully from project: ${project.projectId}`
+    );
     res.status(200).json({ message: 'Member removed successfully' });
     return;
   } catch (error) {
@@ -73,7 +77,9 @@ export async function fetchDevicesHandler(req: Request, res: Response) {
     logger.info(`Fetching devices for project: ${currentProject.projectId}`);
 
     if (!currentProject.fitbitUserId || !currentProject.fitbitAccessToken) {
-      logger.error(`Fitbit account not linked to project: ${currentProject.projectId}`);
+      logger.error(
+        `Fitbit account not linked to project: ${currentProject.projectId}`
+      );
       res.status(400).json({ message: 'Fitbit account not linked to project' });
       return;
     }
@@ -82,7 +88,9 @@ export async function fetchDevicesHandler(req: Request, res: Response) {
       currentProject.fitbitAccessToken,
       currentProject.projectId
     );
-    logger.info(`Devices fetched successfully for project: ${currentProject.projectId}`);
+    logger.info(
+      `Devices fetched successfully for project: ${currentProject.projectId}`
+    );
     res.json(devices);
     return;
   } catch (error) {
@@ -95,11 +103,15 @@ export async function fetchDevicesHandler(req: Request, res: Response) {
 export async function fetchIntradayDataHandler(req: Request, res: Response) {
   const currentProject = req.project as IProject;
   try {
-    logger.info(`Fetching intraday data for project: ${currentProject.projectId}`);
+    logger.info(
+      `Fetching intraday data for project: ${currentProject.projectId}`
+    );
 
     const { dataType, date, detailLevel } = req.query;
     if (!currentProject.fitbitUserId || !currentProject.fitbitAccessToken) {
-      logger.error(`Fitbit account not linked to project: ${currentProject.projectId}`);
+      logger.error(
+        `Fitbit account not linked to project: ${currentProject.projectId}`
+      );
       res.status(400).json({ message: 'Fitbit account not linked to project' });
       return;
     }
@@ -110,7 +122,9 @@ export async function fetchIntradayDataHandler(req: Request, res: Response) {
       date as string,
       detailLevel as string
     );
-    logger.info(`Intraday data fetched successfully for project: ${currentProject.projectId}`);
+    logger.info(
+      `Intraday data fetched successfully for project: ${currentProject.projectId}`
+    );
     res.json(data);
     return;
   } catch (error) {
@@ -127,7 +141,9 @@ export async function fetchDataHandler(req: Request, res: Response) {
     logger.info(`Fetching data for project: ${currentProject.projectId}`);
 
     if (!currentProject.fitbitUserId || !currentProject.fitbitAccessToken) {
-      logger.error(`Fitbit account not linked to project: ${currentProject.projectId}`);
+      logger.error(
+        `Fitbit account not linked to project: ${currentProject.projectId}`
+      );
       res.status(400).json({ message: 'Fitbit account not linked to project' });
       return;
     }
@@ -137,7 +153,9 @@ export async function fetchDataHandler(req: Request, res: Response) {
       startDate as string,
       endDate as string
     );
-    logger.info(`Data fetched successfully for project: ${currentProject.projectId}`);
+    logger.info(
+      `Data fetched successfully for project: ${currentProject.projectId}`
+    );
     res.json(data);
     return;
   } catch (error) {
@@ -154,7 +172,9 @@ export async function downloadDataHandler(req: Request, res: Response) {
     logger.info(`Downloading data for project: ${currentProject.projectId}`);
 
     if (!currentProject.fitbitUserId || !currentProject.fitbitAccessToken) {
-      logger.error(`Fitbit account not linked to project: ${currentProject.projectId}`);
+      logger.error(
+        `Fitbit account not linked to project: ${currentProject.projectId}`
+      );
       res.status(400).json({ message: 'Fitbit account not linked to project' });
       return;
     }
@@ -171,7 +191,9 @@ export async function downloadDataHandler(req: Request, res: Response) {
       `attachment; filename="${deviceId}-${date}-${detailLevel}.csv"`
     );
     res.set('Content-Type', 'text/csv');
-    logger.info(`Data downloaded successfully for project: ${currentProject.projectId}`);
+    logger.info(
+      `Data downloaded successfully for project: ${currentProject.projectId}`
+    );
     res.send(csv);
     return;
   } catch (error) {

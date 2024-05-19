@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 
+import logger from './logger';
 import Project, { IProject } from '../models/Project';
 import User, { IUser } from '../models/User';
-import logger from './logger';
 
 const checkProjectMembership = async (
   req: Request,
@@ -20,7 +20,7 @@ const checkProjectMembership = async (
   const userId = currentUser.userId;
 
   try {
-    logger.info('[checkProjectMembership] Checking project membership')
+    logger.info('[checkProjectMembership] Checking project membership');
 
     const user = await User.findOne({ userId: userId }).populate('projects');
 
@@ -31,7 +31,9 @@ const checkProjectMembership = async (
     }
 
     if (!user.projects.length && user.role !== 'owner') {
-      res.status(403).json({msg: `Access denied - User not a member of any project`});
+      res
+        .status(403)
+        .json({ msg: `Access denied - User not a member of any project` });
       return;
     }
 
@@ -43,8 +45,12 @@ const checkProjectMembership = async (
     });
 
     if (!matchingProject && user.role !== 'owner') {
-      logger.error('[checkProjectMembership] Access denied - User not a member of the project')
-      res.status(403).json({msg: `Access denied - User not a member of the project`});
+      logger.error(
+        '[checkProjectMembership] Access denied - User not a member of the project'
+      );
+      res
+        .status(403)
+        .json({ msg: `Access denied - User not a member of the project` });
       return;
     }
 
@@ -53,7 +59,9 @@ const checkProjectMembership = async (
 
     next();
   } catch (error) {
-    logger.error(`[checkProjectMembership] Error checking project membership: ${error}`);
+    logger.error(
+      `[checkProjectMembership] Error checking project membership: ${error}`
+    );
     res.status(500).json({ msg: 'Internal Server Error' });
     return;
   }
