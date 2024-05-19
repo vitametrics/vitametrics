@@ -10,12 +10,23 @@
     "dev": "nodemon --exec ts-node index.ts",
     "lint": "eslint . --quiet",
     "format": "prettier --write .",
-    "test": "jest"
+    "test": "jest",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "**/*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "**/*.{json,md}": [
+      "prettier --write"
+    ]
   },
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node"
   },
+  
   "dependencies": {
     "argon2": "^0.31.2",
     "axios": "^1.6.5",
