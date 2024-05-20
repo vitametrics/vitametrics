@@ -22,6 +22,18 @@ const ChangeNameField = () => {
     e.preventDefault();
     const CHANGE_NAME_ENDPOINT = `${import.meta.env.VITE_API_URL}/admin/change-project-name`;
 
+    if (!name) {
+      setError(true);
+      setMessage("Please enter a new project name");
+      return;
+    }
+
+    if (name === projectName) {
+      setError(true);
+      setMessage("New name is the same as the current name");
+      return;
+    }
+
     try {
       await axios.post(
         CHANGE_NAME_ENDPOINT,
