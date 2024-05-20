@@ -25,7 +25,7 @@ const ChangeNameField = () => {
     try {
       await axios.post(
         CHANGE_NAME_ENDPOINT,
-        { projectName: name, projectId: projectId },
+        { newProjectName: name, projectId: projectId },
         { withCredentials: true }
       );
       setMessage("Project name changed successfully");
