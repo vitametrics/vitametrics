@@ -263,14 +263,14 @@ const Settings = () => {
           <input
             type="password"
             value={password}
-            className="w-full md:w-[500px] h-12 p-5 mt-2 text-lg text-black bg-white  dark:bg-opacity-10 rounded-lg border-none"
+            className="w-full md:w-[500px] h-12 p-5 mt-2 text-lg text-primary bg-white  dark:bg-opacity-10 rounded-lg border-[2px] border-solid border-[#d2d1d1]"
             placeholder="New Password"
             onChange={(e) => setPassword(e.target.value)}
           />
           <input
             type="password"
             value={confirmPassword}
-            className="w-full md:w-[500px] h-12 p-5 mt-5 text-lg text-black bg-white dark:bg-opacity-10 rounded-lg border-none"
+            className="w-full md:w-[500px] h-12 p-5 mt-5 text-lg text-primary bg-white dark:bg-opacity-10 rounded-lg border-[2px] border-solid border-[#d2d1d1]"
             placeholder="Confirm New Password"
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
@@ -294,7 +294,7 @@ const Settings = () => {
           <input
             type="email"
             value={newEmail}
-            className="w-full md:w-[500px] h-12 p-5 mt-2 text-lg text-black bg-white  dark:bg-opacity-10 rounded-lg border-none"
+            className="w-full md:w-[500px] h-12 p-5 mt-2 text-lg text-primary bg-white dark:bg-opacity-10 rounded-lg border-[2px] border-solid border-[#d2d1d1]"
             placeholder="New Email"
             onChange={(e) => setNewEmail(e.target.value)}
           />
@@ -308,7 +308,7 @@ const Settings = () => {
         </div>
         {!isOwner && (
           <button
-            className="bg-red-400 p-4 text-xl w-full rounded-lg md:w-[350px]"
+            className="bg-red-400 p-4 text-xl w-full rounded-lg md:w-[350px] text-white font-bold"
             onClick={() => toggleDeleteMenu(true)}
           >
             Delete Account
