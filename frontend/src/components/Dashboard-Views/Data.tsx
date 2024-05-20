@@ -74,7 +74,7 @@ interface DataItem {
 }
 
 const Data = () => {
-  const DOWNLOAD_DATA_ENDPOINT = `${import.meta.env.VITE_API_URL}/project/download-data`;
+  const DOWNLOAD_DATA_ENDPOINT = `${process.env.API_URL}/project/download-data`;
   const { deviceViewDevices, projectName, projectId } = useProject();
   const [searchParams, setSearchParams] = useSearchParams({
     detailLevel: "1min",

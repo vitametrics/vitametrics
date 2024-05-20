@@ -15,7 +15,7 @@ const ChangeDescriptionField = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setMessage("");
-    const CHANGE_DESC_ENDPOINT = `${import.meta.env.VITE_API_URL}/admin/change-project-description`;
+    const CHANGE_DESC_ENDPOINT = `${process.env.API_URL}/admin/change-project-description`;
 
     try {
       await axios.post(

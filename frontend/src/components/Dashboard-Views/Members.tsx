@@ -8,8 +8,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 const Members = () => {
-  const ADD_MEMBER_ENDPOINT = `${import.meta.env.VITE_API_URL}/admin/add-member`;
-  const REMOVE_MEMBER_ENDPOINT = `${import.meta.env.VITE_API_URL}/admin/remove-member`;
+  const ADD_MEMBER_ENDPOINT = `${process.env.API_URL}/admin/add-member`;
+  const REMOVE_MEMBER_ENDPOINT = `${process.env.API_URL}/admin/remove-member`;
   const fadeInItemVariants = {
     hidden: { opacity: 0 },
     show: { opacity: 1 },

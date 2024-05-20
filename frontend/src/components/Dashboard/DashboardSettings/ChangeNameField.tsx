@@ -20,7 +20,7 @@ const ChangeNameField = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const CHANGE_NAME_ENDPOINT = `${import.meta.env.VITE_API_URL}/admin/change-project-name`;
+    const CHANGE_NAME_ENDPOINT = `${process.env.API_URL}/admin/change-project-name`;
 
     if (!name) {
       setError(true);

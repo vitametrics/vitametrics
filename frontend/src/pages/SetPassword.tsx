@@ -7,8 +7,8 @@ import { useAuth } from "../helpers/AuthContext";
 import logo from "../assets/images/vitamix.webp";
 
 const SetPassword = () => {
-  const SET_PASSWORD_ENDPOINT = `${import.meta.env.VITE_API_URL}/user/set-password`;
-  const CHECK_PASSWORD_TOKEN_ENDPOINT = `${import.meta.env.VITE_API_URL}/user/check-password-token`;
+  const SET_PASSWORD_ENDPOINT = `${process.env.API_URL}/user/set-password`;
+  const CHECK_PASSWORD_TOKEN_ENDPOINT = `${process.env.API_URL}/user/check-password-token`;
 
   const [searchParams] = useSearchParams({
     token: "",

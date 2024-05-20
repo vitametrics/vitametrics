@@ -6,20 +6,19 @@ import dotenv from 'dotenv';
 import path from 'path';
 
 const loadEnv = (mode, root) => {
-  const envPath = path.resolve(__dirname, '../.env');
-  const env = dotenv.config({ path: envPath }).parsed;
-  const envWithPrefix = Object.keys(env).reduce((acc, key) => {
-    if (key.startsWith('VITE_')) {
-      acc[key] = env[key];
-    }
-    return acc;
-  }, {});
-  return envWithPrefix;
+  const envPath = path.resolve(root, '../.env'); // Ensure the path points correctly outside your directory
+  const result = dotenv.config({ path: envPath });
+  if (result.error) {
+    throw result.error;
+  }
+  return result.parsed;
 };
 
 export default defineConfig(({ mode }) => {
   const root = process.cwd();
   const env = loadEnv(mode, root);
+  process.env = {...process.env, ...loadEnv(mode, process.cwd())};
+
 
   return {
     plugins: [react(), viteCompression({
@@ -27,7 +26,8 @@ export default defineConfig(({ mode }) => {
       filter: (assetFileName) => assetFileName.endsWith('.js') || assetFileName.endsWith('.css'),
     })],
     define: {
-      'import.meta.env': env
+      'process.env': process.env
+      
     }
   };
 });

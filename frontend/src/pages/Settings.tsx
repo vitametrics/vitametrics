@@ -44,9 +44,9 @@ const Settings = () => {
     if (showDeleteMenu) setShowBackDrop(showDeleteMenu);
   }, []);
 
-  const CHANGE_PASSWORD_ENDPOINT = `${import.meta.env.VITE_API_URL}/user/change-password`;
-  const CHANGE_EMAIL_ENDPOINT = `${import.meta.env.VITE_API_URL}/user/change-email`;
-  const SEND_VERIFICATION_LINK_ENDPOINT = `${import.meta.env.VITE_API_URL}/user/send-email-verification`;
+  const CHANGE_PASSWORD_ENDPOINT = `${process.env.API_URL}/user/change-password`;
+  const CHANGE_EMAIL_ENDPOINT = `${process.env.API_URL}/user/change-email`;
+  const SEND_VERIFICATION_LINK_ENDPOINT = `${process.env.API_URL}/user/send-email-verification`;
 
   const handleAccountDeletion = async () => {
     if (deletePassword === "") {
