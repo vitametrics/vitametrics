@@ -106,6 +106,9 @@ router.get(
   '/download-log',
   verifySession,
   verifyRole('admin'),
+  validationHandler([
+    body('logType').not().isEmpty().withMessage('Log type is required'),
+  ]),
   asyncHandler(AdminController.downloadLog)
 );
 

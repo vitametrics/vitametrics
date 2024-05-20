@@ -319,7 +319,19 @@ class AdminController {
 
   static async downloadLog(req: Request, res: Response) {
     const currentDate = moment().format('YYYY-MM-DD');
-    const logFileName = `${currentDate}-vitametrics.log`;
+    const logType = req.body.logType as string;
+    let logFileName = '';
+
+    if (logType === 'info') {
+      logFileName = `${currentDate}-vitametrics.log`;
+    } else if (logType === 'error') {
+      logFileName = `${currentDate}-error.log`;
+    } else {
+      logger.error(`Incorrect log type provided: ${logType}`);
+      res.status(500).json({ msg: 'Incorrect log' });
+      return;
+    }
+
     const logFilePath = path.join(__dirname, '..', 'logs', logFileName);
 
     if (!fs.existsSync(logFilePath)) {
