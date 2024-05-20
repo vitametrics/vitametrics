@@ -7,7 +7,7 @@ const ChangeNameField = () => {
   const [name, setName] = useState("");
   const [error, setError] = useState(false);
   const [message, setMessage] = useState("");
-  const { projectId, projectName } = useProject();
+  const { projectId, projectName, setProjectName } = useProject();
   const MAX_CHARS = 100;
   const [charsLeft, setCharsLeft] = useState(MAX_CHARS - name.length);
 
@@ -28,6 +28,7 @@ const ChangeNameField = () => {
         { newProjectName: name, projectId: projectId },
         { withCredentials: true }
       );
+      setProjectName(name);
       setMessage("Project name changed successfully");
       setError(false);
     } catch (error: any) {

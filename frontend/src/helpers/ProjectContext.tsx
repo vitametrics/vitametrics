@@ -46,6 +46,7 @@ interface ProjectContextProps {
   fetchDeviceViewDevices: () => void;
   projectDescription: string;
   setProjectDescription: (arg0: string) => void;
+  setProjectName: (arg0: string) => void;
 }
 
 const ProjectContext = createContext<ProjectContextProps | undefined>(
@@ -431,6 +432,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         setProjectDescription,
         projectDevices,
         fetchDeviceViewDevices,
+        setProjectName,
       }}
     >
       {children}
