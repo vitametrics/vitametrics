@@ -10,6 +10,7 @@ import { connectDB } from './middleware/config';
 import logger from './middleware/logger';
 import passportConfig from './middleware/util/passport-config';
 import configureRoutes from './routes';
+import axios from 'axios';
 
 dotenv.config({ path: '../.env' });
 
@@ -35,13 +36,33 @@ configureRoutes(app, passport);
 
 connectDB();
 
-app.get('/version', (req: Request, res: Response) => {
+app.get('/version', async (req: Request, res: Response) => {
   const backendPackageJson = require('./package.json');
   const frontendPackageJson = require('../frontend/package.json');
-  return res.json({ 
-    backendVersion: backendPackageJson.version,
-    frontendVersion: frontendPackageJson.version
-  });
+
+  const backendVersion = backendPackageJson.version;
+  const frontendVersion = frontendPackageJson.version;
+
+  try {
+
+    const response = await axios.get('https://api.github.com/repos/vitametrics/vitametrics/releases/latest');
+    const latestRelease = response.data;
+    const latestVersion = latestRelease.tag_name;
+
+    const isBackendUpToDate = backendVersion === latestVersion;
+    const isFrontendUpToDate = frontendVersion === latestVersion;
+
+    return res.json({
+      backendVersion,
+      frontendVersion,
+      latestVersion,
+      isBackendUpToDate,
+      isFrontendUpToDate
+    });
+  } catch (error) {
+    logger.error(`Error fetching latest release: ${error}`);
+    return res.status(500).json({ msg: 'Error fetching latest release' });
+  }
 })
 
 app.get('/health', (req: Request, res: Response) => {
