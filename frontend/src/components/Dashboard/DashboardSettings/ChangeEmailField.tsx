@@ -19,7 +19,7 @@ const ChangeEmailField = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setMessage("");
-    const CHANGE_DESC_ENDPOINT = `${import.meta.env.VITE_API_URL}/admin/change-project-email`;
+    const CHANGE_EMAIL_ENDPOINT = `${import.meta.env.VITE_API_URL}/admin/change-project-email`;
     if (!debouncedChangeEmailInput) {
       setError(true);
       setMessage("Please enter a new email");
@@ -39,10 +39,10 @@ const ChangeEmailField = () => {
 
     try {
       await axios.post(
-        CHANGE_DESC_ENDPOINT,
+        CHANGE_EMAIL_ENDPOINT,
         {
           projectId: projectId,
-          newProjectDescription: debouncedChangeEmailInput,
+          newOwnerEmail: debouncedChangeEmailInput,
         },
         { withCredentials: true }
       );
