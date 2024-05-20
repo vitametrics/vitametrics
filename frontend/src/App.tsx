@@ -15,6 +15,7 @@ const TOS = lazy(() => import("./pages/TOS"));
 const Demo = lazy(() => import("./pages/Demo"));
 const SetPassword = lazy(() => import("./pages/SetPassword"));
 const PageNotFound = lazy(() => import("./pages/PageNotFound"));
+const Settings = lazy(() => import("./pages/Settings"));
 import { useAuth } from "./helpers/AuthContext";
 import { ProjectProvider } from "./helpers/ProjectContext";
 const LoadingFallback = () => <div>Loading...</div>;
@@ -58,6 +59,18 @@ function App() {
                 <AuthenticatedRoute redirectTo="/login">
                   <Suspense fallback={<LoadingFallback />}>
                     <Dashboard />
+                  </Suspense>
+                </AuthenticatedRoute>
+              }
+            />
+            <Route
+              path="settings"
+              element={
+                <AuthenticatedRoute redirectTo="/login">
+                  <Suspense fallback={<LoadingFallback />}>
+                    <ProjectProvider>
+                      <Settings />
+                    </ProjectProvider>
                   </Suspense>
                 </AuthenticatedRoute>
               }
