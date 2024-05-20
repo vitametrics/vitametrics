@@ -109,7 +109,7 @@ router.get('/callback', verifySession, async (req: Request, res: Response) => {
     await project.save();
 
     // this should not handle redirects. fine for now i guess.
-    res.redirect('/dashboard');
+    res.redirect(`/dashboard/project?id=${projectId}&view=overview`);
   } catch (err) {
     console.error('Error handling OAuth callback:', err);
     res.status(500).json({ success: false, msg: 'Internal Server Error' });
