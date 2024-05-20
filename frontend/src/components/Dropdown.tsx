@@ -19,7 +19,7 @@ const Dropdown = () => {
       </a>
       {isOwner && (
         <a
-          href="/dashboard/admin"
+          href="/dashboard/admin?view=overview"
           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
         >
           Admin
