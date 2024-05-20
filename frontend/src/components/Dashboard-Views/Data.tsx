@@ -75,7 +75,7 @@ interface DataItem {
 
 const Data = () => {
   const DOWNLOAD_DATA_ENDPOINT = `${import.meta.env.VITE_API_URL}/project/download-data`;
-  const { deviceViewDevices, projectName } = useProject();
+  const { deviceViewDevices, projectName, projectId } = useProject();
   const [searchParams, setSearchParams] = useSearchParams({
     detailLevel: "1min",
     dataType: "steps",
@@ -438,6 +438,7 @@ const Data = () => {
             dataType: downloadDataType,
             date: date,
             detailLevel: downloadDetailLevel,
+            projectId: projectId,
           },
           withCredentials: true,
         });
@@ -762,7 +763,7 @@ const Data = () => {
                 return (
                   <div
                     key={index}
-                    className="flex flex-row gap-5 items-center w-full h-[70px] bg-[#434040] p-5 rounded-xl"
+                    className="flex flex-row gap-5 items-center w-full h-[70px] bg-primary p-5 rounded-xl"
                   >
                     <div className="flex flex-row mr-3 items-center justify-center">
                       <input
@@ -774,7 +775,7 @@ const Data = () => {
                           )
                         }
                         checked={selectedDevices.includes(device.deviceId)}
-                        className="w-9 h-[44px] mr-2  bg-gray-100 accent-[#606060] border-gray-300 rounded-xl focus:ring-transparent "
+                        className="w-9 h-[44px] mr-2  bg-gray-100 accent-[#7d8bae] border-gray-300 rounded-xl focus:ring-transparent "
                       />
                       <p className="text-2xl font-bol mr-auto ">
                         {device.deviceVersion} &nbsp;
