@@ -2,8 +2,10 @@ import express, { Request, Response } from 'express';
 
 import sgMail from '@sendgrid/mail';
 import dotenv from 'dotenv';
+import fs from 'fs';
 import helmet from 'helmet';
 import passport from 'passport';
+import path from 'path';
 
 import { commonMiddlewares } from './middleware/common';
 import { connectDB } from './middleware/config';
@@ -37,8 +39,12 @@ configureRoutes(app, passport);
 connectDB();
 
 app.get('/version', async (req: Request, res: Response) => {
-  const backendPackageJson = require('./package.json');
-  const frontendPackageJson = require('../frontend/package.json');
+
+  const backendPackagePath = path.join(__dirname, '../..', 'package.json');
+  const frontendPackagePath = path.join(__dirname, '../..', 'frontend', 'package.json');
+
+  const backendPackageJson = JSON.parse(fs.readFileSync(backendPackagePath, 'utf8'));
+  const frontendPackageJson = JSON.parse(fs.readFileSync(frontendPackagePath, 'utf8'));
 
   const backendVersion = backendPackageJson.version;
   const frontendVersion = frontendPackageJson.version;
