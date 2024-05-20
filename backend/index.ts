@@ -35,8 +35,17 @@ configureRoutes(app, passport);
 
 connectDB();
 
-app.get('/health', (_req: Request, res: Response) => {
-  res.status(200).json({ status: 'success', message: 'Backend is healthy' });
+app.get('/version', (req: Request, res: Response) => {
+  const backendPackageJson = require('./package.json');
+  const frontendPackageJson = require('../frontend/package.json');
+  return res.json({ 
+    backendVersion: backendPackageJson.version,
+    frontendVersion: frontendPackageJson.version
+  });
+})
+
+app.get('/health', (req: Request, res: Response) => {
+  return res.status(200).json({ status: 'success', message: 'Backend is healthy' });
 });
 
 app.listen(7970, () => {
