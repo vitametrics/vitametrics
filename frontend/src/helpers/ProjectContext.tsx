@@ -14,7 +14,7 @@ interface ProjectContextProps {
   ownerId: string;
   setOwnerName: (arg0: string) => void;
   setOwnerId: (arg0: string) => void;
-  setprojectName: (arg0: string) => void;
+  setProjectName: (arg0: string) => void;
   setMembers: (arg0: any[]) => void;
   members: any[];
   devices: DeviceData[];
@@ -46,7 +46,6 @@ interface ProjectContextProps {
   fetchDeviceViewDevices: () => void;
   projectDescription: string;
   setProjectDescription: (arg0: string) => void;
-  setProjectName: (arg0: string) => void;
 }
 
 const ProjectContext = createContext<ProjectContextProps | undefined>(
@@ -60,7 +59,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   const FETCH_DEVICE_DATA_ENDPOINT = `${import.meta.env.VITE_API_URL}/project/fetch-data`;
   const FETCH_PROJECT_DEVICES_ENDPOINT = `${import.meta.env.VITE_API_URL}/project/fetch-devices`;
 
-  const [projectName, setprojectName] = useState<string>("");
+  const [projectName, setProjectName] = useState<string>("");
   const [projectId, setProjectId] = useState<string>("");
   const [projectDescription, setProjectDescription] = useState<string>("");
   const [ownerEmail, setOwnerEmail] = useState<string>("");
@@ -213,7 +212,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       setMembers(project.members);
       setProjectDevices(project.devices);
       console.log("from ProjectContext: " + project.devices);
-      setprojectName(project.projectName);
+      setProjectName(project.projectName);
       setOwnerEmail(project.ownerEmail);
       setOwnerId(project.ownerId);
       setOwnerName(project.ownerName);
@@ -402,7 +401,6 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         setOwnerEmail,
         setOwnerName,
         setOwnerId,
-        setprojectName,
         setMembers,
         setDevices,
         fetchDevices,
