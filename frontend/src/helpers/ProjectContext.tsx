@@ -42,10 +42,10 @@ interface ProjectContextProps {
   isOwner: boolean;
   isAccountLinked: boolean;
   fetchProject: () => void;
-  description: string;
-  setDescription: (arg0: string) => void;
   projectDevices: any[];
   fetchDeviceViewDevices: () => void;
+  projectDescription: string;
+  setProjectDescription: (arg0: string) => void;
 }
 
 const ProjectContext = createContext<ProjectContextProps | undefined>(
@@ -61,6 +61,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const [projectName, setprojectName] = useState<string>("");
   const [projectId, setProjectId] = useState<string>("");
+  const [projectDescription, setProjectDescription] = useState<string>("");
   const [ownerEmail, setOwnerEmail] = useState<string>("");
   const [ownerName, setOwnerName] = useState<string>("");
   const [isOwner] = useState<boolean>(false);
@@ -74,7 +75,6 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   const [selectedDevices, setSelectedDevices] = useState<string[]>([]);
   const [showBackDrop, setShowBackDrop] = useState(false);
   const [isAccountLinked] = useState<boolean>(false);
-  const [description, setDescription] = useState<string>("");
   const [projectDevices, setProjectDevices] = useState<OverviewDevice[]>([]);
   const [devices, setDevices] = useState<DeviceData[]>(
     localStorage.getItem("devices")
@@ -87,7 +87,6 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       ? JSON.parse(localStorage.getItem("devices")!)
       : []
   );
-  const testDescription = "No description provided";
 
   /*
   const testDevices = [
@@ -217,8 +216,8 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       setOwnerEmail(project.ownerEmail);
       setOwnerId(project.ownerId);
       setOwnerName(project.ownerName);
-      setDescription(
-        project.description ? project.description : testDescription
+      setProjectDescription(
+        project.projectDescription ? project.projectDescription : ""
       );
 
       console.log(response);
@@ -428,8 +427,8 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         isOwner,
         isAccountLinked,
         fetchProject,
-        description,
-        setDescription,
+        projectDescription,
+        setProjectDescription,
         projectDevices,
         fetchDeviceViewDevices,
       }}

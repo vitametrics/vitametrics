@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import useCustomInView from "../../hooks/useCustomInView";
 import { useProject } from "../../helpers/ProjectContext";
 import ChangeNameField from "../Dashboard/DashboardSettings/ChangeNameField";
+import ChangeDescriptionField from "../Dashboard/DashboardSettings/ChangeDescription";
+import ChangeOwnerEmailField from "../Dashboard/DashboardSettings/ChangeEmailField";
 
 const DashboardSettings = () => {
   const { ref, inView } = useCustomInView();
@@ -24,6 +26,15 @@ const DashboardSettings = () => {
           <h2 className="text-2xl font-bold">Change Project Name</h2>
           <ChangeNameField />
         </span>
+        <span className="mb-10">
+          <h2 className="text-2xl font-bold">Change Project Description</h2>
+          <ChangeDescriptionField />
+        </span>
+        <span className="mb-10">
+          <h2 className="text-2xl font-bold">Change Owner Email</h2>
+          <ChangeOwnerEmailField />
+        </span>
+
         <span className="mb-10">
           <h2 className="text-2xl font-bold">Delete Project</h2>
           <p className="text-secondary text-md">

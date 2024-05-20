@@ -6,7 +6,7 @@ import OverviewMembers from "../Dashboard/Overview/OverviewMembers";
 import OverviewDevices from "../Dashboard/Overview/OverviewDevices";
 
 const Overview = () => {
-  const { projectName, description } = useProject();
+  const { projectName, projectDescription } = useProject();
   const { inView, ref } = useCustomInView();
 
   return (
@@ -21,7 +21,7 @@ const Overview = () => {
         {projectName} Overview
       </h2>
       <div className="p-5 w-full flex-col">
-        <h2 className="text-2xl text-primary mb-5">{description}</h2>
+        <h2 className="text-2xl text-primary mb-5">{projectDescription}</h2>
         <OverviewMembers />
         <OverviewDevices />
       </div>
