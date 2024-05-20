@@ -16,6 +16,7 @@ const Demo = lazy(() => import("./pages/Demo"));
 const SetPassword = lazy(() => import("./pages/SetPassword"));
 const PageNotFound = lazy(() => import("./pages/PageNotFound"));
 const Settings = lazy(() => import("./pages/Settings"));
+const Admin = lazy(() => import("./pages/Admin"));
 import { useAuth } from "./helpers/AuthContext";
 import { ProjectProvider } from "./helpers/ProjectContext";
 const LoadingFallback = () => <div>Loading...</div>;
@@ -34,6 +35,14 @@ function App() {
       return null; // Or a minimal placeholder that doesn't change layout dramatically
     }
     return isAuthenticated ? children : <Navigate to={redirectTo} />;
+  };
+
+  const AdminRoute: React.FC<AuthRouteProps> = ({ children, redirectTo }) => {
+    const { isAuthenticated, isLoadingAuth, isOwner } = useAuth();
+    if (isLoadingAuth) {
+      return null;
+    }
+    return isAuthenticated && isOwner ? children : <Navigate to={redirectTo} />;
   };
 
   const UnauthenticatedRoute: React.FC<AuthRouteProps> = ({
@@ -73,6 +82,16 @@ function App() {
                     </ProjectProvider>
                   </Suspense>
                 </AuthenticatedRoute>
+              }
+            />
+            <Route
+              path="admin"
+              element={
+                <AdminRoute redirectTo="/login">
+                  <Suspense fallback={<LoadingFallback />}>
+                    <Admin />
+                  </Suspense>
+                </AdminRoute>
               }
             />
             <Route
