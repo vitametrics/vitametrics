@@ -276,15 +276,18 @@ const Members = () => {
   const handleInvite = async () => {
     if (!validInput()) return;
     try {
-      const response = await axios.post(ADD_MEMBER_ENDPOINT, {
-        params: {
+      const response = await axios.post(
+        ADD_MEMBER_ENDPOINT,
+        {
           email: debouncedEmail,
           name: debouncedName,
           role: role,
           projectId: searchParams.get("id"),
         },
-        withCredentials: true,
-      });
+        {
+          withCredentials: true,
+        }
+      );
 
       //console.log(response.data);
       setSearchParams((prev) => {
