@@ -214,6 +214,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       setOwnerEmail(project.ownerEmail);
       setOwnerId(project.ownerId);
       setOwnerName(project.ownerName);
+      setIsAccountLinked(project.isAccountLinked);
 
       setProjectDescription(
         project.projectDescription ? project.projectDescription : ""
