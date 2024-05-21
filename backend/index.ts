@@ -40,8 +40,8 @@ connectDB();
 
 app.get('/version', async (req: Request, res: Response) => {
 
-  const backendPackagePath = path.join(__dirname, '../..', 'package.json');
-  const frontendPackagePath = path.join(__dirname, '../..', 'frontend', 'package.json');
+  const backendPackagePath = path.join(__dirname, 'package.json');
+  const frontendPackagePath = path.join(__dirname, '..', 'frontend', 'package.json');
 
   const backendPackageJson = JSON.parse(fs.readFileSync(backendPackagePath, 'utf8'));
   const frontendPackageJson = JSON.parse(fs.readFileSync(frontendPackagePath, 'utf8'));
