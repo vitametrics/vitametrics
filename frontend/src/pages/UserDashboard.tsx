@@ -82,6 +82,7 @@ const UserDashboard = () => {
       toggleCreateProjectMenu(false);
       setProjectName("");
       setProjects([...projects, project]);
+      handleProjectClick(project.projectId);
     } catch (error) {
       console.error(error);
     }
