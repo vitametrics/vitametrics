@@ -74,7 +74,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   const [detailLevel, setDetailLevel] = useState<string>("1min");
   const [selectedDevices, setSelectedDevices] = useState<string[]>([]);
   const [showBackDrop, setShowBackDrop] = useState(false);
-  const [isAccountLinked] = useState<boolean>(false);
+  const [isAccountLinked, setIsAccountLinked] = useState<boolean>(false);
   const [projectDevices, setProjectDevices] = useState<OverviewDevice[]>([]);
   const [devices, setDevices] = useState<DeviceData[]>(
     localStorage.getItem("devices")
@@ -208,14 +208,13 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
 
       const project = response.data.project;
 
-      console.log(project.members);
       setMembers(project.members);
       setProjectDevices(project.devices);
-      console.log("from ProjectContext: " + project.devices);
       setProjectName(project.projectName);
       setOwnerEmail(project.ownerEmail);
       setOwnerId(project.ownerId);
       setOwnerName(project.ownerName);
+
       setProjectDescription(
         project.projectDescription ? project.projectDescription : ""
       );

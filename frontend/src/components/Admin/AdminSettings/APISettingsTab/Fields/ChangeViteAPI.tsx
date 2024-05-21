@@ -1,7 +1,5 @@
-import useDebounce from "../../../../../helpers/useDebounce";
-import { useState } from "react";
-
 const ChangeViteAPI = () => {
+  /*
   const [newViteAPI, setNewViteAPI] = useState("https://");
   const debouncedChangeBaseUrl = useDebounce(newViteAPI, 1000);
   const [error, setError] = useState(false);
@@ -22,16 +20,17 @@ const ChangeViteAPI = () => {
       console.error("Invalid URL. Please ensure it starts with https://");
     }
   };
+  */
 
   return (
     <div className="p-5 flex flex-col">
       <span className="bg-primary text-white font-bold text-xl mb-3 ">
-        Change the current VITE API URL of the instance
+        Current VITE API URL of the instance
       </span>
       <span className="bg-primary text-[#f5f5f5] pb-0 text-sm  mb-3">
         Current VITE API URL: {process.env.API_URL}
       </span>
-
+      {/*
       <span className="bg-primary text-secondary pb-0 text-md font-bold">
         Enter New VITE API URL
       </span>
@@ -55,7 +54,7 @@ const ChangeViteAPI = () => {
         onClick={handleChangeBaseUrl}
       >
         Change VITE API URL
-      </button>
+    </button>*/}
     </div>
   );
 };

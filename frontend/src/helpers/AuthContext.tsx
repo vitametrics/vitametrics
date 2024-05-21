@@ -16,6 +16,9 @@ interface AuthContextProps {
   setProjects: (auth0: any[]) => void;
   frontendVersion: string;
   backendVersion: string;
+  latestVersion: string;
+  isBackendUpToDate: boolean;
+  isFrontendUpToDate: boolean;
   fetchVersion: () => void;
 }
 
@@ -43,6 +46,9 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [projects, setProjects] = useState<Project[]>([]);
   const [frontendVersion, setFrontendVersion] = useState<string>("");
   const [backendVersion, setBackendVersion] = useState<string>("");
+  const [latestVersion, setLatestVersion] = useState<string>("");
+  const [isBackendUpToDate, setIsBackendUpToDate] = useState<boolean>(false);
+  const [isFrontendUpToDate, setIsFrontendUpToDate] = useState<boolean>(false);
 
   const login = async () => {
     if (!isAuthenticated) {
@@ -108,9 +114,11 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const response = await axios.get(FETCH_VERSION_ENDPOINT, {
         withCredentials: true,
       });
-      console.log(response.data);
       setFrontendVersion(response.data.frontendVersion);
       setBackendVersion(response.data.backendVersion);
+      setIsBackendUpToDate(response.data.isBackendUpToDate);
+      setIsFrontendUpToDate(response.data.isFrontendUpToDate);
+      setLatestVersion(response.data.latestVersion);
     } catch (error) {
       console.error("Error fetching version:", error);
     }
@@ -132,6 +140,9 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setProjects,
         frontendVersion,
         backendVersion,
+        latestVersion,
+        isBackendUpToDate,
+        isFrontendUpToDate,
         fetchVersion,
       }}
     >

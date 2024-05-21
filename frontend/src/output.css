@@ -904,6 +904,10 @@ video {
   max-width: 1280px;
 }
 
+.max-w-\[200px\] {
+  max-width: 200px;
+}
+
 .transform {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
@@ -972,10 +976,6 @@ video {
   justify-content: space-evenly;
 }
 
-.gap-1 {
-  gap: 0.25rem;
-}
-
 .gap-10 {
   gap: 2.5rem;
 }
@@ -990,10 +990,6 @@ video {
 
 .gap-5 {
   gap: 1.25rem;
-}
-
-.gap-\[100px\] {
-  gap: 100px;
 }
 
 .space-x-3 > :not([hidden]) ~ :not([hidden]) {
@@ -1620,6 +1616,11 @@ html {
   border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
+.custom-grid {
+  display: grid;
+  grid-template-columns: 0.5fr 3fr 3fr 3fr 3fr;
+}
+
 .bg-glass {
   background-color: rgba(255, 255, 255, 0.01);
   border: 1px solid rgba(0, 0, 0, 0.2);
@@ -1997,6 +1998,11 @@ nav.animated-parent {
 .hover\:bg-secondary2:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(107 111 142 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-secondary:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(125 139 174 / var(--tw-bg-opacity));
 }
 
 .hover\:text-gray-300:hover {

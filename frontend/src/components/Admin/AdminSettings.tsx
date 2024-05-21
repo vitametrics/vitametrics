@@ -3,7 +3,7 @@ import useCustomInView from "../../hooks/useCustomInView";
 import { motion } from "framer-motion";
 import { useSearchParams } from "react-router-dom";
 import GeneralSettings from "./AdminSettings/GeneralSettings/GeneralSettings";
-import MailSettings from "./AdminSettings/MailSettings";
+import MailSettings from "./AdminSettings/MailSettings/MailSettings";
 import APISettings from "./AdminSettings/APISettingsTab/APISettings";
 
 const AdminSettings = () => {

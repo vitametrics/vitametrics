@@ -1,7 +1,5 @@
-import useDebounce from "../../../../../helpers/useDebounce";
-import { useState } from "react";
-
 const ChangeClientID = () => {
+  /*
   const [newClientId, setNewClientId] = useState("");
   const debouncedClientId = useDebounce(newClientId, 1000);
   const [error, setError] = useState(false);
@@ -16,17 +14,17 @@ const ChangeClientID = () => {
       setMessage("Invalid URL. Please ensure it starts with https://");
       console.error("Invalid URL. Please ensure it starts with https://");
     }
-  };
+  };*/
 
   return (
     <div className="p-5 flex flex-col">
       <span className="bg-primary text-white font-bold text-xl mb-3 ">
-        Change the current FitBit Client ID of the instance
+        Current FitBit Client ID of the instance
       </span>
       <span className="bg-primary text-[#f5f5f5] pb-0 text-sm  mb-3">
         Current FitBit Client ID: {process.env.FITBIT_CLIENT_ID}
       </span>
-
+      {/*
       <span className="bg-primary text-secondary pb-0 text-md font-bold">
         Enter New FitBit Client ID
       </span>
@@ -50,7 +48,7 @@ const ChangeClientID = () => {
         onClick={handleChangeBaseUrl}
       >
         Change Client ID
-      </button>
+    </button>*/}
     </div>
   );
 };

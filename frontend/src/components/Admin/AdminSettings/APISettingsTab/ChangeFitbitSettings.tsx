@@ -4,7 +4,7 @@ const ChangeFitbitSettings = () => {
   return (
     <span className="flex flex-col bg-primary">
       <span className="bg-primary2 text-white font-bold text-xl px-5 py-3">
-        Change FitBit Settings
+        FitBit Environment Variable Configurations
       </span>
       <ChangeClientID />
       <ChangeClientSecret />
