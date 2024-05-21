@@ -11,14 +11,26 @@ export async function getProjectInfo(req: Request, res: Response) {
   try {
     logger.info(`Fetching project info with projectId: ${req.query.projectId}`);
 
+    let isAccountLinked = false;
+
     const project = await Project.findOne({
       projectId: req.query.projectId as string,
     })
       .select(
-        '-fitbitUserId -fitbitAccessToken -fitbitRefreshToken -lastTokenRefresh'
+        '-fitbitAccessToken -fitbitRefreshToken -lastTokenRefresh'
       )
       .populate('members', 'userId email name role emailVerified')
       .populate('devices', 'deviceId deviceName deviceVersion');
+
+    if (!project) {
+      logger.error(`Project: ${req.query.projectId} not found`);
+      res.status(404).json({ msg: 'Project not found'});
+      return;
+    }
+
+    if (project.fitbitUserId) {
+      isAccountLinked = true;
+    }
 
     if (!project) {
       logger.error(`Project: ${req.query.projectId} not found`);
@@ -27,7 +39,20 @@ export async function getProjectInfo(req: Request, res: Response) {
     }
     logger.info(`Project info fetched successfully: ${project.projectId}`);
     res.cookie('projectId', project.projectId);
-    res.json({ project, members: project.members });
+    res.json({ 
+      project: {
+        _id: project._id,
+        projectId: project.projectId,
+        projectName: project.projectName,
+        projectDescription: project.projectDescription,
+        ownerId: project.ownerId,
+        ownerName: project.ownerName,
+        ownerEmail: project.ownerEmail,
+        members: project.members,
+        devices: project.devices,
+      },
+      isAccountLinked
+     });
     return;
   } catch (error) {
     logger.error(`Error fetching project info: ${error}`);
