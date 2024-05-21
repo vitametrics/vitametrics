@@ -1,8 +1,8 @@
 // projectService.ts
 import axios from "axios";
 
-const CREATE_PROJECT_ENDPOINT = `${import.meta.env.VITE_API_URL}/admin/create-project`;
-const DELETE_PROJECT_ENDPOINT = `${import.meta.env.VITE_API_URL}/admin/delete-project`;
+const CREATE_PROJECT_ENDPOINT = `${process.env.API_URL}/admin/create-project`;
+const DELETE_PROJECT_ENDPOINT = `${process.env.API_URL}/admin/delete-project`;
 
 export const createProjectService = async (projectName: string, projectDescription: string) => {
   try {

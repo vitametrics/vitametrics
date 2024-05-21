@@ -11,7 +11,7 @@ export const DashboardNavbar = () => {
     <nav className="bg-primary2 px-5">
       <div className="flex flex-row w-full bg-primary2 top-0 flex-wrap items-center justify-between mx-auto py-3">
         <a
-          href="/"
+          href="/dashboard"
           className="flex items-center space-x-3 rtl:space-x-reverse mr-auto"
         >
           <img src={logo} className="h-[35px]" alt="vitametrics Logo" />

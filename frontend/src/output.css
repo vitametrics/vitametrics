@@ -800,6 +800,10 @@ video {
   height: 500px;
 }
 
+.h-\[5px\] {
+  height: 5px;
+}
+
 .h-\[700px\] {
   height: 700px;
 }
@@ -850,6 +854,10 @@ video {
 
 .w-\[175px\] {
   width: 175px;
+}
+
+.w-\[200px\] {
+  width: 200px;
 }
 
 .w-\[230px\] {
@@ -944,6 +952,10 @@ video {
   align-items: center;
 }
 
+.justify-start {
+  justify-content: flex-start;
+}
+
 .justify-center {
   justify-content: center;
 }
@@ -960,6 +972,10 @@ video {
   justify-content: space-evenly;
 }
 
+.gap-1 {
+  gap: 0.25rem;
+}
+
 .gap-10 {
   gap: 2.5rem;
 }
@@ -974,6 +990,10 @@ video {
 
 .gap-5 {
   gap: 1.25rem;
+}
+
+.gap-\[100px\] {
+  gap: 100px;
 }
 
 .space-x-3 > :not([hidden]) ~ :not([hidden]) {
@@ -1046,6 +1066,15 @@ video {
   border-width: 2px;
 }
 
+.border-x-0 {
+  border-left-width: 0px;
+  border-right-width: 0px;
+}
+
+.border-b-0 {
+  border-bottom-width: 0px;
+}
+
 .border-solid {
   border-style: solid;
 }
@@ -1077,6 +1106,11 @@ video {
 .border-gray-300 {
   --tw-border-opacity: 1;
   border-color: rgb(209 213 219 / var(--tw-border-opacity));
+}
+
+.border-t-\[\#F28D59\] {
+  --tw-border-opacity: 1;
+  border-top-color: rgb(242 141 89 / var(--tw-border-opacity));
 }
 
 .bg-\[\#00000080\] {
@@ -1168,6 +1202,11 @@ video {
   background-color: rgb(247 250 255 / var(--tw-bg-opacity));
 }
 
+.bg-logoColor {
+  --tw-bg-opacity: 1;
+  background-color: rgb(242 141 89 / var(--tw-bg-opacity));
+}
+
 .bg-primary {
   --tw-bg-opacity: 1;
   background-color: rgb(69 73 106 / var(--tw-bg-opacity));
@@ -1176,6 +1215,11 @@ video {
 .bg-primary2 {
   --tw-bg-opacity: 1;
   background-color: rgb(50 53 79 / var(--tw-bg-opacity));
+}
+
+.bg-primary3 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(43 46 71 / var(--tw-bg-opacity));
 }
 
 .bg-quaternary {
@@ -1450,9 +1494,18 @@ video {
   font-weight: 600;
 }
 
+.italic {
+  font-style: italic;
+}
+
 .text-\[\#b0b0b0\] {
   --tw-text-opacity: 1;
   color: rgb(176 176 176 / var(--tw-text-opacity));
+}
+
+.text-\[\#f5f5f5\] {
+  --tw-text-opacity: 1;
+  color: rgb(245 245 245 / var(--tw-text-opacity));
 }
 
 .text-\[\#ffdd00\] {
@@ -1483,6 +1536,11 @@ video {
 .text-green-500 {
   --tw-text-opacity: 1;
   color: rgb(34 197 94 / var(--tw-text-opacity));
+}
+
+.text-lightPrimary {
+  --tw-text-opacity: 1;
+  color: rgb(235 235 235 / var(--tw-text-opacity));
 }
 
 .text-primary {
@@ -1516,10 +1574,6 @@ video {
 
 .accent-\[\#606060\] {
   accent-color: #606060;
-}
-
-.accent-\[\#\] {
-  accent-color: #;
 }
 
 .accent-\[\#7d8bae\] {

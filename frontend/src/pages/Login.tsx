@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   console.log(import.meta.env);
-  const LOGIN_ENDPOINT = `${import.meta.env.VITE_API_URL}/login`;
+  const LOGIN_ENDPOINT = `${process.env.API_URL}/login`;
 
   const navigate = useNavigate();
   const [email, setEmail] = useState("");

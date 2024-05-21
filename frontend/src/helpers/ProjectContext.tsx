@@ -55,9 +55,9 @@ const ProjectContext = createContext<ProjectContextProps | undefined>(
 const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const GET_PROJECT_ENDPOINT = `${import.meta.env.VITE_API_URL}/project/info`;
-  const FETCH_DEVICE_DATA_ENDPOINT = `${import.meta.env.VITE_API_URL}/project/fetch-data`;
-  const FETCH_PROJECT_DEVICES_ENDPOINT = `${import.meta.env.VITE_API_URL}/project/fetch-devices`;
+  const GET_PROJECT_ENDPOINT = `${process.env.API_URL}/project/info`;
+  const FETCH_DEVICE_DATA_ENDPOINT = `${process.env.API_URL}/project/fetch-data`;
+  const FETCH_PROJECT_DEVICES_ENDPOINT = `${process.env.API_URL}/project/fetch-devices`;
 
   const [projectName, setProjectName] = useState<string>("");
   const [projectId, setProjectId] = useState<string>("");
