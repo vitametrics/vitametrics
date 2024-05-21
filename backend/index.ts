@@ -40,6 +40,7 @@ connectDB();
 
 app.get('/version', async (req: Request, res: Response) => {
 
+
   console.log(__dirname);
   const backendPackagePath = path.join(__dirname, 'package.json');
   const frontendPackagePath = path.join(__dirname, '..', 'frontend', 'package.json');
