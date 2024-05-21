@@ -55,20 +55,18 @@ async function fetchIntradayData(
   const url = `${baseUrl}/${dataType}/date/${date}/1d/${detailLevel}.json`;
 
   try {
-    const response = await axios.get<{
-      'activities-${dataType}-intraday': { dataset: IntradayEntry[] };
-    }>(url, {
+    const response = await axios.get(url, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
 
-    return response.data['activities-${dataType}-intraday'].dataset.map(
-      (entry) => ({
-        timestamp: DateTime.fromISO(`${date}T${entry.time}`).toFormat(
-          'yyyy-MM-dd HH:mm:ss'
-        ),
-        value: entry.value,
-      })
-    );
+    const processedData = response.data[`activities-${dataType}-intraday`].dataset.map((entry: {time: string; value: number;}) => {
+      return {
+        timestamp: DateTime.fromISO(`${date}T${entry.time}`).toFormat('yyyy-MM-dd HH:mm:ss'),
+        value: entry.value
+      }
+    });
+
+    return processedData;
   } catch (error) {
     logger.error(`[fetchIntraday] Error fetching data from Fitbit: ${error}`);
     throw error;
