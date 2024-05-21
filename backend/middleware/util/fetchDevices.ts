@@ -8,12 +8,14 @@ interface FitbitDeviceInfo {
   id: string;
   deviceVersion: string;
   batteryLevel: string;
+  lastSyncTime: Date;
 }
 interface DeviceInfo {
   deviceId: string;
   deviceName: string;
   deviceVersion: string;
   batteryLevel: string;
+  lastSyncTime: string;
 }
 
 async function fetchDevices(
@@ -50,7 +52,8 @@ async function fetchDevices(
         deviceId: device.id,
         deviceVersion: device.deviceVersion,
         batteryLevel: device.batteryLevel,
-        deviceName: device.deviceVersion, // default to deviceVersion
+        deviceName: device.deviceVersion,
+        lastSyncTime: device.lastSyncTime
       });
 
       const savedDevice = await newDevice.save();
@@ -65,7 +68,10 @@ async function fetchDevices(
     for (const device of existingDevices) {
       await Device.findOneAndUpdate(
         { deviceId: device.id },
-        { batteryLevel: device.batteryLevel }
+        { 
+          batteryLevel: device.batteryLevel,
+          lastSyncTime: device.lastSyncTime
+        }
       );
     }
 
@@ -78,6 +84,7 @@ async function fetchDevices(
       deviceName: device.deviceName,
       deviceVersion: device.deviceVersion,
       batteryLevel: device.batteryLevel,
+      lastSyncTime: device.lastSyncTime
     }));
 
     logger.info(`[fetchDevices] Fetched devices for project: ${projectId}`);

@@ -5,6 +5,7 @@ export interface IDevice extends Document {
   deviceVersion: string;
   batteryLevel: string;
   deviceId: string;
+  lastSyncTime: string;
 }
 
 const deviceSchema = new mongoose.Schema({
@@ -12,6 +13,7 @@ const deviceSchema = new mongoose.Schema({
   deviceVersion: { type: String, default: '' },
   batteryLevel: { type: String, default: '0%' },
   deviceId: { type: String, default: '' },
+  lastSyncTime: { type: String }
 });
 
 const deviceModel = mongoose.model<IDevice>('Devices', deviceSchema);
