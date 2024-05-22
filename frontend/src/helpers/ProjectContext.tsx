@@ -3,7 +3,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { DeviceData, Device } from "../types/Device";
-import { useAuth } from "./AuthContext";
 
 interface ProjectContextProps {
   projectName: string;
