@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useCallback } from "react";
-//import axios from "axios";
+import { useCallback, useState } from "react";
+import axios from "axios";
 import { motion } from "framer-motion";
 import { useProject } from "../../helpers/ProjectContext";
 import { fadeInItemVariants } from "../../hooks/animationVariant";
@@ -11,21 +11,20 @@ import useSearch from "../../hooks/useDeviceSearch";
 import PaginationControls from "../Dashboard/PaginationControls";
 import Pagination from "../../components/Pagination";
 
-//const NAME_CHANGE_ENDPOINT = `${process.env.API_URL}/device/change-owner-name`;
+const NAME_CHANGE_ENDPOINT = `${process.env.API_URL}/device/change-device-name`;
 
 const Devices = () => {
   const {
     //setDevices,
     projectDevices,
-    //setProjectDevices,
+    setProjectDevices,
     projectName,
     fetchProjectDevices,
   } = useProject();
 
-  /*
   const [editingDevices, setEditingDevices] = useState<Record<string, string>>(
     {}
-  );*/
+  );
 
   const itemsPerPageOptions = [5, 10, 15, 20];
   const {
@@ -53,7 +52,6 @@ const Devices = () => {
   console.log(projectDevices);
   const { ref, inView } = useCustomInView();
 
-  /*
   const handleOwnerNameChange = useCallback(
     async (deviceId: string) => {
       try {
@@ -63,7 +61,6 @@ const Devices = () => {
           { deviceId, ownerName },
           { withCredentials: true }
         );
-        setDevices(response.data);
         setProjectDevices(response.data);
         setEditingDevices((prev) => {
           const { [deviceId]: removed, ...rest } = prev;
@@ -73,8 +70,8 @@ const Devices = () => {
         console.error("Error changing owner name:", error);
       }
     },
-    [editingDevisces]
-  );*/
+    [editingDevices]
+  );
 
   const handleFetchDevices = useCallback(() => {
     fetchProjectDevices();
@@ -129,14 +126,12 @@ const Devices = () => {
         </section>
       ) : (
         <div className="flex flex-col gap-5 p-5">
-          <div className="flex p-5 w-full">
-            <button
-              onClick={handleFetchDevices}
-              className="p-2 text-xl flex flex-row gap-2 justify-center items-center rounded-xl w-[150px] bg-primary text-white shadow-lg font-bold"
-            >
-              Fetch
-            </button>
-          </div>
+          <button
+            onClick={handleFetchDevices}
+            className="p-2 text-xl flex flex-row gap-2 justify-center items-center rounded-xl w-[150px] bg-primary text-white shadow-lg font-bold"
+          >
+            Fetch
+          </button>
           <h2 className="text-2xl font-bold text-primary">No Devices Found.</h2>
         </div>
       )}
