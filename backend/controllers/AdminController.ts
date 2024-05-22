@@ -64,6 +64,8 @@ class AdminController {
           subject: 'Your new project',
           text: `You have created a new project: ${projectName}. Access it here: ${process.env.BASE_URL}/dashboard/project?id=${newProjectId}`,
         });
+        res.status(200).json({ msg: 'Project created successfully' });
+        return;
       } else {
         const projectResponse = {
           projectId: savedProject.projectId,
@@ -89,23 +91,28 @@ class AdminController {
   static async deleteProject(req: Request, res: Response) {
     const currentUser = req.user as IUser;
     const projectId = req.body.projectId;
-    const userId = currentUser.userId;
 
     try {
       logger.info(
         `User: ${currentUser.email} attempting to delete project: ${projectId}`
       );
 
-      const user = await User.findOne({ userId });
-      if (!user) {
-        res.status(404).json({ msg: 'User not found' });
-        return;
-      }
-
       const project = await Project.findOne({ projectId });
       if (!project) {
         logger.error(`Project: ${projectId} not found`);
         res.status(404).json({ msg: 'Project not found' });
+        return;
+      }
+
+      if (
+        currentUser.role !== 'siteAdmin' &&
+        currentUser.role !== 'siteOwner' &&
+        project.ownerId !== currentUser.userId
+      ) {
+        logger.error(
+          `User: ${currentUser.email} does not have permission to delete project: ${projectId}`
+        );
+        res.status(403).json({ msg: 'You do not have permission to delete this project' });
         return;
       }
 
@@ -116,11 +123,12 @@ class AdminController {
         await Device.deleteMany({ deviceId: { $in: deviceIds } });
       }
 
-      if (members && members.length > 1) {
+      if (members && members.length > 0) {
         for (const member of members) {
-          if (member._id != user._id) {
-            await User.deleteOne({ _id: member });
-          }
+          await User.updateOne(
+            { _id: member._id },
+            { $pull : { projects: project._id } }
+          );
         }
       }
 
