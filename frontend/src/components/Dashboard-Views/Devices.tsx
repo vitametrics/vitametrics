@@ -51,6 +51,7 @@ const Devices = () => {
   console.log(projectDevices);
   const { ref, inView } = useCustomInView();
 
+  /*
   const handleOwnerNameChange = useCallback(
     async (deviceId: string) => {
       try {
@@ -70,8 +71,8 @@ const Devices = () => {
         console.error("Error changing owner name:", error);
       }
     },
-    [editingDevices]
-  );
+    [editingDevisces]
+  );*/
 
   const handleFetchDevices = useCallback(() => {
     fetchProjectDevices();

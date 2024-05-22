@@ -17,8 +17,8 @@ const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const debouncedEmail = useDebounce(email, 500);
-  const debouncedPassword = useDebounce(password, 500);
+  const debouncedEmail = useDebounce(email, 100);
+  const debouncedPassword = useDebounce(password, 100);
   const [msg, setMsg] = useState("");
   const { login } = useAuth();
 

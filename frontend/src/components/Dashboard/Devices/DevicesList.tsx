@@ -29,9 +29,9 @@ const DevicesList: React.FC<DeviceListProps> = ({ devices }) => {
             <span className="text-primary ml-2">{device.deviceVersion}</span>
             <span className="text-primary ml-2">{device.lastSyncTime}</span>
             <span className="text-primary text-center flex flex-row items-center justify-center gap-2">
-              {device.batteryLevel >= 70 ? (
+              {device.batteryLevel >= "70" ? (
                 <FullBatteryLevel />
-              ) : device.batteryLevel >= 30 ? (
+              ) : device.batteryLevel >= "30" ? (
                 <MediumBatteryLevel />
               ) : (
                 <LowBatteryLevel />
