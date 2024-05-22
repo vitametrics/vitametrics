@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useState, useCallback } from "react";
-import axios from "axios";
+import { useCallback } from "react";
+//import axios from "axios";
 import { motion } from "framer-motion";
 import { useProject } from "../../helpers/ProjectContext";
 import { fadeInItemVariants } from "../../hooks/animationVariant";
@@ -11,19 +11,21 @@ import useSearch from "../../hooks/useDeviceSearch";
 import PaginationControls from "../../components/Dashboard/Overview/PaginationControls";
 import Pagination from "../../components/Pagination";
 
-const NAME_CHANGE_ENDPOINT = `${process.env.API_URL}/device/change-owner-name`;
+//const NAME_CHANGE_ENDPOINT = `${process.env.API_URL}/device/change-owner-name`;
 
 const Devices = () => {
   const {
-    setDevices,
+    //setDevices,
     projectDevices,
-    setProjectDevices,
+    //setProjectDevices,
     projectName,
     fetchProjectDevices,
   } = useProject();
+
+  /*
   const [editingDevices, setEditingDevices] = useState<Record<string, string>>(
     {}
-  );
+  );*/
 
   const itemsPerPageOptions = [5, 10, 15, 20];
   const {
