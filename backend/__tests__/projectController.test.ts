@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
+
 import mongoose from 'mongoose';
+
 import {
   getProjectInfo,
   removeMember,
@@ -42,7 +44,7 @@ describe('ProjectController', () => {
       setHeader: jest.fn(),
       set: jest.fn(),
       send: jest.fn(),
-      cookie: jest.fn()
+      cookie: jest.fn(),
     };
     jest.clearAllMocks();
   });

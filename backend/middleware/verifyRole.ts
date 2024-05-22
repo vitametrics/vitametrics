@@ -1,27 +1,67 @@
 import { Request, Response, NextFunction } from 'express';
 
+import { Types } from 'mongoose';
+
 import logger from './logger';
+import Project, { IProject } from '../models/Project';
 import { IUser } from '../models/User';
 
 const verifyRole = (role: string) => {
   return async (req: Request, res: Response, next: NextFunction) => {
-    const user = req.user as IUser;
-    if (!user) {
-      logger.error('[verifyRole] User not logged in');
-      res.status(401).json({ msg: 'Unauthorized - User not logged in' });
-      return;
-    }
+    try {
+      const currentUser = req.user as IUser;
+      const projectId =
+        (req.query.projectId as string) || (req.body.projectId as string);
 
-    if (user.role !== role && user.role !== 'owner') {
-      logger.error(
-        '[verifyRole] Access denied - User does not have the required role'
-      );
-      res
-        .status(403)
-        .json({ msg: 'Access denied - User does not have the required role' });
+      if (!currentUser) {
+        logger.error('[verifyRole] User not logged in');
+        return res
+          .status(401)
+          .json({ msg: 'Unauthorized - User not logged in' });
+      }
+
+      if (
+        (!projectId && currentUser.role === 'siteAdmin') ||
+        currentUser.role === 'siteOwner'
+      ) {
+        return next();
+      } else if (projectId) {
+        const currentProject = (await Project.findOne({
+          projectId,
+        })) as IProject;
+
+        if (!currentProject) {
+          logger.error('[verifyRole] Project not found');
+          return res.status(404).json({ msg: 'Project not found' });
+        }
+
+        if (currentProject.ownerId === currentUser.userId) {
+          return next();
+        }
+
+        const isAdmin =
+          currentUser.role === 'siteAdmin' ||
+          currentProject.admins.includes(currentUser._id as Types.ObjectId);
+        const isMember = currentUser.projects.some((projId) =>
+          projId.equals(currentProject._id as string)
+        );
+
+        if (isAdmin && role === 'user' && isMember) {
+          return next();
+        }
+      } else {
+        logger.error(
+          `[verifyRole] Access denied - User does not have the required role`
+        );
+        return res.status(403).json({
+          msg: 'Access denied - User does not have the required role',
+        });
+      }
+    } catch (error) {
+      logger.error(`[verifyRole] Error verifying role: ${error}`);
+      res.status(500).json({ msg: 'Internal Server Error' });
       return;
     }
-    next();
   };
 };
 

@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { query } from 'express-validator';
+import { query, body } from 'express-validator';
 
 import {
   getProjectInfo,
@@ -8,11 +8,14 @@ import {
   fetchDataHandler,
   fetchIntradayDataHandler,
   downloadDataHandler,
+  changeDeviceName,
+  changeMemberName,
 } from '../controllers/ProjectController';
 import { asyncHandler } from '../handlers/asyncHandler';
 import { validationHandler } from '../handlers/validationHandler';
 import checkProjectMembership from '../middleware/checkProjectMembership';
 import refreshFitbitToken from '../middleware/refreshFitbitToken';
+import verifyRole from '../middleware/verifyRole';
 import verifySession from '../middleware/verifySession';
 
 const router = express.Router();
@@ -25,6 +28,30 @@ router.get(
   ]),
   checkProjectMembership,
   asyncHandler(getProjectInfo)
+);
+
+router.post(
+  '/change-device-name',
+  verifySession,
+  validationHandler([
+    body('deviceId').not().isEmpty().withMessage('Device ID is required'),
+    body('deviceName').not().isEmpty().withMessage('Device name is required'),
+  ]),
+  checkProjectMembership,
+  verifyRole('admin'),
+  asyncHandler(changeDeviceName)
+);
+
+router.post(
+  '/change-member-name',
+  verifySession,
+  validationHandler([
+    body('userId').not().isEmpty().withMessage('User ID is required'),
+    body('name').not().isEmpty().withMessage('Name is required'),
+  ]),
+  checkProjectMembership,
+  verifyRole('admin'),
+  asyncHandler(changeMemberName)
 );
 
 router.post(

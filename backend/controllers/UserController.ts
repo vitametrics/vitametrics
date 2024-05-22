@@ -23,9 +23,17 @@ class UserController {
           return;
         }
 
-        const projects = await Project.find({
-          members: { $in: [user._id] },
-        }).lean();
+        let projects;
+        if (
+          currentUser.role === 'siteOwner' ||
+          currentUser.role === 'siteAdmin'
+        ) {
+          projects = await Project.find({}).lean();
+        } else {
+          projects = await Project.find({
+            members: { $in: [user._id] },
+          }).lean();
+        }
 
         const userProjects = projects.map((project) => ({
           projectId: project.projectId,
@@ -93,7 +101,10 @@ class UserController {
         return;
       }
 
-      if ((!project && user.role === 'admin') || user.role === 'owner') {
+      if (
+        (!project && user.role === 'siteAdmin') ||
+        user.role === 'siteOwner'
+      ) {
         user.password = await argon2.hash(password);
         user.emailVerified = true;
         user.setPasswordToken = null;
@@ -119,6 +130,7 @@ class UserController {
       await user.save();
 
       project.members.push(user._id as Types.ObjectId);
+
       await project.save();
 
       logger.info(`Password set successfully for user: ${user.email}`);

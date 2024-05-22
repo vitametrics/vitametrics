@@ -18,7 +18,7 @@ async function initializeDatabase() {
       const newUser = new User({
         userId: newUserId,
         email: process.env.ADMIN_EMAIL,
-        role: 'owner',
+        role: 'siteOwner',
         name: 'Owner',
         emailVerfToken: crypto.randomBytes(32).toString('hex'),
         emailVerified: false,

@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 
 import sgMail from '@sendgrid/mail';
+import axios from 'axios';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import helmet from 'helmet';
@@ -12,7 +13,6 @@ import { connectDB } from './middleware/config';
 import logger from './middleware/logger';
 import passportConfig from './middleware/util/passport-config';
 import configureRoutes from './routes';
-import axios from 'axios';
 
 dotenv.config({ path: '../.env' });
 
@@ -39,19 +39,28 @@ configureRoutes(app, passport);
 connectDB();
 
 app.get('/version', async (req: Request, res: Response) => {
-
   const backendPackagePath = path.join(__dirname, 'package.json');
-  const frontendPackagePath = path.join(__dirname, '..', 'frontend', 'package.json');
+  const frontendPackagePath = path.join(
+    __dirname,
+    '..',
+    'frontend',
+    'package.json'
+  );
 
-  const backendPackageJson = JSON.parse(fs.readFileSync(backendPackagePath, 'utf8'));
-  const frontendPackageJson = JSON.parse(fs.readFileSync(frontendPackagePath, 'utf8'));
+  const backendPackageJson = JSON.parse(
+    fs.readFileSync(backendPackagePath, 'utf8')
+  );
+  const frontendPackageJson = JSON.parse(
+    fs.readFileSync(frontendPackagePath, 'utf8')
+  );
 
   const backendVersion = backendPackageJson.version;
   const frontendVersion = frontendPackageJson.version;
 
   try {
-
-    const response = await axios.get('https://api.github.com/repos/vitametrics/vitametrics/releases/latest');
+    const response = await axios.get(
+      'https://api.github.com/repos/vitametrics/vitametrics/releases/latest'
+    );
     const latestRelease = response.data;
     const latestVersion = latestRelease.tag_name;
 
@@ -63,16 +72,18 @@ app.get('/version', async (req: Request, res: Response) => {
       frontendVersion,
       latestVersion,
       isBackendUpToDate,
-      isFrontendUpToDate
+      isFrontendUpToDate,
     });
   } catch (error) {
     logger.error(`Error fetching latest release: ${error}`);
     return res.status(500).json({ msg: 'Error fetching latest release' });
   }
-})
+});
 
 app.get('/health', (req: Request, res: Response) => {
-  return res.status(200).json({ status: 'success', message: 'Backend is healthy' });
+  return res
+    .status(200)
+    .json({ status: 'success', message: 'Backend is healthy' });
 });
 
 app.listen(7970, () => {
