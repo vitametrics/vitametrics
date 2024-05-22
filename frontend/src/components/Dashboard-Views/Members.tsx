@@ -149,15 +149,29 @@ const Members = () => {
           initial="hidden"
           animate={inView ? "show" : "hidden"}
           ref={ref}
-          className="absolute w-full h-full p-10 z-20 bg-[#e8e8e8] flex flex-col left-0 md:left-1/2 md:top-1/2 transform-center md:h-[35%] md:w-[500px] rounded-xl"
+          className="absolute w-full h-full p-10 z-20 bg-[#e8e8e8] flex flex-col left-0 md:left-1/2 md:top-1/2 transform-center md:h-[35%] md:w-[500px] rounded-xl text-primary"
         >
           <button
             onClick={() => handleClose()}
             className="item-3 ml-auto"
           ></button>
-          <h1 className="text-2xl text-center font-bold"> Member Info</h1>
-          <h1 className="text-2xl mb-3 text-center">{user.name}</h1>
-          <h1 className="text-xl mb-1">{user.email}</h1>
+          <h1 className="text-2xl text-center font-bold text-primary">
+            {" "}
+            Member Info
+          </h1>
+          <h1 className="text-xl mb-1 text-left">
+            <strong> Name: </strong> {user.name}
+          </h1>
+          <h1 className="text-xl mb-1">
+            {" "}
+            <strong> Email: </strong>
+            {user.email}
+          </h1>
+          <h1 className="text-xl mb-1">
+            {" "}
+            <strong> Role: </strong>
+            {user.role}
+          </h1>
           {isOwner && userId != user.userId ? (
             <button
               onClick={() => handleRemoveMember(user.userId)}
