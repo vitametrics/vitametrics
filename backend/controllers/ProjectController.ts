@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-import { Types } from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 
 import logger from '../middleware/logger';
 import fetchData from '../middleware/util/fetchData';
@@ -26,7 +26,8 @@ export async function getProjectInfo(req: Request, res: Response) {
       .select('-fitbitAccessToken -fitbitRefreshToken -lastTokenRefresh')
       .populate('members', 'userId email name role emailVerified')
       .populate('devices', 'deviceId deviceName deviceVersion')
-      .populate('admins', 'userId')) as IProject;
+      .populate('admins', 'userId'));
+
 
     if (!project) {
       logger.error(`Project: ${req.query.projectId} not found`);
@@ -38,20 +39,26 @@ export async function getProjectInfo(req: Request, res: Response) {
       isAccountLinked = true;
     }
 
-    if (project.ownerId === currentUser.userId) {
-      isOwner = true;
-    }
+    const membersWithRole = project.members.map((member) => {
+      const memberObj = member as unknown as IUser;
+      const isOwner = project.ownerId === memberObj.userId;
+      const isAdmin = project.admins.some((admin) => {
+        const adminObj = admin as IUser & { _id: Types.ObjectId };
+        return adminObj._id.equals(memberObj._id as Types.ObjectId);
+      });
+      return {
+        ...memberObj.toObject(),
+        isOwner,
+        isAdmin
+      }
+    });
 
-    if (
-      project.admins.some((admin) => {
-        if (typeof admin === 'object' && 'userId' in admin) {
-          return (admin as IUser).userId === currentUser.userId;
-        }
-        return false;
-      })
-    ) {
-      isAdmin = true;
-    }
+    isAdmin = project.admins.some((admin) => {
+      const adminObj = admin as IUser;
+      return adminObj.userId === currentUser.userId;
+    })
+
+    isOwner = project.ownerId === currentUser.userId;
 
     logger.info(`Project info fetched successfully: ${project.projectId}`);
     res.cookie('projectId', project.projectId);
@@ -64,7 +71,7 @@ export async function getProjectInfo(req: Request, res: Response) {
         ownerId: project.ownerId,
         ownerName: project.ownerName,
         ownerEmail: project.ownerEmail,
-        members: project.members,
+        members: membersWithRole,
         devices: project.devices,
         isAdmin,
         isOwner,
