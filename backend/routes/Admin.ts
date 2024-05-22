@@ -73,7 +73,7 @@ router.post(
   verifyRole('admin'),
   validationHandler([
     body('newOwnerEmail').isEmail().withMessage('Invalid email'),
-    ...projectIdValidation
+    ...projectIdValidation,
   ]),
   asyncHandler(AdminController.changeProjectOwnerEmail)
 );
@@ -84,8 +84,11 @@ router.post(
   checkProjectMembership,
   verifyRole('admin'),
   validationHandler([
-    body('newProjectName').not().isEmpty().withMessage('Project name is required'),
-    ...projectIdValidation
+    body('newProjectName')
+      .not()
+      .isEmpty()
+      .withMessage('Project name is required'),
+    ...projectIdValidation,
   ]),
   asyncHandler(AdminController.changeProjectName)
 );
@@ -96,8 +99,11 @@ router.post(
   checkProjectMembership,
   verifyRole('admin'),
   validationHandler([
-    body('newProjectDescription').not().isEmpty().withMessage('Project description is required'),
-    ...projectIdValidation
+    body('newProjectDescription')
+      .not()
+      .isEmpty()
+      .withMessage('Project description is required'),
+    ...projectIdValidation,
   ]),
   asyncHandler(AdminController.changeProjectDescription)
 );

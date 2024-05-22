@@ -53,7 +53,7 @@ async function fetchDevices(
         deviceVersion: device.deviceVersion,
         batteryLevel: device.batteryLevel,
         deviceName: device.deviceVersion,
-        lastSyncTime: device.lastSyncTime
+        lastSyncTime: device.lastSyncTime,
       });
 
       const savedDevice = await newDevice.save();
@@ -68,9 +68,9 @@ async function fetchDevices(
     for (const device of existingDevices) {
       await Device.findOneAndUpdate(
         { deviceId: device.id },
-        { 
+        {
           batteryLevel: device.batteryLevel,
-          lastSyncTime: device.lastSyncTime
+          lastSyncTime: device.lastSyncTime,
         }
       );
     }
@@ -84,7 +84,7 @@ async function fetchDevices(
       deviceName: device.deviceName,
       deviceVersion: device.deviceVersion,
       batteryLevel: device.batteryLevel,
-      lastSyncTime: device.lastSyncTime
+      lastSyncTime: device.lastSyncTime,
     }));
 
     logger.info(`[fetchDevices] Fetched devices for project: ${projectId}`);

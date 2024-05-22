@@ -59,11 +59,15 @@ async function fetchIntradayData(
       headers: { Authorization: `Bearer ${accessToken}` },
     });
 
-    const processedData = response.data[`activities-${dataType}-intraday`].dataset.map((entry: {time: string; value: number;}) => {
+    const processedData = response.data[
+      `activities-${dataType}-intraday`
+    ].dataset.map((entry: { time: string; value: number }) => {
       return {
-        timestamp: DateTime.fromISO(`${date}T${entry.time}`).toFormat('yyyy-MM-dd HH:mm:ss'),
-        value: entry.value
-      }
+        timestamp: DateTime.fromISO(`${date}T${entry.time}`).toFormat(
+          'yyyy-MM-dd HH:mm:ss'
+        ),
+        value: entry.value,
+      };
     });
 
     return processedData;

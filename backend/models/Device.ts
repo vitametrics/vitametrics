@@ -13,7 +13,7 @@ const deviceSchema = new mongoose.Schema({
   deviceVersion: { type: String, default: '' },
   batteryLevel: { type: String, default: '0%' },
   deviceId: { type: String, default: '' },
-  lastSyncTime: { type: String }
+  lastSyncTime: { type: String },
 });
 
 const deviceModel = mongoose.model<IDevice>('Devices', deviceSchema);
