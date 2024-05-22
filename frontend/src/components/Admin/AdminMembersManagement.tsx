@@ -1,8 +1,22 @@
+import { motion } from "framer-motion";
+import useCustomInView from "../../hooks/useCustomInView";
+import { fadeInItemVariants } from "../../hooks/animationVariant";
+
 const AdminMembersManagement = () => {
+  const { ref, inView } = useCustomInView();
+
   return (
-    <div>
-      <h1>Admin Members</h1>
-    </div>
+    <motion.div
+      variants={fadeInItemVariants}
+      initial="hidden"
+      animate={inView ? "show" : "hidden"}
+      ref={ref}
+      className="w-full h-full flex flex-col p-10 bg-whitePrimary font-libreFranklin"
+    >
+      <h1 className="w-full text-4xl font-bold text-primary pb-0">
+        Admin Members Management
+      </h1>
+    </motion.div>
   );
 };
 
