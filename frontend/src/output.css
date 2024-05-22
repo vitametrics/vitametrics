@@ -824,6 +824,14 @@ video {
   height: 100vh;
 }
 
+.h-\[30px\] {
+  height: 30px;
+}
+
+.h-\[20px\] {
+  height: 20px;
+}
+
 .max-h-\[300px\] {
   max-height: 300px;
 }
@@ -1578,6 +1586,11 @@ video {
 .text-yellow-500 {
   --tw-text-opacity: 1;
   color: rgb(234 179 8 / var(--tw-text-opacity));
+}
+
+.text-secondary2 {
+  --tw-text-opacity: 1;
+  color: rgb(107 111 142 / var(--tw-text-opacity));
 }
 
 .underline {

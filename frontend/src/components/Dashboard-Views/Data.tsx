@@ -2,7 +2,7 @@
 //import DatePicker from "react-datepicker";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useState, lazy, Suspense, useEffect } from "react";
+import { useState, lazy, Suspense, useEffect, Fragment } from "react";
 import axios from "axios";
 //import { useDashboard } from "../../helpers/DashboardContext";
 import { useSearchParams } from "react-router-dom";
@@ -75,7 +75,21 @@ interface DataItem {
 
 const Data = () => {
   const DOWNLOAD_DATA_ENDPOINT = `${process.env.API_URL}/project/download-data`;
-  const { deviceViewDevices, projectName, projectId } = useProject();
+  const {
+    projectDevices,
+    projectName,
+    projectId,
+    devicesData,
+    setRangeStartDate,
+    setRangeEndDate,
+    rangeEndDate,
+    rangeStartDate,
+    selectedDevices,
+    handleDeviceSelectionChange,
+    downloadDate,
+    setDownloadDate,
+    fetchDevices,
+  } = useProject();
   const [searchParams, setSearchParams] = useSearchParams({
     detailLevel: "1min",
     dataType: "steps",
@@ -93,18 +107,6 @@ const Data = () => {
   const [downloadMsg, setDownloadMsg] = useState("");
   const [downloadFlag, setDownloadFlag] = useState(false);
 
-  const {
-    setRangeStartDate,
-    setRangeEndDate,
-    rangeEndDate,
-    rangeStartDate,
-    selectedDevices,
-    handleDeviceSelectionChange,
-    devicesData,
-    downloadDate,
-    setDownloadDate,
-    fetchDevices,
-  } = useProject();
   const [rangeChartData, setRangeChartData] = useState({});
 
   const detailLevelTypes = [
@@ -219,6 +221,7 @@ const Data = () => {
         //console.log("inside of mapping selected devices " + devicesData);
 
         let device = undefined as DeviceData | undefined;
+        console.log(devicesData);
         for (const deviceData of devicesData) {
           //console.log(
           //   "iterating inside of devicesData (for loop): " + deviceData
@@ -230,10 +233,8 @@ const Data = () => {
         }
 
         if (!device) {
-          //console.log("device " + deviceId + " not found");
           return null;
         }
-        //console.log("device found: " + device.deviceId);
 
         const label =
           device["deviceInfo"].deviceVersion + " " + device.deviceId;
@@ -512,7 +513,7 @@ const Data = () => {
           Fetch Data{" "}
         </button>
       </span>
-      <div className="p-5 w-full flex-col">
+      <div className="p-5 w-full flex flex-col">
         {/*
         <h1 className="text-2xl text-yellow-500 mb-2">
           {" "}
@@ -753,42 +754,57 @@ const Data = () => {
            /*renderStatistics()
             </div>   
             */}
-        <div className="w-full h-[400px bg-white shadow-lg rounded-xl flex flex-col mb-10">
-          <h2 className="text-center w-ful p-5 text-4xl font-bold text-primary">
-            Devices
+        <div className="w-full h-[400px bg-white shadow-lg rounded-xl flex flex-col mb-10 p-10">
+          <h2 className="text-left w-full text-3xl font-bold text-primary mb-3">
+            Toggle Devices
           </h2>
-          <div className="flex flex-row justify-between h-full w-full p-5 gap-5">
-            {deviceViewDevices && deviceViewDevices.length > 0 ? (
-              deviceViewDevices.map((device: Device, index: number) => {
-                return (
-                  <div
-                    key={index}
-                    className="flex flex-row gap-5 items-center w-full h-[70px] bg-primary p-5 rounded-xl"
-                  >
-                    <div className="flex flex-row mr-3 items-center justify-center">
-                      <input
-                        type="checkbox"
-                        onChange={(e) =>
-                          handleDeviceSelectionChange(
-                            device.deviceId,
-                            e.target.checked
-                          )
-                        }
-                        checked={selectedDevices.includes(device.deviceId)}
-                        className="w-9 h-[44px] mr-2  bg-gray-100 accent-[#7d8bae] border-gray-300 rounded-xl focus:ring-transparent "
-                      />
-                      <p className="text-2xl font-bol mr-auto ">
-                        {device.deviceVersion} &nbsp;
-                        {device.deviceId}
-                      </p>
+          <span className="h-[0.5px] bg-[#d3d7df] w-full mb-3"></span>
+          <div className="flex flex-col justify-between h-full w-full">
+            {devicesData && devicesData.length > 0 ? (
+              <Fragment>
+                {projectDevices && projectDevices.length > 0 ? (
+                  <Fragment>
+                    <div className="grid grid-cols-4 font-bold text-secondary2 mb-3">
+                      <span>ACTION</span>
+                      <span>DEVICE</span>
+                      <span>NAME</span>
+                      <span>ID</span>
                     </div>
+                    {projectDevices.map((device: Device, index: number) => (
+                      <Fragment>
+                        <span className="h-[0.5px] bg-[#d3d7df] w-full mb-3"></span>
+
+                        <div
+                          className="grid grid-cols-4 mr-3 items-center justify-center mb-2"
+                          key={index}
+                        >
+                          <input
+                            type="checkbox"
+                            onChange={(e) =>
+                              handleDeviceSelectionChange(
+                                device.deviceId,
+                                e.target.checked
+                              )
+                            }
+                            checked={selectedDevices.includes(device.deviceId)}
+                            className="w-9 h-[20px] mr-2 bg-gray-100 accent-[#7d8bae] border-gray-300 rounded-xl focus:ring-transparent"
+                          />
+                          <span>{device.deviceVersion}</span>
+                          <span>{device.deviceName}</span>
+                          <span>{device.deviceId} </span>
+                        </div>
+                      </Fragment>
+                    ))}
+                  </Fragment>
+                ) : (
+                  <div className="flex justify-center items-center w-full h-full text-secondary">
+                    No Devices Found
                   </div>
-                );
-              })
+                )}
+              </Fragment>
             ) : (
-              <div className="text-center items-center w-full h-full text-secondary">
-                {" "}
-                No Devices Found
+              <div className="text-left w-full h-full text-secondary">
+                No Device Data was found
               </div>
             )}
           </div>

@@ -19,8 +19,7 @@ interface ProjectContextProps {
   members: any[];
   devices: DeviceData[];
   setDevices: (arg0: DeviceData[]) => void;
-  deviceViewDevices: Device[];
-  setDeviceViewDevices: (arg0: Device[]) => void;
+  setProjectDevices: (arg0: Device[]) => void;
   fetchDevices: () => void;
   startDate: Date;
   rangeStartDate: Date;
@@ -43,7 +42,7 @@ interface ProjectContextProps {
   isAccountLinked: boolean;
   fetchProject: () => void;
   projectDevices: any[];
-  fetchDeviceViewDevices: () => void;
+  fetchProjectDevices: () => void;
   projectDescription: string;
   setProjectDescription: (arg0: string) => void;
 }
@@ -75,7 +74,6 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   const [selectedDevices, setSelectedDevices] = useState<string[]>([]);
   const [showBackDrop, setShowBackDrop] = useState(false);
   const [isAccountLinked, setIsAccountLinked] = useState<boolean>(false);
-  const [projectDevices, setProjectDevices] = useState<OverviewDevice[]>([]);
   const [devices, setDevices] = useState<DeviceData[]>(
     localStorage.getItem("devices")
       ? JSON.parse(localStorage.getItem("devices")!)
@@ -84,14 +82,14 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const testDevices = [
     {
-      deviceId: "531590",
+      deviceId: "2570612980",
       deviceName: "Device #1",
       deviceVersion: "Charge 4",
       lastSyncTime: "2024-02-10",
       batteryLevel: "100",
     },
     {
-      id: "124811",
+      deviceId: "124811",
       deviceName: "Device #2",
       deviceVersion: "Charge 4",
       lastSyncTime: "2024-02-10",
@@ -99,7 +97,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
     },
   ];
 
-  const [deviceViewDevices, setDeviceViewDevices] = useState<Device[]>(
+  const [projectDevices, setProjectDevices] = useState<Device[]>(
     localStorage.getItem("devices")
       ? JSON.parse(localStorage.getItem("devices")!)
       : testDevices
@@ -212,7 +210,9 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       const project = response.data.project;
 
       setMembers(project.members);
-      setProjectDevices(project.devices);
+      //setProjectDevices(project.devices);
+      setProjectDevices(testDevices);
+
       setProjectName(project.projectName);
       setOwnerEmail(project.ownerEmail);
       setOwnerId(project.ownerId);
@@ -372,7 +372,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const fetchDeviceViewDevices = async () => {
+  const fetchProjectDevices = async () => {
     try {
       const response = await axios.post(
         FETCH_PROJECT_DEVICES_ENDPOINT,
@@ -384,7 +384,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         }
       );
 
-      setDeviceViewDevices(response.data);
+      setProjectDevices(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -407,8 +407,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         setMembers,
         setDevices,
         fetchDevices,
-        deviceViewDevices,
-        setDeviceViewDevices,
+
         startDate,
         rangeStartDate,
         rangeEndDate,
@@ -432,8 +431,9 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         projectDescription,
         setProjectDescription,
         projectDevices,
-        fetchDeviceViewDevices,
+        fetchProjectDevices,
         setProjectName,
+        setProjectDevices,
       }}
     >
       {children}

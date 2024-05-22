@@ -11,18 +11,15 @@ import useSearch from "../../hooks/useDeviceSearch";
 import PaginationControls from "../../components/Dashboard/Overview/PaginationControls";
 import Pagination from "../../components/Pagination";
 
-const NAME_CHANGE_ENDPOINT =
-  import.meta.env.VITE_APP_NODE_ENV === "production"
-    ? import.meta.env.VITE_APP_NAME_CHANGE_ENDPOINT
-    : import.meta.env.VITE_APP_NAME_CHANGE_DEV_ENDPOINT;
+const NAME_CHANGE_ENDPOINT = `${process.env.API_URL}/device/change-owner-name`;
 
 const Devices = () => {
   const {
     setDevices,
-    deviceViewDevices,
-    setDeviceViewDevices,
+    projectDevices,
+    setProjectDevices,
     projectName,
-    fetchDeviceViewDevices,
+    fetchProjectDevices,
   } = useProject();
   const [editingDevices, setEditingDevices] = useState<Record<string, string>>(
     {}
@@ -37,7 +34,7 @@ const Devices = () => {
   } = usePagination();
 
   const { searchTerm, handleSearchChange, filteredItems } = useSearch(
-    deviceViewDevices,
+    projectDevices,
     setCurrentPage
   );
 
@@ -51,7 +48,7 @@ const Devices = () => {
     indexOfLastMember
   );
 
-  console.log(deviceViewDevices);
+  console.log(projectDevices);
   const { ref, inView } = useCustomInView();
 
   const handleOwnerNameChange = useCallback(
@@ -64,7 +61,7 @@ const Devices = () => {
           { withCredentials: true }
         );
         setDevices(response.data);
-        setDeviceViewDevices(response.data);
+        setProjectDevices(response.data);
         setEditingDevices((prev) => {
           const { [deviceId]: removed, ...rest } = prev;
           return rest;
@@ -77,8 +74,8 @@ const Devices = () => {
   );
 
   const handleFetchDevices = useCallback(() => {
-    fetchDeviceViewDevices();
-  }, [fetchDeviceViewDevices]);
+    fetchProjectDevices();
+  }, [fetchProjectDevices]);
 
   return (
     <motion.div
@@ -92,7 +89,7 @@ const Devices = () => {
         {projectName} Devices
       </h2>
 
-      {deviceViewDevices.length > 0 ? (
+      {projectDevices.length > 0 ? (
         <section className="p-5">
           <div className="flex flex-col bg-white rounded-xl shadow-lg p-10">
             <h2 className="text-2xl text-primary font-bold mb-5">Devices</h2>
@@ -100,8 +97,7 @@ const Devices = () => {
               onClick={handleFetchDevices}
               className="p-2 text-xl flex flex-row gap-2 justify-center items-center rounded-xl w-[150px] bg-primary text-white shadow-lg font-bold mb-5"
             >
-              {" "}
-              Fetch{" "}
+              Fetch
             </button>
             <input
               type="text"

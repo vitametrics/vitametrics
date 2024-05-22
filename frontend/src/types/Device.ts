@@ -3,6 +3,8 @@ export interface OverviewDevice {
     deviceId: string;
     deviceName: string;
     deviceVersion: string;
+    batteryLevel: number;
+    lastSyncTime: string;
 }
 
 
@@ -47,8 +49,8 @@ export interface HeartData {
   }
   
   export interface DeviceData {
-    id: string;
-    name: string;
+    deviceId: string;
+    deviceName: string;
     deviceVersion: string;
     lastSyncTime: string;
     batteryLevel: number;
@@ -59,7 +61,7 @@ export interface HeartData {
     deviceId: string;
     deviceName: string;
     deviceVersion: string;
-    batteryLevel: number;
+    batteryLevel: string;
     lastSyncTime: string;
   }
   
