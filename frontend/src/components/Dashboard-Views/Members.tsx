@@ -1,51 +1,47 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// components/Members.tsx
 import { useProject } from "../../helpers/ProjectContext";
 import { useAuth } from "../../helpers/AuthContext";
 import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
-import useDebounce from "../../helpers/useDebounce";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import useDebounce from "../../helpers/useDebounce";
+import MemberInfo from "../../components/Dashboard/Members/MemberInfo";
+import InviteMenu from "../../components/Dashboard/Members/InviteMenu";
+import { fadeInItemVariants } from "../../hooks/animationVariant";
+import useCustomInView from "../../hooks/useCustomInView";
 
 const Members = () => {
   const ADD_MEMBER_ENDPOINT = `${process.env.API_URL}/admin/add-member`;
   const REMOVE_MEMBER_ENDPOINT = `${process.env.API_URL}/admin/remove-member`;
-  const fadeInItemVariants = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1 },
-  };
-  const { ref, inView } = useInView({
-    threshold: 0.1, // Adjust based on when you want the animation to trigger (1 = fully visible)
-    triggerOnce: true, // Ensures the animation only plays once
-  });
-  const { projectName, members, fetchProject } = useProject();
-  const { userRole } = useAuth();
-  const { userId, isOwner } = useAuth();
+  const { ref, inView } = useCustomInView();
+
+  const { projectName, members, fetchProject, setShowBackDrop, showBackDrop } =
+    useProject();
+  const { userRole, userId, isOwner } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams({
     view: "members",
     showInviteMenu: "false",
-    email: "",
-    name: "",
     member: "",
     invited: "false",
     role: "user",
   });
+
   const showInviteMenu = searchParams.get("showInviteMenu") === "true";
   const member = searchParams.get("member") || "";
-  const { setShowBackDrop, showBackDrop } = useProject();
   const [emailInput, setEmailInput] = useState(searchParams.get("email") || "");
   const [nameInput, setNameInput] = useState(searchParams.get("name") || "");
   const role = searchParams.get("role") || "user";
-
   const [msg, setMsg] = useState("");
-
   const invited = searchParams.get("invited") === "true";
   const [confirmDelete, setConfirmDelete] = useState({
     id: "",
     confirm: false,
   });
-  const debouncedEmail = useDebounce(emailInput, 500);
-  const debouncedName = useDebounce(nameInput, 500);
+
+  const debouncedEmail = useDebounce(emailInput, 100);
+  const debouncedName = useDebounce(nameInput, 100);
 
   const roleOptions =
     userRole === "admin"
@@ -58,20 +54,53 @@ const Members = () => {
   useEffect(() => {
     if (showInviteMenu && userRole !== "user") setShowBackDrop(showInviteMenu);
     if (member) setShowBackDrop(true);
-  }, []);
-
-  useEffect(() => {
-    setSearchParams((prev) => {
-      const newParams = new URLSearchParams(prev);
-      newParams.set("email", debouncedEmail);
-      return newParams;
-    });
-  }, [debouncedEmail]);
+  }, [showInviteMenu, member, userRole, setShowBackDrop]);
 
   const handleEmailChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ): void => {
     setEmailInput(event.target.value);
+  };
+
+  const handleNameChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    setNameInput(event.target.value);
+  };
+
+  const handleRoleChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ): void => {
+    setSearchParams((prev) => {
+      prev.set("role", event.target.value);
+      return prev;
+    });
+  };
+
+  const toggleInviteMenu = (show: boolean) => {
+    setSearchParams((prev) => {
+      prev.set("showInviteMenu", show.toString());
+      return prev;
+    });
+    setSearchParams((prev) => {
+      prev.set("invited", "false");
+      return prev;
+    });
+    setMsg("");
+    setShowBackDrop(show);
+  };
+
+  const toggleMemberInfo = (show: boolean, id: string) => {
+    setShowBackDrop(show);
+    setSearchParams((prev) => {
+      prev.set("member", id);
+      return prev;
+    });
+  };
+
+  const handleClose = () => {
+    toggleMemberInfo(false, "");
+    setConfirmDelete({ id: "", confirm: false });
   };
 
   const handleRemoveMember = async (memberId: string) => {
@@ -94,175 +123,6 @@ const Members = () => {
       }
     } else {
       setConfirmDelete({ id: memberId, confirm: true });
-    }
-  };
-
-  useEffect(() => {
-    setSearchParams((prev) => {
-      const newParams = new URLSearchParams(prev);
-      newParams.set("name", debouncedEmail);
-      return newParams;
-    });
-  }, [debouncedName]);
-
-  const handleClose = () => {
-    toggleMemberInfo(false, "");
-    setConfirmDelete({ id: "", confirm: false });
-  };
-
-  const handleNameChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ): void => {
-    setNameInput(event.target.value);
-  };
-
-  const toggleInviteMenu = (show: boolean) => {
-    setSearchParams((prev) => {
-      prev.set("showInviteMenu", show.toString());
-      return prev;
-    });
-    setSearchParams((prev) => {
-      prev.set("invited", "false");
-      return prev;
-    });
-    setMsg("");
-    setShowBackDrop(show); // Show or hide backdrop when invite menu is toggled
-  };
-
-  const toggleMemberInfo = (show: boolean, id: string) => {
-    setShowBackDrop(show);
-    setSearchParams((prev) => {
-      prev.set("member", id);
-      return prev;
-    });
-  };
-
-  const renderMemberInfo = () => {
-    const member = searchParams.get("member");
-    if (member) {
-      const user = members.find((m) => m.userId === member);
-      if (!user) return null;
-
-      return (
-        <motion.div
-          variants={fadeInItemVariants}
-          initial="hidden"
-          animate={inView ? "show" : "hidden"}
-          ref={ref}
-          className="absolute w-full h-full p-10 z-20 bg-[#e8e8e8] flex flex-col left-0 md:left-1/2 md:top-1/2 transform-center md:h-[35%] md:w-[500px] rounded-xl text-primary"
-        >
-          <button
-            onClick={() => handleClose()}
-            className="item-3 ml-auto"
-          ></button>
-          <h1 className="text-2xl text-center font-bold text-primary">
-            {" "}
-            Member Info
-          </h1>
-          <h1 className="text-xl mb-1 text-left">
-            <strong> Name: </strong> {user.name}
-          </h1>
-          <h1 className="text-xl mb-1">
-            {" "}
-            <strong> Email: </strong>
-            {user.email}
-          </h1>
-          <h1 className="text-xl mb-1">
-            {" "}
-            <strong> Role: </strong>
-            {user.role}
-          </h1>
-          {isOwner && userId != user.userId ? (
-            <button
-              onClick={() => handleRemoveMember(user.userId)}
-              className={`w-full mt-auto ${confirmDelete.id === user.userId && confirmDelete.confirm ? "bg-yellow-500" : "bg-red-500"} text-white p-3 rounded-lg`}
-            >
-              {confirmDelete.id === user.userId && confirmDelete.confirm
-                ? "Confirm Remove"
-                : "Remove"}
-            </button>
-          ) : null}
-        </motion.div>
-      );
-    }
-  };
-
-  const renderInviteMenu = () => {
-    if (showInviteMenu && userRole !== "user") {
-      return (
-        <motion.div
-          variants={fadeInItemVariants}
-          initial="hidden"
-          animate={inView ? "show" : "hidden"}
-          ref={ref}
-          className={`opacity-transition ${showBackDrop ? "show" : ""} absolute w-full h-full p-10 z-10 bg-[#e8e8e8] flex flex-col left-0 md:left-1/2 md:top-1/2 transform-center md:h-[500px] md:w-[500px] rounded-xl`}
-        >
-          <button
-            onClick={() => toggleInviteMenu(false)}
-            className="item-3 ml-auto p-2"
-          ></button>
-          <h1 className="text-2xl mb-3 text-center w-full font-bold text-primary">
-            Invite to {projectName}
-          </h1>
-          {invited ? (
-            <p className="text-yellow-500 text-center w-full mb-1"> {msg} </p>
-          ) : (
-            <p className="text-red-500 text-center w-full mb-1"> {msg} </p>
-          )}
-          <h1 className="text-xl mb-1 text-primary">Enter Name</h1>
-          <input
-            type="text"
-            className="w-full h-10 p-6 rounded-xl mb-5 text-primary"
-            placeholder="Enter member's name"
-            value={nameInput}
-            onChange={handleNameChange}
-          />
-          <h1 className="text-xl mb-1 text-primary">Enter Email</h1>
-          <input
-            type="text"
-            className="w-full h-10 p-6 rounded-xl mb-5 text-primary"
-            placeholder="Enter member's email"
-            value={emailInput}
-            onChange={handleEmailChange}
-          />
-          <h1 className="text-xl mb-1 text-primary">Select Role</h1>
-          <select
-            className="w-full text-lg p-2 h-10 rounded-xl mb-5 text-primary"
-            value={role}
-            name="role"
-            id="role"
-            onChange={(e) =>
-              setSearchParams(
-                (prev) => {
-                  prev.set("role", e.target.value);
-                  return prev;
-                },
-                { replace: true }
-              )
-            }
-          >
-            <option value="defaultRole" disabled>
-              -- SELECT ROLE --
-            </option>
-            {roleOptions.map((option) => (
-              <option
-                className="text-primary"
-                key={option.value}
-                value={option.value}
-              >
-                {option.label}
-              </option>
-            ))}
-          </select>
-
-          <button
-            onClick={() => handleInvite()}
-            className="w-full p-3 rounded-xl text-white bg-primary shadow-lg font-bold"
-          >
-            Invite Member
-          </button>
-        </motion.div>
-      );
     }
   };
 
@@ -308,13 +168,11 @@ const Members = () => {
         }
       );
 
-      //console.log(response.data);
       setSearchParams((prev) => {
         prev.set("invited", "true");
         return prev;
       });
       setMsg(response.data.msg);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       setMsg(error.response.data.msg);
       setSearchParams((prev) => {
@@ -328,20 +186,43 @@ const Members = () => {
   return (
     <motion.div
       variants={fadeInItemVariants}
+      ref={ref}
       initial="hidden"
       animate={inView ? "show" : "hidden"}
-      ref={ref}
       className="w-full h-full flex flex-col p-10 font-libreFranklin"
     >
-      {renderInviteMenu()}
-      {renderMemberInfo()}
+      <InviteMenu
+        projectName={projectName}
+        showInviteMenu={showInviteMenu}
+        showBackDrop={showBackDrop}
+        userRole={userRole}
+        nameInput={nameInput}
+        emailInput={emailInput}
+        role={role}
+        invited={invited}
+        msg={msg}
+        roleOptions={roleOptions}
+        handleNameChange={handleNameChange}
+        handleEmailChange={handleEmailChange}
+        handleRoleChange={handleRoleChange}
+        handleInvite={handleInvite}
+        toggleInviteMenu={toggleInviteMenu}
+      />
+      <MemberInfo
+        member={members.find((m) => m.userId === member)}
+        isOwner={isOwner}
+        userId={userId}
+        confirmDelete={confirmDelete}
+        handleRemoveMember={handleRemoveMember}
+        handleClose={handleClose}
+      />
       <h2 className="w-full text-4xl font-bold p-5 pb-0 text-primary">
         {projectName} Members
       </h2>
       {userRole !== "user" && (
         <div className="flex p-5 w-full">
           <button
-            onClick={() => toggleInviteMenu(true)} // Close invite menu when clicking the button
+            onClick={() => toggleInviteMenu(true)}
             className="p-2 text-2xl flex flex-row gap-2 justify-center items-center rounded-xl w-[230px] bg-primary font-bold text-white shadow-lg"
           >
             Invite
@@ -364,11 +245,10 @@ const Members = () => {
             );
           })
         ) : (
-          <h2 className="text-2xl font-bold">No Members Found.</h2>
+          <h2 className="text-2xl font-bold text-primary">No Members Found.</h2>
         )}
       </div>
     </motion.div>
   );
 };
-
 export default Members;
