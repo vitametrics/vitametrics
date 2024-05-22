@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
-import { OverviewDevice, DeviceData, Device } from "../types/Device";
+import { DeviceData, Device } from "../types/Device";
 
 interface ProjectContextProps {
   projectName: string;
