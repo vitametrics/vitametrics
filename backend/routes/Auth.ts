@@ -6,6 +6,7 @@ import crypto from 'crypto';
 import verifySession from '../middleware/verifySession';
 import CodeVerifier from '../models/CodeVerifier';
 import Project from '../models/Project';
+import User from '../models/User';
 
 const router = express.Router();
 
@@ -19,6 +20,7 @@ function createCodeChallenge(codeVerifier: string): string {
 
 router.get('/auth', async (req: Request, res: Response) => {
   const projectId = req.cookies.projectId;
+  const userId = req.query.userId as string || req.user?.userId as string;
 
   if (!projectId) {
     return res.status(400).send('projectId cookie is missing');
@@ -28,7 +30,7 @@ router.get('/auth', async (req: Request, res: Response) => {
   const codeChallenge = createCodeChallenge(codeVerifier);
 
   try {
-    await new CodeVerifier({ value: codeVerifier, projectId }).save();
+    await new CodeVerifier({ value: codeVerifier, projectId, userId: userId }).save();
     const queryParams = new URLSearchParams({
       client_id: process.env.FITBIT_CLIENT_ID as string,
       response_type: 'code',
@@ -41,6 +43,7 @@ router.get('/auth', async (req: Request, res: Response) => {
 
     const authUrl = `https://www.fitbit.com/oauth2/authorize?${queryParams.toString()}`;
 
+    res.cookie('userId', userId);
     res.redirect(authUrl);
   } catch (err) {
     console.error(err);
@@ -48,8 +51,9 @@ router.get('/auth', async (req: Request, res: Response) => {
   }
 });
 
-router.get('/callback', verifySession, async (req: Request, res: Response) => {
+router.get('/callback', async (req: Request, res: Response) => {
   const projectId = req.cookies.projectId;
+  const userId = req.cookies.userId;
   const code = req.query.code as string;
 
   if (!projectId) {
@@ -57,7 +61,7 @@ router.get('/callback', verifySession, async (req: Request, res: Response) => {
   }
 
   try {
-    const verifier = await CodeVerifier.findOne()
+    const verifier = await CodeVerifier.findOne({ projectId, userId})
       .sort({ createdAt: -1 })
       .limit(1);
     if (!verifier) {
@@ -102,14 +106,29 @@ router.get('/callback', verifySession, async (req: Request, res: Response) => {
       return res.status(404).send('Project not found');
     }
 
-    project.fitbitUserId = fitbitUserID;
-    project.fitbitAccessToken = accessToken;
-    project.fitbitRefreshToken = refreshToken;
+    const user = await User.findOne({ userId });
+    if (!user) {
+      return res.status(404).send('User not found');
+    } else if (user.isTempUser) {
+      user.fitbitUserId = fitbitUserID;
+      user.fitbitAccessToken = accessToken;
+      user.fitbitRefreshToken = refreshToken;
 
-    await project.save();
+      await user.save();
+      res.redirect('/');
+      return;
+    } else {
+      project.fitbitUserId = fitbitUserID;
+      project.fitbitAccessToken = accessToken;
+      project.fitbitRefreshToken = refreshToken;
+  
+      await project.save();
+      res.clearCookie('userId');
+          // this should not handle redirects. fine for now i guess.
+      res.redirect(`/dashboard/project?id=${projectId}&view=overview`);
+      return;
+    }
 
-    // this should not handle redirects. fine for now i guess.
-    res.redirect(`/dashboard/project?id=${projectId}&view=overview`);
   } catch (err) {
     console.error('Error handling OAuth callback:', err);
     res.status(500).json({ success: false, msg: 'Internal Server Error' });

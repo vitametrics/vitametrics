@@ -20,15 +20,10 @@ const memberIdValidation = [
   body('userId').not().isEmpty().withMessage('No userId provided'),
 ];
 
-const projectIdValidation = [
-  body('projectId').not().isEmpty().withMessage('No projectId provided'),
-];
-
 const memberInfoValidations = [
   body('email').isEmail().withMessage('Invalid email'),
   body('name').not().isEmpty().withMessage('Name is required'),
   body('role').not().isEmpty().withMessage('Role is required'),
-  ...projectIdValidation,
 ];
 
 router.post(
@@ -44,7 +39,6 @@ router.post(
   verifySession,
   checkProjectMembership,
   verifyRole('admin'),
-  validationHandler(projectIdValidation),
   asyncHandler(AdminController.deleteProject)
 );
 
@@ -72,8 +66,7 @@ router.post(
   checkProjectMembership,
   verifyRole('admin'),
   validationHandler([
-    body('newOwnerEmail').isEmail().withMessage('Invalid email'),
-    ...projectIdValidation
+    body('newOwnerEmail').isEmail().withMessage('Invalid email')
   ]),
   asyncHandler(AdminController.changeProjectOwnerEmail)
 );
@@ -84,8 +77,7 @@ router.post(
   checkProjectMembership,
   verifyRole('admin'),
   validationHandler([
-    body('newProjectName').not().isEmpty().withMessage('Project name is required'),
-    ...projectIdValidation
+    body('newProjectName').not().isEmpty().withMessage('Project name is required')
   ]),
   asyncHandler(AdminController.changeProjectName)
 );
@@ -96,8 +88,7 @@ router.post(
   checkProjectMembership,
   verifyRole('admin'),
   validationHandler([
-    body('newProjectDescription').not().isEmpty().withMessage('Project description is required'),
-    ...projectIdValidation
+    body('newProjectDescription').not().isEmpty().withMessage('Project description is required')
   ]),
   asyncHandler(AdminController.changeProjectDescription)
 );

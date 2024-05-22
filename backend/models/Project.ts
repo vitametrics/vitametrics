@@ -12,7 +12,7 @@ export interface IProject extends Document {
   fitbitRefreshToken: string;
   lastTokenRefresh: Date;
   members: Types.ObjectId[];
-  devices: string[];
+  devices: Types.ObjectId[];
 }
 
 const projectSchema = new mongoose.Schema(

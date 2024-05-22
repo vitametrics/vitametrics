@@ -3,6 +3,7 @@ import axios, { AxiosResponse } from 'axios';
 import Device from '../../models/Device';
 import Project from '../../models/Project';
 import logger from '../logger';
+import User from '../../models/User';
 
 interface FitbitDeviceInfo {
   id: string;
@@ -19,21 +20,42 @@ interface DeviceInfo {
 }
 
 async function fetchDevices(
-  projectFitbitUserId: string,
-  projectFitbitAccessToken: string,
-  projectId: string
+  fitbitUserID: string,
+  fitbitAccessToken: string,
+  projectId: string,
+  userId: string | undefined
 ): Promise<DeviceInfo[]> {
   try {
-    const deviceResponse: AxiosResponse<FitbitDeviceInfo[]> = await axios.get(
-      `https://api.fitbit.com/1/user/${projectFitbitUserId}/devices.json`,
-      {
-        headers: { Authorization: `Bearer ${projectFitbitAccessToken}` },
-      }
-    );
 
-    const validDevices = deviceResponse.data.filter(
-      (device) => device.deviceVersion !== 'MobileTrack'
-    );
+    let deviceResponse;
+    let userName = 'Project';
+
+    if (!userId) {
+      deviceResponse = await axios.get(
+        `https://api.fitbit.com/1/user/${fitbitUserID}/devices.json`,
+        {
+          headers: { Authorization: `Bearer ${fitbitAccessToken}` },
+        }
+      ) as AxiosResponse<FitbitDeviceInfo[]>;
+    } else {
+      const user = await User.findOne({ userId });
+      if (!user) {
+        logger.error(`[fetchDevices] User not found: ${userId}`);
+        throw new Error('User not found');
+      }
+
+      userName = user.name;
+
+      deviceResponse = await axios.get(
+        `https://api.fitbit.com/1/user/${user.fitbitUserId}/devices.json`,
+        {
+          headers: { Authorization: `Bearer ${user.fitbitAccessToken}` },
+        }
+      ) as AxiosResponse<FitbitDeviceInfo[]>;
+
+    }
+
+    const validDevices = deviceResponse.data;
 
     const existingDevices = await Device.find({
       deviceId: { $in: validDevices.map((device) => device.id) },
@@ -47,21 +69,44 @@ async function fetchDevices(
       (device) => !existingDeviceIds.has(device.id)
     );
 
-    for (const device of newDevices) {
-      const newDevice = new Device({
-        deviceId: device.id,
-        deviceVersion: device.deviceVersion,
-        batteryLevel: device.batteryLevel,
-        deviceName: device.deviceVersion,
-        lastSyncTime: device.lastSyncTime
-      });
-
-      const savedDevice = await newDevice.save();
-
-      await Project.updateOne(
-        { projectId },
-        { $addToSet: { devices: savedDevice._id } }
-      );
+    if (userId) {
+      for (const device of newDevices) {
+        const newDevice = new Device({
+          owner: userId,
+          ownerName: userName,
+          deviceId: device.id,
+          deviceVersion: device.deviceVersion,
+          batteryLevel: device.batteryLevel,
+          deviceName: device.deviceVersion,
+          lastSyncTime: device.lastSyncTime
+        });
+  
+        const savedDevice = await newDevice.save();
+  
+        await Project.updateOne(
+          { projectId },
+          { $addToSet: { devices: savedDevice._id } }
+        );
+      }
+    } else {
+      for (const device of newDevices) {
+        const newDevice = new Device({
+          owner: 'Project',
+          ownerName: 'Project',
+          deviceId: device.id,
+          deviceVersion: device.deviceVersion,
+          batteryLevel: device.batteryLevel,
+          deviceName: device.deviceVersion,
+          lastSyncTime: device.lastSyncTime
+        });
+  
+        const savedDevice = await newDevice.save();
+  
+        await Project.updateOne(
+          { projectId },
+          { $addToSet: { devices: savedDevice._id } }
+        );
+      }
     }
 
     // update existing devices
@@ -81,6 +126,8 @@ async function fetchDevices(
 
     const deviceInfoList: DeviceInfo[] = allDevices.map((device) => ({
       deviceId: device.deviceId,
+      owner: device.owner,
+      ownerName: device.ownerName,
       deviceName: device.deviceName,
       deviceVersion: device.deviceVersion,
       batteryLevel: device.batteryLevel,
