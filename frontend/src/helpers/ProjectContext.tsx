@@ -56,7 +56,6 @@ const ProjectContext = createContext<ProjectContextProps | undefined>(
 const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { setUserRole } = useAuth();
   const GET_PROJECT_ENDPOINT = `${process.env.API_URL}/project/info`;
   const FETCH_DEVICE_DATA_ENDPOINT = `${process.env.API_URL}/project/fetch-data`;
   const FETCH_PROJECT_DEVICES_ENDPOINT = `${process.env.API_URL}/project/fetch-devices`;
