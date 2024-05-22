@@ -12,13 +12,7 @@ import PaginationControls from "../Dashboard/PaginationControls";
 import Pagination from "../../components/Pagination";
 
 const Devices = () => {
-  const {
-    //setDevices,
-    projectDevices,
-    //setProjectDevices,
-    projectName,
-    fetchProjectDevices,
-  } = useProject();
+  const { projectDevices, projectName, fetchProjectDevices } = useProject();
 
   const itemsPerPageOptions = [5, 10, 15, 20];
   const {

@@ -18,9 +18,16 @@ const Members = () => {
   const REMOVE_MEMBER_ENDPOINT = `${process.env.API_URL}/admin/remove-member`;
   const { ref, inView } = useCustomInView();
 
-  const { projectName, members, fetchProject, setShowBackDrop, showBackDrop } =
-    useProject();
-  const { userRole, userId, isOwner } = useAuth();
+  const {
+    projectName,
+    members,
+    fetchProject,
+    setShowBackDrop,
+    showBackDrop,
+    isAdmin,
+  } = useProject();
+  const { userRole, userId } = useAuth();
+
   const [searchParams, setSearchParams] = useSearchParams({
     view: "members",
     showInviteMenu: "false",
@@ -40,18 +47,16 @@ const Members = () => {
     id: "",
     confirm: false,
   });
-  console.log(members);
 
   const debouncedEmail = useDebounce(emailInput, 100);
   const debouncedName = useDebounce(nameInput, 100);
 
-  const roleOptions =
-    userRole === "admin"
-      ? [{ value: "user", label: "User" }]
-      : [
-          { value: "user", label: "User" },
-          { value: "admin", label: "Admin" },
-        ];
+  const roleOptions = isAdmin
+    ? [{ value: "user", label: "User" }]
+    : [
+        { value: "user", label: "User" },
+        { value: "admin", label: "Admin" },
+      ];
 
   useEffect(() => {
     if (showInviteMenu && userRole !== "user") setShowBackDrop(showInviteMenu);
@@ -101,6 +106,7 @@ const Members = () => {
   };
 
   const handleClose = () => {
+    toggleInviteMenu(false);
     toggleMemberInfo(false, "");
     setConfirmDelete({ id: "", confirm: false });
   };
@@ -157,7 +163,7 @@ const Members = () => {
   const handleInvite = async () => {
     if (!validInput()) return;
     try {
-      const response = await axios.post(
+      await axios.post(
         ADD_MEMBER_ENDPOINT,
         {
           email: debouncedEmail,
@@ -174,7 +180,8 @@ const Members = () => {
         prev.set("invited", "true");
         return prev;
       });
-      setMsg(response.data.msg);
+      handleClose();
+      setMsg("User invited!");
     } catch (error: any) {
       setMsg(error.response.data.msg);
       setSearchParams((prev) => {
@@ -212,7 +219,6 @@ const Members = () => {
       />
       <MemberInfo
         member={members.find((m) => m.userId === member)}
-        isOwner={isOwner}
         userId={userId}
         confirmDelete={confirmDelete}
         handleRemoveMember={handleRemoveMember}

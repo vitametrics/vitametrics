@@ -21,6 +21,8 @@ interface AuthContextProps {
   isFrontendUpToDate: boolean;
   fetchVersion: () => void;
   userRole: string;
+  isAdmin: boolean;
+  setUserRole: (auth0: string) => void;
 }
 
 interface Project {
@@ -42,6 +44,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isLoadingAuth, setIsLoadingAuth] = useState<boolean>(true);
   const [isEmailVerified, setIsEmailVerified] = useState<boolean>(false);
   const [isOwner, setIsOwner] = useState<boolean>(false);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [userRole, setUserRole] = useState<string>("" as string);
   const [userEmail, setUserEmail] = useState<string>("");
   const [userId, setUserId] = useState<string>("");
@@ -62,7 +65,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setIsEmailVerified(response.data.user.isEmailVerified);
         setUserEmail(response.data.user.email);
         setUserId(response.data.user.id);
-        setIsOwner(response.data.user.role === "owner" ? true : false);
+        setIsOwner(response.data.user.isOwner);
+        setIsAdmin(response.data.user.isAdmin);
         setUserRole(response.data.user.role);
         if (isOwner) {
           await fetchVersion();
@@ -148,6 +152,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         isFrontendUpToDate,
         fetchVersion,
         userRole,
+        isAdmin,
+        setUserRole,
       }}
     >
       {children}

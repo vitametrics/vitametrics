@@ -2,23 +2,20 @@
 // components/MemberInfo.tsx
 import React from "react";
 import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
+import useCustomInView from "../../../hooks/useCustomInView";
 import { fadeInItemVariants } from "../../../hooks/animationVariant";
 import { MemberInfoProps } from "../../../types/Member";
+import { useProject } from "../../../helpers/ProjectContext";
 
 const MemberInfo: React.FC<MemberInfoProps> = ({
   member,
-  isOwner,
   userId,
   confirmDelete,
   handleRemoveMember,
   handleClose,
 }) => {
-  const { ref, inView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true,
-  });
-
+  const { ref, inView } = useCustomInView();
+  const { isOwner } = useProject();
   if (!member) return null;
 
   return (

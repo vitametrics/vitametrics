@@ -5,6 +5,8 @@ export interface Member {
     email: string;
     role: string;
     emailVerified: boolean;
+    isOwner: boolean;
+    isAdmin: boolean;
 }
 
 export interface OverviewMembersListProps {
@@ -18,7 +20,6 @@ export interface MembersListProps{
 
 export interface MemberInfoProps {
     member: Member;
-    isOwner: boolean;
     userId: string;
     confirmDelete: { id: string; confirm: boolean };
     handleRemoveMember: (memberId: string) => void;

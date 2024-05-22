@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { DeviceData, Device } from "../types/Device";
+import { useAuth } from "./AuthContext";
 
 interface ProjectContextProps {
   projectName: string;
@@ -45,6 +46,7 @@ interface ProjectContextProps {
   fetchProjectDevices: () => void;
   projectDescription: string;
   setProjectDescription: (arg0: string) => void;
+  isAdmin: boolean;
 }
 
 const ProjectContext = createContext<ProjectContextProps | undefined>(
@@ -54,6 +56,7 @@ const ProjectContext = createContext<ProjectContextProps | undefined>(
 const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const { setUserRole } = useAuth();
   const GET_PROJECT_ENDPOINT = `${process.env.API_URL}/project/info`;
   const FETCH_DEVICE_DATA_ENDPOINT = `${process.env.API_URL}/project/fetch-data`;
   const FETCH_PROJECT_DEVICES_ENDPOINT = `${process.env.API_URL}/project/fetch-devices`;
@@ -63,7 +66,8 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   const [projectDescription, setProjectDescription] = useState<string>("");
   const [ownerEmail, setOwnerEmail] = useState<string>("");
   const [ownerName, setOwnerName] = useState<string>("");
-  const [isOwner] = useState<boolean>(false);
+  const [isOwner, setIsOwner] = useState<boolean>(false);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [ownerId, setOwnerId] = useState<string>("");
   const [members, setMembers] = useState<any[]>([]);
   const [startDate, setStartDate] = useState(new Date("2024-02-09"));
@@ -219,15 +223,13 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setMembers(project.members);
       setProjectDevices(project.devices);
-
-      //setProjectDevices(testDevices);
-
       setProjectName(project.projectName);
       setOwnerEmail(project.ownerEmail);
       setOwnerId(project.ownerId);
       setOwnerName(project.ownerName);
       setIsAccountLinked(project.hasFitbitAccountLinked);
-
+      setIsOwner(project.isOwner);
+      setIsAdmin(project.isAdmin);
       setProjectDescription(
         project.projectDescription ? project.projectDescription : ""
       );
@@ -443,6 +445,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         fetchProjectDevices,
         setProjectName,
         setProjectDevices,
+        isAdmin,
       }}
     >
       {children}

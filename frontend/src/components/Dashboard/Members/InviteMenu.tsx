@@ -107,7 +107,6 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
           </option>
         ))}
       </select>
-
       <button
         onClick={handleInvite}
         className="w-full p-3 rounded-xl text-white bg-primary shadow-lg font-bold"

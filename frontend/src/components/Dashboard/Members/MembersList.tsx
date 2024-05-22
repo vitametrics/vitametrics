@@ -22,7 +22,9 @@ const MembersList: React.FC<MembersListProps> = ({ members, onClick }) => {
           >
             <span className="text-primary">{member.name}</span>
             <span className="text-primary">{member.email}</span>
-            <span className="text-primary">{member.role}</span>
+            <span className="text-primary">
+              {member.isOwner ? "Owner" : member.isAdmin ? "Admin" : "User"}
+            </span>
           </div>
         </Fragment>
       ))}
