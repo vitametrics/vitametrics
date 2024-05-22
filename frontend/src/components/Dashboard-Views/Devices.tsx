@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useCallback, useState } from "react";
-import axios from "axios";
+//import axios from "axios";
 import { motion } from "framer-motion";
 import { useProject } from "../../helpers/ProjectContext";
 import { fadeInItemVariants } from "../../hooks/animationVariant";
@@ -11,20 +11,21 @@ import useSearch from "../../hooks/useDeviceSearch";
 import PaginationControls from "../Dashboard/PaginationControls";
 import Pagination from "../../components/Pagination";
 
-const NAME_CHANGE_ENDPOINT = `${process.env.API_URL}/device/change-device-name`;
+//const NAME_CHANGE_ENDPOINT = `${process.env.API_URL}/device/change-device-name`;
 
 const Devices = () => {
   const {
     //setDevices,
     projectDevices,
-    setProjectDevices,
+    //setProjectDevices,
     projectName,
     fetchProjectDevices,
   } = useProject();
 
+  /*
   const [editingDevices, setEditingDevices] = useState<Record<string, string>>(
     {}
-  );
+  );*/
 
   const itemsPerPageOptions = [5, 10, 15, 20];
   const {
@@ -52,6 +53,7 @@ const Devices = () => {
   console.log(projectDevices);
   const { ref, inView } = useCustomInView();
 
+  /*
   const handleOwnerNameChange = useCallback(
     async (deviceId: string) => {
       try {
@@ -71,7 +73,7 @@ const Devices = () => {
       }
     },
     [editingDevices]
-  );
+  );*/
 
   const handleFetchDevices = useCallback(() => {
     fetchProjectDevices();
