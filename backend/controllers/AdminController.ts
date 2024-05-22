@@ -64,7 +64,7 @@ class AdminController {
           subject: 'Your new project',
           text: `You have created a new project: ${projectName}. Access it here: ${process.env.BASE_URL}/dashboard/project?id=${newProjectId}`,
         });
-        res.status(200).json({ msg: 'Project created successfully' });
+        res.status(200).json({ msg: 'Project created successfully', savedProject });
         return;
       } else {
         const projectResponse = {
