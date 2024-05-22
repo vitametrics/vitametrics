@@ -1,4 +1,5 @@
 import mongoose, { Document, Types } from 'mongoose';
+import { IUser } from './User';
 
 export interface IProject extends Document {
   projectId: string;
@@ -12,6 +13,7 @@ export interface IProject extends Document {
   fitbitRefreshToken: string;
   lastTokenRefresh: Date;
   members: Types.ObjectId[];
+  admins: (Types.ObjectId | IUser)[];
   devices: string[];
 }
 
@@ -28,6 +30,7 @@ const projectSchema = new mongoose.Schema(
     lastTokenRefresh: { type: Date, default: null },
     creationDate: { type: Date, default: Date.now },
     members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    admins: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
     devices: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Devices' }],
   },
   { timestamps: true }

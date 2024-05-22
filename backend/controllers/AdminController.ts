@@ -12,6 +12,10 @@ import Device from '../models/Device';
 import Project from '../models/Project';
 import User, { IUser } from '../models/User';
 
+interface IPopulatedUser {
+  _id: Types.ObjectId;
+  userId: string;
+}
 class AdminController {
   static async createProject(req: Request, res: Response) {
     const projectName = req.body.projectName as string;
@@ -134,8 +138,9 @@ class AdminController {
   }
 
   static async addMember(req: Request, res: Response) {
-    const { email, name } = req.body;
-    const projectId = req.query.projectId as string;
+    const { email, name, role } = req.body;
+    const projectId =
+      (req.query.projectId as string) || (req.body.projectId as string);
 
     try {
       logger.info(`Adding member: ${email} to project: ${projectId}`);
@@ -148,35 +153,43 @@ class AdminController {
       }
 
       let user = await User.findOne({ email });
-      if (!user) {
-        const newUserId = crypto.randomBytes(16).toString('hex');
-        const passwordToken = crypto.randomBytes(32).toString('hex');
-        const tokenExpiry = new Date(Date.now() + 3600000);
 
+      const newUserId = crypto.randomBytes(16).toString('hex');
+      const passwordToken = crypto.randomBytes(32).toString('hex');
+      const tokenExpiry = new Date(Date.now() + 3600000);
+
+      if (!user) {
         const newUser = new User({
           userId: newUserId,
           email: email,
           name: name,
-          passwordToken: passwordToken,
+          role: 'user',
+          setPasswordToken: passwordToken,
           passwordTokenExpiry: tokenExpiry,
         });
 
-        await newUser.save();
         user = newUser;
+        await newUser.save();
+
+        console.log(role);
+        if (role === 'admin') {
+          project.admins.push(newUser._id as Types.ObjectId);
+          await project.save();
+        }
       }
 
       if (process.env.NODE_ENV === 'production') {
         await sendEmail({
           to: email,
           subject: 'Invitation to join a project',
-          text: `You have been invited to join the project: ${project.projectName}. Please set your password by following this link: ${process.env.BASE_URL}/set-password?token=${user.setPasswordToken}`,
+          text: `You have been invited to join the project: ${project.projectName}. Please set your password by following this link: ${process.env.BASE_URL}/set-password?token=${passwordToken}&projectId=${project.projectId}`,
         });
-      } else {
-        logger.info(
-          `User invited to join project: ${project.projectName}. They can set their password by following this link: ${process.env.BASE_URL}/set-password?token=${user.setPasswordToken}`
-        );
         res.status(200).json({ msg: 'Member added successfully', project });
         return;
+      } else {
+        logger.info(
+          `User invited to join project: ${project.projectName}. They can set their password by following this link: ${process.env.BASE_URL}/set-password?token=${passwordToken}&projectId=${project.projectId}`
+        );
       }
     } catch (error) {
       logger.error(`Error adding member: ${error}`);
@@ -187,21 +200,41 @@ class AdminController {
 
   static async removeMember(req: Request, res: Response) {
     const userId = req.body.userId as string;
-    const projectId = req.query.projectId as string;
+    const projectId =
+      (req.query.projectId as string) || (req.body.projectId as string);
 
     try {
       logger.info(`Removing member: ${userId} from project: ${projectId}`);
 
-      const project = await Project.findOne({ projectId });
+      const project = await Project.findOne({ projectId })
+        .populate('members', 'userId')
+        .populate('admins', 'userId');
       if (!project) {
         logger.error(`Project: ${projectId} not found`);
         res.status(404).json({ msg: 'Project not found' });
         return;
       }
 
-      project.members = project.members.filter(
-        (memberId) => !memberId.equals(userId)
-      );
+      if (project.ownerId === userId) {
+        logger.error('Cannot remove project owner');
+        res.status(400).json({ msg: 'Cannot remove project owner' });
+        return;
+      }
+
+      const members = project.members as unknown as IPopulatedUser[];
+      const admins = project.admins as unknown as IPopulatedUser[];
+
+      const updatedMembers = members
+        .filter((member) => member.userId !== userId)
+        .map((member) => member._id);
+
+      const updatedAdmins = admins
+        .filter((admin) => admin.userId !== userId)
+        .map((admin) => admin._id);
+
+      project.members = updatedMembers;
+      project.admins = updatedAdmins;
+
       await project.save();
 
       const user = await User.findOne({ userId });
@@ -222,6 +255,8 @@ class AdminController {
           subject: 'Removal from project',
           text: `You have been removed from the project: ${project.projectName}.`,
         });
+        res.status(200).json({ msg: 'Member removed successfully' });
+        return;
       } else {
         logger.info(
           `User ${user.name} removed from project: ${project.projectName}`

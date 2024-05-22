@@ -15,7 +15,7 @@ const router = express.Router();
 router.post(
   '/invite-admin',
   verifySession,
-  verifyRole('owner'),
+  verifyRole('siteOwner'),
   validationHandler([
     body('email').isEmail().withMessage('Valid email is required'),
     body('name').isString().withMessage('Name is required'),
@@ -44,7 +44,7 @@ router.post(
       const newUser = new User({
         userId: newUserId,
         email: email,
-        role: 'admin',
+        role: 'siteAdmin',
         name: name,
         setPasswordToken: passwordToken,
         passwordTokenExpiry: tokenExpiry,

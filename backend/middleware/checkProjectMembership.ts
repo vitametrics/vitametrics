@@ -30,7 +30,7 @@ const checkProjectMembership = async (
       return;
     }
 
-    if (!user.projects.length && user.role !== 'owner') {
+    if (!user.projects.length && user.role !== 'siteOwner') {
       res
         .status(403)
         .json({ msg: `Access denied - User not a member of any project` });
@@ -44,7 +44,7 @@ const checkProjectMembership = async (
       _id: { $in: projectIds },
     });
 
-    if (!matchingProject && user.role !== 'owner') {
+    if (!matchingProject && user.role !== 'siteOwner') {
       logger.error(
         '[checkProjectMembership] Access denied - User not a member of the project'
       );
@@ -55,10 +55,9 @@ const checkProjectMembership = async (
     } else {
       logger.info('[checkProjectMembership] Project membership verified');
       req.project = matchingProject as IProject;
-  
+
       return next();
     }
- 
   } catch (error) {
     logger.error(
       `[checkProjectMembership] Error checking project membership: ${error}`

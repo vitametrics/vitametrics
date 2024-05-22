@@ -34,7 +34,7 @@ const memberInfoValidations = [
 router.post(
   '/create-project',
   verifySession,
-  verifyRole('admin'),
+  verifyRole('siteAdmin'),
   validationHandler(createProjectValidation),
   asyncHandler(AdminController.createProject)
 );
