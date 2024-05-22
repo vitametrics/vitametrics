@@ -81,6 +81,7 @@ const Members = () => {
           REMOVE_MEMBER_ENDPOINT,
           {
             userId: memberId,
+            projectId: searchParams.get("id"),
           },
           {
             withCredentials: true,
