@@ -21,9 +21,9 @@ const DashboardSettings = () => {
     setShowBackDrop(show);
   };
 
-  const handleDeleteProject = () => {
+  const handleDeleteProject = async () => {
     toggleDeleteProjectMenu(true);
-    deleteProjectService(projectId);
+    await deleteProjectService(projectId);
     setProjects(projects.filter((project) => project._id !== projectId));
     setDeleteProject(false);
     setShowBackDrop(false);
