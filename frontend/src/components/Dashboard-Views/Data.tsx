@@ -1,80 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-//import DatePicker from "react-datepicker";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useState, lazy, Suspense, useEffect, Fragment } from "react";
 import axios from "axios";
-//import { useDashboard } from "../../helpers/DashboardContext";
 import { useSearchParams } from "react-router-dom";
+import "chart.js/auto";
+import { useProject } from "../../helpers/ProjectContext";
+import { motion } from "framer-motion";
+import { Device, DeviceData, DataItem } from "../../types/Device";
+import useCustomInView from "../../hooks/useCustomInView";
 
 const LazyBarChart = lazy(() =>
   import("react-chartjs-2").then((module) => ({ default: module.Bar }))
 );
-
 const LazyLineChart = lazy(() =>
   import("react-chartjs-2").then((module) => ({ default: module.Line }))
 );
-import "chart.js/auto";
-import { useProject } from "../../helpers/ProjectContext";
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
-import { Device } from "../../types/Device";
-
-/*
-type DataItem = {
-  date: string;
-  value: number;
-};*/
-/*
-type DeviceData = {
-  id: string;
-  deviceVersion: string;
-  lastSyncTime: string;
-  batteryLevel: number;
-  ownerName: string;
-  heart: DataItem[];
-  steps: DataItem[];
-  calories: DataItem[];
-  distance: DataItem[];
-  elevation: DataItem[];
-  floors: DataItem[];
-  [key: string]: any; // This line is the index signature
-};*/
-
-interface DeviceInfo {
-  battery: string;
-  batteryLevel: number;
-  deviceVersion: string;
-  features: string[];
-  id: string;
-}
-
-interface HeartData {
-  dateTime: string;
-  value: {
-    customHeartRateZones: any[];
-    heartRateZones: any[];
-    restingHeartRate: number;
-  };
-}
-
-interface DeviceData {
-  deviceId: string;
-  deviceInfo: DeviceInfo;
-  heartData: HeartData[];
-  stepsData: DataItem[];
-  floorsData: DataItem[];
-  distanceData: DataItem[];
-  elevationData: DataItem[];
-  caloriesData: DataItem[];
-}
-interface DataItem {
-  dateTime: string;
-  value: string;
-}
 
 const Data = () => {
   const DOWNLOAD_DATA_ENDPOINT = `${process.env.API_URL}/project/download-data`;
+  const { ref, inView } = useCustomInView();
+
   const {
     projectDevices,
     projectName,
@@ -151,48 +97,6 @@ const Data = () => {
     { value: "line", label: "Line" },
   ];
 
-  /*
-  const createDataset = () => {
-    const formattedDate = formatDate(startDate);
-
-    const labels = selectedDevices.map((deviceId) => {
-      const device = devices.find((d) => d.id === deviceId);
-      if (!device) return { x: "Unknown", y: 0 };
-      return device
-        ? device.deviceVersion + " " + device?.ownerName + " " + device.id
-        : "Unknown";
-    });
-
-    const dataPoints = selectedDevices.map((deviceId) => {
-      const device = devices.find((d) => d.id === deviceId);
-      if (!device) return { x: "Unknown", y: 0 };
-
-      const dataPoint = device[dataType]?.find(
-        (item: DeviceData) => item.date === formattedDate
-      );
-
-      return {
-        x: device.deviceVersion + " " + device?.ownerName + " " + device.id,
-        y: dataPoint ? dataPoint.value : 0,
-        device: deviceId,
-      };
-    });
-
-    const datasets = [
-      {
-        data: dataPoints,
-        backgroundColor: labels.map(
-          () => `#${Math.floor(Math.random() * 16777215).toString(16)}`
-        ),
-      },
-    ];
-
-    setChartData({
-      labels,
-      datasets,
-    });
-  };*/
-
   const generateLabelsForRange = (start: Date, end: Date) => {
     let currentDate = new Date(start);
     const labels = [];
@@ -210,22 +114,12 @@ const Data = () => {
     end.setHours(23, 59, 59, 999);
 
     const labels = generateLabelsForRange(start, end);
-    //console.log("selected devices: " + selectedDevices);
-    //console.log(
-    // "iterating through devicesData in createRangeDataset(): " + devicesData
-    //);
-    //console.log("creating dataset type of: " + rangeDataType);
 
     const datasets = selectedDevices
       .map((deviceId) => {
-        //console.log("inside of mapping selected devices " + devicesData);
-
         let device = undefined as DeviceData | undefined;
         console.log(devicesData);
         for (const deviceData of devicesData) {
-          //console.log(
-          //   "iterating inside of devicesData (for loop): " + deviceData
-          //);
           if (deviceData[0].deviceId === deviceId) {
             device = deviceData[0];
             break;
@@ -247,10 +141,7 @@ const Data = () => {
             item.value,
           ])
         );
-        //console.log(dataByDate);
-
         const data = labels.map((dateLabel) => dataByDate.get(dateLabel) || 0);
-
         return {
           label,
           data,
@@ -260,27 +151,13 @@ const Data = () => {
           fill: false,
         };
       })
-      .filter((dataset) => dataset !== null); // Filter out null datasets
+      .filter((dataset) => dataset !== null);
 
     setRangeChartData({
       labels, // Use dates from the first device as labels
       datasets,
     });
-    //console.log(labels);
-    //console.log(datasets);
   };
-
-  /*
-  const changeWeekDays = () => {
-    const start = new Date(rangeStartDate);
-    const end = new Date(rangeEndDate);
-
-    start.setDate(start.getDate() - 7);
-    end.setDate(end.getDate() - 7);
-
-    setRangeStartDate(start);
-    setRangeEndDate(end);
-  };*/
 
   const renderRangeGraph = () => {
     const options = {
@@ -320,116 +197,12 @@ const Data = () => {
     }
   };
 
-  /*
-  const renderGraph = () => {
-    const options = {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        x: {
-          offset: true,
-          ticks: {
-            autoSkip: true,
-          },
-        },
-        y: {
-          beginAtZero: true,
-          title: {
-            display: true,
-            text: "Value",
-          },
-        },
-      },
-      plugins: {
-        legend: {
-          display: true, // Show the legend
-          position: "bottom",
-          onClick: (_evt: any, legendItem: any, legend: any) => {
-            const index = legend.chart.data.labels.indexOf(legendItem.text);
-            console.log(index);
-            if (index > -1) {
-              const meta = legend.chart.getDatasetMeta(0);
-              const item = meta.data[index];
-              legend.chart.toggleDataVisibility(index);
-              item.hidden = !item.hidden;
-            }
-            legend.chart.update();
-          },
-          labels: {
-            generateLabels: (chart: any) => {
-              const datasets = chart.data.datasets;
-              return chart.data.labels.map((label: string, i: number) => ({
-                text: label,
-                fontColor: "white",
-                fillStyle: datasets[0].backgroundColor[i],
-                datasetIndex: i,
-                hidden: chart.getDatasetMeta(0).data[i].hidden,
-              }));
-            },
-          },
-        },
-      },
-    };
-
-    switch (graphType) {
-      case "bar":
-        return (
-          <Suspense fallback={<div>Loading Chart...</div>}>
-            <LazyBarChart
-              data={{ datasets: [], ...chartData }}
-              options={{
-                ...options,
-                plugins: {
-                  ...options.plugins,
-                  legend: {
-                    ...options.plugins.legend,
-                    position: "bottom",
-                  },
-                },
-              }}
-              width="100%"
-            />
-          </Suspense>
-        );
-      case "line":
-        return (
-          <Suspense fallback={<div>Loading Chart...</div>}>
-            <LazyLineChart
-              data={{ datasets: [], ...chartData }}
-              options={{
-                ...options,
-                plugins: {
-                  ...options.plugins,
-                  legend: {
-                    ...options.plugins.legend,
-                    position: "bottom",
-                  },
-                },
-              }}
-              width="100%"
-            />
-          </Suspense>
-        );
-
-      default:
-        return (
-          <Suspense fallback={<div>Loading Chart...</div>}>
-            <LazyBarChart
-              data={{ datasets: [], ...chartData }}
-              options={{ responsive: true }}
-            />
-          </Suspense>
-        );
-    }
-  };*/
-
   const downloadData = async () => {
     if (selectedDevices.length === 0) {
       setDownloadFlag(false);
       setDownloadMsg("Please select device(s) to download");
       return;
     }
-
     for (const deviceId of selectedDevices) {
       try {
         const date = formatDate(downloadDate);
@@ -490,10 +263,6 @@ const Data = () => {
     show: { opacity: 1 },
   };
 
-  const { ref, inView } = useInView({
-    threshold: 0.1, // Adjust based on when you want the animation to trigger (1 = fully visible)
-    triggerOnce: true, // Ensures the animation only plays once
-  });
   return (
     <motion.div
       variants={fadeInItemVariants}
@@ -514,136 +283,6 @@ const Data = () => {
         </button>
       </span>
       <div className="p-5 w-full flex flex-col">
-        {/*
-        <h1 className="text-2xl text-yellow-500 mb-2">
-          {" "}
-          Data from {formatDate(startDate)}
-        </h1>
-        <div className="flex flex-row w-full gap-5 mb-5">
-          <div className="mr-auto flex flex-row gap-5">
-            <div className="flex flex-col">
-              <label
-                htmlFor="dataType"
-                className="block text-sm font-medium"
-              >
-                Select Data Type:
-              </label>
-              <select
-                id="dataType"
-                name="dataType"
-                value={dataType}
-                onChange={(e) =>
-                  setSearchParams(
-                    (prev) => {
-                      prev.set("dataType", e.target.value);
-                      return prev;
-                    },
-                    { replace: true }
-                  )
-                }
-                className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-              >
-                <option value="defaultDataType" disabled>
-                  -- Select Data Type --
-                </option>
-                {dataTypeOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="flex flex-col">
-              <label
-                htmlFor="graphType"
-                className="block text-sm font-medium"
-              >
-                Select Graph Type:
-              </label>
-              <select
-                id="graphType"
-                name="graphType"
-                value={graphType}
-                onChange={(e) =>
-                  setSearchParams(
-                    (prev) => {
-                      prev.set("graphType", e.target.value);
-                      return prev;
-                    },
-                    { replace: true }
-                  )
-                }
-                className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-              >
-                <option value="defaultGraphType" disabled>
-                  -- Select Graph Type --
-                </option>
-                {graphTypeOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="flex flex-col">
-              <label
-                htmlFor="detailLevelType"
-                className="block text-sm font-medium w-ful"
-              >
-                Select Detail Level:
-              </label>
-              <select
-                id="detailLevelType"
-                name="detailLevelType"
-                value={detailLevel}
-                onChange={(e) =>
-                  setSearchParams(
-                    (prev) => {
-                      prev.set("detailLevel", e.target.value);
-                      return prev;
-                    },
-                    { replace: true }
-                  )
-                }
-                className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-              >
-                <option value="defaultDataType" disabled>
-                  -- Select Detail Level --
-                </option>
-                {detailLevelTypes.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="flex flex-row w-full gap-5">
-            <div className="ml-auto">
-              <label
-                htmlFor="startDate"
-                className="block text-sm font-medium"
-              >
-                Select Date:
-              </label>
-              <DatePicker
-                selected={startDate}
-                onChange={(e: React.SetStateAction<any>) => setStartDate(e)}
-                selectsStart
-                startDate={startDate}
-                className=" p-2 border border-gray-300 rounded-md w-full"
-              />
-            </div>
-          </div>
-        </div>
-        <div className="w-full h-[500px] p- bg-[#2F2D2D] rounded-xl flex justify-center items-center mb-10">
-          {/*renderGraph()}
-        </div>
-
-        */}
-
         <h1 className="text-2xl text-primary mb-2 font-bold">
           {" "}
           Data from {formatDate(rangeStartDate)} to {formatDate(rangeEndDate)}
@@ -743,17 +382,9 @@ const Data = () => {
             </div>
           </div>
         </div>
-
         <div className="w-full h-[500px] p- bg-white shadow-lg rounded-xl flex justify-center items-center mb-10">
           {renderRangeGraph()}
-          {/*renderStatistics()*/}
         </div>
-        {/*
-        <div className="w-full h-[500px] p- bg-[#2F2D2D] rounded-xl flex justify-center items-center mb-10">
-          {/*renderRangeGraph()
-           /*renderStatistics()
-            </div>   
-            */}
         <div className="w-full h-[400px bg-white shadow-lg rounded-xl flex flex-col mb-10 p-10">
           <h2 className="text-left w-full text-3xl font-bold text-primary mb-3">
             Toggle Devices
