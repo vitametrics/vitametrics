@@ -80,6 +80,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       : []
   );
 
+  /*
   const testDevices = [
     {
       deviceId: "2570612980",
@@ -91,16 +92,23 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
     {
       deviceId: "124811",
       deviceName: "Device #2",
-      deviceVersion: "Charge 4",
+      deviceVersion: "Charge 3",
       lastSyncTime: "2024-02-10",
-      batteryLevel: "100",
+      batteryLevel: "50",
     },
-  ];
+    {
+      deviceId: "69133712",
+      deviceName: "Device #2",
+      deviceVersion: "Alta HR",
+      lastSyncTime: "2024-02-10",
+      batteryLevel: "20",
+    },
+  ];*/
 
   const [projectDevices, setProjectDevices] = useState<Device[]>(
     localStorage.getItem("devices")
       ? JSON.parse(localStorage.getItem("devices")!)
-      : testDevices
+      : []
   );
   /*
   const testMembers = [
@@ -210,8 +218,8 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       const project = response.data.project;
 
       setMembers(project.members);
-      //setProjectDevices(project.devices);
-      setProjectDevices(testDevices);
+      setProjectDevices(project.devices);
+      //setProjectDevices(testDevices);
 
       setProjectName(project.projectName);
       setOwnerEmail(project.ownerEmail);
