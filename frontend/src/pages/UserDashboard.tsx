@@ -20,7 +20,7 @@ interface Project {
 }
 
 const UserDashboard = () => {
-  const { projects, setProjects } = useAuth();
+  const { projects, setProjects, userRole } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -140,12 +140,14 @@ const UserDashboard = () => {
             <span className="text-left text-primary text-2xl mr-auto mb-3 font-bold">
               Projects
             </span>
-            <button
-              onClick={() => toggleCreateProjectMenu(true)}
-              className="p-2 bg-primary text-white rounded-lg mb-5 text-xl w-[150px] mr-auto font-bold"
-            >
-              New Project
-            </button>
+            {userRole !== "user" && (
+              <button
+                onClick={() => toggleCreateProjectMenu(true)}
+                className="p-2 bg-primary text-white rounded-lg mb-5 text-xl w-[150px] mr-auto font-bold"
+              >
+                New Project
+              </button>
+            )}
             {/* search bar */}
             <input
               type="text"

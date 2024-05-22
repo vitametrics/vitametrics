@@ -219,13 +219,14 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setMembers(project.members);
       setProjectDevices(project.devices);
+
       //setProjectDevices(testDevices);
 
       setProjectName(project.projectName);
       setOwnerEmail(project.ownerEmail);
       setOwnerId(project.ownerId);
       setOwnerName(project.ownerName);
-      setIsAccountLinked(project.isAccountLinked);
+      setIsAccountLinked(project.hasFitbitAccountLinked);
 
       setProjectDescription(
         project.projectDescription ? project.projectDescription : ""

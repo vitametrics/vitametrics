@@ -11,8 +11,6 @@ import useSearch from "../../hooks/useDeviceSearch";
 import PaginationControls from "../Dashboard/PaginationControls";
 import Pagination from "../../components/Pagination";
 
-//const NAME_CHANGE_ENDPOINT = `${process.env.API_URL}/device/change-device-name`;
-
 const Devices = () => {
   const {
     //setDevices,
@@ -21,11 +19,6 @@ const Devices = () => {
     projectName,
     fetchProjectDevices,
   } = useProject();
-
-  /*
-  const [editingDevices, setEditingDevices] = useState<Record<string, string>>(
-    {}
-  );*/
 
   const itemsPerPageOptions = [5, 10, 15, 20];
   const {
@@ -52,28 +45,6 @@ const Devices = () => {
 
   console.log(projectDevices);
   const { ref, inView } = useCustomInView();
-
-  /*
-  const handleOwnerNameChange = useCallback(
-    async (deviceId: string) => {
-      try {
-        const ownerName = editingDevices[deviceId];
-        const response = await axios.post(
-          NAME_CHANGE_ENDPOINT,
-          { deviceId, ownerName },
-          { withCredentials: true }
-        );
-        setProjectDevices(response.data);
-        setEditingDevices((prev) => {
-          const { [deviceId]: removed, ...rest } = prev;
-          return rest;
-        });
-      } catch (error) {
-        console.error("Error changing owner name:", error);
-      }
-    },
-    [editingDevices]
-  );*/
 
   const handleFetchDevices = useCallback(() => {
     fetchProjectDevices();
