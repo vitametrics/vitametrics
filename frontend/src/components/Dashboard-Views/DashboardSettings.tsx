@@ -8,12 +8,10 @@ import ChangeDescriptionField from "../Dashboard/DashboardSettings/ChangeDescrip
 import ChangeOwnerEmailField from "../Dashboard/DashboardSettings/ChangeEmailField";
 import DeleteProjectMenu from "../Dashboard/DeleteProjectMenu";
 import { deleteProjectService } from "../../services/projectService";
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 const DashboardSettings = () => {
   const { ref, inView } = useCustomInView();
-  const navigate = useNavigate();
   const { projectName, setShowBackDrop, projectId } = useProject();
   const { projects, setProjects } = useAuth();
   const [deleteProject, setDeleteProject] = useState(false);
@@ -30,7 +28,7 @@ const DashboardSettings = () => {
     setDeleteProject(false);
     setShowBackDrop(false);
 
-    navigate("/dashboard");
+    window.location.href = "/dashboard";
   };
 
   return (
