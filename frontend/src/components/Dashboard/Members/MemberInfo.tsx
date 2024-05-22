@@ -3,20 +3,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-
-interface MemberInfoProps {
-  member: any;
-  isOwner: boolean;
-  userId: string;
-  confirmDelete: { id: string; confirm: boolean };
-  handleRemoveMember: (memberId: string) => void;
-  handleClose: () => void;
-}
-
-const fadeInItemVariants = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1 },
-};
+import { fadeInItemVariants } from "../../../hooks/animationVariant";
+import { MemberInfoProps } from "../../../types/Member";
 
 const MemberInfo: React.FC<MemberInfoProps> = ({
   member,

@@ -11,6 +11,7 @@ import MemberInfo from "../../components/Dashboard/Members/MemberInfo";
 import InviteMenu from "../../components/Dashboard/Members/InviteMenu";
 import { fadeInItemVariants } from "../../hooks/animationVariant";
 import useCustomInView from "../../hooks/useCustomInView";
+import MembersContainer from "../Dashboard/Members/MembersContainer";
 
 const Members = () => {
   const ADD_MEMBER_ENDPOINT = `${process.env.API_URL}/admin/add-member`;
@@ -39,6 +40,7 @@ const Members = () => {
     id: "",
     confirm: false,
   });
+  console.log(members);
 
   const debouncedEmail = useDebounce(emailInput, 100);
   const debouncedName = useDebounce(nameInput, 100);
@@ -229,25 +231,7 @@ const Members = () => {
           </button>
         </div>
       )}
-      <div className="flex flex-row flex-wrap gap-5 p-5">
-        {members.length > 0 ? (
-          members.map((member, index: number) => {
-            return (
-              <div
-                key={index}
-                onClick={() => toggleMemberInfo(true, member.userId)}
-                className="flex flex-row items-center h-[70px] justify-center hover:cursor-pointer bg-secondary rounded-xl p-5"
-              >
-                <p className="text-xl text-white font-bold text-center">
-                  {member.email}
-                </p>
-              </div>
-            );
-          })
-        ) : (
-          <h2 className="text-2xl font-bold text-primary">No Members Found.</h2>
-        )}
-      </div>
+      <MembersContainer onClick={toggleMemberInfo} />
     </motion.div>
   );
 };

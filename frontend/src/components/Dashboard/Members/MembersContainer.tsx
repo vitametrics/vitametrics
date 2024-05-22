@@ -1,13 +1,17 @@
-import { Fragment } from "react";
 import { useProject } from "../../../helpers/ProjectContext";
 import Pagination from "../../Pagination";
 import usePagination from "../../../hooks/usePagination";
 import PaginationControls from "../PaginationControls";
-import OverviewDevicesList from "./OverviewDevicesList";
-import useSearch from "../../../hooks/useDeviceSearch"; // Ensure correct path
+import MembersList from "./MembersList";
+import useSearch from "../../../hooks/useSearch";
+import { Fragment } from "react";
 
-const OverviewDevices = () => {
-  const { projectDevices } = useProject();
+interface MembersContainerProps {
+  onClick: (arg0: boolean, arg1: string) => void;
+}
+
+const MembersContainer: React.FC<MembersContainerProps> = ({ onClick }) => {
+  const { members } = useProject();
   const itemsPerPageOptions = [5, 10, 15, 20];
   const {
     currentPage,
@@ -17,7 +21,7 @@ const OverviewDevices = () => {
   } = usePagination();
 
   const { searchTerm, handleSearchChange, filteredItems } = useSearch(
-    projectDevices,
+    members,
     setCurrentPage
   );
 
@@ -26,16 +30,16 @@ const OverviewDevices = () => {
     filteredItems.length
   );
   const indexOfFirstMember = (currentPage - 1) * itemsPerPage;
-  const currentDevices = filteredItems.slice(
+  const currentMembers = filteredItems.slice(
     indexOfFirstMember,
     indexOfLastMember
   );
 
   return (
-    <div className="flex flex-col bg-white rounded-xl shadow-lg p-10">
-      <h2 className="text-2xl text-primary font-bold mb-3">Devices</h2>
-      {projectDevices && projectDevices.length === 0 ? (
-        <span className="text-primary text-lg">No devices found</span>
+    <div className="flex flex-col bg-white rounded-xl shadow-lg p-10 mb-12">
+      <h2 className="text-2xl text-primary font-bold mb-3">Members</h2>
+      {members && members.length === 0 ? (
+        <span className="text-primary text-lg">No members found</span>
       ) : (
         <Fragment>
           <input
@@ -53,7 +57,7 @@ const OverviewDevices = () => {
             currentPage={currentPage}
             indexOfLastItem={indexOfLastMember}
           />
-          <OverviewDevicesList devices={currentDevices} />
+          <MembersList members={currentMembers} onClick={onClick} />
           <span className="h-[0.5px] bg-[#d3d7df] w-full mb-3"></span>
 
           <div
@@ -73,4 +77,4 @@ const OverviewDevices = () => {
   );
 };
 
-export default OverviewDevices;
+export default MembersContainer;

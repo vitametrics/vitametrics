@@ -8,7 +8,7 @@ import useCustomInView from "../../hooks/useCustomInView";
 import DevicesList from "../Dashboard/Devices/DevicesList";
 import usePagination from "../../hooks/usePagination";
 import useSearch from "../../hooks/useDeviceSearch";
-import PaginationControls from "../../components/Dashboard/Overview/PaginationControls";
+import PaginationControls from "../Dashboard/PaginationControls";
 import Pagination from "../../components/Pagination";
 
 //const NAME_CHANGE_ENDPOINT = `${process.env.API_URL}/device/change-owner-name`;

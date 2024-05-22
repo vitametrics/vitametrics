@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import Home from "./pages/Home"; // Regular import for Home
 const Dashboard = lazy(() => import("./pages/UserDashboard"));
-const ProjectDashboard = lazy(() => import("./pages/ProjectDashboard")); // Regular import for UserDashboard
+const ProjectDashboard = lazy(() => import("./pages/ProjectDashboard"));
 const Login = lazy(() => import("./pages/Login"));
 const FAQs = lazy(() => import("./pages/FAQs"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));

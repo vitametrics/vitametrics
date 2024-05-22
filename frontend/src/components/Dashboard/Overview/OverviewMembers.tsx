@@ -1,7 +1,7 @@
 import { useProject } from "../../../helpers/ProjectContext";
 import Pagination from "../../Pagination";
 import usePagination from "../../../hooks/usePagination";
-import PaginationControls from "./PaginationControls";
+import PaginationControls from "../PaginationControls";
 import OverviewMembersList from "./OverviewMembersList";
 import useSearch from "../../../hooks/useSearch";
 import { Fragment } from "react";
