@@ -19,6 +19,7 @@ const Members = () => {
     triggerOnce: true, // Ensures the animation only plays once
   });
   const { projectName, members, fetchProject } = useProject();
+  const { userRole } = useAuth();
   const { userId, isOwner } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams({
     view: "members",
@@ -46,13 +47,16 @@ const Members = () => {
   const debouncedEmail = useDebounce(emailInput, 500);
   const debouncedName = useDebounce(nameInput, 500);
 
-  const roleOptions = [
-    { value: "user", label: "User" },
-    { value: "admin", label: "Admin" },
-  ];
+  const roleOptions =
+    userRole === "admin"
+      ? [{ value: "user", label: "User" }]
+      : [
+          { value: "user", label: "User" },
+          { value: "admin", label: "Admin" },
+        ];
 
   useEffect(() => {
-    if (showInviteMenu) setShowBackDrop(showInviteMenu);
+    if (showInviteMenu && userRole !== "user") setShowBackDrop(showInviteMenu);
     if (member) setShowBackDrop(true);
   }, []);
 
@@ -169,7 +173,7 @@ const Members = () => {
   };
 
   const renderInviteMenu = () => {
-    if (showInviteMenu) {
+    if (showInviteMenu && userRole !== "user") {
       return (
         <motion.div
           variants={fadeInItemVariants}
@@ -319,7 +323,7 @@ const Members = () => {
       <h2 className="w-full text-4xl font-bold p-5 pb-0 text-primary">
         {projectName} Members
       </h2>
-      {isOwner && (
+      {userRole !== "user" && (
         <div className="flex p-5 w-full">
           <button
             onClick={() => toggleInviteMenu(true)} // Close invite menu when clicking the button

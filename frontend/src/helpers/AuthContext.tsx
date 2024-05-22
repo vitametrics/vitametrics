@@ -20,6 +20,7 @@ interface AuthContextProps {
   isBackendUpToDate: boolean;
   isFrontendUpToDate: boolean;
   fetchVersion: () => void;
+  userRole: string;
 }
 
 interface Project {
@@ -41,6 +42,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isLoadingAuth, setIsLoadingAuth] = useState<boolean>(true);
   const [isEmailVerified, setIsEmailVerified] = useState<boolean>(false);
   const [isOwner, setIsOwner] = useState<boolean>(false);
+  const [userRole, setUserRole] = useState<string>("" as string);
   const [userEmail, setUserEmail] = useState<string>("");
   const [userId, setUserId] = useState<string>("");
   const [projects, setProjects] = useState<Project[]>([]);
@@ -61,6 +63,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setUserEmail(response.data.user.email);
         setUserId(response.data.user.id);
         setIsOwner(response.data.user.role === "owner" ? true : false);
+        setUserRole(response.data.user.role);
         if (isOwner) {
           await fetchVersion();
         }
@@ -144,6 +147,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         isBackendUpToDate,
         isFrontendUpToDate,
         fetchVersion,
+        userRole,
       }}
     >
       {children}
