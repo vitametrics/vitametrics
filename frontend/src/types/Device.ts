@@ -10,6 +10,10 @@ export interface OverviewMembersListProps {
     devices: OverviewDevice[];
 }
 
+export interface DeviceListProps {
+  devices: Device[];
+}
+
 export interface HeartData {
     dateTime: string;
     value: {
@@ -56,5 +60,6 @@ export interface HeartData {
     deviceName: string;
     deviceVersion: string;
     batteryLevel: number;
+    lastSyncTime: string;
   }
   

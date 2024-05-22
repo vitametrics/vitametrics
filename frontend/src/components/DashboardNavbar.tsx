@@ -8,7 +8,7 @@ export const DashboardNavbar = () => {
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
   return (
-    <nav className="bg-primary2 px-5">
+    <nav id="top" className="bg-primary2 px-5 ">
       <div className="flex flex-row w-full bg-primary2 top-0 flex-wrap items-center justify-between mx-auto py-3">
         <a
           href="/dashboard"

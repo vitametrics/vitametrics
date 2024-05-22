@@ -2,13 +2,36 @@ import { fadeInItemVariants } from "../../hooks/animationVariant";
 import { motion } from "framer-motion";
 import useCustomInView from "../../hooks/useCustomInView";
 import { useProject } from "../../helpers/ProjectContext";
+import { useAuth } from "../../helpers/AuthContext";
 import ChangeNameField from "../Dashboard/DashboardSettings/ChangeNameField";
 import ChangeDescriptionField from "../Dashboard/DashboardSettings/ChangeDescription";
 import ChangeOwnerEmailField from "../Dashboard/DashboardSettings/ChangeEmailField";
+import DeleteProjectMenu from "../Dashboard/DeleteProjectMenu";
+import { deleteProjectService } from "../../services/projectService";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const DashboardSettings = () => {
   const { ref, inView } = useCustomInView();
-  const { projectName } = useProject();
+  const navigate = useNavigate();
+  const { projectName, setShowBackDrop, projectId } = useProject();
+  const { projects, setProjects } = useAuth();
+  const [deleteProject, setDeleteProject] = useState(false);
+
+  const toggleDeleteProjectMenu = (show: boolean) => {
+    setDeleteProject(show);
+    setShowBackDrop(show);
+  };
+
+  const handleDeleteProject = () => {
+    toggleDeleteProjectMenu(true);
+    deleteProjectService(projectId);
+    setProjects(projects.filter((project) => project._id !== projectId));
+    setDeleteProject(false);
+    setShowBackDrop(false);
+
+    navigate("/dashboard");
+  };
 
   return (
     <motion.div
@@ -16,8 +39,14 @@ const DashboardSettings = () => {
       initial="hidden"
       animate={inView ? "show" : "hidden"}
       ref={ref}
-      className="w-full h-full flex flex-col p-[3.75rem] text-primary "
+      className={`w-full h-full flex flex-col p-[3.75rem] text-primary`}
     >
+      <DeleteProjectMenu
+        toggleMenu={toggleDeleteProjectMenu}
+        handleDelete={handleDeleteProject}
+        show={deleteProject}
+      />
+
       <h2 className="w-full text-4xl font-libreFranklin font-bold mb-10">
         {projectName} Settings
       </h2>
@@ -41,9 +70,14 @@ const DashboardSettings = () => {
             DISCLAIMER: This action is not reversible
           </p>
 
-          <button className="p-4 w-[300px] bg-red-500 text-white rounded-lg font-bold">
-            Delete Project
-          </button>
+          <a href="#top">
+            <button
+              className="p-4 w-[300px] bg-red-500 text-white rounded-lg font-bold"
+              onClick={() => toggleDeleteProjectMenu(true)}
+            >
+              Delete Project
+            </button>
+          </a>
         </span>
       </div>
     </motion.div>

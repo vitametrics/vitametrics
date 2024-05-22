@@ -12,7 +12,7 @@ import { useSearchParams } from "react-router-dom";
 import { useProject } from "../helpers/ProjectContext";
 
 const ProjectDashboard = () => {
-  const { showBackDrop } = useProject();
+  const { showBackDrop, isAccountLinked } = useProject();
   const [searchParams, setSearchParams] = useSearchParams({ view: "overview" });
   const view = searchParams.get("view") || "overview";
   const id = searchParams.get("id");
@@ -47,7 +47,7 @@ const ProjectDashboard = () => {
           <StickySidebar setPage={setPage} path="dashboard/project" />
         </div>
         <div className="flex w-full h-full flex-col">
-          <AuthenticationBanner />
+          {!isAccountLinked && <AuthenticationBanner />}
           {renderComponent()}
         </div>
       </div>

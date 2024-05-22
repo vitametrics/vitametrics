@@ -19,6 +19,7 @@ export const createProjectService = async (projectName: string, projectDescripti
   }
 };
 export const deleteProjectService = async (projectId: string) => {
+  
   try {
     const response = await axios.post(
       DELETE_PROJECT_ENDPOINT,

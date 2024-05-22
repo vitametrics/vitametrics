@@ -82,26 +82,29 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       : []
   );
 
-  const [deviceViewDevices, setDeviceViewDevices] = useState<Device[]>(
-    localStorage.getItem("devices")
-      ? JSON.parse(localStorage.getItem("devices")!)
-      : []
-  );
-
-  /*
   const testDevices = [
     {
-      id: "531590",
-      name: "Device #1",
+      deviceId: "531590",
+      deviceName: "Device #1",
       deviceVersion: "Charge 4",
+      lastSyncTime: "2024-02-10",
+      batteryLevel: "100",
     },
     {
       id: "124811",
-      name: "Device #2",
+      deviceName: "Device #2",
       deviceVersion: "Charge 4",
+      lastSyncTime: "2024-02-10",
+      batteryLevel: "100",
     },
   ];
 
+  const [deviceViewDevices, setDeviceViewDevices] = useState<Device[]>(
+    localStorage.getItem("devices")
+      ? JSON.parse(localStorage.getItem("devices")!)
+      : testDevices
+  );
+  /*
   const testMembers = [
     {
       name: "John Doe",
