@@ -5,10 +5,7 @@ import PaginationControls from "../PaginationControls";
 import MembersList from "./MembersList";
 import useSearch from "../../../hooks/useSearch";
 import { Fragment } from "react";
-
-interface MembersContainerProps {
-  onClick: (arg0: boolean, arg1: string) => void;
-}
+import { MembersContainerProps } from "../../../types/Member";
 
 const MembersContainer: React.FC<MembersContainerProps> = ({ onClick }) => {
   const { members } = useProject();

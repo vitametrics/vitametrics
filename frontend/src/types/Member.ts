@@ -25,3 +25,7 @@ export interface MemberInfoProps {
     handleRemoveMember: (memberId: string) => void;
     handleClose: () => void;
   }
+
+ export interface MembersContainerProps {
+    onClick: (arg0: boolean, arg1: string) => void;
+  }

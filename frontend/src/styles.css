@@ -234,7 +234,7 @@ input:checked + .slider:before {
     position: absolute;
     height: 2px;
     width: 40px;
-    background-color: #000;
+    background-color: #32354f;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%) rotate(-45deg);
@@ -245,7 +245,7 @@ input:checked + .slider:before {
     position: absolute;
     height: 2px;
     width: 40px;
-    background-color: #000;
+    background-color: #32354f;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%) rotate(45deg);
