@@ -25,7 +25,6 @@ const Members = () => {
     setShowBackDrop,
     showBackDrop,
     isAdmin,
-    isOwner,
   } = useProject();
   const { userRole, userId } = useAuth();
 
@@ -52,13 +51,12 @@ const Members = () => {
   const debouncedEmail = useDebounce(emailInput, 100);
   const debouncedName = useDebounce(nameInput, 100);
 
-  const roleOptions =
-    isAdmin || isOwner
-      ? [{ value: "user", label: "User" }]
-      : [
-          { value: "user", label: "User" },
-          { value: "admin", label: "Admin" },
-        ];
+  const roleOptions = isAdmin
+    ? [{ value: "user", label: "User" }]
+    : [
+        { value: "user", label: "User" },
+        { value: "admin", label: "Admin" },
+      ];
 
   useEffect(() => {
     if (showInviteMenu && userRole !== "user") setShowBackDrop(showInviteMenu);
