@@ -174,7 +174,7 @@ class AdminController {
 
       const availableUsers = await User.find({
         _id: { $nin: existingMemberIds },
-      }).select('email, name');
+      }).select('email name');
 
       res.status(200).json({ availableUsers });
       return;
