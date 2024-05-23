@@ -31,10 +31,10 @@ const userSchema = new Schema(
     projects: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Projects' }],
     setPasswordToken: String,
     passwordTokenExpiry: Date,
-    fitbitUserId: { type: String, default: null},
-    fitbitAccessToken: { type: String, default: null},
-    fitbitRefreshToken: { type: String, default: null},
-    lastTokenRefresh: { type: Date, default: null}
+    fitbitUserId: { type: String, default: null },
+    fitbitAccessToken: { type: String, default: null },
+    fitbitRefreshToken: { type: String, default: null },
+    lastTokenRefresh: { type: Date, default: null },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );

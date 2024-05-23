@@ -2,8 +2,8 @@ import axios, { AxiosResponse } from 'axios';
 
 import Device from '../../models/Device';
 import Project from '../../models/Project';
-import logger from '../logger';
 import User from '../../models/User';
+import logger from '../logger';
 
 interface FitbitDeviceInfo {
   id: string;
@@ -26,17 +26,16 @@ async function fetchDevices(
   userId: string | undefined
 ): Promise<DeviceInfo[]> {
   try {
-
     let deviceResponse;
     let userName = 'Project';
 
     if (!userId) {
-      deviceResponse = await axios.get(
+      deviceResponse = (await axios.get(
         `https://api.fitbit.com/1/user/${fitbitUserId}/devices.json`,
         {
           headers: { Authorization: `Bearer ${fitbitAccessToken}` },
         }
-      ) as AxiosResponse<FitbitDeviceInfo[]>;
+      )) as AxiosResponse<FitbitDeviceInfo[]>;
     } else {
       const user = await User.findOne({ userId });
       if (!user) {
@@ -46,12 +45,12 @@ async function fetchDevices(
 
       userName = user.name;
 
-      deviceResponse = await axios.get(
+      deviceResponse = (await axios.get(
         `https://api.fitbit.com/1/user/${user.fitbitUserId}/devices.json`,
         {
           headers: { Authorization: `Bearer ${user.fitbitAccessToken}` },
         }
-      ) as AxiosResponse<FitbitDeviceInfo[]>;
+      )) as AxiosResponse<FitbitDeviceInfo[]>;
     }
 
     const validDevices = deviceResponse.data.filter(
@@ -79,14 +78,14 @@ async function fetchDevices(
           deviceVersion: device.deviceVersion,
           batteryLevel: device.batteryLevel,
           deviceName: device.deviceVersion,
-          lastSyncTime: device.lastSyncTime
+          lastSyncTime: device.lastSyncTime,
         });
 
         const savedDevice = await newDevice.save();
 
         await Project.updateOne(
-          {projectId},
-          { $addToSet: { devices: savedDevice._id}}
+          { projectId },
+          { $addToSet: { devices: savedDevice._id } }
         );
       }
     } else {
@@ -98,14 +97,14 @@ async function fetchDevices(
           deviceVersion: device.deviceVersion,
           batteryLevel: device.batteryLevel,
           deviceName: device.deviceVersion,
-          lastSyncTime: device.lastSyncTime
+          lastSyncTime: device.lastSyncTime,
         });
 
         const savedDevice = await newDevice.save();
-        
+
         await Project.updateOne(
           { projectId },
-          { $addToSet: { devices: savedDevice._id }}
+          { $addToSet: { devices: savedDevice._id } }
         );
       }
     }

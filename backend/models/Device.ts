@@ -11,8 +11,8 @@ export interface IDevice extends Document {
 }
 
 const deviceSchema = new mongoose.Schema({
-  owner: { type: String, required: true},
-  ownerName: { type: String, required: true},
+  owner: { type: String, required: true },
+  ownerName: { type: String, required: true },
   deviceName: { type: String, default: '' },
   deviceVersion: { type: String, default: '' },
   batteryLevel: { type: String, default: '0%' },

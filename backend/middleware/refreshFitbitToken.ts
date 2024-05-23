@@ -44,29 +44,27 @@ async function refreshUserToken(user: IUser) {
     ? (new Date().getTime() - new Date(lastTokenRefresh).getTime()) / 3600000
     : Infinity;
 
-    if (tokenAgeHours >= 8) {
-      const refreshResponse = await axios.post(
-        'https://api.fitbit.com/oauth2/token',
-        `grant_type=refresh_token&refresh_token=${fitbitRefreshToken}`,
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            Authorization: `Basic ${Buffer.from(`${process.env.FITBIT_CLIENT_ID}:${process.env.FITBIT_CLIENT_SECRET}`).toString('base64')}`
-          },
-        }
-      );
+  if (tokenAgeHours >= 8) {
+    const refreshResponse = await axios.post(
+      'https://api.fitbit.com/oauth2/token',
+      `grant_type=refresh_token&refresh_token=${fitbitRefreshToken}`,
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Authorization: `Basic ${Buffer.from(`${process.env.FITBIT_CLIENT_ID}:${process.env.FITBIT_CLIENT_SECRET}`).toString('base64')}`,
+        },
+      }
+    );
 
-      const {
-        access_token: newAccessToken,
-        refresh_token: newRefreshToken
-      } = refreshResponse.data;
+    const { access_token: newAccessToken, refresh_token: newRefreshToken } =
+      refreshResponse.data;
 
-      await User.findByIdAndUpdate(user._id, {
-        fitbitAccessToken: newAccessToken,
-        fitbitRefreshToken: newRefreshToken,
-        lastTokenRefresh: new Date(),
-      });
-    }
+    await User.findByIdAndUpdate(user._id, {
+      fitbitAccessToken: newAccessToken,
+      fitbitRefreshToken: newRefreshToken,
+      lastTokenRefresh: new Date(),
+    });
+  }
 }
 
 async function refreshProjectToken(project: IProject) {
@@ -82,15 +80,13 @@ async function refreshProjectToken(project: IProject) {
       {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          Authorization: `Basic ${Buffer.from(`${process.env.FITBIT_CLIENT_ID}:${process.env.FITBIT_CLIENT_SECRET}`).toString('base64')}`
+          Authorization: `Basic ${Buffer.from(`${process.env.FITBIT_CLIENT_ID}:${process.env.FITBIT_CLIENT_SECRET}`).toString('base64')}`,
         },
       }
     );
 
-    const {
-      access_token: newAccessToken,
-      refresh_token: newRefreshToken
-    } = refreshResponse.data;
+    const { access_token: newAccessToken, refresh_token: newRefreshToken } =
+      refreshResponse.data;
 
     await Project.findByIdAndUpdate(project._id, {
       fitbitAccessToken: newAccessToken,

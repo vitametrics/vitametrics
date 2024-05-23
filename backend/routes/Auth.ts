@@ -18,11 +18,11 @@ function createCodeChallenge(codeVerifier: string): string {
 }
 
 router.get('/auth', async (req: Request, res: Response) => {
-  const projectId = req.cookies.projectId || req.query.projectId as string;
-  const userId = req.query.userId as string || req.user?.userId as string;
+  const projectId = req.cookies.projectId || (req.query.projectId as string);
+  const userId = (req.query.userId as string) || (req.user?.userId as string);
 
   if (!projectId) {
-    return res.status(400).json({msg: 'projectId is missing'});
+    return res.status(400).json({ msg: 'projectId is missing' });
   }
 
   const codeVerifier = crypto.randomBytes(32).toString('hex');
@@ -60,15 +60,15 @@ router.get('/callback', async (req: Request, res: Response) => {
   const code = req.query.code as string;
 
   if (!projectId) {
-    return res.status(400).json({msg: 'projectId cookie is missing'});
+    return res.status(400).json({ msg: 'projectId cookie is missing' });
   }
 
   try {
-    const verifier = await CodeVerifier.findOne({ projectId, userId})
+    const verifier = await CodeVerifier.findOne({ projectId, userId })
       .sort({ createdAt: -1 })
       .limit(1);
     if (!verifier) {
-      return res.status(400).json({msg: 'Code verifier not found'});
+      return res.status(400).json({ msg: 'Code verifier not found' });
     }
     const codeVerifier = verifier.value;
     await CodeVerifier.findOneAndDelete(verifier._id); // cleanup verifier from db
@@ -124,14 +124,13 @@ router.get('/callback', async (req: Request, res: Response) => {
       project.fitbitUserId = fitbitUserID;
       project.fitbitAccessToken = accessToken;
       project.fitbitRefreshToken = refreshToken;
-  
+
       await project.save();
-  
+
       res.clearCookie('userId');
       // this should not handle redirects. fine for now i guess.
       return res.redirect(`/dashboard/project?id=${projectId}&view=overview`);
     }
-    
   } catch (err) {
     console.error('Error handling OAuth callback:', err);
     res.status(500).json({ success: false, msg: 'Internal Server Error' });

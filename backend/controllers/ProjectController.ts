@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-import mongoose, { Types } from 'mongoose';
+import { Types } from 'mongoose';
 
 import logger from '../middleware/logger';
 import fetchData from '../middleware/util/fetchData';
@@ -20,14 +20,13 @@ export async function getProjectInfo(req: Request, res: Response) {
     let isAdmin = false;
     let isOwner = false;
 
-    const project = (await Project.findOne({
+    const project = await Project.findOne({
       projectId: req.query.projectId as string,
     })
       .select('-fitbitAccessToken -fitbitRefreshToken -lastTokenRefresh')
       .populate('members', 'userId email name role emailVerified')
       .populate('devices', 'deviceId deviceName deviceVersion owner ownerName')
-      .populate('admins', 'userId'));
-
+      .populate('admins', 'userId');
 
     if (!project) {
       logger.error(`Project: ${req.query.projectId} not found`);
@@ -49,14 +48,14 @@ export async function getProjectInfo(req: Request, res: Response) {
       return {
         ...memberObj.toObject(),
         isOwner,
-        isAdmin
-      }
+        isAdmin,
+      };
     });
 
     isAdmin = project.admins.some((admin) => {
       const adminObj = admin as IUser;
       return adminObj.userId === currentUser.userId;
-    })
+    });
 
     isOwner = project.ownerId === currentUser.userId;
 
@@ -208,20 +207,19 @@ export async function fetchDevicesHandler(req: Request, res: Response) {
   try {
     logger.info(`Fetching devices for project: ${currentProject.projectId}`);
 
-
     if (userId) {
       logger.info(`Fetching devices for user: ${userId}`);
       const user = await User.findOne({ userId });
 
       if (!user) {
         logger.error(`User: ${userId} not found`);
-        res.status(404).json({ msg: 'User not found'});
+        res.status(404).json({ msg: 'User not found' });
         return;
       }
 
       if (!user.fitbitUserId || !user.fitbitAccessToken) {
         logger.error(`Fitbit account not linked to user: ${userId}`);
-        res.status(400).json({ msg: 'Fitbit account not linked to user'});
+        res.status(400).json({ msg: 'Fitbit account not linked to user' });
         return;
       }
 
@@ -232,21 +230,19 @@ export async function fetchDevicesHandler(req: Request, res: Response) {
         user.userId
       );
 
-      logger.info(
-        `Devices fetched successfully for user: ${userId}`
-      );
+      logger.info(`Devices fetched successfully for user: ${userId}`);
       res.json(devices);
       return;
-
     } else {
-
       logger.info(`Fetching devices for project: ${currentProject.projectId}`);
 
       if (!currentProject.fitbitUserId || !currentProject.fitbitAccessToken) {
         logger.error(
           `Fitbit account not linked to project: ${currentProject.projectId}`
         );
-        res.status(400).json({ message: 'Fitbit account not linked to project' });
+        res
+          .status(400)
+          .json({ message: 'Fitbit account not linked to project' });
         return;
       }
       const devices = await fetchDevices(
@@ -255,7 +251,7 @@ export async function fetchDevicesHandler(req: Request, res: Response) {
         currentProject.projectId,
         undefined
       );
-  
+
       logger.info(
         `Devices fetched successfully for project: ${currentProject.projectId}`
       );
@@ -276,8 +272,6 @@ export async function fetchIntradayDataHandler(req: Request, res: Response) {
       `Fetching intraday data for project: ${currentProject.projectId}`
     );
 
-    let fitbitUserId, fitbitAccessToken;
-
     const { dataType, date, detailLevel } = req.query;
     if (!currentProject.fitbitUserId || !currentProject.fitbitAccessToken) {
       logger.error(
@@ -287,23 +281,28 @@ export async function fetchIntradayDataHandler(req: Request, res: Response) {
       return;
     }
 
-    fitbitUserId = currentProject.fitbitUserId;
-    fitbitAccessToken = currentProject.fitbitAccessToken;
+    const projectFitbitUserId = currentProject.fitbitUserId;
+    const projectFitbitAccessToken = currentProject.fitbitAccessToken;
 
     const projectData = await fetchIntradayData(
-      fitbitUserId,
-      fitbitAccessToken,
+      projectFitbitUserId,
+      projectFitbitAccessToken,
       dataType as string,
       date as string,
       detailLevel as string
     );
 
-    const tempUsers = await User.find({ projects: currentProject._id, isTempUser: true});
+    const tempUsers = await User.find({
+      projects: currentProject._id,
+      isTempUser: true,
+    });
 
     const tempUserData = await Promise.all(
       tempUsers.map(async (tempUser) => {
         if (!tempUser.fitbitUserId || !tempUser.fitbitAccessToken) {
-          logger.error(`Fitbit account not linked to temporary user: ${tempUser.userId}`);
+          logger.error(
+            `Fitbit account not linked to temporary user: ${tempUser.userId}`
+          );
           return null;
         }
 
@@ -319,7 +318,7 @@ export async function fetchIntradayDataHandler(req: Request, res: Response) {
 
     const allData = {
       projectData,
-      tempUserData: tempUserData.filter(data => data !== null),
+      tempUserData: tempUserData.filter((data) => data !== null),
     };
 
     logger.info(
@@ -340,8 +339,6 @@ export async function fetchDataHandler(req: Request, res: Response) {
   try {
     logger.info(`Fetching data for project: ${currentProject.projectId}`);
 
-    let fitbitUserId, fitbitAccessToken;
-
     if (!currentProject.fitbitUserId || !currentProject.fitbitAccessToken) {
       logger.error(
         `Fitbit account not linked to project: ${currentProject.projectId}`
@@ -349,22 +346,27 @@ export async function fetchDataHandler(req: Request, res: Response) {
       res.status(400).json({ message: 'Fitbit account not linked to project' });
       return;
     }
-    fitbitUserId = currentProject.fitbitUserId;
-    fitbitAccessToken = currentProject.fitbitAccessToken;
+    const projectFitbitUserId = currentProject.fitbitUserId;
+    const projectFitbitAccessToken = currentProject.fitbitAccessToken;
 
     const projectData = await fetchData(
-      fitbitUserId,
-      fitbitAccessToken,
+      projectFitbitUserId,
+      projectFitbitAccessToken,
       startDate as string,
       endDate as string
     );
 
-    const tempUsers = await User.find({ projects: currentProject._id, isTempUser: true});
+    const tempUsers = await User.find({
+      projects: currentProject._id,
+      isTempUser: true,
+    });
 
     const tempUserData = await Promise.all(
       tempUsers.map(async (tempUser) => {
         if (!tempUser.fitbitUserId || !tempUser.fitbitAccessToken) {
-          logger.error(`Fitbit account not linked to temporary user: ${tempUser.userId}`);
+          logger.error(
+            `Fitbit account not linked to temporary user: ${tempUser.userId}`
+          );
           return null;
         }
 
@@ -379,10 +381,12 @@ export async function fetchDataHandler(req: Request, res: Response) {
 
     const allData = {
       projectData,
-      tempUserData: tempUserData.filter(data => data !== null),
+      tempUserData: tempUserData.filter((data) => data !== null),
     };
 
-    logger.info(`Data fetched successfully for project: ${currentProject.projectId}`);
+    logger.info(
+      `Data fetched successfully for project: ${currentProject.projectId}`
+    );
     res.json(allData);
     return;
   } catch (error) {
