@@ -15,7 +15,7 @@ export interface IProject extends Document {
   lastTokenRefresh: Date;
   members: Types.ObjectId[];
   admins: (Types.ObjectId | IUser)[];
-  devices: string[];
+  devices: Types.ObjectId[];
 }
 
 const projectSchema = new mongoose.Schema(

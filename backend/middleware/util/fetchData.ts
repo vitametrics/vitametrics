@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 async function fetchData(
-  orgUserId: string,
+  fitbitUserId: string,
   accessToken: string,
   startDate: string | undefined,
   endDate: string | undefined
@@ -10,7 +10,7 @@ async function fetchData(
 
   try {
     const deviceInfoResponse = await axios.get(
-      `https://api.fitbit.com/1/user/${orgUserId}/devices.json`,
+      `https://api.fitbit.com/1/user/${fitbitUserId}/devices.json`,
       {
         headers: { Authorization: `Bearer ${accessToken}` },
       }
@@ -28,8 +28,8 @@ async function fetchData(
         stepsData: [],
       };
 
-      const heartRateEndpoint = `https://api.fitbit.com/1/user/${orgUserId}/activities/heart/date/${startDate}/${endDate}.json?deviceId=${device.id}`;
-      const stepsEndpoint = `https://api.fitbit.com/1/user/${orgUserId}/activities/steps/date/${startDate}/${endDate}.json?deviceId=${device.id}`;
+      const heartRateEndpoint = `https://api.fitbit.com/1/user/${fitbitUserId}/activities/heart/date/${startDate}/${endDate}.json?deviceId=${device.id}`;
+      const stepsEndpoint = `https://api.fitbit.com/1/user/${fitbitUserId}/activities/steps/date/${startDate}/${endDate}.json?deviceId=${device.id}`;
 
       try {
         const [heartResponse, stepsResponse] = await Promise.all([
