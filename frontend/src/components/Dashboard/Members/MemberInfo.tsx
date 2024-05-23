@@ -19,7 +19,7 @@ const MemberInfo: React.FC<MemberInfoProps> = ({
   handleClose,
 }) => {
   const { ref, inView } = useCustomInView();
-  const { isOwner } = useProject();
+  const { isOwner, isAdmin } = useProject();
   const [editing, setEditing] = useState(false);
   const [newName, setNewName] = useState(member ? member.name : "");
 
@@ -68,7 +68,7 @@ const MemberInfo: React.FC<MemberInfoProps> = ({
       </h1>
       <div className="text-xl mb-1 text-left flex items-center">
         <strong className="mr-2">Name:</strong>
-        {isOwner && editing ? (
+        {(isOwner && editing) || (isAdmin && editing) ? (
           <Fragment>
             <input
               type="text"
