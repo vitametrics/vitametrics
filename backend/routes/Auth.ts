@@ -3,9 +3,9 @@ import express, { Request, Response } from 'express';
 import axios from 'axios';
 import crypto from 'crypto';
 
-import verifySession from '../middleware/verifySession';
 import CodeVerifier from '../models/CodeVerifier';
 import Project from '../models/Project';
+import User from '../models/User';
 
 const router = express.Router();
 
@@ -18,17 +18,18 @@ function createCodeChallenge(codeVerifier: string): string {
 }
 
 router.get('/auth', async (req: Request, res: Response) => {
-  const projectId = req.cookies.projectId;
+  const projectId = req.cookies.projectId || (req.query.projectId as string);
+  const userId = (req.query.userId as string) || (req.user?.userId as string);
 
   if (!projectId) {
-    return res.status(400).send('projectId cookie is missing');
+    return res.status(400).json({ msg: 'projectId is missing' });
   }
 
   const codeVerifier = crypto.randomBytes(32).toString('hex');
   const codeChallenge = createCodeChallenge(codeVerifier);
 
   try {
-    await new CodeVerifier({ value: codeVerifier, projectId }).save();
+    await new CodeVerifier({ value: codeVerifier, projectId, userId }).save();
     const queryParams = new URLSearchParams({
       client_id: process.env.FITBIT_CLIENT_ID as string,
       response_type: 'code',
@@ -41,6 +42,11 @@ router.get('/auth', async (req: Request, res: Response) => {
 
     const authUrl = `https://www.fitbit.com/oauth2/authorize?${queryParams.toString()}`;
 
+    if (!req.cookies.projectId) {
+      res.cookie('projectId', projectId);
+    }
+
+    res.cookie('userId', userId);
     res.redirect(authUrl);
   } catch (err) {
     console.error(err);
@@ -48,20 +54,21 @@ router.get('/auth', async (req: Request, res: Response) => {
   }
 });
 
-router.get('/callback', verifySession, async (req: Request, res: Response) => {
+router.get('/callback', async (req: Request, res: Response) => {
   const projectId = req.cookies.projectId;
+  const userId = req.cookies.userId;
   const code = req.query.code as string;
 
   if (!projectId) {
-    return res.status(400).send('projectId cookie is missing');
+    return res.status(400).json({ msg: 'projectId cookie is missing' });
   }
 
   try {
-    const verifier = await CodeVerifier.findOne()
+    const verifier = await CodeVerifier.findOne({ projectId, userId })
       .sort({ createdAt: -1 })
       .limit(1);
     if (!verifier) {
-      return res.status(400).send('Invalid session or code verifier not found');
+      return res.status(400).json({ msg: 'Code verifier not found' });
     }
     const codeVerifier = verifier.value;
     await CodeVerifier.findOneAndDelete(verifier._id); // cleanup verifier from db
@@ -102,14 +109,28 @@ router.get('/callback', verifySession, async (req: Request, res: Response) => {
       return res.status(404).send('Project not found');
     }
 
-    project.fitbitUserId = fitbitUserID;
-    project.fitbitAccessToken = accessToken;
-    project.fitbitRefreshToken = refreshToken;
+    const user = await User.findOne({ userId });
+    if (!user) {
+      return res.status(404).send('User not found');
+    } else if (user.isTempUser) {
+      user.fitbitUserId = fitbitUserID;
+      user.fitbitAccessToken = accessToken;
+      user.fitbitRefreshToken = refreshToken;
 
-    await project.save();
+      await user.save();
+      res.clearCookie('userId');
+      return res.redirect('/');
+    } else {
+      project.fitbitUserId = fitbitUserID;
+      project.fitbitAccessToken = accessToken;
+      project.fitbitRefreshToken = refreshToken;
 
-    // this should not handle redirects. fine for now i guess.
-    res.redirect(`/dashboard/project?id=${projectId}&view=overview`);
+      await project.save();
+
+      res.clearCookie('userId');
+      // this should not handle redirects. fine for now i guess.
+      return res.redirect(`/dashboard/project?id=${projectId}&view=overview`);
+    }
   } catch (err) {
     console.error('Error handling OAuth callback:', err);
     res.status(500).json({ success: false, msg: 'Internal Server Error' });

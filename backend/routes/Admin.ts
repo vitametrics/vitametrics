@@ -48,6 +48,15 @@ router.post(
   asyncHandler(AdminController.deleteProject)
 );
 
+router.get(
+  '/get-available-users',
+  verifySession,
+  checkProjectMembership,
+  verifyRole('admin'),
+  validationHandler(projectIdValidation),
+  asyncHandler(AdminController.getAvailableUsers)
+);
+
 router.post(
   '/add-member',
   verifySession,

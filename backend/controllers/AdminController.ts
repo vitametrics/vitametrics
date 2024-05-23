@@ -27,10 +27,17 @@ class AdminController {
         `Creating project with name: ${projectName} by user: ${user.email}`
       );
 
-      const existingProject = await Project.findOne({ projectName });
+      const existingProject = await Project.findOne({
+        projectName,
+        ownerId: user.userId,
+      });
       if (existingProject) {
-        logger.error(`Project with name: ${projectName} already exists`);
-        res.status(409).json({ msg: 'Project with that name already exists!' });
+        logger.error(
+          `User already has a project with the name: ${projectName}`
+        );
+        res
+          .status(409)
+          .json({ msg: 'You already have a project with this name!' });
         return;
       }
 
@@ -64,7 +71,9 @@ class AdminController {
           subject: 'Your new project',
           text: `You have created a new project: ${projectName}. Access it here: ${process.env.BASE_URL}/dashboard/project?id=${newProjectId}`,
         });
-        res.status(200).json({ msg: 'Project created successfully', savedProject });
+        res
+          .status(200)
+          .json({ msg: 'Project created successfully', savedProject });
         return;
       } else {
         const projectResponse = {
@@ -90,7 +99,8 @@ class AdminController {
 
   static async deleteProject(req: Request, res: Response) {
     const currentUser = req.user as IUser;
-    const projectId = req.body.projectId;
+    const projectId =
+      (req.body.projectId as string) || (req.query.projectId as string);
 
     try {
       logger.info(
@@ -107,12 +117,15 @@ class AdminController {
       if (
         currentUser.role !== 'siteAdmin' &&
         currentUser.role !== 'siteOwner' &&
-        project.ownerId !== currentUser.userId
+        project.ownerId !== currentUser.userId &&
+        !project.admins.includes(currentUser._id as Types.ObjectId)
       ) {
         logger.error(
           `User: ${currentUser.email} does not have permission to delete project: ${projectId}`
         );
-        res.status(403).json({ msg: 'You do not have permission to delete this project' });
+        res
+          .status(403)
+          .json({ msg: 'You do not have permission to delete this project' });
         return;
       }
 
@@ -127,7 +140,7 @@ class AdminController {
         for (const member of members) {
           await User.updateOne(
             { _id: member._id },
-            { $pull : { projects: project._id } }
+            { $pull: { projects: project._id } }
           );
         }
       }
@@ -145,10 +158,36 @@ class AdminController {
     }
   }
 
+  static async getAvailableUsers(req: Request, res: Response) {
+    const projectId = req.body.projectId as string;
+
+    try {
+      const project = await Project.findOne({ projectId });
+      if (!project) {
+        res.status(404).json({ msg: 'Project not found' });
+        return;
+      }
+
+      const existingMemberIds = project.members.map((member) =>
+        member.toString()
+      );
+
+      const availableUsers = await User.find({
+        _id: { $nin: existingMemberIds },
+      }).select('email name');
+
+      res.status(200).json({ availableUsers });
+      return;
+    } catch (error) {
+      logger.error(`Error getting available users: ${error}`);
+      res.status(500).json({ msg: 'Internal Server Error' });
+      return;
+    }
+  }
+
   static async addMember(req: Request, res: Response) {
     const { email, name, role } = req.body;
-    const projectId =
-      (req.query.projectId as string) || (req.body.projectId as string);
+    const projectId = req.body.projectId as string;
 
     try {
       logger.info(`Adding member: ${email} to project: ${projectId}`);
@@ -167,24 +206,71 @@ class AdminController {
       const tokenExpiry = new Date(Date.now() + 3600000);
 
       if (!user) {
-        const newUser = new User({
-          userId: newUserId,
-          email: email,
-          name: name,
-          role: 'user',
-          setPasswordToken: passwordToken,
-          passwordTokenExpiry: tokenExpiry,
-        });
+        if (role === 'tempUser') {
+          const tempUser = new User({
+            userId: newUserId,
+            email,
+            name,
+            role: 'user',
+            isTempUser: true,
+            projects: [project._id],
+          });
 
-        user = newUser;
-        await newUser.save();
-
-        console.log(role);
-        if (role === 'admin') {
-          project.admins.push(newUser._id as Types.ObjectId);
+          await tempUser.save();
+          project.members.push(tempUser._id as Types.ObjectId);
           await project.save();
+
+          const fitbitAuthLink = `${process.env.API_URL}/auth?userId=${newUserId}&projectId=${project.projectId}`;
+          if (process.env.NODE_ENV === 'production') {
+            await sendEmail({
+              to: email,
+              subject: `Vitametrics: Invitation to Participate`,
+              text: `Please associate your account with Fitbit by following this link: ${fitbitAuthLink}`,
+            });
+            res
+              .status(200)
+              .json({ msg: 'Temp member added successfully', project });
+            return;
+          } else {
+            logger.info(
+              `Temporary user invited to join project: ${project.projectName}. They can set link their Fitbit account by following this link: ${fitbitAuthLink}`
+            );
+            res
+              .status(200)
+              .json({ msg: 'Temp member added successfully', project });
+            return;
+          }
+        } else {
+          const newUser = new User({
+            userId: newUserId,
+            email: email,
+            name: name,
+            role: 'user',
+            setPasswordToken: passwordToken,
+            passwordTokenExpiry: tokenExpiry,
+          });
+
+          user = newUser;
+          await newUser.save();
+        }
+      } else {
+        if (project.members.includes(user._id as Types.ObjectId)) {
+          logger.error(
+            `User: ${email} is already a member of project: ${project.projectName}`
+          );
+          res
+            .status(409)
+            .json({ msg: 'User is already a member of the project' });
+          return;
         }
       }
+
+      project.members.push(user._id as Types.ObjectId);
+      if (role === 'admin') {
+        project.admins.push(user._id as Types.ObjectId);
+      }
+
+      await project.save();
 
       if (process.env.NODE_ENV === 'production') {
         await sendEmail({
@@ -198,6 +284,8 @@ class AdminController {
         logger.info(
           `User invited to join project: ${project.projectName}. They can set their password by following this link: ${process.env.BASE_URL}/set-password?token=${passwordToken}&projectId=${project.projectId}`
         );
+        res.status(200).json({ msg: 'Member added successfully', project });
+        return;
       }
     } catch (error) {
       logger.error(`Error adding member: ${error}`);
@@ -252,10 +340,14 @@ class AdminController {
         return;
       }
 
-      user.projects = user.projects.filter(
-        (pid) => !pid.equals(project._id as Types.ObjectId)
-      );
-      await user.save();
+      if (user.isTempUser) {
+        await User.findByIdAndDelete(user._id);
+      } else {
+        user.projects = user.projects.filter(
+          (pid) => !pid.equals(project._id as Types.ObjectId)
+        );
+        await user.save();
+      }
 
       if (process.env.NODE_ENV === 'production') {
         await sendEmail({
@@ -307,6 +399,7 @@ class AdminController {
   }
 
   static async changeProjectName(req: Request, res: Response) {
+    const currentUser = req.user as IUser;
     const newProjectName = req.body.newProjectName as string;
     const projectId = req.body.projectId as string;
 
@@ -319,6 +412,20 @@ class AdminController {
       if (!project) {
         logger.error(`Project: ${projectId} not found`);
         res.status(404).json({ msg: 'Project not found' });
+        return;
+      }
+
+      const existingProject = await Project.findOne({
+        projectName: newProjectName,
+        ownerId: currentUser.userId,
+      });
+      if (existingProject && existingProject._id !== project._id) {
+        logger.error(
+          `User already has a project with the name: ${newProjectName}`
+        );
+        res
+          .status(409)
+          .json({ msg: 'You already have a project with this name' });
         return;
       }
 
