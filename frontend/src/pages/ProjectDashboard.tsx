@@ -15,8 +15,6 @@ const ProjectDashboard = () => {
   const { showBackDrop, isAccountLinked } = useProject();
   const [searchParams, setSearchParams] = useSearchParams({ view: "overview" });
   const view = searchParams.get("view") || "overview";
-  const id = searchParams.get("id");
-  console.log(id);
   const setPage = (newView: string) => {
     setSearchParams({ view: newView }, { replace: true });
   };
