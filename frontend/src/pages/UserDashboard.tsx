@@ -35,6 +35,7 @@ const UserDashboard = () => {
   const debouncedProjectDescription = useDebounce(projectDescription, 100);
   const [projectIdToDelete, setProjectIdToDelete] = useState<string>("");
   const itemsPerPageOptions = [5, 10, 15, 20];
+  const [msg, setMsg] = useState("");
 
   const handleItemsPerPageChange = (
     event: React.ChangeEvent<HTMLSelectElement>
@@ -65,6 +66,7 @@ const UserDashboard = () => {
       prev.set("createProject", show.toString());
       return prev;
     });
+    setMsg("");
     setShowBackDrop(show); // Show or hide backdrop when invite menu is toggled
   };
 
@@ -72,7 +74,28 @@ const UserDashboard = () => {
     navigate(`/dashboard/project?id=${projectId}&view=overview`);
   };
 
+  // Utility function to handle API errors
+  const getErrorMessage = (error: any) => {
+    if (axios.isAxiosError(error)) {
+      const status = error.response?.status;
+      switch (status) {
+        case 401:
+          return "You are not authorized to create projects. Please login.";
+        case 409:
+          return "A project with the same name already exists.";
+        default:
+          return "Failed to create project. Please try again later.";
+      }
+    } else {
+      return "An unexpected error occurred.";
+    }
+  };
+
   const handleCreateProject = async () => {
+    if (!debouncedProjectName) {
+      setMsg("Project name cannot be empty.");
+      return;
+    }
     try {
       const response = await axios.post(
         CREATE_PROJECT_ENDPOINT,
@@ -85,12 +108,14 @@ const UserDashboard = () => {
 
       console.log(response.data.project);
       const project = response.data.project;
-
       toggleCreateProjectMenu(false);
       setProjectName("");
       setProjects([...projects, project]);
+      setMsg("");
       handleProjectClick(project.projectId);
     } catch (error) {
+      const errorMessage = getErrorMessage(error);
+      setMsg(errorMessage);
       console.error(error);
     }
   };
@@ -125,6 +150,7 @@ const UserDashboard = () => {
 
       <CreateProjectMenu
         show={createProject}
+        msg={msg}
         toggleMenu={toggleCreateProjectMenu}
         projectName={projectName}
         setProjectName={setProjectName}

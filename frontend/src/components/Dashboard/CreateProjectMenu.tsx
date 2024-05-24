@@ -4,6 +4,7 @@ import { fadeInItemVariants } from "../../hooks/animationVariant";
 
 interface CreateProjectMenuProps {
   show: boolean;
+  msg: string;
   toggleMenu: (show: boolean) => void;
   projectName: string;
   setProjectName: (name: string) => void;
@@ -13,6 +14,7 @@ interface CreateProjectMenuProps {
 
 const CreateProjectMenu: React.FC<CreateProjectMenuProps> = ({
   show,
+  msg,
   toggleMenu,
   projectName,
   setProjectName,
@@ -32,9 +34,10 @@ const CreateProjectMenu: React.FC<CreateProjectMenuProps> = ({
         onClick={() => toggleMenu(false)}
         className="item-3 ml-auto"
       ></button>
-      <h1 className="text-3xl mb-10 text-center w-full text-primary font-bold">
+      <h1 className="text-3xl mb-3 text-center w-full text-primary font-bold">
         Create New Project
       </h1>
+      <p className="text-red-500 text-center">{msg}</p>
       <p className="text-primary font-bold">Enter New Project Name</p>
       <input
         type="text"
