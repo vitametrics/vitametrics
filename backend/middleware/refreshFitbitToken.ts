@@ -22,7 +22,7 @@ async function refreshToken(req: Request, res: Response, next: NextFunction) {
 
     // refresh token for each project the user is a member of
     for (const projectId of user.projects) {
-      const project = await Project.findById(projectId);
+      const project = await Project.findOne({ projectId });
       if (!project) {
         logger.error(`[refreshToken] Project not found: ${projectId}`);
         continue;

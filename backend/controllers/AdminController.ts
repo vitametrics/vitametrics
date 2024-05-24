@@ -498,7 +498,7 @@ class AdminController {
         return;
       }
 
-      project.projectName = newProjectDescription;
+      project.projectDescription = newProjectDescription;
       await project.save();
       res.status(200).json({ msg: 'Project description changed successfully' });
       return;
