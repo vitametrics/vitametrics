@@ -7,10 +7,10 @@ import Pagination from "../components/Pagination";
 import CreateProjectMenu from "../components/Dashboard/CreateProjectMenu";
 import DeleteProjectMenu from "../components/Dashboard/DeleteProjectMenu";
 import useDebounce from "../helpers/useDebounce";
-import {
-  deleteProjectService,
-  createProjectService,
-} from "../services/projectService";
+import axios from "axios";
+import { deleteProjectService } from "../services/projectService";
+
+const CREATE_PROJECT_ENDPOINT = `${process.env.API_URL}/admin/create-project`;
 
 interface Project {
   projectId: string;
@@ -74,12 +74,17 @@ const UserDashboard = () => {
 
   const handleCreateProject = async () => {
     try {
-      const project = await createProjectService(
-        debouncedProjectName,
-        debouncedProjectDescription
+      const response = await axios.post(
+        CREATE_PROJECT_ENDPOINT,
+        {
+          projectName: debouncedProjectName,
+          projectDescription: debouncedProjectDescription,
+        },
+        { withCredentials: true }
       );
 
-      console.log(project);
+      console.log(response.data.project);
+      const project = response.data.project;
 
       toggleCreateProjectMenu(false);
       setProjectName("");
