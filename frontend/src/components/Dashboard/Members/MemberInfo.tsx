@@ -9,7 +9,7 @@ import SaveButton from "../../Buttons/SaveButton";
 import CancelButton from "../../Buttons/CancelButton";
 import axios from "axios";
 
-const CHANGE_MEMBER_NAME_ENDPOINT = `${process.env.API_URL}/admin/change-member-name`;
+const CHANGE_MEMBER_NAME_ENDPOINT = `${process.env.API_URL}/project/change-member-name`;
 
 const MemberInfo: React.FC<MemberInfoProps> = ({
   member,
@@ -30,7 +30,7 @@ const MemberInfo: React.FC<MemberInfoProps> = ({
         CHANGE_MEMBER_NAME_ENDPOINT,
         {
           userId: member.userId,
-          newName,
+          name: newName,
         },
         {
           withCredentials: true,

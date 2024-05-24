@@ -27,7 +27,7 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage, path }) => {
     if (newPage !== currentPage) {
       setPage(newPage);
       setCurrentPage(newPage);
-      navigate(`/${path}?id=${id}&&view=${newPage.toLowerCase()}`);
+      navigate(`/${path}?id=${id}&view=${newPage.toLowerCase()}`);
     }
   };
 

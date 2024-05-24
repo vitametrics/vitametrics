@@ -67,14 +67,13 @@ const UserDashboard = () => {
       return prev;
     });
     setMsg("");
-    setShowBackDrop(show); // Show or hide backdrop when invite menu is toggled
+    setShowBackDrop(show);
   };
 
   const handleProjectClick = (projectId: string) => {
     navigate(`/dashboard/project?id=${projectId}&view=overview`);
   };
 
-  // Utility function to handle API errors
   const getErrorMessage = (error: any) => {
     if (axios.isAxiosError(error)) {
       const status = error.response?.status;
