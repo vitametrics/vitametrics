@@ -11,7 +11,6 @@ import useDebounce from "../helpers/useDebounce";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  console.log(import.meta.env);
   const LOGIN_ENDPOINT = `${process.env.API_URL}/login`;
 
   const navigate = useNavigate();

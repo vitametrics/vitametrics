@@ -65,8 +65,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setIsEmailVerified(response.data.user.isEmailVerified);
         setUserEmail(response.data.user.email);
         setUserId(response.data.user.id);
-        setIsOwner(response.data.user.isOwner);
-        setIsAdmin(response.data.user.isAdmin);
+        setIsOwner(response.data.user.role === "siteOwner");
+        setIsAdmin(response.data.user.role === "siteAdmin");
         setUserRole(response.data.user.role);
         if (isOwner) {
           await fetchVersion();
