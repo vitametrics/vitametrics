@@ -24,8 +24,10 @@ const Devices = () => {
     handleItemsPerPageChange,
   } = usePagination();
 
+  console.log(project.devices);
+
   const { searchTerm, handleSearchChange, filteredItems } = useSearch(
-    projectDevices,
+    project.devices,
     setCurrentPage
   );
 
