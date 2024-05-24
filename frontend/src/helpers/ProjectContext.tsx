@@ -82,117 +82,13 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       : []
   );
 
-  /*
-  const testDevices = [
-    {
-      deviceId: "2570612980",
-      deviceName: "Device #1",
-      deviceVersion: "Charge 4",
-      lastSyncTime: "2024-02-10",
-      batteryLevel: "100",
-    },
-    {
-      deviceId: "124811",
-      deviceName: "Device #2",
-      deviceVersion: "Charge 3",
-      lastSyncTime: "2024-02-10",
-      batteryLevel: "50",
-    },
-    {
-      deviceId: "69133712",
-      deviceName: "Device #2",
-      deviceVersion: "Alta HR",
-      lastSyncTime: "2024-02-10",
-      batteryLevel: "20",
-    },
-  ];*/
-
   const [projectDevices, setProjectDevices] = useState<Device[]>(
     localStorage.getItem("devices")
       ? JSON.parse(localStorage.getItem("devices")!)
       : []
   );
-  /*
-  const testMembers = [
-    {
-      name: "John Doe",
-      email: "johndoe831@gmail.com",
-      role: "Owner",
-    },
-    {
-      name: "Jane Doe",
-      email: "janedoe831@gmail.com",
-      role: "Member",
-    },
-    {
-      name: "Brandon Le",
-      email: "brandonle831@gmail.com",
-      role: "Member",
-    },
-    {
-      name: "Emily Zhang",
-      email: "emilyzhang831@gmail.com",
-      role: "Member",
-    },
-    {
-      name: "Michael Smith",
-      email: "michaelsmith831@gmail.com",
-      role: "Admin",
-    },
-    {
-      name: "Sara Connor",
-      email: "saraconnor831@gmail.com",
-      role: "Member",
-    },
-    {
-      name: "Will Johnson",
-      email: "willjohnson831@gmail.com",
-      role: "Member",
-    },
-    {
-      name: "Grace Lee",
-      email: "gracelee831@gmail.com",
-      role: "Member",
-    },
-    {
-      name: "Samuel Jackson",
-      email: "samueljackson831@gmail.com",
-      role: "Member",
-    },
-    {
-      name: "Lily Evans",
-      email: "lilyevans831@gmail.com",
-      role: "Member",
-    },
-    {
-      name: "James Potter",
-      email: "jamespotter831@gmail.com",
-      role: "Member",
-    },
-    {
-      name: "Olivia Rodrigo",
-      email: "oliviarodrigo831@gmail.com",
-      role: "Member",
-    },
-    {
-      name: "Tony Stark",
-      email: "tonystark831@gmail.com",
-      role: "Member",
-    },
-    {
-      name: "Bruce Wayne",
-      email: "brucewayne831@gmail.com",
-      role: "Member",
-    },
-    {
-      name: "Clark Kent",
-      email: "clarkkent831@gmail.com",
-      role: "Admin",
-    },
-  ];*/
 
   useEffect(() => {
-    // Check the URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get("id");
     if (id) {
