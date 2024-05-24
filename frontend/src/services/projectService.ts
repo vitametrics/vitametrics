@@ -30,3 +30,7 @@ export const deleteProjectService = async (projectId: string) => {
     throw new Error('Failed to delete the project: ' + error);
   }
 }
+
+export const oAuthLogin = async () => {
+  window.location.href = "https://vitametrics.org/api/auth";
+};

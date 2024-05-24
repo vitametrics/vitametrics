@@ -900,6 +900,10 @@ video {
   width: 100vw;
 }
 
+.w-\[100px\] {
+  width: 100px;
+}
+
 .min-w-\[500px\] {
   min-width: 500px;
 }
@@ -910,6 +914,10 @@ video {
 
 .max-w-screen-xl {
   max-width: 1280px;
+}
+
+.max-w-\[300px\] {
+  max-width: 300px;
 }
 
 .transform {
@@ -1356,6 +1364,10 @@ video {
 
 .p-\[88px\] {
   padding: 88px;
+}
+
+.p-0\.5 {
+  padding: 0.125rem;
 }
 
 .px-10 {

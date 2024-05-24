@@ -1,10 +1,7 @@
 import { Fragment } from "react";
+import { oAuthLogin } from "../../services/projectService";
 
 const AuthenticationBanner = () => {
-  const oAuthLogin = async () => {
-    window.location.href = "https://vitametrics.org/api/auth";
-  };
-
   return (
     <Fragment>
       <button

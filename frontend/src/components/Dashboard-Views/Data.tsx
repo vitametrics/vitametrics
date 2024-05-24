@@ -288,7 +288,6 @@ const Data = () => {
         </h1>
 
         <div className="flex flex-row w-full gap-5 mb-5">
-          {/* Data & Graph Type Dropdown */}
           <div className="mr-auto flex flex-row gap-5 text-secondary">
             <div className="flex flex-col">
               <label htmlFor="dataType" className="block text-sm font-medium">

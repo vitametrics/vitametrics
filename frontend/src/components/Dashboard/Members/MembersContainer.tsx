@@ -4,7 +4,7 @@ import usePagination from "../../../hooks/usePagination";
 import PaginationControls from "../PaginationControls";
 import MembersList from "./MembersList";
 import useSearch from "../../../hooks/useSearch";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { MembersContainerProps } from "../../../types/Member";
 
 const MembersContainer: React.FC<MembersContainerProps> = ({ onClick }) => {
@@ -16,9 +16,20 @@ const MembersContainer: React.FC<MembersContainerProps> = ({ onClick }) => {
     itemsPerPage,
     handleItemsPerPageChange,
   } = usePagination();
+  const [selectedRole, setSelectedRole] = useState(""); // State to track the selected role
 
   const { searchTerm, handleSearchChange, filteredItems } = useSearch(
-    project.members,
+    project.members.filter((member) =>
+      selectedRole === ""
+        ? member
+        : selectedRole === "admin"
+          ? member.isAdmin
+          : selectedRole === "owner"
+            ? member.isOwner
+            : selectedRole === "user"
+              ? !member.isAdmin && !member.isOwner
+              : member.role === selectedRole
+    ),
     setCurrentPage
   );
 
@@ -39,6 +50,20 @@ const MembersContainer: React.FC<MembersContainerProps> = ({ onClick }) => {
         <span className="text-primary text-lg">No members found</span>
       ) : (
         <Fragment>
+          <div className="flex flex-row text-primary items-center mb-3">
+            <span>Filter by Role:</span>
+            <select
+              value={selectedRole}
+              onChange={(e) => setSelectedRole(e.target.value)}
+              className=" w-[100px] ml-2 border-2 border-gray-200 rounded-lg"
+            >
+              <option value="">All</option>
+              <option value="owner">Owner</option>
+              <option value="admin">Admin</option>
+              <option value="user">User</option>
+              <option value="guest">Temp User</option>
+            </select>
+          </div>
           <input
             type="text"
             placeholder="Search For Name"
