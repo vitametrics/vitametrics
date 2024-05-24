@@ -214,7 +214,7 @@ export async function fetchDevicesHandler(req: Request, res: Response) {
         currentProject.fitbitUserId,
         currentProject.fitbitAccessToken,
         currentProject.projectId,
-        { id: 'Project', name: 'Project'}
+        { id: 'Project', name: 'Project' }
       );
       devicesForProject.push(...projectDevices);
     }
@@ -222,8 +222,8 @@ export async function fetchDevicesHandler(req: Request, res: Response) {
     const tempUsers = await User.find({
       _id: { $in: currentProject.members },
       isTempUser: true,
-      fitbitUserId: { $exists: true, $ne: null},
-      fitbitAccessToken: { $exists: true, $ne: null}
+      fitbitUserId: { $exists: true, $ne: null },
+      fitbitAccessToken: { $exists: true, $ne: null },
     });
 
     for (const tempUser of tempUsers) {
@@ -231,7 +231,7 @@ export async function fetchDevicesHandler(req: Request, res: Response) {
         tempUser.fitbitUserId!,
         tempUser.fitbitAccessToken!,
         currentProject.projectId,
-        { id: tempUser.userId, name: tempUser.name}
+        { id: tempUser.userId, name: tempUser.name }
       );
       devicesForProject.push(...userDevice);
     }
@@ -241,7 +241,6 @@ export async function fetchDevicesHandler(req: Request, res: Response) {
     );
     res.status(200).json(devicesForProject);
     return;
-    
   } catch (error) {
     logger.error(`Error fetching devices: ${error}`);
     res.status(500).json({ msg: 'Internal Server Error' });

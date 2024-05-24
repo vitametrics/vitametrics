@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
+
 import axios from 'axios';
+
 import logger from './logger';
 import Project, { IProject } from '../models/Project';
 import User, { IUser } from '../models/User';
@@ -46,9 +48,12 @@ async function refreshUserToken(user: IUser) {
 
   if (tokenAgeHours >= 8) {
     try {
-      const response = await axios.get('https://api.fitbit.com/1/user/-/profile.json', {
-        headers: { Authorization: `Bearer ${fitbitRefreshToken}` },
-      });
+      const response = await axios.get(
+        'https://api.fitbit.com/1/user/-/profile.json',
+        {
+          headers: { Authorization: `Bearer ${fitbitRefreshToken}` },
+        }
+      );
 
       if (response.status === 200) {
         logger.info(`[refreshUserToken] Token valid for user: ${user.userId}`);
@@ -66,7 +71,8 @@ async function refreshUserToken(user: IUser) {
         }
       );
 
-      const { access_token: newAccessToken, refresh_token: newRefreshToken } = refreshResponse.data;
+      const { access_token: newAccessToken, refresh_token: newRefreshToken } =
+        refreshResponse.data;
 
       console.log(user._id);
       await User.findByIdAndUpdate(user._id, {
@@ -91,9 +97,12 @@ async function refreshProjectToken(project: IProject) {
 
   if (tokenAgeHours >= 8) {
     try {
-      const response = await axios.get('https://api.fitbit.com/1/user/-/profile.json', {
-        headers: { Authorization: `Bearer ${fitbitRefreshToken}` },
-      });
+      const response = await axios.get(
+        'https://api.fitbit.com/1/user/-/profile.json',
+        {
+          headers: { Authorization: `Bearer ${fitbitRefreshToken}` },
+        }
+      );
 
       if (response.status === 200) {
         return;
@@ -110,7 +119,8 @@ async function refreshProjectToken(project: IProject) {
         }
       );
 
-      const { access_token: newAccessToken, refresh_token: newRefreshToken } = refreshResponse.data;
+      const { access_token: newAccessToken, refresh_token: newRefreshToken } =
+        refreshResponse.data;
 
       await Project.findByIdAndUpdate(project._id, {
         fitbitAccessToken: newAccessToken,

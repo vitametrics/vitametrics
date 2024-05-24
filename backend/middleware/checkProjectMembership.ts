@@ -35,8 +35,10 @@ const checkProjectMembership = async (
     if (currentUser.role === 'siteOwner') {
       const project = await Project.findOne({ projectId });
       if (!project) {
-        logger.error(`[checkProjectMembership] Project not found: ${projectId}`);
-        res.status(404).json({ msg: 'Project not found'});
+        logger.error(
+          `[checkProjectMembership] Project not found: ${projectId}`
+        );
+        res.status(404).json({ msg: 'Project not found' });
         return;
       }
       logger.info('[checkProjectMembership] Site owner access granted');

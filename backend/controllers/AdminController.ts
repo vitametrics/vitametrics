@@ -199,7 +199,7 @@ class AdminController {
         return;
       }
 
-      let user = await User.findOne({ email });
+      const user = await User.findOne({ email });
 
       const newUserId = crypto.randomBytes(16).toString('hex');
       const passwordToken = crypto.randomBytes(32).toString('hex');
@@ -277,7 +277,6 @@ class AdminController {
             res.status(200).json({ msg: 'Member invited successfully' });
             return;
           }
-
         }
       } else {
         if (project.members.includes(user._id as Types.ObjectId)) {
@@ -308,7 +307,7 @@ class AdminController {
               await sendEmail({
                 to: project.ownerEmail,
                 subject: `[INFO] Vitametrics: Admin Added to ${project.projectName}`,
-                text: `A new admin has been added to your project by ${req.user?.name}.\n\nYou can manage your project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}`
+                text: `A new admin has been added to your project by ${req.user?.name}.\n\nYou can manage your project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}`,
               });
               res.status(200).json({ msg: 'Admin added successfully' });
               return;
@@ -334,7 +333,7 @@ class AdminController {
               subject: `[INFO] Vitametrics: ${project.projectName} - Member Added`,
               text: `A new admin has been added to your project by ${req.user?.name}.\n\nYou can manage your project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}`,
             });
-            res.status(200).json({ msg: 'Member added successfully'});
+            res.status(200).json({ msg: 'Member added successfully' });
           } else {
             logger.info(
               `User: ${user.email} added to project: ${project.projectName}`
