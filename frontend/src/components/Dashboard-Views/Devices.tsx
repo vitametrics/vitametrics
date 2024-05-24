@@ -69,7 +69,7 @@ const Devices = () => {
         </div>
       ) : (
         <Fragment>
-          {projectDevices.length > 0 ? (
+          {project.devices.length > 0 ? (
             <section className="p-5">
               <div className="flex flex-col bg-white rounded-xl shadow-lg p-10">
                 <h2 className="text-2xl text-primary font-bold mb-5">
