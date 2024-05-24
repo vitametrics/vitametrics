@@ -79,6 +79,8 @@ const UserDashboard = () => {
         debouncedProjectDescription
       );
 
+      console.log(project);
+
       toggleCreateProjectMenu(false);
       setProjectName("");
       setProjects([...projects, project]);
