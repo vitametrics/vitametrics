@@ -12,7 +12,7 @@ import { useState } from "react";
 
 const DashboardSettings = () => {
   const { ref, inView } = useCustomInView();
-  const { projectName, setShowBackDrop, projectId } = useProject();
+  const { project, setShowBackDrop } = useProject();
   const { projects, setProjects } = useAuth();
   const [deleteProject, setDeleteProject] = useState(false);
 
@@ -23,8 +23,10 @@ const DashboardSettings = () => {
 
   const handleDeleteProject = async () => {
     toggleDeleteProjectMenu(true);
-    await deleteProjectService(projectId);
-    setProjects(projects.filter((project) => project._id !== projectId));
+    await deleteProjectService(project.projectId);
+    setProjects(
+      projects.filter((project) => project._id !== project.projectId)
+    );
     setDeleteProject(false);
     setShowBackDrop(false);
 
@@ -46,7 +48,7 @@ const DashboardSettings = () => {
       />
 
       <h2 className="w-full text-4xl font-libreFranklin font-bold mb-10">
-        {projectName} Settings
+        {project.projectName} Settings
       </h2>
       <div className="flex flex-col gap-5">
         <span className="mb-10">

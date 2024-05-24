@@ -7,7 +7,7 @@ const ChangeEmailField = () => {
   const MAX_CHARS = 500; // Set the maximum number of characters for the description
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
-  const { ownerEmail, setOwnerEmail, projectId } = useProject();
+  const { project } = useProject();
   const [changeEmailInput, setChangeEmailInput] = useState("");
   const debouncedChangeEmailInput = useDebounce(changeEmailInput, 100);
 
@@ -31,7 +31,7 @@ const ChangeEmailField = () => {
       return;
     }
 
-    if (debouncedChangeEmailInput === ownerEmail) {
+    if (debouncedChangeEmailInput === project.ownerEmail) {
       setError(true);
       setMessage("New email is the same as the current email");
       return;
@@ -41,12 +41,12 @@ const ChangeEmailField = () => {
       await axios.post(
         CHANGE_EMAIL_ENDPOINT,
         {
-          projectId: projectId,
+          projectId: project.projectId,
           newOwnerEmail: debouncedChangeEmailInput,
         },
         { withCredentials: true }
       );
-      setOwnerEmail(debouncedChangeEmailInput);
+      project.ownerEmail = debouncedChangeEmailInput;
       setMessage("Owner email changed successfully");
       setError(false);
     } catch (error: any) {
@@ -62,10 +62,9 @@ const ChangeEmailField = () => {
           New Owner Email
         </label>
         <div className="text-sm mb-2 text-secondary">
-          Current Email: {ownerEmail}
+          Current Email: {project.ownerEmail}
         </div>
         <p className={`${error ? "text-red-500" : "text-green-500"} text-lg `}>
-          {" "}
           {message}
         </p>
         <input

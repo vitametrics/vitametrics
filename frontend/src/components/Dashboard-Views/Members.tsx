@@ -18,15 +18,7 @@ const Members = () => {
   const REMOVE_MEMBER_ENDPOINT = `${process.env.API_URL}/admin/remove-member`;
   const { ref, inView } = useCustomInView();
 
-  const {
-    projectName,
-    members,
-    fetchProject,
-    setShowBackDrop,
-    showBackDrop,
-    isAdmin,
-    isOwner,
-  } = useProject();
+  const { project, setShowBackDrop, fetchProject, showBackDrop } = useProject();
   const { userRole, userId } = useAuth();
 
   const [searchParams, setSearchParams] = useSearchParams({
@@ -52,7 +44,7 @@ const Members = () => {
   const debouncedEmail = useDebounce(emailInput, 100);
   const debouncedName = useDebounce(nameInput, 100);
 
-  const roleOptions = isAdmin
+  const roleOptions = project.isAdmin
     ? [{ value: "user", label: "User" }]
     : [
         { value: "user", label: "User" },
@@ -202,7 +194,7 @@ const Members = () => {
       className="w-full h-full flex flex-col p-10 font-libreFranklin"
     >
       <InviteMenu
-        projectName={projectName}
+        projectName={project.projectName}
         showInviteMenu={showInviteMenu}
         showBackDrop={showBackDrop}
         userRole={userRole}
@@ -219,16 +211,16 @@ const Members = () => {
         toggleInviteMenu={toggleInviteMenu}
       />
       <MemberInfo
-        member={members.find((m) => m.userId === member)}
+        member={project.members.find((m) => m.userId === member)}
         userId={userId}
         confirmDelete={confirmDelete}
         handleRemoveMember={handleRemoveMember}
         handleClose={handleClose}
       />
       <h2 className="w-full text-4xl font-bold p-5 pb-0 text-primary">
-        {projectName} Members
+        {project.projectName} Members
       </h2>
-      {(isOwner || isAdmin) && (
+      {(project.isOwner || project.isAdmin) && (
         <div className="flex p-5 w-full">
           <button
             onClick={() => toggleInviteMenu(true)}

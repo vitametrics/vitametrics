@@ -19,7 +19,7 @@ const MemberInfo: React.FC<MemberInfoProps> = ({
   handleClose,
 }) => {
   const { ref, inView } = useCustomInView();
-  const { isOwner, isAdmin } = useProject();
+  const { project } = useProject();
   const [editing, setEditing] = useState(false);
   const [newName, setNewName] = useState(member ? member.name : "");
 
@@ -68,7 +68,7 @@ const MemberInfo: React.FC<MemberInfoProps> = ({
       </h1>
       <div className="text-xl mb-1 text-left flex items-center">
         <strong className="mr-2">Name:</strong>
-        {(isOwner && editing) || (isAdmin && editing) ? (
+        {(project.isOwner && editing) || (project.isAdmin && editing) ? (
           <Fragment>
             <input
               type="text"
@@ -82,7 +82,7 @@ const MemberInfo: React.FC<MemberInfoProps> = ({
         ) : (
           <Fragment>
             {member.name}
-            {isOwner && <EditButton onClick={handleEditButton} />}
+            {project.isOwner && <EditButton onClick={handleEditButton} />}
           </Fragment>
         )}
       </div>
@@ -93,7 +93,7 @@ const MemberInfo: React.FC<MemberInfoProps> = ({
         <strong className="mr-2">Role:</strong>{" "}
         {member.isOwner ? "Owner" : member.isAdmin ? "Admin" : "User"}
       </div>
-      {isOwner && userId !== member.userId ? (
+      {project.isOwner && userId !== member.userId ? (
         <button
           onClick={() => handleRemoveMember(member.userId)}
           className={`w-full mt-auto ${

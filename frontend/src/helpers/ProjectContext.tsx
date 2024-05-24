@@ -5,21 +5,12 @@ import axios from "axios";
 import { DeviceData, Device } from "../types/Device";
 
 interface ProjectContextProps {
-  projectName: string;
   projectId: string;
   setProjectId: (arg0: string) => void;
-  setOwnerEmail: (arg0: string) => void;
-  ownerEmail: string;
   ownerName: string;
-  ownerId: string;
   setOwnerName: (arg0: string) => void;
-  setOwnerId: (arg0: string) => void;
-  setProjectName: (arg0: string) => void;
-  setMembers: (arg0: any[]) => void;
-  members: any[];
   devices: DeviceData[];
   setDevices: (arg0: DeviceData[]) => void;
-  setProjectDevices: (arg0: Device[]) => void;
   fetchDevices: () => void;
   startDate: Date;
   rangeStartDate: Date;
@@ -38,36 +29,51 @@ interface ProjectContextProps {
   detailLevel: string;
   setDetailLevel: (arg0: string) => void;
   fetchDevice: (deviceId: string) => void;
-  isOwner: boolean;
   isAccountLinked: boolean;
   fetchProject: () => void;
   projectDevices: any[];
+  setProjectDevices: (arg0: Device[]) => void;
   fetchProjectDevices: () => void;
-  projectDescription: string;
-  setProjectDescription: (arg0: string) => void;
-  isAdmin: boolean;
+  project: Project;
 }
 
 const ProjectContext = createContext<ProjectContextProps | undefined>(
   undefined
 );
 
+interface Project {
+  projectId: string;
+  projectName: string;
+  projectDescription: string;
+  ownerId: string;
+  ownerEmail: string;
+  members: any[];
+  devices: Device[];
+  isAdmin: boolean;
+  isOwner: boolean;
+}
+
 const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const defaultProject: Project = {
+    projectId: "",
+    projectName: "",
+    projectDescription: "",
+    ownerId: "",
+    ownerEmail: "",
+    members: [],
+    devices: [],
+    isAdmin: false,
+    isOwner: false,
+  };
+
   const GET_PROJECT_ENDPOINT = `${process.env.API_URL}/project/info`;
   const FETCH_DEVICE_DATA_ENDPOINT = `${process.env.API_URL}/project/fetch-data`;
   const FETCH_PROJECT_DEVICES_ENDPOINT = `${process.env.API_URL}/project/fetch-devices`;
-
-  const [projectName, setProjectName] = useState<string>("");
+  const [project, setProject] = useState<Project>(defaultProject);
   const [projectId, setProjectId] = useState<string>("");
-  const [projectDescription, setProjectDescription] = useState<string>("");
-  const [ownerEmail, setOwnerEmail] = useState<string>("");
   const [ownerName, setOwnerName] = useState<string>("");
-  const [isOwner, setIsOwner] = useState<boolean>(false);
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const [ownerId, setOwnerId] = useState<string>("");
-  const [members, setMembers] = useState<any[]>([]);
   const [startDate, setStartDate] = useState(new Date("2024-02-09"));
   const [rangeStartDate, setRangeStartDate] = useState(new Date("2024-02-10"));
   const [rangeEndDate, setRangeEndDate] = useState(new Date("2024-02-11"));
@@ -112,23 +118,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         },
         withCredentials: true,
       });
-
-      const project = response.data.project;
-
-      setMembers(project.members);
-      setProjectDevices(project.devices);
-      setProjectName(project.projectName);
-      setOwnerEmail(project.ownerEmail);
-      setOwnerId(project.ownerId);
-      setOwnerName(project.ownerName);
-      setIsAccountLinked(response.data.isAccountLinked);
-      setIsOwner(project.isOwner);
-      setIsAdmin(project.isAdmin);
-      setProjectDescription(
-        project.projectDescription ? project.projectDescription : ""
-      );
-
-      console.log(response);
+      setProject(response.data.project);
     } catch (error) {
       console.log(error);
     }
@@ -298,21 +288,14 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   return (
     <ProjectContext.Provider
       value={{
-        projectName,
         projectId,
         setProjectId,
-        members,
         devices,
-        ownerEmail,
         ownerName,
-        ownerId,
-        setOwnerEmail,
         setOwnerName,
-        setOwnerId,
-        setMembers,
         setDevices,
         fetchDevices,
-
+        project,
         startDate,
         rangeStartDate,
         rangeEndDate,
@@ -330,16 +313,11 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         detailLevel,
         setDetailLevel,
         fetchDevice,
-        isOwner,
         isAccountLinked,
         fetchProject,
-        projectDescription,
-        setProjectDescription,
         projectDevices,
         fetchProjectDevices,
-        setProjectName,
         setProjectDevices,
-        isAdmin,
       }}
     >
       {children}

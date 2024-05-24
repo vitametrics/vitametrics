@@ -12,7 +12,7 @@ import PaginationControls from "../Dashboard/PaginationControls";
 import Pagination from "../../components/Pagination";
 
 const Devices = () => {
-  const { projectDevices, projectName, fetchProjectDevices } = useProject();
+  const { projectDevices, project, fetchProjectDevices } = useProject();
 
   const itemsPerPageOptions = [5, 10, 15, 20];
   const {
@@ -53,7 +53,7 @@ const Devices = () => {
       className="w-full h-full flex flex-col p-10 whitePrimary"
     >
       <h2 className="w-full text-4xl font-bold p-5 text-primary pb-0">
-        {projectName} Devices
+        {project.projectName} Devices
       </h2>
 
       {projectDevices.length > 0 ? (

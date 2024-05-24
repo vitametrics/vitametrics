@@ -6,7 +6,7 @@ import OverviewMembers from "../Dashboard/Overview/OverviewMembers";
 import OverviewDevices from "../Dashboard/Overview/OverviewDevices";
 
 const Overview = () => {
-  const { projectName, projectDescription } = useProject();
+  const { project } = useProject();
   const { inView, ref } = useCustomInView();
 
   return (
@@ -18,10 +18,12 @@ const Overview = () => {
       className="w-full h-full flex flex-col p-10 bg-whitePrimary font-libreFranklin"
     >
       <h2 className="w-full text-4xl text-primary p-5 pb-0 mb-5 font-bold">
-        {projectName} Overview
+        {project.projectName} Overview
       </h2>
       <div className="p-5 w-full flex-col">
-        <h2 className="text-2xl text-primary mb-5">{projectDescription}</h2>
+        <h2 className="text-2xl text-primary mb-5">
+          {project.projectDescription}
+        </h2>
         <OverviewMembers />
         <OverviewDevices />
       </div>

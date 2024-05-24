@@ -2,27 +2,36 @@
 import { useState } from "react";
 import axios from "axios";
 import { useProject } from "../../../helpers/ProjectContext";
+import useDebounce from "../../../helpers/useDebounce";
 
 const ChangeDescriptionField = () => {
   const MAX_CHARS = 500; // Set the maximum number of characters for the description
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
-  const { projectDescription, setProjectDescription, projectId } = useProject();
+  const { project, fetchProject } = useProject();
+  const [projectDescription, setProjectDescription] = useState(
+    project.projectDescription
+  );
+
+  const debouncedProjectDescription = useDebounce(projectDescription, 100);
   const [charsLeft, setCharsLeft] = useState(
-    MAX_CHARS - projectDescription.length
+    MAX_CHARS - project.projectDescription.length
   );
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setMessage("");
     const CHANGE_DESC_ENDPOINT = `${process.env.API_URL}/admin/change-project-description`;
-
     try {
       await axios.post(
         CHANGE_DESC_ENDPOINT,
-        { projectId: projectId, newProjectDescription: projectDescription },
+        {
+          projectId: project.projectId,
+          newProjectDescription: debouncedProjectDescription,
+        },
         { withCredentials: true }
       );
+      fetchProject();
       setMessage("Project description changed successfully");
       setError(false);
     } catch (error: any) {

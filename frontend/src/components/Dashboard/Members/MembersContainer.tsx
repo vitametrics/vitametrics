@@ -8,7 +8,7 @@ import { Fragment } from "react";
 import { MembersContainerProps } from "../../../types/Member";
 
 const MembersContainer: React.FC<MembersContainerProps> = ({ onClick }) => {
-  const { members } = useProject();
+  const { project } = useProject();
   const itemsPerPageOptions = [5, 10, 15, 20];
   const {
     currentPage,
@@ -18,7 +18,7 @@ const MembersContainer: React.FC<MembersContainerProps> = ({ onClick }) => {
   } = usePagination();
 
   const { searchTerm, handleSearchChange, filteredItems } = useSearch(
-    members,
+    project.members,
     setCurrentPage
   );
 
@@ -35,7 +35,7 @@ const MembersContainer: React.FC<MembersContainerProps> = ({ onClick }) => {
   return (
     <div className="flex flex-col bg-white rounded-xl shadow-lg p-10 mb-12">
       <h2 className="text-2xl text-primary font-bold mb-3">Members</h2>
-      {members && members.length === 0 ? (
+      {project.members && project.members.length === 0 ? (
         <span className="text-primary text-lg">No members found</span>
       ) : (
         <Fragment>

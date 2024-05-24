@@ -10,7 +10,6 @@ import { useSearchParams } from "react-router-dom";
 import { DashboardNavbar } from "../components/DashboardNavbar";
 
 const Settings = () => {
-  const { projectName } = useProject();
   const { isEmailVerified, userEmail, isOwner } = useAuth();
   const { setShowBackDrop, showBackDrop } = useProject();
 
@@ -217,7 +216,7 @@ const Settings = () => {
       >
         {renderDeleteMenu()}
         <h2 className="w-full text-4xl font-libreFranklin font-bold mb-10">
-          {projectName} Settings
+          Your Settings
         </h2>
 
         {!isEmailVerified ? (

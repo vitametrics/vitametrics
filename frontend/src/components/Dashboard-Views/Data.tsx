@@ -23,8 +23,7 @@ const Data = () => {
 
   const {
     projectDevices,
-    projectName,
-    projectId,
+    project,
     devicesData,
     setRangeStartDate,
     setRangeEndDate,
@@ -212,7 +211,7 @@ const Data = () => {
             dataType: downloadDataType,
             date: date,
             detailLevel: downloadDetailLevel,
-            projectId: projectId,
+            projectId: project.projectId,
           },
           withCredentials: true,
         });
@@ -272,7 +271,7 @@ const Data = () => {
       className="w-full h-full flex flex-col p-10 bg-whitePrimary font-libreFranklin"
     >
       <h2 className="w-full text-4xl text-primary p-5 pb-0 mb-5 font-bold">
-        {projectName} Data
+        {project.projectName} Data
       </h2>
       <span className="p-5">
         <button

@@ -7,7 +7,7 @@ const ChangeNameField = () => {
   const [name, setName] = useState("");
   const [error, setError] = useState(false);
   const [message, setMessage] = useState("");
-  const { projectId, projectName, setProjectName } = useProject();
+  const { projectId, project } = useProject();
   const MAX_CHARS = 100;
   const [charsLeft, setCharsLeft] = useState(MAX_CHARS - name.length);
 
@@ -28,7 +28,7 @@ const ChangeNameField = () => {
       return;
     }
 
-    if (name === projectName) {
+    if (name === project.projectName) {
       setError(true);
       setMessage("New name is the same as the current name");
       return;
@@ -40,7 +40,7 @@ const ChangeNameField = () => {
         { newProjectName: name, projectId: projectId },
         { withCredentials: true }
       );
-      setProjectName(name);
+      project.projectName = name;
       setMessage("Project name changed successfully");
       setError(false);
     } catch (error: any) {
@@ -56,7 +56,7 @@ const ChangeNameField = () => {
           New Project Name
         </label>
         <div className="text-sm mb-2 text-secondary">
-          Current Name: {projectName}
+          Current Name: {project.projectName}
         </div>
         <p className={`${error ? "text-red-500" : "text-green-500"} text-lg `}>
           {message}

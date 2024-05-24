@@ -1993,6 +1993,11 @@ nav.animated-parent {
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
 }
 
+.hover\:bg-hoverPrimary:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(91 95 127 / var(--tw-bg-opacity));
+}
+
 .hover\:bg-hoverQuaternary:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(216 160 160 / var(--tw-bg-opacity));
@@ -2013,6 +2018,11 @@ nav.animated-parent {
   background-color: rgb(206 119 110 / var(--tw-bg-opacity));
 }
 
+.hover\:bg-red-400:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(248 113 113 / var(--tw-bg-opacity));
+}
+
 .hover\:bg-secondary:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(125 139 174 / var(--tw-bg-opacity));
@@ -2021,16 +2031,6 @@ nav.animated-parent {
 .hover\:bg-secondary2:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(107 111 142 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-hoverPrimary:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(91 95 127 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-red-400:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(248 113 113 / var(--tw-bg-opacity));
 }
 
 .hover\:text-gray-300:hover {
