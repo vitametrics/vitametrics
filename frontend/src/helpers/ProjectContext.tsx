@@ -35,6 +35,7 @@ interface ProjectContextProps {
   setProjectDevices: (arg0: Device[]) => void;
   fetchProjectDevices: () => void;
   project: Project;
+  updateProject: (updates: Partial<Project>) => void;
 }
 
 const ProjectContext = createContext<ProjectContextProps | undefined>(
@@ -119,9 +120,16 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         withCredentials: true,
       });
       setProject(response.data.project);
+      setIsAccountLinked(response.data.isAccountLinked);
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const updateProject = (updates: Partial<Project>) => {
+    setProject((prevProject) => {
+      return { ...prevProject, ...updates };
+    });
   };
 
   const [devicesData, setDevicesData] = useState<DeviceData[]>(() => {
@@ -315,6 +323,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         fetchDevice,
         isAccountLinked,
         fetchProject,
+        updateProject,
         projectDevices,
         fetchProjectDevices,
         setProjectDevices,

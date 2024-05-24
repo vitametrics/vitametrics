@@ -8,7 +8,7 @@ const ChangeDescriptionField = () => {
   const MAX_CHARS = 500; // Set the maximum number of characters for the description
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
-  const { project, fetchProject } = useProject();
+  const { project, updateProject } = useProject();
   const [projectDescription, setProjectDescription] = useState(
     project.projectDescription
   );
@@ -31,7 +31,7 @@ const ChangeDescriptionField = () => {
         },
         { withCredentials: true }
       );
-      fetchProject();
+      updateProject({ projectDescription: debouncedProjectDescription });
       setMessage("Project description changed successfully");
       setError(false);
     } catch (error: any) {

@@ -7,7 +7,7 @@ const ChangeEmailField = () => {
   const MAX_CHARS = 500; // Set the maximum number of characters for the description
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
-  const { project } = useProject();
+  const { project, updateProject } = useProject();
   const [changeEmailInput, setChangeEmailInput] = useState("");
   const debouncedChangeEmailInput = useDebounce(changeEmailInput, 100);
 
@@ -46,7 +46,7 @@ const ChangeEmailField = () => {
         },
         { withCredentials: true }
       );
-      project.ownerEmail = debouncedChangeEmailInput;
+      updateProject({ ownerEmail: debouncedChangeEmailInput });
       setMessage("Owner email changed successfully");
       setError(false);
     } catch (error: any) {
