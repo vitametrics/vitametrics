@@ -28,7 +28,7 @@ const projectSchema = new mongoose.Schema(
     fitbitUserId: { type: String, required: false },
     fitbitAccessToken: { type: String, required: false },
     fitbitRefreshToken: { type: String, required: false },
-    lastTokenRefresh: { type: Date, default: null },
+    lastTokenRefresh: { type: Date },
     creationDate: { type: Date, default: Date.now },
     members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     admins: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],

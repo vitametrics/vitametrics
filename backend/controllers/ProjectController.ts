@@ -214,7 +214,7 @@ export async function fetchDevicesHandler(req: Request, res: Response) {
         currentProject.fitbitUserId,
         currentProject.fitbitAccessToken,
         currentProject.projectId,
-        undefined
+        { id: 'Project', name: 'Project'}
       );
       devicesForProject.push(...projectDevices);
     }
@@ -231,7 +231,7 @@ export async function fetchDevicesHandler(req: Request, res: Response) {
         tempUser.fitbitUserId!,
         tempUser.fitbitAccessToken!,
         currentProject.projectId,
-        tempUser.userId,
+        { id: tempUser.userId, name: tempUser.name}
       );
       devicesForProject.push(...userDevice);
     }
