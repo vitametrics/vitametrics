@@ -13,7 +13,7 @@ import CancelIcon from "../../../assets/CancelIcon";
 const CHANGE_DEVICE_NAME_ENDPOINT = `${process.env.API_URL}/project/change-device-name`;
 
 const DevicesList: React.FC<DeviceListProps> = ({ devices }) => {
-  const { fetchProjectDevices, setProjectDevices, projectDevices } =
+  const { fetchProjectDevices, setProjectDevices, projectDevices, projectId } =
     useProject();
 
   const [editingDevices, setEditingDevices] = useState<Record<string, string>>(
@@ -26,7 +26,7 @@ const DevicesList: React.FC<DeviceListProps> = ({ devices }) => {
       try {
         await axios.post(
           CHANGE_DEVICE_NAME_ENDPOINT,
-          { deviceId: deviceId, deviceName: deviceName },
+          { deviceId: deviceId, deviceName: deviceName, projectId: projectId },
           { withCredentials: true }
         );
         fetchProjectDevices();
