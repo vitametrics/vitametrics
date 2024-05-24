@@ -69,7 +69,7 @@ const UserDashboard = () => {
   };
 
   const handleProjectClick = (projectId: string) => {
-    navigate(`/dashboard/project?id=${projectId}&&view=overview`);
+    navigate(`/dashboard/project?id=${projectId}&view=overview`);
   };
 
   const handleCreateProject = async () => {
