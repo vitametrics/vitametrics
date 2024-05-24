@@ -70,7 +70,7 @@ const DashboardSettings = () => {
 
           <a href="#top">
             <button
-              className="p-4 w-[300px] bg-red-500 text-white rounded-lg font-bold"
+              className="p-4 w-[300px] bg-red-500 text-white rounded-lg font-bold hover:bg-red-400"
               onClick={() => toggleDeleteProjectMenu(true)}
             >
               Delete Project

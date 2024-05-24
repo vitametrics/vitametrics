@@ -24,6 +24,7 @@ export default {
         tertiary: "#e5857b",
         quaternary: "#f1b2b2",
         quinary: "#e8ccc7",
+        hoverPrimary: "#5B5F7F",
         hoverSecondary: "#707D9C",
         hoverTertiary: "#CE776E",
         hoverQuaternary: "#D8A0A0",

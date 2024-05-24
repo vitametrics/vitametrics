@@ -95,7 +95,7 @@ const Devices = () => {
         <div className="flex flex-col gap-5 p-5">
           <button
             onClick={handleFetchDevices}
-            className="p-2 text-xl flex flex-row gap-2 justify-center items-center rounded-xl w-[150px] bg-primary text-white shadow-lg font-bold"
+            className="p-2 text-xl flex flex-row gap-2 justify-center items-center rounded-xl w-[150px] bg-primary text-white shadow-lg font-bold hover:bg-hoverPrimary"
           >
             Fetch
           </button>

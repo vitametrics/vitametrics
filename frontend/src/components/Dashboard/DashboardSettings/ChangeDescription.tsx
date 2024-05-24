@@ -63,7 +63,7 @@ const ChangeDescriptionField = () => {
       </div>
       <button
         type="submit"
-        className="p-3 bg-primary text-white rounded-xl w-[300px] font-bold"
+        className="p-3 bg-primary text-white rounded-xl w-[300px] font-bold hover:bg-hoverPrimary shadow-lg"
       >
         Change Description
       </button>

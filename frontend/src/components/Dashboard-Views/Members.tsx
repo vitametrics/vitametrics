@@ -232,7 +232,7 @@ const Members = () => {
         <div className="flex p-5 w-full">
           <button
             onClick={() => toggleInviteMenu(true)}
-            className="p-2 text-2xl flex flex-row gap-2 justify-center items-center rounded-xl w-[230px] bg-primary font-bold text-white shadow-lg"
+            className="p-2 text-2xl flex flex-row gap-2 justify-center items-center rounded-xl w-[230px] bg-primary font-bold text-white shadow-lg hover:bg-hoverPrimary"
           >
             Invite
           </button>
