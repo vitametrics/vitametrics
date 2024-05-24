@@ -10,7 +10,7 @@ import EditIcon from "../../../assets/EditIcon";
 import ConfirmIcon from "../../../assets/ConfirmIcon";
 import CancelIcon from "../../../assets/CancelIcon";
 
-const CHANGE_DEVICE_NAME_ENDPOINT = `${process.env.API_URL}/admin/change-device-name`;
+const CHANGE_DEVICE_NAME_ENDPOINT = `${process.env.API_URL}/project/change-device-name`;
 
 const DevicesList: React.FC<DeviceListProps> = ({ devices }) => {
   const { fetchProjectDevices, setProjectDevices, projectDevices } =
