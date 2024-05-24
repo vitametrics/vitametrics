@@ -26,9 +26,9 @@ const MembersContainer: React.FC<MembersContainerProps> = ({ onClick }) => {
           ? member.isAdmin
           : selectedRole === "owner"
             ? member.isOwner
-            : selectedRole === "user"
-              ? !member.isAdmin && !member.isOwner
-              : member.role === selectedRole
+            : selectedRole === "guest"
+              ? member.isTempUser
+              : member.role === "user"
     ),
     setCurrentPage
   );
