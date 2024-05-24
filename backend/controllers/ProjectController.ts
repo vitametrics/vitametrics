@@ -44,7 +44,7 @@ export async function getProjectInfo(req: Request, res: Response) {
       const isAdmin = project.admins.some((admin) => {
         const adminObj = admin as IUser & { _id: Types.ObjectId };
         return adminObj._id.equals(memberObj._id as Types.ObjectId);
-      }) || memberObj.role === 'siteAdmin' || memberObj.role === 'siteOwner';
+      });
       return {
         ...memberObj.toObject(),
         isOwner,
@@ -55,7 +55,7 @@ export async function getProjectInfo(req: Request, res: Response) {
     isAdmin = project.admins.some((admin) => {
       const adminObj = admin as IUser;
       return adminObj.userId === currentUser.userId;
-    }) || currentUser.role === 'siteAdmin' || currentUser.role === 'siteOwner';
+    });
 
     isOwner = project.ownerId === currentUser.userId;
 

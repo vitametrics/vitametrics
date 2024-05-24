@@ -84,7 +84,7 @@ class AdminController {
         };
 
         logger.info(`Project created successfully: ${projectResponse}`);
-        res.status(201).json({
+        res.status(200).json({
           msg: 'Project created successfully',
           project: projectResponse,
         });
@@ -227,6 +227,11 @@ class AdminController {
               subject: `Vitametrics: Invitation to Participate`,
               text: `Please associate your account with Fitbit by following this link: ${fitbitAuthLink}`,
             });
+            await sendEmail({
+              to: project.ownerEmail,
+              subject: `[INFO] Vitametrics: ${project.projectName} - New Member Added`,
+              text: `A new member has been added to your project by ${req.user?.name}.\nThe users role is set to 'tempUser'.\n\nYou can manage your project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}`,
+            });
             res
               .status(200)
               .json({ msg: 'Temp member added successfully', project });
@@ -262,30 +267,61 @@ class AdminController {
             .status(409)
             .json({ msg: 'User is already a member of the project' });
           return;
+        } else {
+          user.projects.push(project._id as Types.ObjectId);
+
+          await user.save();
+
+          project.members.push(user._id as Types.ObjectId);
+          if (role === 'admin') {
+            project.admins.push(user._id as Types.ObjectId);
+
+            await project.save();
+
+            if (process.env.NODE_ENV === 'production') {
+              await sendEmail({
+                to: user.email,
+                subject: `Vitametrics: Admin Invitation to ${project.projectName}`,
+                text: `You have been invited to join ${project.projectName} as an admin. You can access the project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}&view=overview`,
+              });
+              await sendEmail({
+                to: project.ownerEmail,
+                subject: `[INFO] Vitametrics: Admin Added to ${project.projectName}`,
+                text: `A new admin has been added to your project by ${req.user?.name}.\n\nYou can manage your project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}`
+              });
+              res.status(200).json({ msg: 'Admin added successfully' });
+              return;
+            } else {
+              logger.info(
+                `User: ${user.email} added as an admin to project: ${project.projectName}`
+              );
+              res.status(200).json({ msg: 'Admin added successfully' });
+              return;
+            }
+          }
+
+          await project.save();
+
+          if (process.env.NODE_ENV === 'production') {
+            await sendEmail({
+              to: user.email,
+              subject: `Vitametrics: Invitation to ${project.projectName}`,
+              text: `You have been added to the project: ${project.projectName} with the role ${role as string | 'user'}. You can access the project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}&view=overview`,
+            });
+            await sendEmail({
+              to: project.ownerEmail,
+              subject: `[INFO] Vitametrics: ${project.projectName} - Member Added`,
+              text: `A new admin has been added to your project by ${req.user?.name}.\n\nYou can manage your project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}`,
+            });
+            res.status(200).json({ msg: 'Member added successfully'});
+          } else {
+            logger.info(
+              `User: ${user.email} added to project: ${project.projectName}`
+            );
+            res.status(200).json({ msg: 'Member added successfully' });
+            return;
+          }
         }
-      }
-
-      project.members.push(user._id as Types.ObjectId);
-      if (role === 'admin') {
-        project.admins.push(user._id as Types.ObjectId);
-      }
-
-      await project.save();
-
-      if (process.env.NODE_ENV === 'production') {
-        await sendEmail({
-          to: email,
-          subject: 'Invitation to join a project',
-          text: `You have been invited to join the project: ${project.projectName}. Please set your password by following this link: ${process.env.BASE_URL}/set-password?token=${passwordToken}&projectId=${project.projectId}`,
-        });
-        res.status(200).json({ msg: 'Member added successfully', project });
-        return;
-      } else {
-        logger.info(
-          `User invited to join project: ${project.projectName}. They can set their password by following this link: ${process.env.BASE_URL}/set-password?token=${passwordToken}&projectId=${project.projectId}`
-        );
-        res.status(200).json({ msg: 'Member added successfully', project });
-        return;
       }
     } catch (error) {
       logger.error(`Error adding member: ${error}`);
@@ -355,6 +391,11 @@ class AdminController {
           subject: 'Removal from project',
           text: `You have been removed from the project: ${project.projectName}.`,
         });
+        await sendEmail({
+          to: project.ownerEmail,
+          subject: `[INFO] ${project.projectName} - Member Removed`,
+          text: `A member has been removed from your project by ${req.user?.name}.\n\nYou can manage your project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}`,
+        });
         res.status(200).json({ msg: 'Member removed successfully' });
         return;
       } else {
@@ -405,7 +446,7 @@ class AdminController {
 
     try {
       logger.info(
-        `Changing project name to: ${newProjectName} for project: ${projectId}`
+        `[${currentUser.name}, ${currentUser.id}] Changing project name to: ${newProjectName} for project: ${projectId}`
       );
 
       const project = await Project.findOne({ projectId });
@@ -441,12 +482,13 @@ class AdminController {
   }
 
   static async changeProjectDescription(req: Request, res: Response) {
+    const currentUser = req.user as IUser;
     const newProjectDescription = req.body.newProjectDescription as string;
     const projectId = req.body.projectId as string;
 
     try {
       logger.info(
-        `Changing project description to: ${newProjectDescription} for project: ${projectId}`
+        `[${currentUser.name}, ${currentUser.id}] Changing project description to: ${newProjectDescription} for project: ${projectId}`
       );
 
       const project = await Project.findOne({ projectId });
