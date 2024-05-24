@@ -25,6 +25,7 @@ const Members = () => {
     setShowBackDrop,
     showBackDrop,
     isAdmin,
+    isOwner,
   } = useProject();
   const { userRole, userId } = useAuth();
 
@@ -227,7 +228,7 @@ const Members = () => {
       <h2 className="w-full text-4xl font-bold p-5 pb-0 text-primary">
         {projectName} Members
       </h2>
-      {userRole !== "user" && (
+      {(isOwner || isAdmin) && (
         <div className="flex p-5 w-full">
           <button
             onClick={() => toggleInviteMenu(true)}
