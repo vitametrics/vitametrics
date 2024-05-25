@@ -388,7 +388,7 @@ const Data = () => {
           </h2>
           <span className="h-[0.5px] bg-[#d3d7df] w-full mb-3"></span>
           <div className="flex flex-col justify-between h-full w-full">
-            {devicesData && devicesData.length > 0 ? (
+            {project.devices && project.devices.length > 0 ? (
               <Fragment>
                 {project.devices && project.devices.length > 0 ? (
                   <Fragment>
