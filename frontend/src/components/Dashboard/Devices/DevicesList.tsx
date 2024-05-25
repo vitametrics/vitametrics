@@ -13,8 +13,13 @@ import CancelIcon from "../../../assets/CancelIcon";
 const CHANGE_DEVICE_NAME_ENDPOINT = `${process.env.API_URL}/project/change-device-name`;
 
 const DevicesList: React.FC<DeviceListProps> = ({ devices }) => {
-  const { fetchProjectDevices, setProjectDevices, projectDevices, projectId } =
-    useProject();
+  const {
+    fetchProjectDevices,
+    setProjectDevices,
+    projectDevices,
+    projectId,
+    updateProject,
+  } = useProject();
 
   const [editingDevices, setEditingDevices] = useState<Record<string, string>>(
     {}
@@ -29,7 +34,13 @@ const DevicesList: React.FC<DeviceListProps> = ({ devices }) => {
           { deviceId: deviceId, deviceName: deviceName, projectId: projectId },
           { withCredentials: true }
         );
-        fetchProjectDevices();
+        const updatedDevices = projectDevices.map((device) => {
+          if (device.deviceId === deviceId) {
+            return { ...device, deviceName: deviceName };
+          }
+          return device;
+        });
+        setProjectDevices(updatedDevices);
         handleCancelEdit(deviceId);
       } catch (error) {
         const updatedDevices = projectDevices.map((device) => {
