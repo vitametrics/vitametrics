@@ -63,22 +63,23 @@ const DashboardSettings = () => {
           <h2 className="text-2xl font-bold">Change Owner Email</h2>
           <ChangeOwnerEmailField />
         </span>
+        {project.isOwner && (
+          <span className="mb-10">
+            <h2 className="text-2xl font-bold">Delete Project</h2>
+            <p className="text-secondary text-md">
+              DISCLAIMER: This action is not reversible
+            </p>
 
-        <span className="mb-10">
-          <h2 className="text-2xl font-bold">Delete Project</h2>
-          <p className="text-secondary text-md">
-            DISCLAIMER: This action is not reversible
-          </p>
-
-          <a href="#top">
-            <button
-              className="p-4 w-[300px] bg-red-500 text-white rounded-lg font-bold hover:bg-red-400"
-              onClick={() => toggleDeleteProjectMenu(true)}
-            >
-              Delete Project
-            </button>
-          </a>
-        </span>
+            <a href="#top">
+              <button
+                className="p-4 w-[300px] bg-red-500 text-white rounded-lg font-bold hover:bg-red-400"
+                onClick={() => toggleDeleteProjectMenu(true)}
+              >
+                Delete Project
+              </button>
+            </a>
+          </span>
+        )}
       </div>
     </motion.div>
   );
