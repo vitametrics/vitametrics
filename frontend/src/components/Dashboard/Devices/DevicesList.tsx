@@ -13,13 +13,8 @@ import CancelIcon from "../../../assets/CancelIcon";
 const CHANGE_DEVICE_NAME_ENDPOINT = `${process.env.API_URL}/project/change-device-name`;
 
 const DevicesList: React.FC<DeviceListProps> = ({ devices }) => {
-  const {
-    fetchProjectDevices,
-    setProjectDevices,
-    projectDevices,
-    projectId,
-    updateProject,
-  } = useProject();
+  const { fetchProjectDevices, setProjectDevices, projectDevices, projectId } =
+    useProject();
 
   const [editingDevices, setEditingDevices] = useState<Record<string, string>>(
     {}
