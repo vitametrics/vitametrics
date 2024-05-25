@@ -56,7 +56,6 @@ const AdminServiceStatus = () => {
               {isFrontendUpToDate ? "Up to date" : "Update available"}
             </span>
             <span> Good </span>
-            <span>{frontendVersion}</span>
           </div>
           <div className="bg-primary w-full text-white p-3 text-lg custom-grid">
             <span>
