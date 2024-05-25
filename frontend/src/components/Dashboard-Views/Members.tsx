@@ -33,6 +33,8 @@ const Members = () => {
   const member = searchParams.get("member") || "";
   const [emailInput, setEmailInput] = useState(searchParams.get("email") || "");
   const [nameInput, setNameInput] = useState(searchParams.get("name") || "");
+  const [tempUserEmailInput, setTempUserEmailInput] = useState("");
+  const [tempUserNameInput, setTempUserNameInput] = useState("");
   const role = searchParams.get("role") || "user";
   const [msg, setMsg] = useState("");
   const invited = searchParams.get("invited") === "true";
@@ -43,6 +45,8 @@ const Members = () => {
 
   const debouncedEmail = useDebounce(emailInput, 100);
   const debouncedName = useDebounce(nameInput, 100);
+  const debouncedTempUserEmail = useDebounce(tempUserEmailInput, 100);
+  const debouncedTempUserName = useDebounce(tempUserNameInput, 100);
 
   const roleOptions = project.isAdmin
     ? [{ value: "user", label: "User" }]
@@ -55,6 +59,18 @@ const Members = () => {
     if (showInviteMenu && userRole !== "user") setShowBackDrop(showInviteMenu);
     if (member) setShowBackDrop(true);
   }, [showInviteMenu, member, userRole, setShowBackDrop]);
+
+  const handleTempUserEmailChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    setTempUserEmailInput(event.target.value);
+  };
+
+  const handleTempUserNameChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    setTempUserNameInput(event.target.value);
+  };
 
   const handleEmailChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -127,6 +143,20 @@ const Members = () => {
     }
   };
 
+  const tempValidInput = () => {
+    if (!debouncedTempUserEmail || !debouncedTempUserName) {
+      setMsg("Both parameters must be filled out.");
+      return false;
+    }
+
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    if (!emailRegex.test(debouncedTempUserEmail)) {
+      setMsg("Email is invalid.");
+      return false;
+    }
+    return true;
+  };
+
   const validInput = () => {
     if (!debouncedEmail || !debouncedName) {
       setMsg("Both parameters must be filled out.");
@@ -185,6 +215,46 @@ const Members = () => {
     }
   };
 
+  const handleTabChange = () => {
+    setSearchParams((prev) => {
+      prev.set("invited", "false");
+      return prev;
+    });
+    setMsg("");
+  };
+
+  const handleTempUserInvite = async () => {
+    if (!tempValidInput()) return;
+    try {
+      await axios.post(
+        ADD_MEMBER_ENDPOINT,
+        {
+          email: debouncedTempUserEmail,
+          name: debouncedTempUserName,
+          role: "tempUser",
+          projectId: searchParams.get("id"),
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      setSearchParams((prev) => {
+        prev.set("invited", "true");
+        return prev;
+      });
+      handleClose();
+      setMsg("Temp User invited!");
+    } catch (error: any) {
+      setMsg(error.response.data.msg);
+      setSearchParams((prev) => {
+        prev.set("invited", "false");
+        return prev;
+      });
+      console.log(error);
+    }
+  };
+
   return (
     <motion.div
       variants={fadeInItemVariants}
@@ -209,6 +279,12 @@ const Members = () => {
         handleRoleChange={handleRoleChange}
         handleInvite={handleInvite}
         toggleInviteMenu={toggleInviteMenu}
+        tempUserNameInput={tempUserNameInput}
+        tempUserEmailInput={tempUserEmailInput}
+        handleTempUserNameChange={handleTempUserNameChange}
+        handleTempUserEmailChange={handleTempUserEmailChange}
+        handleTempUserInvite={handleTempUserInvite}
+        handleTabChange={handleTabChange}
       />
       <MemberInfo
         member={project.members.find((m) => m.userId === member)}
