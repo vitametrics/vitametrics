@@ -24,7 +24,7 @@ export async function getProjectInfo(req: Request, res: Response) {
       projectId: req.query.projectId as string,
     })
       .select('-fitbitAccessToken -fitbitRefreshToken -lastTokenRefresh')
-      .populate('members', 'userId email name role emailVerified')
+      .populate('members', 'userId email name role emailVerified isTempUser')
       .populate('devices', 'deviceId deviceName deviceVersion owner ownerName')
       .populate('admins', 'userId');
 
@@ -203,61 +203,44 @@ export async function changeMemberName(req: Request, res: Response) {
 
 export async function fetchDevicesHandler(req: Request, res: Response) {
   const currentProject = req.project as IProject;
-  const userId = req.body.userId as string | undefined;
+
   try {
     logger.info(`Fetching devices for project: ${currentProject.projectId}`);
 
-    if (userId) {
-      logger.info(`Fetching devices for user: ${userId}`);
-      const user = await User.findOne({ userId });
+    const devicesForProject = [];
 
-      if (!user) {
-        logger.error(`User: ${userId} not found`);
-        res.status(404).json({ msg: 'User not found' });
-        return;
-      }
-
-      if (!user.fitbitUserId || !user.fitbitAccessToken) {
-        logger.error(`Fitbit account not linked to user: ${userId}`);
-        res.status(400).json({ msg: 'Fitbit account not linked to user' });
-        return;
-      }
-
-      const devices = await fetchDevices(
-        user.fitbitUserId,
-        user.fitbitAccessToken,
-        currentProject.projectId,
-        user.userId
-      );
-
-      logger.info(`Devices fetched successfully for user: ${userId}`);
-      res.json(devices);
-      return;
-    } else {
-      logger.info(`Fetching devices for project: ${currentProject.projectId}`);
-
-      if (!currentProject.fitbitUserId || !currentProject.fitbitAccessToken) {
-        logger.error(
-          `Fitbit account not linked to project: ${currentProject.projectId}`
-        );
-        res
-          .status(400)
-          .json({ message: 'Fitbit account not linked to project' });
-        return;
-      }
-      const devices = await fetchDevices(
+    if (currentProject.fitbitUserId && currentProject.fitbitAccessToken) {
+      const projectDevices = await fetchDevices(
         currentProject.fitbitUserId,
         currentProject.fitbitAccessToken,
         currentProject.projectId,
-        undefined
+        { id: 'Project', name: 'Project' }
       );
-
-      logger.info(
-        `Devices fetched successfully for project: ${currentProject.projectId}`
-      );
-      res.json(devices);
-      return;
+      devicesForProject.push(...projectDevices);
     }
+
+    const tempUsers = await User.find({
+      _id: { $in: currentProject.members },
+      isTempUser: true,
+      fitbitUserId: { $exists: true, $ne: null },
+      fitbitAccessToken: { $exists: true, $ne: null },
+    });
+
+    for (const tempUser of tempUsers) {
+      const userDevice = await fetchDevices(
+        tempUser.fitbitUserId!,
+        tempUser.fitbitAccessToken!,
+        currentProject.projectId,
+        { id: tempUser.userId, name: tempUser.name }
+      );
+      devicesForProject.push(...userDevice);
+    }
+
+    logger.info(
+      `Devices fetched successfully for project: ${currentProject.projectId}`
+    );
+    res.status(200).json(devicesForProject);
+    return;
   } catch (error) {
     logger.error(`Error fetching devices: ${error}`);
     res.status(500).json({ msg: 'Internal Server Error' });

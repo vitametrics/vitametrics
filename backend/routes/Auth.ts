@@ -116,6 +116,7 @@ router.get('/callback', async (req: Request, res: Response) => {
       user.fitbitUserId = fitbitUserID;
       user.fitbitAccessToken = accessToken;
       user.fitbitRefreshToken = refreshToken;
+      user.lastTokenRefresh = new Date();
 
       await user.save();
       res.clearCookie('userId');
@@ -124,6 +125,7 @@ router.get('/callback', async (req: Request, res: Response) => {
       project.fitbitUserId = fitbitUserID;
       project.fitbitAccessToken = accessToken;
       project.fitbitRefreshToken = refreshToken;
+      project.lastTokenRefresh = new Date();
 
       await project.save();
 

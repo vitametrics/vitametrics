@@ -30,6 +30,22 @@ const checkProjectMembership = async (
       return;
     }
 
+    const projectId = req.body.projectId || req.query.projectId;
+
+    if (currentUser.role === 'siteOwner') {
+      const project = await Project.findOne({ projectId });
+      if (!project) {
+        logger.error(
+          `[checkProjectMembership] Project not found: ${projectId}`
+        );
+        res.status(404).json({ msg: 'Project not found' });
+        return;
+      }
+      logger.info('[checkProjectMembership] Site owner access granted');
+      req.project = project as IProject;
+      return next();
+    }
+
     if (!user.projects.length && user.role !== 'siteOwner') {
       res
         .status(403)
@@ -37,14 +53,13 @@ const checkProjectMembership = async (
       return;
     }
 
-    const projectId = req.body.projectId || req.query.projectId;
     const projectIds = user.projects.map((project) => project._id);
     const matchingProject = await Project.findOne({
       projectId: projectId,
       _id: { $in: projectIds },
     });
 
-    if (!matchingProject && user.role !== 'siteOwner') {
+    if (!matchingProject) {
       logger.error(
         '[checkProjectMembership] Access denied - User not a member of the project'
       );

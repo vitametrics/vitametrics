@@ -199,7 +199,7 @@ class AdminController {
         return;
       }
 
-      let user = await User.findOne({ email });
+      const user = await User.findOne({ email });
 
       const newUserId = crypto.randomBytes(16).toString('hex');
       const passwordToken = crypto.randomBytes(32).toString('hex');
@@ -255,8 +255,28 @@ class AdminController {
             passwordTokenExpiry: tokenExpiry,
           });
 
-          user = newUser;
           await newUser.save();
+
+          if (process.env.NODE_ENV === 'production') {
+            await sendEmail({
+              to: email,
+              subject: 'Vitametrics: Invitation to Join',
+              text: `You have been invited to join the project: ${project.projectName}. Please set your password by following this link: ${process.env.BASE_URL}/set-password?token=${passwordToken}&projectId=${project.projectId}`,
+            });
+            await sendEmail({
+              to: project.ownerEmail,
+              subject: `[INFO] Vitametrics: ${project.projectName} - New Member Added`,
+              text: `A new member has been added to your project by ${req.user?.name}.\nThe users role is set to 'user'.\nTo manage your project, use this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}&view=overview`,
+            });
+            res.status(200).json({ msg: 'Member invited successfully' });
+            return;
+          } else {
+            logger.info(
+              `User: ${email} invited to join project: ${project.projectName}. They can set their password by following this link: ${process.env.BASE_URL}/set-password?token=${passwordToken}&projectId=${project.projectId}`
+            );
+            res.status(200).json({ msg: 'Member invited successfully' });
+            return;
+          }
         }
       } else {
         if (project.members.includes(user._id as Types.ObjectId)) {
@@ -287,7 +307,7 @@ class AdminController {
               await sendEmail({
                 to: project.ownerEmail,
                 subject: `[INFO] Vitametrics: Admin Added to ${project.projectName}`,
-                text: `A new admin has been added to your project by ${req.user?.name}.\n\nYou can manage your project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}`
+                text: `A new admin has been added to your project by ${req.user?.name}.\n\nYou can manage your project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}`,
               });
               res.status(200).json({ msg: 'Admin added successfully' });
               return;
@@ -313,7 +333,7 @@ class AdminController {
               subject: `[INFO] Vitametrics: ${project.projectName} - Member Added`,
               text: `A new admin has been added to your project by ${req.user?.name}.\n\nYou can manage your project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}`,
             });
-            res.status(200).json({ msg: 'Member added successfully'});
+            res.status(200).json({ msg: 'Member added successfully' });
           } else {
             logger.info(
               `User: ${user.email} added to project: ${project.projectName}`

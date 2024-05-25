@@ -2,7 +2,6 @@ import axios, { AxiosResponse } from 'axios';
 
 import Device from '../../models/Device';
 import Project from '../../models/Project';
-import User from '../../models/User';
 import logger from '../logger';
 
 interface FitbitDeviceInfo {
@@ -23,35 +22,15 @@ async function fetchDevices(
   fitbitUserId: string,
   fitbitAccessToken: string,
   projectId: string,
-  userId: string | undefined
+  owner: { id: string; name: string }
 ): Promise<DeviceInfo[]> {
   try {
-    let deviceResponse;
-    let userName = 'Project';
-
-    if (!userId) {
-      deviceResponse = (await axios.get(
-        `https://api.fitbit.com/1/user/${fitbitUserId}/devices.json`,
-        {
-          headers: { Authorization: `Bearer ${fitbitAccessToken}` },
-        }
-      )) as AxiosResponse<FitbitDeviceInfo[]>;
-    } else {
-      const user = await User.findOne({ userId });
-      if (!user) {
-        logger.error(`[fetchDevices] User not found: ${userId}`);
-        throw new Error('User not found');
+    const deviceResponse = (await axios.get(
+      `https://api.fitbit.com/1/user/${fitbitUserId}/devices.json`,
+      {
+        headers: { Authorization: `Bearer ${fitbitAccessToken}` },
       }
-
-      userName = user.name;
-
-      deviceResponse = (await axios.get(
-        `https://api.fitbit.com/1/user/${user.fitbitUserId}/devices.json`,
-        {
-          headers: { Authorization: `Bearer ${user.fitbitAccessToken}` },
-        }
-      )) as AxiosResponse<FitbitDeviceInfo[]>;
-    }
+    )) as AxiosResponse<FitbitDeviceInfo[]>;
 
     const validDevices = deviceResponse.data.filter(
       (device) => device.deviceVersion !== 'MobileTrack'
@@ -69,50 +48,30 @@ async function fetchDevices(
       (device) => !existingDeviceIds.has(device.id)
     );
 
-    if (userId) {
-      for (const device of newDevices) {
-        const newDevice = new Device({
-          owner: userId,
-          ownerName: userName,
-          deviceId: device.id,
-          deviceVersion: device.deviceVersion,
-          batteryLevel: device.batteryLevel,
-          deviceName: device.deviceVersion,
-          lastSyncTime: device.lastSyncTime,
-        });
+    for (const device of newDevices) {
+      const newDevice = new Device({
+        owner: owner.id,
+        ownerName: owner.name,
+        deviceId: device.id,
+        deviceVersion: device.deviceVersion,
+        batteryLevel: device.batteryLevel,
+        deviceName: device.deviceVersion,
+        lastSyncTime: device.lastSyncTime,
+      });
 
-        const savedDevice = await newDevice.save();
+      const savedDevice = await newDevice.save();
 
-        await Project.updateOne(
-          { projectId },
-          { $addToSet: { devices: savedDevice._id } }
-        );
-      }
-    } else {
-      for (const device of newDevices) {
-        const newDevice = new Device({
-          owner: 'Project',
-          ownerName: 'Project',
-          deviceId: device.id,
-          deviceVersion: device.deviceVersion,
-          batteryLevel: device.batteryLevel,
-          deviceName: device.deviceVersion,
-          lastSyncTime: device.lastSyncTime,
-        });
-
-        const savedDevice = await newDevice.save();
-
-        await Project.updateOne(
-          { projectId },
-          { $addToSet: { devices: savedDevice._id } }
-        );
-      }
+      await Project.updateOne(
+        { projectId },
+        { $addToSet: { devices: savedDevice._id } }
+      );
     }
 
     // update existing devices
+
     for (const device of existingDevices) {
       await Device.findOneAndUpdate(
-        { deviceId: device.id },
+        { deviceId: device.deviceId },
         {
           batteryLevel: device.batteryLevel,
           lastSyncTime: device.lastSyncTime,
