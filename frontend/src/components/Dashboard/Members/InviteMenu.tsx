@@ -64,7 +64,7 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
   const [availableUsers, setAvailableUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState<any[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
-  const GET_AVAILABLE_USERS_ENDPOINT = `${process.env.API_URL}/admin/available-users`;
+  const GET_AVAILABLE_USERS_ENDPOINT = `${process.env.API_URL}/admin/get-available-users`;
 
   useEffect(() => {
     if (availableUsers.length === 0) {
