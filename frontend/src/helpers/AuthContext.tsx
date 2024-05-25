@@ -114,7 +114,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     login();
   }, []); // Empty dependency array to run only on mount
 
-  const FETCH_VERSION_ENDPOINT = `${process.env.API_URL}/version"`;
+  const FETCH_VERSION_ENDPOINT = `${process.env.API_URL}/version`;
 
   const fetchVersion = async () => {
     try {
