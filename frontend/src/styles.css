@@ -92,6 +92,11 @@ html {
   font-style: normal;
 }
 
+.selected-tab {
+  font-weight: 500;
+  text-decoration: underline;
+}
+
 @font-face {
   font-family: "Libre Franklin", sans-serif;
   font-optical-sizing: auto;
