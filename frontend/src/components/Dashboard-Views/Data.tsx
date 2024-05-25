@@ -22,7 +22,6 @@ const Data = () => {
   const { ref, inView } = useCustomInView();
 
   const {
-    projectDevices,
     project,
     devicesData,
     setRangeStartDate,
@@ -391,7 +390,7 @@ const Data = () => {
           <div className="flex flex-col justify-between h-full w-full">
             {devicesData && devicesData.length > 0 ? (
               <Fragment>
-                {projectDevices && projectDevices.length > 0 ? (
+                {project.devices && project.devices.length > 0 ? (
                   <Fragment>
                     <div className="grid grid-cols-4 font-bold text-secondary2 mb-3">
                       <span>ACTION</span>
@@ -399,7 +398,7 @@ const Data = () => {
                       <span>NAME</span>
                       <span>ID</span>
                     </div>
-                    {projectDevices.map((device: Device, index: number) => (
+                    {project.devices.map((device: Device, index: number) => (
                       <Fragment>
                         <span className="h-[0.5px] bg-[#d3d7df] w-full mb-3"></span>
 
