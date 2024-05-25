@@ -80,7 +80,7 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
         },
         withCredentials: true,
       });
-      setAvailableUsers(response.data);
+      setAvailableUsers(response.data.availableUsers);
       console.log(response.data);
     } catch (error) {
       console.log(error);
