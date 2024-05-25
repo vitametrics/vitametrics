@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // components/InviteMenu.tsx
-import React, { useState, Fragment } from "react";
+import React, { useState, Fragment, useEffect } from "react";
 import { motion } from "framer-motion";
 import useCustomInView from "../../../hooks/useCustomInView";
 import { fadeInItemVariants } from "../../../hooks/animationVariant";
+import axios from "axios";
+import { useProject } from "../../../helpers/ProjectContext";
 
 interface InviteMenuProps {
   projectName: string;
@@ -57,6 +60,50 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
 }) => {
   const { ref, inView } = useCustomInView();
   const [tab, setTab] = useState("user");
+  const { project } = useProject();
+  const [availableUsers, setAvailableUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState<any[]>([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const GET_AVAILABLE_USERS_ENDPOINT = `${process.env.API_URL}/admin/available-users`;
+
+  useEffect(() => {
+    if (availableUsers.length === 0) {
+      fetchAvailableUsers();
+    }
+  }, []);
+
+  const fetchAvailableUsers = async () => {
+    try {
+      const response = await axios.get(GET_AVAILABLE_USERS_ENDPOINT, {
+        params: {
+          projectId: project.projectId,
+        },
+        withCredentials: true,
+      });
+      setAvailableUsers(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleEmailInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    handleEmailChange(event);
+    const input = event.target.value.toLowerCase();
+
+    // Filter users based on the input
+    if (input.length >= 3) {
+      // Start filtering if at least 3 characters are typed
+      const filteredUsers = availableUsers.filter((user: any) =>
+        user.email.toLowerCase().includes(input)
+      );
+      setFilteredUsers(filteredUsers);
+      setShowDropdown(true);
+    } else {
+      setFilteredUsers([]);
+      setShowDropdown(false);
+    }
+  };
 
   if (!showInviteMenu || userRole === "user") return null;
 
@@ -66,7 +113,7 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
       initial="hidden"
       animate={inView ? "show" : "hidden"}
       ref={ref}
-      className={`opacity-transition ${showBackDrop ? "show" : ""} absolute w-full h-full p-10 z-10 bg-[#e8e8e8] flex flex-col left-0 md:left-1/2 md:top-1/2 transform-center md:h-[500px] md:w-[500px] rounded-xl`}
+      className={`opacity-transition ${showBackDrop ? "show" : ""} absolute w-full h-full p-10 z-10 bg-[#e8e8e8] flex flex-col left-0 md:left-1/2 md:top-1/2 transform-center md:h-[600px] md:w-[500px] rounded-xl`}
     >
       <button
         onClick={() => toggleInviteMenu(false)}
@@ -110,13 +157,31 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
             onChange={handleNameChange}
           />
           <h1 className="text-xl mb-1 text-primary">Enter Email</h1>
-          <input
-            type="text"
-            className="w-full h-10 p-6 rounded-xl mb-5 text-primary"
-            placeholder="Enter member's email"
-            value={emailInput}
-            onChange={handleEmailChange}
-          />
+          <span className="mb-5">
+            <input
+              type="text"
+              className="w-full h-10 p-6 rounded-xl text-primary"
+              placeholder="Enter member's email"
+              value={emailInput}
+              onChange={handleEmailInput}
+            />
+            {showDropdown && (
+              <div className="w-full bg-white rounded-lg mt-0.5 shadow-lg p-2">
+                {filteredUsers.length === 0 ? (
+                  <span className="text-primary">No users found</span>
+                ) : (
+                  <Fragment>
+                    {filteredUsers.map((user) => (
+                      <div key={user.userId} className="flex flex-row gap-2">
+                        <span className="font-bold text-lg">{user.name}</span>
+                        <span className="text-md">{user.email}</span>
+                      </div>
+                    ))}
+                  </Fragment>
+                )}
+              </div>
+            )}
+          </span>
           <h1 className="text-xl mb-1 text-primary">Select Role</h1>
           <select
             className="w-full text-lg p-2 h-10 rounded-xl mb-5 text-primary"
