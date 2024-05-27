@@ -22,7 +22,7 @@ const Devices = () => {
 
   const handleDeviceClick = (deviceId: string) => {
     setSearchParams(
-      { id: projectId, view: "devices", device: deviceId },
+      { id: projectId, view: "device", device: deviceId },
       { replace: true }
     );
   };
@@ -70,72 +70,59 @@ const Devices = () => {
         {project.projectName} Devices
       </h2>
 
-      {!isAccountLinked ? (
-        <div className="flex flex-col gap-5 p-5">
-          <button
-            className="bg-secondary p-3 rounded-lg text-white font-bold max-w-[200px]"
-            onClick={oAuthLogin}
-          >
-            Link FitBit Account
-          </button>
-        </div>
-      ) : (
-        <Fragment>
-          {project.devices.length > 0 ? (
-            <section className="p-5">
-              <div className="flex flex-col bg-white rounded-xl shadow-lg p-10">
-                <h2 className="text-2xl text-primary font-bold mb-5">
-                  Devices
-                </h2>
-                <button
-                  onClick={handleFetchDevices}
-                  className="p-2 text-xl flex flex-row gap-2 justify-center items-center rounded-xl w-[150px] bg-primary text-white shadow-lg font-bold mb-5"
-                >
-                  Fetch
-                </button>
-                <input
-                  type="text"
-                  placeholder="Search For Name"
-                  value={searchTerm}
-                  onChange={handleSearchChange}
-                  className="p-2 w-[300px] mr-auto border-2 border-gray-200 rounded-lg mb-2"
-                />
-                <PaginationControls
-                  itemsPerPage={itemsPerPage}
-                  handleItemsPerPageChange={handleItemsPerPageChange}
-                  itemsPerPageOptions={itemsPerPageOptions}
-                  totalItems={filteredItems.length}
-                  currentPage={currentPage}
-                  indexOfLastItem={indexOfLastMember}
-                />
-                <DevicesList
-                  devices={currentDevices}
-                  onDeviceClick={handleDeviceClick}
-                />
-                <span className="h-[0.5px] bg-[#d3d7df] w-full mb-3"></span>
-                <Pagination
-                  totalItems={filteredItems.length}
-                  itemsPerPage={itemsPerPage}
-                  currentPage={currentPage}
-                  setCurrentPage={setCurrentPage}
-                />
-              </div>
-            </section>
-          ) : (
-            <div className="flex flex-col gap-5 p-5">
+      <Fragment>
+        {project.devices.length > 0 ? (
+          <section className="p-5">
+            <div className="flex flex-col bg-white rounded-xl shadow-lg p-10">
+              <h2 className="text-2xl text-primary font-bold mb-5">Devices</h2>
               <button
                 onClick={handleFetchDevices}
-                className="p-2 text-xl flex flex-row gap-2 justify-center items-center rounded-xl w-[150px] bg-primary text-white shadow-lg font-bold hover:bg-hoverPrimary"
+                className="p-2 text-xl flex flex-row gap-2 justify-center items-center rounded-xl w-[150px] bg-primary text-white shadow-lg font-bold mb-5"
               >
                 Fetch
               </button>
-              <h2 className="text-2xl font-bold text-primary">
-                No Devices Found.
-              </h2>
+              <input
+                type="text"
+                placeholder="Search For Name"
+                value={searchTerm}
+                onChange={handleSearchChange}
+                className="p-2 w-[300px] mr-auto border-2 border-gray-200 rounded-lg mb-2"
+              />
+              <PaginationControls
+                itemsPerPage={itemsPerPage}
+                handleItemsPerPageChange={handleItemsPerPageChange}
+                itemsPerPageOptions={itemsPerPageOptions}
+                totalItems={filteredItems.length}
+                currentPage={currentPage}
+                indexOfLastItem={indexOfLastMember}
+              />
+              <DevicesList
+                devices={currentDevices}
+                onDeviceClick={handleDeviceClick}
+              />
+              <span className="h-[0.5px] bg-[#d3d7df] w-full mb-3"></span>
+              <Pagination
+                totalItems={filteredItems.length}
+                itemsPerPage={itemsPerPage}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+              />
             </div>
-          )}
-        </Fragment>
-      )}
+          </section>
+        ) : (
+          <div className="flex flex-col gap-5 p-5">
+            <button
+              onClick={handleFetchDevices}
+              className="p-2 text-xl flex flex-row gap-2 justify-center items-center rounded-xl w-[150px] bg-primary text-white shadow-lg font-bold hover:bg-hoverPrimary"
+            >
+              Fetch
+            </button>
+            <h2 className="text-2xl font-bold text-primary">
+              No Devices Found.
+            </h2>
+          </div>
+        )}
+      </Fragment>
     </motion.div>
   );
 };

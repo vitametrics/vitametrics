@@ -13,61 +13,6 @@ import CancelIcon from "../../../assets/CancelIcon";
 const CHANGE_DEVICE_NAME_ENDPOINT = `${process.env.API_URL}/project/change-device-name`;
 
 const DevicesList: React.FC<DeviceListProps> = ({ devices, onDeviceClick }) => {
-  const { fetchProjectDevices, setProjectDevices, projectDevices, projectId } =
-    useProject();
-
-  const [editingDevices, setEditingDevices] = useState<Record<string, string>>(
-    {}
-  );
-
-  const handleOwnerNameChange = useCallback(
-    async (deviceId: string) => {
-      const deviceName = editingDevices[deviceId];
-      try {
-        const response = await axios.post(
-          CHANGE_DEVICE_NAME_ENDPOINT,
-          { deviceId: deviceId, deviceName: deviceName, projectId: projectId },
-          { withCredentials: true }
-        );
-        const updatedDevice = response.data.device;
-        const updatedDevices = projectDevices.map((device) => {
-          if (device.deviceId === deviceId) {
-            return updatedDevice;
-          }
-          return device;
-        });
-
-        setProjectDevices(updatedDevices);
-        handleCancelEdit(deviceId);
-      } catch (error) {
-        const updatedDevices = projectDevices.map((device) => {
-          if (device.deviceId === deviceId) {
-            return { ...device, deviceName: deviceName };
-          }
-          return device;
-        });
-        setProjectDevices(updatedDevices);
-        handleCancelEdit(deviceId);
-
-        console.error("Error changing device name:", error);
-      }
-    },
-    [editingDevices, fetchProjectDevices]
-  );
-
-  const handleEditChange = (deviceId: string, newName: string) => {
-    setEditingDevices((prev) => ({
-      ...prev,
-      [deviceId]: newName,
-    }));
-  };
-
-  const handleCancelEdit = (deviceId: string) => {
-    setEditingDevices((prev) => {
-      const { [deviceId]: _, ...rest } = prev;
-      return rest;
-    });
-  };
   const truncateName = (name: string) => {
     return name.length > 25 ? `${name.substring(0, 22)}...` : name;
   };
@@ -88,40 +33,13 @@ const DevicesList: React.FC<DeviceListProps> = ({ devices, onDeviceClick }) => {
         <Fragment key={device.deviceId}>
           <span className="h-[0.5px] bg-[#d3d7df] w-full"></span>
           <div
-            className="grid grid-cols-5 w-full items-center text-center p-2"
+            className="grid grid-cols-5 w-full items-center text-center p-2 hover:cursor-pointer hover:bg-slate-50"
             onClick={() => onDeviceClick(device.deviceId)}
           >
-            {editingDevices[device.deviceId] !== undefined ? (
-              <div className="flex items-center justify-center">
-                <input
-                  type="text"
-                  value={editingDevices[device.deviceId]}
-                  onChange={(e) =>
-                    handleEditChange(device.deviceId, e.target.value)
-                  }
-                  className="text-primary ml-2 bg-slate-300 px-2 rounded-lg"
-                />
-                <button onClick={() => handleOwnerNameChange(device.deviceId)}>
-                  <ConfirmIcon />
-                </button>
-                <button onClick={() => handleCancelEdit(device.deviceId)}>
-                  <CancelIcon />
-                </button>
-              </div>
-            ) : (
-              <div className="flex items-center justify-center">
-                <button
-                  onClick={() =>
-                    handleEditChange(device.deviceId, device.deviceName)
-                  }
-                >
-                  <EditIcon />
-                </button>
-                <span className="text-primary ml-2">
-                  {truncateName(device.deviceName)}
-                </span>
-              </div>
-            )}
+            <span className="text-primary ml-2">
+              {truncateName(device.deviceName)}
+            </span>
+
             <span className="text-primary ml-2">{device.deviceId}</span>
             <span className="text-primary ml-2">{device.deviceVersion}</span>
             <span className="text-primary ml-2">{device.lastSyncTime}</span>
