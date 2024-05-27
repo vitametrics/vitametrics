@@ -92,7 +92,7 @@ const DevicesList: React.FC<DeviceListProps> = ({ devices, onDeviceClick }) => {
             onClick={() => onDeviceClick(device.deviceId)}
           >
             {editingDevices[device.deviceId] !== undefined ? (
-              <div className="flex items-center">
+              <div className="flex items-center justify-center">
                 <input
                   type="text"
                   value={editingDevices[device.deviceId]}
@@ -109,7 +109,7 @@ const DevicesList: React.FC<DeviceListProps> = ({ devices, onDeviceClick }) => {
                 </button>
               </div>
             ) : (
-              <div className="flex items-center">
+              <div className="flex items-center justify-center">
                 <button
                   onClick={() =>
                     handleEditChange(device.deviceId, device.deviceName)
