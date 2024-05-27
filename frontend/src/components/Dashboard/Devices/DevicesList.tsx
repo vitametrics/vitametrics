@@ -29,7 +29,6 @@ const DevicesList: React.FC<DeviceListProps> = ({ devices, onDeviceClick }) => {
           { deviceId: deviceId, deviceName: deviceName, projectId: projectId },
           { withCredentials: true }
         );
-        //request returns updated device
         const updatedDevice = response.data.device;
         const updatedDevices = projectDevices.map((device) => {
           if (device.deviceId === deviceId) {
