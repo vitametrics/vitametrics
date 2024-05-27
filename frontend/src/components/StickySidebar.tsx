@@ -1,4 +1,3 @@
-import DataIcon from "../assets/DataIcon";
 import OverviewIcon from "../assets/OverviewIcon";
 import DeviceIcon from "../assets/DeviceIcon";
 import MembersIcon from "../assets/MembersIcon";
@@ -46,17 +45,6 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage, path }) => {
           </div>
         </li>
 
-        <li className="px-2 pt-2">
-          <div
-            className={`${
-              currentPage === "data" ? " bg-secondary2" : ""
-            } flex-col flex justify-center text-[0.75rem] px-4 py-2 rounded-xl items-center text-white hover:bg-secondary2 hover:cursor-pointer`}
-            onClick={() => handlePageChange("data")}
-          >
-            <DataIcon />
-            Data
-          </div>
-        </li>
         <li className="px-2 pt-2">
           <div
             className={`${

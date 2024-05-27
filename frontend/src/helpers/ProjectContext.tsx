@@ -162,7 +162,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       setProject(response.data.project);
       //update with tempDevices
       updateProject({
-        devices: testDevices,
+        devices: response.data.devices,
       });
       setIsAccountLinked(response.data.isAccountLinked);
     } catch (error) {

@@ -2,7 +2,6 @@
 import { DashboardNavbar } from "../components/DashboardNavbar";
 import StickySidebar from "../components/StickySidebar";
 import { useCallback, useEffect } from "react";
-import Data from "../components/Dashboard-Views/Data";
 import Devices from "../components/Dashboard-Views/Devices";
 import Overview from "../components/Dashboard-Views/Overview";
 import Members from "../components/Dashboard-Views/Members";
@@ -30,8 +29,6 @@ const ProjectDashboard = () => {
     switch (view) {
       case "overview":
         return <Overview />;
-      case "data":
-        return <Data />;
       case "devices":
         return <Devices />;
       case "members":
@@ -41,7 +38,7 @@ const ProjectDashboard = () => {
       case "device":
         return <ViewDevice />;
       default:
-        return <Data />;
+        return <Overview />;
     }
   }, [view]);
 
