@@ -18,8 +18,11 @@ interface ProjectContextProps {
   setStartDate: (arg0: Date) => void;
   setRangeStartDate: (arg0: Date) => void;
   setRangeEndDate: (arg0: Date) => void;
-  downloadDate: Date;
-  setDownloadDate: (arg0: Date) => void;
+  downloadStartDate: Date;
+  setDownloadStartDate: (arg0: Date) => void;
+  downloadEndDate: Date;
+  setDownloadEndDate: (arg0: Date) => void;
+
   showBackDrop: boolean;
   setShowBackDrop: (arg0: boolean) => void;
   selectedDevices: string[];
@@ -80,7 +83,12 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   const [startDate, setStartDate] = useState(new Date("2024-02-09"));
   const [rangeStartDate, setRangeStartDate] = useState(new Date("2024-02-10"));
   const [rangeEndDate, setRangeEndDate] = useState(new Date("2024-02-11"));
-  const [downloadDate, setDownloadDate] = useState(new Date("2024-02-10"));
+  const [downloadStartDate, setDownloadStartDate] = useState(
+    new Date("2024-02-10")
+  );
+  const [downloadEndDate, setDownloadEndDate] = useState(
+    new Date("2024-02-11")
+  );
   const [detailLevel, setDetailLevel] = useState<string>("1min");
   const [selectedDevices, setSelectedDevices] = useState<string[]>([]);
   const [showBackDrop, setShowBackDrop] = useState(false);
@@ -359,8 +367,10 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         setRangeStartDate,
         setStartDate,
         setRangeEndDate,
-        downloadDate,
-        setDownloadDate,
+        downloadStartDate,
+        setDownloadStartDate,
+        downloadEndDate,
+        setDownloadEndDate,
         showBackDrop,
         setShowBackDrop,
         selectedDevices,

@@ -4,6 +4,8 @@ import axios from "axios";
 import { useProject } from "../../../helpers/ProjectContext";
 import { useSearchParams } from "react-router-dom";
 import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { formatDate } from "../../../helpers/formatDate";
 
 interface DeviceDownloadPanelProps {
   deviceId: string;
@@ -13,10 +15,17 @@ const DOWNLOAD_DATA_ENDPOINT = `${process.env.API_URL}/project/download-data`;
 const DeviceDownloadPanel: React.FC<DeviceDownloadPanelProps> = ({
   deviceId,
 }) => {
-  const { project, downloadDate, setDownloadDate } = useProject();
+  const {
+    project,
+    downloadStartDate,
+    setDownloadStartDate,
+    downloadEndDate,
+    setDownloadEndDate,
+  } = useProject();
 
   const [downloadMsg, setDownloadMsg] = useState("");
   const [downloadFlag, setDownloadFlag] = useState(false);
+  const [fileNameInput, setFileNameInput] = useState("");
 
   const [searchParams, setSearchParams] = useSearchParams({
     id: project.projectId,
@@ -80,14 +89,23 @@ const DeviceDownloadPanel: React.FC<DeviceDownloadPanelProps> = ({
       return;
     }
     try {
-      const date = formatDate(downloadDate);
+      const startDate = formatDate(downloadStartDate);
+      const endDate = formatDate(downloadEndDate);
+
+      let filename = fileNameInput;
+      if (filename === "") {
+        filename = `device-${deviceId}-${startDate}-${endDate}-${downloadDataType}`;
+      }
+
       const response = await axios.get(DOWNLOAD_DATA_ENDPOINT, {
         params: {
-          deviceId: deviceId,
-          dataType: downloadDataType,
-          date: date,
+          deviceIds: [deviceId],
+          dataTypes: [downloadDataType],
+          startDate: startDate,
+          endDate: endDate,
           detailLevel: downloadDetailLevel,
           projectId: project.projectId,
+          archiveName: filename,
         },
         withCredentials: true,
       });
@@ -97,7 +115,7 @@ const DeviceDownloadPanel: React.FC<DeviceDownloadPanelProps> = ({
       link.href = url;
       link.setAttribute(
         "download",
-        `device-${deviceId}-${date}-${downloadDataType}.csv`
+        `device-${deviceId}-${startDate}-${endDate}-${downloadDataType}.csv`
       );
       document.body.appendChild(link);
       link.click();
@@ -109,16 +127,6 @@ const DeviceDownloadPanel: React.FC<DeviceDownloadPanelProps> = ({
     }
   };
 
-  const formatDate = (date: Date) => {
-    const month =
-      date.getMonth() + 1 < 10
-        ? "0" + (date.getMonth() + 1)
-        : date.getMonth() + 1;
-    const day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
-    const year = date.getFullYear();
-    return `${year}-${month}-${day}`;
-  };
-
   return (
     <div className="">
       <h2 className="w-full text-2xl font-bold pb-0 text-primary my-3">
@@ -127,6 +135,21 @@ const DeviceDownloadPanel: React.FC<DeviceDownloadPanelProps> = ({
       <p className="text-primary mb-5">
         Individually export a device's data for a specific date
       </p>
+      <span className="flex flex-row mb-5 items-center">
+        <input
+          className="p-2 border border-gray-300 rounded-tl-lg rounded-bl-lg w-[500px]"
+          placeholder="Enter File Name"
+          value={fileNameInput}
+          onChange={(e) => setFileNameInput(e.target.value)}
+        />
+        <span
+          className=" bg-white text-primary rounded-tr-lg rounded-br-lg p-2 border-gray-300 border"
+          onClick={() => setFileNameInput("")}
+        >
+          .csv
+        </span>
+      </span>
+
       <div className="flex-col text-secondary">
         <div className="flex flex-row gap-5">
           <div className="flex flex-col">
@@ -192,15 +215,32 @@ const DeviceDownloadPanel: React.FC<DeviceDownloadPanelProps> = ({
               htmlFor="downloadDate"
               className="block text-sm font-medium text-primary"
             >
-              Select Date:
+              Select Start Date:
             </label>
             <DatePicker
-              selected={downloadDate}
+              selected={downloadStartDate}
               onChange={(e: React.SetStateAction<any>) => {
-                setDownloadDate(e), setDownloadMsg("");
+                setDownloadStartDate(e), setDownloadMsg("");
               }}
               selectsStart
-              startDate={downloadDate}
+              startDate={downloadStartDate}
+              className=" p-2 border border-gray-300 rounded-md w-full"
+            />
+          </div>
+          <div className="flex flex-col">
+            <label
+              htmlFor="downloadDate"
+              className="block text-sm font-medium text-primary"
+            >
+              Select End Date:
+            </label>
+            <DatePicker
+              selected={downloadEndDate}
+              onChange={(e: React.SetStateAction<any>) => {
+                setDownloadEndDate(e), setDownloadMsg("");
+              }}
+              selectsEnd
+              endDate={downloadStartDate}
               className=" p-2 border border-gray-300 rounded-md w-full"
             />
           </div>
