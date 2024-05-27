@@ -23,9 +23,6 @@ const DeviceDownloadPanel: React.FC<DeviceDownloadPanelProps> = ({
     view: "device",
     device: deviceId,
     tab: "download-data",
-    detailLevel: "1min",
-    dataType: "steps",
-    rangeDataType: "stepsData",
     downloadDataType: "steps",
     downloadDetailLevel: "1min",
   });
