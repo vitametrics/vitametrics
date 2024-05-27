@@ -7,7 +7,7 @@ import OverviewDevicesList from "./OverviewDevicesList";
 import useSearch from "../../../hooks/useDeviceSearch"; // Ensure correct path
 
 const OverviewDevices = () => {
-  const { projectDevices } = useProject();
+  const { project } = useProject();
   const itemsPerPageOptions = [5, 10, 15, 20];
   const {
     currentPage,
@@ -17,7 +17,7 @@ const OverviewDevices = () => {
   } = usePagination();
 
   const { searchTerm, handleSearchChange, filteredItems } = useSearch(
-    projectDevices,
+    project.devices,
     setCurrentPage
   );
 
@@ -34,7 +34,7 @@ const OverviewDevices = () => {
   return (
     <div className="flex flex-col bg-white rounded-xl shadow-lg p-10">
       <h2 className="text-2xl text-primary font-bold mb-3">Devices</h2>
-      {projectDevices && projectDevices.length === 0 ? (
+      {project.devices && project.devices.length === 0 ? (
         <span className="text-primary text-lg">No devices found</span>
       ) : (
         <Fragment>
