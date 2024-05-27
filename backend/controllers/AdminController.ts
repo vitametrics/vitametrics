@@ -174,7 +174,7 @@ class AdminController {
 
       const availableUsers = await User.find({
         _id: { $nin: existingMemberIds },
-      }).select('email name');
+      }).select('email name isTempUser');
 
       res.status(200).json({ availableUsers });
       return;
@@ -384,11 +384,6 @@ class AdminController {
         .filter((admin) => admin.userId !== userId)
         .map((admin) => admin._id);
 
-      project.members = updatedMembers;
-      project.admins = updatedAdmins;
-
-      await project.save();
-
       const user = await User.findOne({ userId });
       if (!user) {
         logger.error(`User: ${userId} not found`);
@@ -397,13 +392,22 @@ class AdminController {
       }
 
       if (user.isTempUser) {
-        await User.findByIdAndDelete(user._id);
-      } else {
-        user.projects = user.projects.filter(
-          (pid) => !pid.equals(project._id as Types.ObjectId)
-        );
-        await user.save();
+        const userDevices = project.devices.filter((device: any) => device.owner.toString() === (user._id as string).toString());
+        const deviceIdsToRemove = userDevices.map((device: any) => device._id);
+
+        project.devices = project.devices.filter((device: any) => device.owner.toString() !== (user._id as string).toString());
+        await Device.deleteMany({ _id: { $in: deviceIdsToRemove }});
       }
+
+      project.members = updatedMembers;
+      project.admins = updatedAdmins;
+
+      await project.save();
+
+      user.projects = user.projects.filter(
+        (pid) => !pid.equals(project._id as Types.ObjectId)
+      );
+      await user.save();
 
       if (process.env.NODE_ENV === 'production') {
         await sendEmail({
