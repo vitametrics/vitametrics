@@ -20,7 +20,7 @@ const DownloadHistory = () => {
               </div>
               <button
                 className="p-2 bg-primary text-white font-bold rounded-xl hover:bg-hoverPrimary"
-                onClick={item.downloadUrl}
+                onClick={() => window.open(item.downloadUrl)}
               >
                 Download
               </button>
