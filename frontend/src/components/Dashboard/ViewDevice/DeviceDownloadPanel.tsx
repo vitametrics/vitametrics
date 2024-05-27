@@ -35,24 +35,36 @@ const DeviceDownloadPanel: React.FC<DeviceDownloadPanelProps> = ({
   const downloadDataType = searchParams.get("downloadDataType") || "steps";
   const downloadDetailLevel = searchParams.get("downloadDetailLevel") || "1min";
 
-  const detailLevelTypes = [
-    {
-      value: "1sec",
-      label: "1 second",
-    },
-    {
-      value: "1min",
-      label: "1 minute",
-    },
-    {
-      value: "5min",
-      label: "5 minutes",
-    },
-    {
-      value: "15min",
-      label: "15 minutes",
-    },
-  ];
+  const getDetailLevelOptions = () => {
+    const baseOptions = [
+      { value: "1min", label: "1 minute" },
+      { value: "5min", label: "5 minutes" },
+      { value: "15min", label: "15 minutes" },
+    ];
+    if (downloadDataType === "heart") {
+      return [{ value: "1sec", label: "1 second" }, ...baseOptions];
+    }
+    return baseOptions;
+  };
+
+  const detailLevelTypes = getDetailLevelOptions();
+
+  const handleDataTypeChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const newDataType = event.target.value;
+    setSearchParams(
+      (prev) => {
+        prev.set("downloadDataType", newDataType);
+        if (newDataType !== "heart" && downloadDetailLevel === "1sec") {
+          prev.set("downloadDetailLevel", "1min"); // Default to 1min if not heart rate
+        }
+        return prev;
+      },
+      { replace: true }
+    );
+    setDownloadMsg("");
+  };
 
   const downloadTypeOptions = [
     { value: "steps", label: "Steps" },
@@ -65,6 +77,13 @@ const DeviceDownloadPanel: React.FC<DeviceDownloadPanelProps> = ({
 
   const downloadData = async () => {
     setDownloadFlag(true); // Set the flag when download starts
+    if (downloadDataType !== "heart" && downloadDetailLevel === "1sec") {
+      setDownloadMsg(
+        "1 second detail level is only available for heart rate data"
+      );
+      setDownloadFlag(false);
+      return;
+    }
     try {
       const date = formatDate(downloadDate);
       const response = await axios.get(DOWNLOAD_DATA_ENDPOINT, {
@@ -126,15 +145,7 @@ const DeviceDownloadPanel: React.FC<DeviceDownloadPanelProps> = ({
               id="dataType"
               name="dataType"
               value={downloadDataType}
-              onChange={(e) =>
-                setSearchParams(
-                  (prev) => {
-                    prev.set("downloadDataType", e.target.value);
-                    return prev;
-                  },
-                  { replace: true }
-                )
-              }
+              onChange={handleDataTypeChange}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full"
             >
               <option value="defaultDataType" disabled>
@@ -159,15 +170,16 @@ const DeviceDownloadPanel: React.FC<DeviceDownloadPanelProps> = ({
               id="detailLevelType"
               name="detailLevelType"
               value={downloadDetailLevel}
-              onChange={(e) =>
+              onChange={(e) => {
                 setSearchParams(
                   (prev) => {
                     prev.set("downloadDetailLevel", e.target.value);
                     return prev;
                   },
                   { replace: true }
-                )
-              }
+                ),
+                  setDownloadMsg("");
+              }}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full"
             >
               <option value="defaultDataType" disabled>
@@ -189,7 +201,9 @@ const DeviceDownloadPanel: React.FC<DeviceDownloadPanelProps> = ({
             </label>
             <DatePicker
               selected={downloadDate}
-              onChange={(e: React.SetStateAction<any>) => setDownloadDate(e)}
+              onChange={(e: React.SetStateAction<any>) => {
+                setDownloadDate(e), setDownloadMsg("");
+              }}
               selectsStart
               startDate={downloadDate}
               className=" p-2 border border-gray-300 rounded-md w-full"
