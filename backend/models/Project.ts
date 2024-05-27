@@ -12,7 +12,7 @@ export interface IProject extends Document {
   fitbitUserId: string;
   fitbitAccessToken: string;
   fitbitRefreshToken: string;
-  lastTokenRefresh: Date;
+  lastTokenRefresh: Date | undefined;
   members: Types.ObjectId[];
   admins: (Types.ObjectId | IUser)[];
   devices: Types.ObjectId[];

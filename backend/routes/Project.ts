@@ -13,6 +13,7 @@ import {
   downloadCachedFile,
   removeDevice,
   deleteCachedFiles,
+  unlinkFitbitAccount,
 } from '../controllers/ProjectController';
 import { asyncHandler } from '../handlers/asyncHandler';
 import { validationHandler } from '../handlers/validationHandler';
@@ -54,6 +55,14 @@ router.post(
   checkProjectMembership,
   verifyRole('admin'),
   asyncHandler(removeDevice)
+);
+
+router.put(
+  '/unlink-fitbit',
+  verifySession,
+  checkProjectMembership,
+  verifyRole('admin'),
+  asyncHandler(unlinkFitbitAccount)
 )
 
 router.post(
@@ -98,12 +107,12 @@ router.post(
   '/delete-cached-files',
   verifySession,
   validationHandler([
-    body('deviceId').not().isEmpty().withMessage('Device ID is required')
+    body('deviceId').not().isEmpty().withMessage('Device ID is required'),
   ]),
   checkProjectMembership,
   verifyRole('admin'),
   asyncHandler(deleteCachedFiles)
-)
+);
 
 router.get(
   '/get-cached-files',

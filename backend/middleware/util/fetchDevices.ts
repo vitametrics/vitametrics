@@ -38,6 +38,8 @@ async function fetchDevices(
 
     const existingDevices = await Device.find({
       deviceId: { $in: validDevices.map((device) => device.id) },
+      projectId: projectId,
+      owner: owner.id,
     });
 
     const existingDeviceIds = new Set(
@@ -72,7 +74,7 @@ async function fetchDevices(
 
     for (const device of existingDevices) {
       await Device.findOneAndUpdate(
-        { deviceId: device.deviceId },
+        { deviceId: device.deviceId, projectId: projectId, owner: owner.id },
         {
           batteryLevel: device.batteryLevel,
           lastSyncTime: device.lastSyncTime,
@@ -82,6 +84,8 @@ async function fetchDevices(
 
     const allDevices = await Device.find({
       deviceId: { $in: validDevices.map((device) => device.id) },
+      owner: owner.id,
+      projectId: projectId,
     });
 
     const deviceInfoList: DeviceInfo[] = allDevices.map((device) => ({

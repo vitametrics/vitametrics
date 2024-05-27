@@ -93,15 +93,16 @@ export async function changeDeviceName(req: Request, res: Response) {
   try {
     logger.info(`Changing device name ${deviceId} to ${deviceName}`);
 
-    const device = await Device.findOne({ deviceId: deviceId });
+    const device = await Device.findOne({
+      deviceId: deviceId,
+      projectId: currentProject.projectId,
+    });
 
     if (!device) {
       logger.error(`Device: ${deviceId} not found`);
       res.status(404).json({ msg: 'Device not found' });
       return;
     }
-
-    console.log('device found');
 
     // make sure device is associated with project
     if (!currentProject.devices.includes(device._id as Types.ObjectId)) {
@@ -133,7 +134,9 @@ export async function removeDevice(req: Request, res: Response) {
   const { deviceId } = req.body;
 
   try {
-    logger.info(`Removing device: ${deviceId} from project: ${currentProject.projectId}`);
+    logger.info(
+      `Removing device: ${deviceId} from project: ${currentProject.projectId}`
+    );
 
     const device = await Device.findOne({ deviceId: deviceId });
     if (!device) {
@@ -146,24 +149,51 @@ export async function removeDevice(req: Request, res: Response) {
       logger.error(
         `Device: ${deviceId} not associated with project: ${currentProject.projectId}`
       );
-      res.status(400).json({ msg: 'Device not associated with project'});
+      res.status(400).json({ msg: 'Device not associated with project' });
       return;
     }
 
-    currentProject.devices = currentProject.devices.filter((id) => !id.equals(device._id as Types.ObjectId));
+    currentProject.devices = currentProject.devices.filter(
+      (id) => !id.equals(device._id as Types.ObjectId)
+    );
 
     await currentProject.save();
 
     await Device.findByIdAndDelete(device._id);
 
-    await Cache.deleteMany({ projectId: currentProject.projectId, deviceId});
+    await Cache.deleteMany({ projectId: currentProject.projectId, deviceId });
 
-    logger.info(`Device: ${deviceId} removed successfully from project: ${currentProject.projectId}`);
-    res.status(200).json({ msg: 'Device removed successfully'});
+    logger.info(
+      `Device: ${deviceId} removed successfully from project: ${currentProject.projectId}`
+    );
+    res.status(200).json({ msg: 'Device removed successfully' });
     return;
   } catch (error) {
     logger.error(`Error removing device: ${error}`);
-    res.status(500).json({ msg: 'Internal Server Error'});
+    res.status(500).json({ msg: 'Internal Server Error' });
+    return;
+  }
+}
+
+export async function unlinkFitbitAccount(req: Request, res: Response) {
+  const currentProject = req.project as IProject;
+
+  try {
+    logger.info(`Unlinking fitbit account for project: ${currentProject.projectId}`);
+
+    currentProject.fitbitUserId = "";
+    currentProject.fitbitAccessToken = "";
+    currentProject.fitbitRefreshToken = "";
+    currentProject.lastTokenRefresh = undefined;
+
+    await currentProject.save();
+
+    logger.info(`Fitbit account unlinked successfully for project: ${currentProject.projectId}`);
+    res.status(200).json({ msg: 'Fitbit account unlinked successfully' });
+    return;
+  } catch (error) {
+    logger.error(`Error unlinking Fitbit account: ${error}`);
+    res.status(500).json({ msg: 'Internal Server Error' });
     return;
   }
 }
@@ -351,22 +381,31 @@ export async function deleteCachedFiles(req: Request, res: Response) {
   const { deviceId } = req.body;
 
   try {
-    logger.info(`Deleting cached files for device: ${deviceId} in project: ${currentProject.projectId}`);
+    logger.info(
+      `Deleting cached files for device: ${deviceId} in project: ${currentProject.projectId}`
+    );
 
-    const result = await Cache.deleteMany({ projectId: currentProject.projectId, deviceId});
+    const result = await Cache.deleteMany({
+      projectId: currentProject.projectId,
+      deviceId,
+    });
 
     if (result.deletedCount === 0) {
-      logger.warn(`No cached files for device: ${deviceId} in project: ${currentProject.projectId}`);
-      res.status(404).json({ msg: 'No cached files found'});
+      logger.warn(
+        `No cached files for device: ${deviceId} in project: ${currentProject.projectId}`
+      );
+      res.status(404).json({ msg: 'No cached files found' });
       return;
     }
 
-    logger.info(`Deleted ${result.deletedCount} cached files for device: ${deviceId} in project: ${currentProject.projectId}`);
-    res.status(200).json({ msg: 'Cached files deleted successfully'});
+    logger.info(
+      `Deleted ${result.deletedCount} cached files for device: ${deviceId} in project: ${currentProject.projectId}`
+    );
+    res.status(200).json({ msg: 'Cached files deleted successfully' });
     return;
   } catch (error) {
     logger.error(`Error deleting cached files: ${error}`);
-    res.status(500).json({ msg: 'Internal Server Error'});
+    res.status(500).json({ msg: 'Internal Server Error' });
     return;
   }
 }
