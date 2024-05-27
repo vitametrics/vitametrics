@@ -243,7 +243,7 @@ class UserController {
         res.status(404).json({ msg: 'User not found' });
         return;
       }
-      const verificationLink = `https://${process.env.BASE_URL}/api/user/verify-email?token=${user.emailVerfToken}`;
+      const verificationLink = `${process.env.API_URL}/user/verify-email?token=${user.emailVerfToken}`;
       await sendEmail({
         to: user.email,
         subject: 'Vitametrics Email Verification',
@@ -266,8 +266,10 @@ class UserController {
     try {
       logger.info(`Verifying email for user: ${currentUser.email}`);
 
+      console.log(req.query.token);
+
       const user = await User.findOne({
-        emailVerificationToken: req.query.token as string,
+        emailVerfToken: req.query.token as string,
       });
       if (!user) {
         logger.error(`Invalid or expired verification token`);
