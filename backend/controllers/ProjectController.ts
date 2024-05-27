@@ -317,10 +317,7 @@ export async function getCachedFiles(req: Request, res: Response) {
       query['deviceId'] = deviceId;
     }
 
-    const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-    const cachedFiles = await Cache.find({ ...query, createdAt: { $gte: oneWeekAgo } });
+    const cachedFiles = await Cache.find({ query });
 
     const cachedFileswithUrls = cachedFiles.map(file => ({
       deviceId: file.deviceId,
