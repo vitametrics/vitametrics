@@ -15,7 +15,6 @@ const DataOverview = () => {
     handleDeviceSelectionChange,
     downloadDate,
     setDownloadDate,
-    fetchDevices,
   } = useProject();
 
   const [downloadMsg, setDownloadMsg] = useState("");
@@ -119,12 +118,13 @@ const DataOverview = () => {
         <h2 className="text-left w-full text-3xl font-bold text-primary mb-3">
           Toggle Devices
         </h2>
+        {/*
         <button
           className="mr-auto p-2 bg-secondary text-white font-bold rounded-xl hover:bg-hoverSecondary shadow-lg mb-5 w-[100px]"
           onClick={() => fetchDevices()}
         >
           Fetch Data
-        </button>
+  </button>*/}
         <span className="h-[0.5px] bg-[#d3d7df] w-full mb-3"></span>
         <div className="flex flex-col justify-between h-full w-full">
           {project.devices && project.devices.length > 0 ? (

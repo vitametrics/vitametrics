@@ -11,7 +11,7 @@ interface ProjectContextProps {
   setOwnerName: (arg0: string) => void;
   devices: DeviceData[];
   setDevices: (arg0: DeviceData[]) => void;
-  fetchDevices: () => void;
+  //fetchDevices: () => void;
   startDate: Date;
   rangeStartDate: Date;
   rangeEndDate: Date;
@@ -255,6 +255,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  /*
   useEffect(() => {
     if (selectedDevices.length > 0) {
       //setDevicesData([]);
@@ -262,8 +263,9 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         fetchDevice(deviceId);
       });
     }
-  }, [rangeStartDate, rangeEndDate, selectedDevices]);
+  }, [rangeStartDate, rangeEndDate, selectedDevices]);*/
 
+  /*
   const fetchDevices = async () => {
     try {
       for (const device of selectedDevices) {
@@ -273,7 +275,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       console.error(error);
       //setDevicesData(testDevicesData);
     }
-  };
+  };*/
 
   const fetchProjectDevices = async () => {
     try {
@@ -302,7 +304,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         ownerName,
         setOwnerName,
         setDevices,
-        fetchDevices,
+        //fetchDevices,
         project,
         startDate,
         rangeStartDate,
