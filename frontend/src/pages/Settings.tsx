@@ -17,8 +17,8 @@ const Settings = () => {
   const [changePasswordMsg, setChangePasswordMsg] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [debouncedPassword, setDebouncedPassword] = useDebounce(password, 200);
-  const debouncedConfirmPassword = useDebounce(confirmPassword, 200);
+  const [debouncedPassword, setDebouncedPassword] = useDebounce(password, 100);
+  const debouncedConfirmPassword = useDebounce(confirmPassword, 100);
 
   const [changeEmailMsg, setChangeEmailMsg] = useState("");
   const [changeEmailFlag, setChangeEmailFlag] = useState(false);
