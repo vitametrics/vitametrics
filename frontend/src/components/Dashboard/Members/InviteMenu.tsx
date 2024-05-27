@@ -88,7 +88,7 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
       );
 
       const tempUsers = response.data.availableUsers.filter(
-        (user: any) => user.isTempUser
+        (user: any) => user.isTempUser === true
       );
 
       setAvailableUsers(availableUsers);
@@ -269,13 +269,13 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
           <h1 className="text-xl mb-1 text-primary">Enter Email</h1>
           <input
             type="text"
-            className="w-full h-10 p-6 rounded-xl mb-5 text-primary"
+            className="w-full h-10 p-6 rounded-xl text-primary"
             placeholder="Enter member's email"
             value={tempUserEmailInput}
             onChange={handleTempUserEmailInput}
           />
           {showTempUserDropdown && (
-            <div className="w-full bg-white rounded-lg mt-0.5 shadow-lg p-2">
+            <div className="w-full bg-white rounded-lg mt-1 shadow-lg p-2">
               {tempUsers.length === 0 ? (
                 <span className="text-primary ">No temp users found</span>
               ) : (
@@ -300,7 +300,7 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
           )}
           <button
             onClick={handleTempUserInvite}
-            className="w-full p-3 rounded-xl text-white bg-primary shadow-lg font-bold"
+            className="w-full p-3 rounded-xl text-white bg-primary shadow-lg font-bold mt-5"
           >
             Invite Participant
           </button>
