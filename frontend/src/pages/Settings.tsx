@@ -150,6 +150,8 @@ const Settings = () => {
   }
 
   const changePassword = async () => {
+    console.log("password entered: " + debouncedPassword);
+    console.log("confirm password entered: " + debouncedConfirmPassword);
     if (debouncedPassword !== debouncedConfirmPassword) {
       setChangePasswordMsg("Passwords do not match");
       return;
@@ -162,7 +164,7 @@ const Settings = () => {
 
     try {
       await axios.post(
-        CHANGE_PASSWORD_ENDPOINT!,
+        CHANGE_PASSWORD_ENDPOINT,
         {
           password: debouncedPassword,
         },
