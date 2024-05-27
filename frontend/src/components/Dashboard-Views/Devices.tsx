@@ -10,12 +10,10 @@ import usePagination from "../../hooks/usePagination";
 import useSearch from "../../hooks/useDeviceSearch";
 import PaginationControls from "../Dashboard/PaginationControls";
 import Pagination from "../../components/Pagination";
-import { oAuthLogin } from "../../services/projectService";
 import { useSearchParams } from "react-router-dom";
 
 const Devices = () => {
-  const { projectDevices, project, fetchProjectDevices, isAccountLinked } =
-    useProject();
+  const { projectDevices, project, fetchProjectDevices } = useProject();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const projectId = searchParams.get("id") || "";
