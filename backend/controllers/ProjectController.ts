@@ -175,6 +175,29 @@ export async function removeDevice(req: Request, res: Response) {
   }
 }
 
+export async function unlinkFitbitAccount(req: Request, res: Response) {
+  const currentProject = req.project as IProject;
+
+  try {
+    logger.info(`Unlinking fitbit account for project: ${currentProject.projectId}`);
+
+    currentProject.fitbitUserId = "";
+    currentProject.fitbitAccessToken = "";
+    currentProject.fitbitRefreshToken = "";
+    currentProject.lastTokenRefresh = undefined;
+
+    await currentProject.save();
+
+    logger.info(`Fitbit account unlinked successfully for project: ${currentProject.projectId}`);
+    res.status(200).json({ msg: 'Fitbit account unlinked successfully' });
+    return;
+  } catch (error) {
+    logger.error(`Error unlinking Fitbit account: ${error}`);
+    res.status(500).json({ msg: 'Internal Server Error' });
+    return;
+  }
+}
+
 export async function fetchDevicesHandler(req: Request, res: Response) {
   const currentProject = req.project as IProject;
 

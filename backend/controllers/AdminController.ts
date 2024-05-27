@@ -373,7 +373,7 @@ class AdminController {
       const project = await Project.findOne({ projectId })
         .populate('members', 'userId')
         .populate('admins', 'userId')
-        .populate('devices', 'owner');
+        .populate('devices', 'owner projectId deviceId');
       if (!project) {
         logger.error(`Project: ${projectId} not found`);
         res.status(404).json({ msg: 'Project not found' });
@@ -409,11 +409,19 @@ class AdminController {
           (device: any) => device.owner === user.userId
         );
         const deviceIdsToRemove = userDevices.map((device: any) => device._id);
+        const deviceIds = userDevices.map((device: any) => device.deviceId);
 
         project.devices = project.devices.filter(
           (device: any) => !deviceIdsToRemove.includes(device._id)
         );
         await Device.deleteMany({ _id: { $in: deviceIdsToRemove } });
+
+        const cacheDeleteResult = await Cache.deleteMany({
+          projectId: project.projectId,
+          deviceId: { $in: deviceIds}
+        });
+
+        logger.info(`Deleted ${cacheDeleteResult.deletedCount} cache entries for devices removed from project: ${project.projectId}`);
       }
 
       project.members = updatedMembers;

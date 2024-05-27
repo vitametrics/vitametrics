@@ -13,6 +13,7 @@ import {
   downloadCachedFile,
   removeDevice,
   deleteCachedFiles,
+  unlinkFitbitAccount,
 } from '../controllers/ProjectController';
 import { asyncHandler } from '../handlers/asyncHandler';
 import { validationHandler } from '../handlers/validationHandler';
@@ -55,6 +56,14 @@ router.post(
   verifyRole('admin'),
   asyncHandler(removeDevice)
 );
+
+router.put(
+  '/unlink-fitbit',
+  verifySession,
+  checkProjectMembership,
+  verifyRole('admin'),
+  asyncHandler(unlinkFitbitAccount)
+)
 
 router.post(
   '/fetch-devices',
