@@ -8,6 +8,7 @@ import Overview from "../components/Dashboard-Views/Overview";
 import Members from "../components/Dashboard-Views/Members";
 import DashboardSettings from "../components/Dashboard-Views/DashboardSettings";
 import AuthenticationBanner from "../components/Dashboard/AuthenticationBanner";
+import ViewDevice from "../components/Dashboard-Views/ViewDevice";
 import { useSearchParams } from "react-router-dom";
 import { useProject } from "../helpers/ProjectContext";
 
@@ -31,6 +32,8 @@ const ProjectDashboard = () => {
         return <Members />;
       case "settings":
         return <DashboardSettings />;
+      case "device":
+        return <ViewDevice />;
       default:
         return <Data />;
     }

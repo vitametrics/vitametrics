@@ -37,6 +37,7 @@ interface ProjectContextProps {
   project: Project;
   updateProject: (updates: Partial<Project>) => void;
   downloadHistory: any[];
+  fetchDeviceDetails: (deviceId: string) => any;
 }
 
 const ProjectContext = createContext<ProjectContextProps | undefined>(
@@ -96,6 +97,16 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       : []
   );
 
+  const testDevices = [
+    {
+      deviceId: "2570612980",
+      deviceName: "Alta HR",
+      deviceVersion: "Alta HR",
+      lastSyncTime: "2024-02-10T00:00:00.000Z",
+      batteryLevel: "4",
+    },
+  ];
+
   const [downloadHistory, setDownloadHistory] = useState<any[]>([]);
   const DOWNLOAD_HISTORY_ENDPOINT = `${process.env.API_URL}/project/get-cached-files`;
 
@@ -134,6 +145,12 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [projectId]); // Add projectId as a dependency
 
+  const updateProject = (updates: Partial<Project>) => {
+    setProject((prevProject) => {
+      return { ...prevProject, ...updates };
+    });
+  };
+
   const fetchProject = async () => {
     try {
       const response = await axios.get(GET_PROJECT_ENDPOINT, {
@@ -143,16 +160,14 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         withCredentials: true,
       });
       setProject(response.data.project);
+      //update with tempDevices
+      updateProject({
+        devices: testDevices,
+      });
       setIsAccountLinked(response.data.isAccountLinked);
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const updateProject = (updates: Partial<Project>) => {
-    setProject((prevProject) => {
-      return { ...prevProject, ...updates };
-    });
   };
 
   const [devicesData, setDevicesData] = useState<DeviceData[]>(() => {
@@ -318,6 +333,14 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const fetchDeviceDetails = (deviceId: string) => {
+    const device = project.devices.find(
+      (device) => device.deviceId === deviceId
+    );
+
+    return device ? device : "Device not found";
+  };
+
   return (
     <ProjectContext.Provider
       value={{
@@ -328,6 +351,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         setOwnerName,
         setDevices,
         //fetchDevices,
+        fetchDeviceDetails,
         project,
         startDate,
         rangeStartDate,
