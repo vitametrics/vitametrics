@@ -54,7 +54,7 @@ router.post(
   checkProjectMembership,
   verifyRole('admin'),
   asyncHandler(removeDevice)
-)
+);
 
 router.post(
   '/fetch-devices',
@@ -98,12 +98,12 @@ router.post(
   '/delete-cached-files',
   verifySession,
   validationHandler([
-    body('deviceId').not().isEmpty().withMessage('Device ID is required')
+    body('deviceId').not().isEmpty().withMessage('Device ID is required'),
   ]),
   checkProjectMembership,
   verifyRole('admin'),
   asyncHandler(deleteCachedFiles)
-)
+);
 
 router.get(
   '/get-cached-files',

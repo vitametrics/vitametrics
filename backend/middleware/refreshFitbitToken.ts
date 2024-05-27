@@ -118,10 +118,6 @@ async function refreshProjectToken(project: IProject) {
         return;
       }
     } catch (error: any) {
-      console.log('errored');
-
-      console.log(fitbitAccessToken);
-      console.log(fitbitRefreshToken);
       if (
         error.response &&
         error.response.data?.errors[0].errorType === 'expired_token'

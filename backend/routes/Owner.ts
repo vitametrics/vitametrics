@@ -59,7 +59,7 @@ router.post(
           text: `An account has been created for you. Please login using this link: ${process.env.BASE_URL}/set-password?token=${passwordToken}`,
         });
       } else {
-        console.log(
+        logger.info(
           `[INFO] An account has been created for you. Please login using this link: ${process.env.BASE_URL}/set-password?token=${passwordToken}`
         );
       }

@@ -266,8 +266,6 @@ class UserController {
     try {
       logger.info(`Verifying email for user: ${currentUser.email}`);
 
-      console.log(req.query.token);
-
       const user = await User.findOne({
         emailVerfToken: req.query.token as string,
       });
