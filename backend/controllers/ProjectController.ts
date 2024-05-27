@@ -310,7 +310,6 @@ export async function getCachedFiles(req: Request, res: Response) {
   const currentProject = req.project as IProject;
   const { deviceId } = req.query;
 
-  console.log('get cached filed called');
   try {
     logger.info(
       `Retrieving cached files for project: ${currentProject.projectId}`
