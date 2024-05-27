@@ -323,17 +323,20 @@ class AdminController {
           await project.save();
 
           if (process.env.NODE_ENV === 'production') {
-            await sendEmail({
-              to: user.email,
-              subject: `Vitametrics: Invitation to ${project.projectName}`,
-              text: `You have been added to the project: ${project.projectName} with the role ${role as string | 'user'}. You can access the project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}&view=overview`,
-            });
+            if (role !== 'tempUser') {
+              await sendEmail({
+                to: user.email,
+                subject: `Vitametrics: Invitation to ${project.projectName}`,
+                text: `You have been added to the project: ${project.projectName} with the role ${role as string | 'user'}. You can access the project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}&view=overview`,
+              });
+            }
             await sendEmail({
               to: project.ownerEmail,
               subject: `[INFO] Vitametrics: ${project.projectName} - Member Added`,
-              text: `A new admin has been added to your project by ${req.user?.name}.\n\nYou can manage your project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}`,
+              text: `A new member has been added to your project by ${req.user?.name}.\n\nYou can manage your project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}`,
             });
             res.status(200).json({ msg: 'Member added successfully' });
+            return;
           } else {
             logger.info(
               `User: ${user.email} added to project: ${project.projectName}`
@@ -360,7 +363,8 @@ class AdminController {
 
       const project = await Project.findOne({ projectId })
         .populate('members', 'userId')
-        .populate('admins', 'userId');
+        .populate('admins', 'userId')
+        .populate('devices', 'owner');
       if (!project) {
         logger.error(`Project: ${projectId} not found`);
         res.status(404).json({ msg: 'Project not found' });
@@ -392,10 +396,14 @@ class AdminController {
       }
 
       if (user.isTempUser) {
-        const userDevices = project.devices.filter((device: any) => device.owner.toString() === (user._id as string).toString());
+        console.log('was temp user')
+        const userDevices = project.devices.filter((device: any) => device.owner === user.userId );
         const deviceIdsToRemove = userDevices.map((device: any) => device._id);
 
-        project.devices = project.devices.filter((device: any) => device.owner.toString() !== (user._id as string).toString());
+        console.log(userDevices);
+        console.log(deviceIdsToRemove);
+
+        project.devices = project.devices.filter((device: any) => !deviceIdsToRemove.includes(device._id));
         await Device.deleteMany({ _id: { $in: deviceIdsToRemove }});
       }
 
@@ -410,11 +418,13 @@ class AdminController {
       await user.save();
 
       if (process.env.NODE_ENV === 'production') {
-        await sendEmail({
-          to: user.email,
-          subject: 'Removal from project',
-          text: `You have been removed from the project: ${project.projectName}.`,
-        });
+        if (!user.isTempUser) {
+          await sendEmail({
+            to: user.email,
+            subject: 'Removal from project',
+            text: `You have been removed from the project: ${project.projectName}.`,
+          });
+        }
         await sendEmail({
           to: project.ownerEmail,
           subject: `[INFO] ${project.projectName} - Member Removed`,
