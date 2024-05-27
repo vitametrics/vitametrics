@@ -42,7 +42,7 @@ const UserDashboard = () => {
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     setItemsPerPage(Number(event.target.value));
-    setCurrentPage(1); // Reset to the first page after changing the number of items per page
+    setCurrentPage(1);
   };
 
   const indexOfLastProject = Math.min(
@@ -165,7 +165,7 @@ const UserDashboard = () => {
       />
       <div className="p-20 bg-lightmodeSecondary h-full">
         <h1 className="text-4xl mb-5 font-libreFranklin font-bold text-primary">
-          Welcome back
+          Welcome back, {}
         </h1>
 
         <div className="flex flex-col bg-white rounded-xl shadow-lg font-libreFranklin p-10">

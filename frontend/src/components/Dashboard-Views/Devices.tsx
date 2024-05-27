@@ -11,11 +11,21 @@ import useSearch from "../../hooks/useDeviceSearch";
 import PaginationControls from "../Dashboard/PaginationControls";
 import Pagination from "../../components/Pagination";
 import { oAuthLogin } from "../../services/projectService";
+import { useSearchParams } from "react-router-dom";
 
 const Devices = () => {
   const { projectDevices, project, fetchProjectDevices, isAccountLinked } =
     useProject();
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const projectId = searchParams.get("id") || "";
+
+  const handleDeviceClick = (deviceId: string) => {
+    setSearchParams(
+      { id: projectId, view: "devices", device: deviceId },
+      { replace: true }
+    );
+  };
   const itemsPerPageOptions = [5, 10, 15, 20];
   const {
     currentPage,
@@ -98,7 +108,10 @@ const Devices = () => {
                   currentPage={currentPage}
                   indexOfLastItem={indexOfLastMember}
                 />
-                <DevicesList devices={currentDevices} />
+                <DevicesList
+                  devices={currentDevices}
+                  onDeviceClick={handleDeviceClick}
+                />
                 <span className="h-[0.5px] bg-[#d3d7df] w-full mb-3"></span>
                 <Pagination
                   totalItems={filteredItems.length}

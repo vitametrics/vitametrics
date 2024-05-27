@@ -12,7 +12,7 @@ import CancelIcon from "../../../assets/CancelIcon";
 
 const CHANGE_DEVICE_NAME_ENDPOINT = `${process.env.API_URL}/project/change-device-name`;
 
-const DevicesList: React.FC<DeviceListProps> = ({ devices }) => {
+const DevicesList: React.FC<DeviceListProps> = ({ devices, onDeviceClick }) => {
   const { fetchProjectDevices, setProjectDevices, projectDevices, projectId } =
     useProject();
 
@@ -85,7 +85,10 @@ const DevicesList: React.FC<DeviceListProps> = ({ devices }) => {
       {devices.map((device) => (
         <Fragment key={device.deviceId}>
           <span className="h-[0.5px] bg-[#d3d7df] w-full"></span>
-          <div className="grid grid-cols-5 w-full items-center text-center p-2">
+          <div
+            className="grid grid-cols-5 w-full items-center text-center p-2"
+            onClick={() => onDeviceClick(device.deviceId)}
+          >
             {editingDevices[device.deviceId] !== undefined ? (
               <div className="flex items-center">
                 <input

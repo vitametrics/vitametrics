@@ -17,7 +17,7 @@ const Settings = () => {
   const [changePasswordMsg, setChangePasswordMsg] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [debouncedPassword, setDebouncedPassword] = useDebounce(password, 100);
+  const debouncedPassword = useDebounce(password, 100);
   const debouncedConfirmPassword = useDebounce(confirmPassword, 100);
 
   const [changeEmailMsg, setChangeEmailMsg] = useState("");
@@ -142,7 +142,6 @@ const Settings = () => {
   };
 
   function passwordSuccess() {
-    setDebouncedPassword("");
     setPassword("");
     setConfirmPassword("");
     setChangePasswordFlag(true);
@@ -150,8 +149,6 @@ const Settings = () => {
   }
 
   const changePassword = async () => {
-    console.log("password entered: " + debouncedPassword);
-    console.log("confirm password entered: " + debouncedConfirmPassword);
     if (debouncedPassword !== debouncedConfirmPassword) {
       setChangePasswordMsg("Passwords do not match");
       return;

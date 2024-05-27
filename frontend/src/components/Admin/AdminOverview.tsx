@@ -1,13 +1,20 @@
 import { fadeInItemVariants } from "../../hooks/animationVariant";
 import useCustomInView from "../../hooks/useCustomInView";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../../helpers/AuthContext";
 
 const AdminOverview = () => {
   const { ref, inView } = useCustomInView();
   const [uptodate] = useState(true);
   const { frontendVersion, backendVersion, fetchVersion } = useAuth();
+
+  useEffect(() => {
+    console.log("called!");
+    if (!frontendVersion || !backendVersion) {
+      fetchVersion();
+    }
+  }, []);
 
   return (
     <motion.div
@@ -34,7 +41,7 @@ const AdminOverview = () => {
         <span className="bg-primary w-full text-white p-3 text-lg">
           {uptodate
             ? `Up to date -- Frontend: ${frontendVersion} Backend: ${backendVersion}`
-            : "Update available: Your current version is 0.11.1 and the latest version is 0.11.2"}
+            : `Update available: Your current version is 0.11.1 and the latest version is 0.11.2`}
         </span>
       </div>
     </motion.div>

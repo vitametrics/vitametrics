@@ -14,6 +14,7 @@ export interface OverviewMembersListProps {
 
 export interface DeviceListProps {
   devices: Device[];
+  onDeviceClick: (deviceId: string) => void;
 }
 
 export interface HeartData {
