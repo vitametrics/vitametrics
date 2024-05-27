@@ -204,11 +204,15 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
                       <div
                         key={user.userId}
                         className="flex flex-row gap-2 items-center hover:cursor-pointer hover:bg-slate-100 p-2 rounded-lg"
-                        onClick={() =>
+                        onClick={() => {
                           handleEmailChange({
                             target: { value: user.email },
-                          } as any)
-                        }
+                          } as any),
+                            handleNameChange({
+                              target: { value: user.name },
+                            } as any);
+                          setShowDropdown(false);
+                        }}
                       >
                         <span className="font-bold text-lg">{user.name}</span>
                         <span className="text-md">{user.email}</span>
@@ -285,11 +289,16 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
                     <div
                       key={user.userId}
                       className="flex flex-row gap-2 items-center hover:cursor-pointer hover:bg-slate-100 p-2 rounded-lg"
-                      onClick={() =>
+                      onClick={() => {
                         handleTempUserEmailChange({
                           target: { value: user.email },
-                        } as any)
-                      }
+                        } as any),
+                          handleTempUserNameChange({
+                            target: { value: user.name },
+                          } as any);
+
+                        setShowTempUserDropdown(false);
+                      }}
                     >
                       <span className="font-bold text-lg">{user.name}</span>
                       <span className="text-md">{user.email}</span>
