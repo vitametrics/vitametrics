@@ -102,9 +102,6 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   const fetchDownloadHistory = async () => {
     try {
       const response = await axios.get(DOWNLOAD_HISTORY_ENDPOINT, {
-        params: {
-          projectId: projectId,
-        },
         withCredentials: true,
       });
 
