@@ -65,6 +65,7 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
   const [filteredUsers, setFilteredUsers] = useState<any[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [tempUsers, setTempUsers] = useState<any[]>([]);
+  const [filteredTempUsers, setFilteredTempUsers] = useState<any[]>([]);
   const [showTempUserDropdown, setShowTempUserDropdown] = useState(false);
 
   const GET_AVAILABLE_USERS_ENDPOINT = `${process.env.API_URL}/admin/get-available-users`;
@@ -125,10 +126,10 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
       const filteredUsers = tempUsers.filter((user: any) =>
         user.email.toLowerCase().includes(input)
       );
-      setTempUsers(filteredUsers);
+      setFilteredTempUsers(filteredUsers);
       setShowTempUserDropdown(true);
     } else {
-      setTempUsers([]);
+      setFilteredTempUsers([]);
       setShowTempUserDropdown(false);
     }
   };
@@ -276,11 +277,11 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
           />
           {showTempUserDropdown && (
             <div className="w-full bg-white rounded-lg mt-1 shadow-lg p-2">
-              {tempUsers.length === 0 ? (
+              {filteredTempUsers.length === 0 ? (
                 <span className="text-primary ">No temp users found</span>
               ) : (
                 <Fragment>
-                  {tempUsers.map((user) => (
+                  {filteredTempUsers.map((user) => (
                     <div
                       key={user.userId}
                       className="flex flex-row gap-2 items-center hover:cursor-pointer hover:bg-slate-100 p-2 rounded-lg"
