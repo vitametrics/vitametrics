@@ -3,11 +3,6 @@ import { DateTime } from 'luxon';
 
 import logger from '../logger';
 
-interface IntradayEntry {
-  time: string;
-  value: number;
-}
-
 interface IntradayData {
   timestamp: string;
   value: number;
