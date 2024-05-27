@@ -91,9 +91,7 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
     handleEmailChange(event);
     const input = event.target.value.toLowerCase();
 
-    // Filter users based on the input
     if (input.length >= 3) {
-      // Start filtering if at least 3 characters are typed
       const filteredUsers = availableUsers.filter((user: any) =>
         user.email.toLowerCase().includes(input)
       );
@@ -168,11 +166,19 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
             {showDropdown && (
               <div className="w-full bg-white rounded-lg mt-0.5 shadow-lg p-2">
                 {filteredUsers.length === 0 ? (
-                  <span className="text-primary">No users found</span>
+                  <span className="text-primary ">No users found</span>
                 ) : (
                   <Fragment>
                     {filteredUsers.map((user) => (
-                      <div key={user.userId} className="flex flex-row gap-2">
+                      <div
+                        key={user.userId}
+                        className="flex flex-row gap-2 items-center hover:cursor-pointer hover:bg-slate-100 p-2 rounded-lg"
+                        onClick={() =>
+                          handleEmailChange({
+                            target: { value: user.email },
+                          } as any)
+                        }
+                      >
                         <span className="font-bold text-lg">{user.name}</span>
                         <span className="text-md">{user.email}</span>
                       </div>
