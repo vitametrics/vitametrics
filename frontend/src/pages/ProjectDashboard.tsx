@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DashboardNavbar } from "../components/DashboardNavbar";
 import StickySidebar from "../components/StickySidebar";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import Data from "../components/Dashboard-Views/Data";
 import Devices from "../components/Dashboard-Views/Devices";
 import Overview from "../components/Dashboard-Views/Overview";
@@ -19,6 +19,12 @@ const ProjectDashboard = () => {
   const setPage = (newView: string) => {
     setSearchParams({ view: newView }, { replace: true });
   };
+
+  useEffect(() => {
+    if (searchParams.get("id") === "null") {
+      window.location.href = "/dashboard";
+    }
+  }, []);
 
   const renderComponent = useCallback(() => {
     switch (view) {

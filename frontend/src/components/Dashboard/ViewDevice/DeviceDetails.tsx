@@ -73,7 +73,7 @@ const DeviceDetails: React.FC<DeviceDetailsProps> = ({ device }) => {
 
   return (
     <Fragment>
-      <h2 className="w-full text-4xl font-bold pb-0 text-primary my-3">
+      <h2 className="w-full text-2xl font-bold pb-0 text-primary my-3">
         Viewing {device.deviceName || "Device"}
       </h2>
       {msg && (

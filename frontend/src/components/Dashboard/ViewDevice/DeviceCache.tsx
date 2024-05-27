@@ -13,7 +13,9 @@ const DeviceCache: React.FC<DeviceCacheProps> = ({ deviceId }) => {
 
   return (
     <div className="flex flex-col h-full">
-      <h1 className="text-2xl font-bold">Device Cache</h1>
+      <h2 className="w-full text-2xl font-bold pb-0 text-primary my-3">
+        Device Cache
+      </h2>
       {deviceCache.length === 0 ? (
         <div className="flex flex-row mt-5">
           <span className="text-primary text-lg">No files downloaded yet</span>
@@ -35,7 +37,7 @@ const DeviceCache: React.FC<DeviceCacheProps> = ({ deviceId }) => {
               >
                 <span className="w-1/3">{cache.key}</span>
                 <span className="w-1/3">{cache.createdAt}</span>
-                <span className="w-1/3 text-primary underline">Delete</span>
+                <span className="w-1/3 text-primary">Delete</span>
               </div>
             </div>
           ))}

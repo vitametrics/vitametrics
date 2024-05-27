@@ -60,7 +60,9 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage, path }) => {
         <li className="px-2 pt-2">
           <div
             className={`${
-              currentPage === "devices" ? " bg-secondary2" : ""
+              currentPage === "devices" || currentPage === "device"
+                ? " bg-secondary2"
+                : ""
             } flex-col flex justify-center text-[0.75rem] px-4 py-2 rounded-xl items-center text-white hover:bg-secondary2 p-4 hover:cursor-pointer`}
             onClick={() => handlePageChange("devices")}
           >

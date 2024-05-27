@@ -5,6 +5,7 @@ import useCustomInView from "../../hooks/useCustomInView";
 import { fadeInItemVariants } from "../../hooks/animationVariant";
 import DeviceCache from "../Dashboard/ViewDevice/DeviceCache";
 import DeviceDetails from "../Dashboard/ViewDevice/DeviceDetails";
+import DeviceDownloadPanel from "../Dashboard/ViewDevice/DeviceDownloadPanel";
 
 const ViewDevice = () => {
   const [searchParams, setSearchParams] = useSearchParams({
@@ -34,6 +35,8 @@ const ViewDevice = () => {
         return <DeviceDetails device={device} />;
       case "download-cache":
         return <DeviceCache deviceId={device.deviceId} />;
+      case "download-data":
+        return <DeviceDownloadPanel deviceId={device.deviceId} />;
       default:
         return <DeviceDetails device={device} />;
     }
@@ -51,13 +54,19 @@ const ViewDevice = () => {
     >
       <span id="options" className="flex flex-row">
         <span
-          className={`p-5 rounded-tl-lg ${tab === "overview" ? "shadow-lg bg-white" : "bg-[#f7f7f7]"} hover:cursor-pointer`}
+          className={`p-5 rounded-tl-lg ${tab === "overview" ? "shadow-lg bg-white font-bold" : "bg-[#f7f7f7]"} hover:cursor-pointer`}
           onClick={() => handleTabChange("overview")}
         >
-          Device Details{" "}
+          Device Details
         </span>
         <span
-          className={`p-5 rounded-tr-lg ${tab === "download-cache" ? "shadow-lg bg-white" : "bg-[#f7f7f7]"} hover:cursor-pointer`}
+          className={`p-5 ${tab === "download-data" ? "shadow-lg bg-white font-bold" : "bg-[#f7f7f7]"} hover:cursor-pointer`}
+          onClick={() => handleTabChange("download-data")}
+        >
+          Download Data
+        </span>
+        <span
+          className={`p-5 rounded-tr-lg ${tab === "download-cache" ? "shadow-lg bg-white font-bold" : "bg-[#f7f7f7]"} hover:cursor-pointer`}
           onClick={() => handleTabChange("download-cache")}
         >
           Download Cache
