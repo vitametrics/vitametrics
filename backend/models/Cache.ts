@@ -13,7 +13,7 @@ const cacheSchema = new Schema({
     projectId: { type: String, required: true },
     deviceId: { type: String, required: true},
     data: { type: String, required: true},
-    createdAt: { type: Date, default: Date.now, expires: '7d'}
+    createdAt: { type: Date, default: Date.now}
 });
 
 const Cache = mongoose.model<ICache>('Cache', cacheSchema);
