@@ -54,7 +54,7 @@ router.get(
   checkProjectMembership,
   verifyRole('admin'),
   validationHandler([
-    cookie('projectId').not().isEmpty().withMessage('No projectId provided')
+    cookie('projectId').not().isEmpty().withMessage('No projectId provided'),
   ]),
   asyncHandler(AdminController.getAvailableUsers)
 );

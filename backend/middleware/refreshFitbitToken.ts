@@ -8,7 +8,8 @@ import User, { IUser } from '../models/User';
 
 async function refreshToken(req: Request, res: Response, next: NextFunction) {
   const user = req.user as IUser;
-  const projectId = req.body.projectId as string || req.cookies.projectId as string;
+  const projectId =
+    (req.body.projectId as string) || (req.cookies.projectId as string);
 
   if (!projectId) {
     logger.error('[refreshToken] Project ID not provided');
@@ -65,7 +66,10 @@ async function refreshUserToken(user: IUser) {
         return;
       }
     } catch (error: any) {
-      if (error.response && error.response.data?.errors[0].errorType === 'expired_token') {
+      if (
+        error.response &&
+        error.response.data?.errors[0].errorType === 'expired_token'
+      ) {
         const refreshResponse = await axios.post(
           'https://api.fitbit.com/oauth2/token',
           `grant_type=refresh_token&refresh_token=${fitbitRefreshToken}`,
@@ -116,12 +120,14 @@ async function refreshProjectToken(project: IProject) {
         return;
       }
     } catch (error: any) {
-
       console.log('errored');
 
       console.log(fitbitAccessToken);
       console.log(fitbitRefreshToken);
-      if (error.response && error.response.data?.errors[0].errorType === 'expired_token') {
+      if (
+        error.response &&
+        error.response.data?.errors[0].errorType === 'expired_token'
+      ) {
         const refreshResponse = await axios.post(
           'https://api.fitbit.com/oauth2/token',
           `grant_type=refresh_token&refresh_token=${fitbitRefreshToken}`,
@@ -133,7 +139,7 @@ async function refreshProjectToken(project: IProject) {
           }
         );
         const { access_token: newAccessToken, refresh_token: newRefreshToken } =
-        refreshResponse.data;
+          refreshResponse.data;
 
         await Project.findByIdAndUpdate(project._id, {
           fitbitAccessToken: newAccessToken,
