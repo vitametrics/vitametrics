@@ -32,10 +32,10 @@ const Devices = () => {
     handleItemsPerPageChange,
   } = usePagination();
 
-  console.log(project.devices);
+  const devices = project.devices || [];
 
   const { searchTerm, handleSearchChange, filteredItems } = useSearch(
-    project.devices,
+    devices,
     setCurrentPage
   );
 
@@ -64,15 +64,14 @@ const Devices = () => {
       ref={ref}
       className="w-full h-full flex flex-col p-10 whitePrimary"
     >
-      <h2 className="w-full text-4xl font-bold p-5 text-primary pb-0">
-        {project.projectName} Devices
-      </h2>
-
       <Fragment>
-        {project.devices.length > 0 ? (
+        {devices.length > 0 ? (
           <section className="p-5">
             <div className="flex flex-col bg-white rounded-xl shadow-lg p-10">
-              <h2 className="text-2xl text-primary font-bold mb-5">Devices</h2>
+              <h2 className="text-2xl text-primary font-bold mb-5">
+                {" "}
+                {project.projectName} Devices
+              </h2>
               <button
                 onClick={handleFetchDevices}
                 className="p-2 text-xl flex flex-row gap-2 justify-center items-center rounded-xl w-[150px] bg-primary text-white shadow-lg font-bold mb-5"
@@ -109,6 +108,9 @@ const Devices = () => {
           </section>
         ) : (
           <div className="flex flex-col gap-5 p-5">
+            <h2 className="text-4xl text-primary font-bold mb-5">
+              {project.projectName} Devices
+            </h2>
             <button
               onClick={handleFetchDevices}
               className="p-2 text-xl flex flex-row gap-2 justify-center items-center rounded-xl w-[150px] bg-primary text-white shadow-lg font-bold hover:bg-hoverPrimary"
