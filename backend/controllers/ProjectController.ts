@@ -128,6 +128,46 @@ export async function changeDeviceName(req: Request, res: Response) {
   }
 }
 
+export async function removeDevice(req: Request, res: Response) {
+  const currentProject = req.project as IProject;
+  const { deviceId } = req.body;
+
+  try {
+    logger.info(`Removing device: ${deviceId} from project: ${currentProject.projectId}`);
+
+    const device = await Device.findOne({ deviceId: deviceId });
+    if (!device) {
+      logger.error(`Device: ${deviceId} not found`);
+      res.status(404).json({ msg: 'Device not found' });
+      return;
+    }
+
+    if (!currentProject.devices.includes(device._id as Types.ObjectId)) {
+      logger.error(
+        `Device: ${deviceId} not associated with project: ${currentProject.projectId}`
+      );
+      res.status(400).json({ msg: 'Device not associated with project'});
+      return;
+    }
+
+    currentProject.devices = currentProject.devices.filter((id) => !id.equals(device._id as Types.ObjectId));
+
+    await currentProject.save();
+
+    await Device.findByIdAndDelete(device._id);
+
+    await Cache.deleteMany({ projectId: currentProject.projectId, deviceId});
+
+    logger.info(`Device: ${deviceId} removed successfully from project: ${currentProject.projectId}`);
+    res.status(200).json({ msg: 'Device removed successfully'});
+    return;
+  } catch (error) {
+    logger.error(`Error removing device: ${error}`);
+    res.status(500).json({ msg: 'Internal Server Error'});
+    return;
+  }
+}
+
 export async function fetchDevicesHandler(req: Request, res: Response) {
   const currentProject = req.project as IProject;
 
@@ -306,6 +346,31 @@ export async function fetchDataHandler(req: Request, res: Response) {
   }
 }
 
+export async function deleteCachedFiles(req: Request, res: Response) {
+  const currentProject = req.project as IProject;
+  const { deviceId } = req.body;
+
+  try {
+    logger.info(`Deleting cached files for device: ${deviceId} in project: ${currentProject.projectId}`);
+
+    const result = await Cache.deleteMany({ projectId: currentProject.projectId, deviceId});
+
+    if (result.deletedCount === 0) {
+      logger.warn(`No cached files for device: ${deviceId} in project: ${currentProject.projectId}`);
+      res.status(404).json({ msg: 'No cached files found'});
+      return;
+    }
+
+    logger.info(`Deleted ${result.deletedCount} cached files for device: ${deviceId} in project: ${currentProject.projectId}`);
+    res.status(200).json({ msg: 'Cached files deleted successfully'});
+    return;
+  } catch (error) {
+    logger.error(`Error deleting cached files: ${error}`);
+    res.status(500).json({ msg: 'Internal Server Error'});
+    return;
+  }
+}
+
 export async function getCachedFiles(req: Request, res: Response) {
   const currentProject = req.project as IProject;
   const { deviceId } = req.query;
@@ -459,8 +524,10 @@ export async function downloadDataHandler(req: Request, res: Response) {
       `Data downloaded successfuly for project: ${currentProject.projectId}`
     );
     res.send(csv);
+    return;
   } catch (error) {
     logger.error(`Error downloading data: ${error}`);
     res.status(500).json({ msg: 'Internal Server Error' });
+    return;
   }
 }
