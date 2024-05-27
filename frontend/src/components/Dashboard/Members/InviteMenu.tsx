@@ -64,6 +64,9 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
   const [availableUsers, setAvailableUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState<any[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [tempUsers, setTempUsers] = useState<any[]>([]);
+  const [showTempUserDropdown, setShowTempUserDropdown] = useState(false);
+
   const GET_AVAILABLE_USERS_ENDPOINT = `${process.env.API_URL}/admin/get-available-users`;
 
   useEffect(() => {
@@ -81,6 +84,10 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
         withCredentials: true,
       });
       setAvailableUsers(response.data.availableUsers);
+      const tempUsers = response.data.availableUsers.filter(
+        (user: any) => user.isTempUser
+      );
+      setTempUsers(tempUsers);
       console.log(response.data);
     } catch (error) {
       console.log(error);
@@ -100,6 +107,24 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
     } else {
       setFilteredUsers([]);
       setShowDropdown(false);
+    }
+  };
+
+  const handleTempUserEmailInput = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    handleTempUserEmailChange(event);
+    const input = event.target.value.toLowerCase();
+
+    if (input.length >= 3) {
+      const filteredUsers = tempUsers.filter((user: any) =>
+        user.email.toLowerCase().includes(input)
+      );
+      setTempUsers(filteredUsers);
+      setShowTempUserDropdown(true);
+    } else {
+      setTempUsers([]);
+      setShowTempUserDropdown(false);
     }
   };
 
@@ -242,8 +267,32 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
             className="w-full h-10 p-6 rounded-xl mb-5 text-primary"
             placeholder="Enter member's email"
             value={tempUserEmailInput}
-            onChange={handleTempUserEmailChange}
+            onChange={handleTempUserEmailInput}
           />
+          {showTempUserDropdown && (
+            <div className="w-full bg-white rounded-lg mt-0.5 shadow-lg p-2">
+              {tempUsers.length === 0 ? (
+                <span className="text-primary ">No temp users found</span>
+              ) : (
+                <Fragment>
+                  {tempUsers.map((user) => (
+                    <div
+                      key={user.userId}
+                      className="flex flex-row gap-2 items-center hover:cursor-pointer hover:bg-slate-100 p-2 rounded-lg"
+                      onClick={() =>
+                        handleTempUserEmailChange({
+                          target: { value: user.email },
+                        } as any)
+                      }
+                    >
+                      <span className="font-bold text-lg">{user.name}</span>
+                      <span className="text-md">{user.email}</span>
+                    </div>
+                  ))}
+                </Fragment>
+              )}
+            </div>
+          )}
           <button
             onClick={handleTempUserInvite}
             className="w-full p-3 rounded-xl text-white bg-primary shadow-lg font-bold"
