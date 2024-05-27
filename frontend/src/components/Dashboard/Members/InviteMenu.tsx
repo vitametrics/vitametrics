@@ -87,6 +87,10 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
         (user: any) => !user.isTempUser
       );
 
+      const tempUsers = response.data.availableUsers.filter(
+        (user: any) => user.isTempUser
+      );
+
       setAvailableUsers(availableUsers);
       setTempUsers(tempUsers);
       console.log(response.data);
