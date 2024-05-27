@@ -36,6 +36,7 @@ interface ProjectContextProps {
   fetchProjectDevices: () => void;
   project: Project;
   updateProject: (updates: Partial<Project>) => void;
+  downloadHistory: any[];
 }
 
 const ProjectContext = createContext<ProjectContextProps | undefined>(
@@ -94,6 +95,25 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       ? JSON.parse(localStorage.getItem("devices")!)
       : []
   );
+
+  const [downloadHistory, setDownloadHistory] = useState<any[]>([]);
+  const DOWNLOAD_HISTORY_ENDPOINT = `${process.env.API_URL}/project/get-cached-files`;
+
+  const fetchDownloadHistory = async () => {
+    try {
+      const response = await axios.get(DOWNLOAD_HISTORY_ENDPOINT, {
+        params: {
+          projectId: projectId,
+        },
+        withCredentials: true,
+      });
+
+      console.log(response.data);
+      setDownloadHistory(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -329,6 +349,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         projectDevices,
         fetchProjectDevices,
         setProjectDevices,
+        downloadHistory,
       }}
     >
       {children}
