@@ -159,7 +159,7 @@ class AdminController {
   }
 
   static async getAvailableUsers(req: Request, res: Response) {
-    const projectId = req.body.projectId as string;
+    const projectId = req.cookies.projectId as string;
 
     try {
       const project = await Project.findOne({ projectId });

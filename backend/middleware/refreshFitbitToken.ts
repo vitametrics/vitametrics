@@ -8,7 +8,7 @@ import User, { IUser } from '../models/User';
 
 async function refreshToken(req: Request, res: Response, next: NextFunction) {
   const user = req.user as IUser;
-  const projectId = req.body.projectId as string;
+  const projectId = req.body.projectId as string || req.cookies.projectId as string;
 
   if (!projectId) {
     logger.error('[refreshToken] Project ID not provided');
@@ -41,53 +41,9 @@ async function refreshToken(req: Request, res: Response, next: NextFunction) {
 }
 
 async function refreshUserToken(user: IUser) {
-  const { fitbitRefreshToken, lastTokenRefresh } = user;
-  const tokenAgeHours = lastTokenRefresh
-    ? (new Date().getTime() - new Date(lastTokenRefresh).getTime()) / 3600000
-    : Infinity;
+  const { fitbitAccessToken, fitbitRefreshToken, lastTokenRefresh } = user;
 
-  if (tokenAgeHours >= 8) {
-    try {
-      const response = await axios.get(
-        'https://api.fitbit.com/1/user/-/profile.json',
-        {
-          headers: { Authorization: `Bearer ${fitbitRefreshToken}` },
-        }
-      );
-
-      if (response.status === 200) {
-        logger.info(`[refreshUserToken] Token valid for user: ${user.userId}`);
-        return;
-      }
-    } catch (error) {
-      const refreshResponse = await axios.post(
-        'https://api.fitbit.com/oauth2/token',
-        `grant_type=refresh_token&refresh_token=${fitbitRefreshToken}`,
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            Authorization: `Basic ${Buffer.from(`${process.env.FITBIT_CLIENT_ID}:${process.env.FITBIT_CLIENT_SECRET}`).toString('base64')}`,
-          },
-        }
-      );
-
-      const { access_token: newAccessToken, refresh_token: newRefreshToken } =
-        refreshResponse.data;
-
-      console.log(user._id);
-      await User.findByIdAndUpdate(user._id, {
-        fitbitAccessToken: newAccessToken,
-        fitbitRefreshToken: newRefreshToken,
-        lastTokenRefresh: new Date(),
-      });
-    }
-  }
-}
-
-async function refreshProjectToken(project: IProject) {
-  const { fitbitRefreshToken, lastTokenRefresh } = project;
-
-  if (!fitbitRefreshToken || !lastTokenRefresh) {
+  if (!fitbitAccessToken || !fitbitRefreshToken || !lastTokenRefresh) {
     return;
   }
 
@@ -100,33 +56,91 @@ async function refreshProjectToken(project: IProject) {
       const response = await axios.get(
         'https://api.fitbit.com/1/user/-/profile.json',
         {
-          headers: { Authorization: `Bearer ${fitbitRefreshToken}` },
+          headers: { Authorization: `Bearer ${fitbitAccessToken}` },
+        }
+      );
+
+      if (response.status === 200) {
+        logger.info(`[refreshUserToken] Token valid for user: ${user.userId}`);
+        return;
+      }
+    } catch (error: any) {
+      if (error.response && error.response.data?.errors[0].errorType === 'expired_token') {
+        const refreshResponse = await axios.post(
+          'https://api.fitbit.com/oauth2/token',
+          `grant_type=refresh_token&refresh_token=${fitbitRefreshToken}`,
+          {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              Authorization: `Basic ${Buffer.from(`${process.env.FITBIT_CLIENT_ID}:${process.env.FITBIT_CLIENT_SECRET}`).toString('base64')}`,
+            },
+          }
+        );
+
+        const { access_token: newAccessToken, refresh_token: newRefreshToken } =
+          refreshResponse.data;
+
+        await User.findByIdAndUpdate(user._id, {
+          fitbitAccessToken: newAccessToken,
+          fitbitRefreshToken: newRefreshToken,
+          lastTokenRefresh: new Date(),
+        });
+      }
+    }
+  }
+}
+
+async function refreshProjectToken(project: IProject) {
+  const { fitbitAccessToken, fitbitRefreshToken, lastTokenRefresh } = project;
+
+  console.log('refreshing project token');
+
+  if (!fitbitAccessToken || !fitbitRefreshToken || !lastTokenRefresh) {
+    return;
+  }
+
+  const tokenAgeHours = lastTokenRefresh
+    ? (new Date().getTime() - new Date(lastTokenRefresh).getTime()) / 3600000
+    : Infinity;
+
+  if (tokenAgeHours >= 8) {
+    try {
+      const response = await axios.get(
+        'https://api.fitbit.com/1/user/-/profile.json',
+        {
+          headers: { Authorization: `Bearer ${fitbitAccessToken}` },
         }
       );
 
       if (response.status === 200) {
         return;
       }
-    } catch (error) {
-      const refreshResponse = await axios.post(
-        'https://api.fitbit.com/oauth2/token',
-        `grant_type=refresh_token&refresh_token=${fitbitRefreshToken}`,
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            Authorization: `Basic ${Buffer.from(`${process.env.FITBIT_CLIENT_ID}:${process.env.FITBIT_CLIENT_SECRET}`).toString('base64')}`,
-          },
-        }
-      );
+    } catch (error: any) {
 
-      const { access_token: newAccessToken, refresh_token: newRefreshToken } =
+      console.log('errored');
+
+      console.log(fitbitAccessToken);
+      console.log(fitbitRefreshToken);
+      if (error.response && error.response.data?.errors[0].errorType === 'expired_token') {
+        const refreshResponse = await axios.post(
+          'https://api.fitbit.com/oauth2/token',
+          `grant_type=refresh_token&refresh_token=${fitbitRefreshToken}`,
+          {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              Authorization: `Basic ${Buffer.from(`${process.env.FITBIT_CLIENT_ID}:${process.env.FITBIT_CLIENT_SECRET}`).toString('base64')}`,
+            },
+          }
+        );
+        const { access_token: newAccessToken, refresh_token: newRefreshToken } =
         refreshResponse.data;
 
-      await Project.findByIdAndUpdate(project._id, {
-        fitbitAccessToken: newAccessToken,
-        fitbitRefreshToken: newRefreshToken,
-        lastTokenRefresh: new Date(),
-      });
+        await Project.findByIdAndUpdate(project._id, {
+          fitbitAccessToken: newAccessToken,
+          fitbitRefreshToken: newRefreshToken,
+          lastTokenRefresh: new Date(),
+        });
+      }
     }
   }
 }

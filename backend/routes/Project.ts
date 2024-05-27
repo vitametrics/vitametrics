@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { query, body } from 'express-validator';
+import { query, body, param } from 'express-validator';
 
 import {
   getProjectInfo,
@@ -9,7 +9,8 @@ import {
   fetchIntradayDataHandler,
   downloadDataHandler,
   changeDeviceName,
-  changeMemberName,
+  getCachedFiles,
+  downloadCachedFile,
 } from '../controllers/ProjectController';
 import { asyncHandler } from '../handlers/asyncHandler';
 import { validationHandler } from '../handlers/validationHandler';
@@ -40,18 +41,6 @@ router.post(
   checkProjectMembership,
   verifyRole('admin'),
   asyncHandler(changeDeviceName)
-);
-
-router.post(
-  '/change-member-name',
-  verifySession,
-  validationHandler([
-    body('userId').not().isEmpty().withMessage('User ID is required'),
-    body('name').not().isEmpty().withMessage('Name is required'),
-  ]),
-  checkProjectMembership,
-  verifyRole('admin'),
-  asyncHandler(changeMemberName)
 );
 
 router.post(
@@ -91,6 +80,27 @@ router.get(
   refreshFitbitToken,
   asyncHandler(fetchIntradayDataHandler)
 );
+
+router.get(
+  '/get-cached-files',
+  verifySession,
+  validationHandler([
+    query('deviceId').optional()
+  ]),
+  checkProjectMembership,
+  refreshFitbitToken,
+  asyncHandler(getCachedFiles)
+)
+
+router.get(
+  '/cache/download/:id',
+  verifySession,
+  validationHandler([
+    param('id').not().isEmpty().withMessage('File ID is required')
+  ]),
+  checkProjectMembership,
+  asyncHandler(downloadCachedFile)
+)
 
 router.get(
   '/download-data',

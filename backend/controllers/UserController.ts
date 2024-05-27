@@ -145,6 +145,34 @@ class UserController {
     }
   }
 
+  static async changeName(req: Request, res: Response) {
+    const currentUser = req.user as IUser;
+    const { name } = req.body;
+  
+    try {
+      logger.info(`Changing member name ${currentUser.userId} to ${name}`);
+
+      const user = await User.findOne({ userId: currentUser.userId });
+
+      if (!user) {
+        logger.error(`User: ${currentUser.userId} not found`);
+        res.status(404).json({ msg: 'User not found' });
+        return;
+      }
+  
+      user.name = name;
+
+      await user.save();
+      logger.info(`Member name changed successfully: ${currentUser.userId}`);
+      res.status(200).json({ message: 'Member name changed successfully' });
+      return;
+    } catch (error) {
+      logger.error(`Error changing name: ${error}`);
+      res.status(500).json({ msg: 'Internal Server Error' });
+      return;
+    }
+  }
+
   static async changePassword(req: Request, res: Response) {
     const currentUser = req.user as IUser;
     const userId = currentUser.userId;

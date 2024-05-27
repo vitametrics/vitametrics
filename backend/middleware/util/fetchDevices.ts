@@ -52,6 +52,7 @@ async function fetchDevices(
       const newDevice = new Device({
         owner: owner.id,
         ownerName: owner.name,
+        projectId: projectId,
         deviceId: device.id,
         deviceVersion: device.deviceVersion,
         batteryLevel: device.batteryLevel,

@@ -30,9 +30,9 @@ const checkProjectMembership = async (
       return;
     }
 
-    const projectId = req.body.projectId || req.query.projectId;
+    const projectId = req.body.projectId || req.query.projectId || req.cookies.projectId;
 
-    if (currentUser.role === 'siteOwner') {
+    if (currentUser.role === 'siteOwner' || currentUser.role === 'siteAdmin') {
       const project = await Project.findOne({ projectId });
       if (!project) {
         logger.error(

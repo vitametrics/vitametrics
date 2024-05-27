@@ -6,6 +6,7 @@ import logger from '../middleware/logger';
 import fetchData from '../middleware/util/fetchData';
 import fetchDevices from '../middleware/util/fetchDevices';
 import fetchIntradayData from '../middleware/util/fetchIntraday';
+import Cache from '../models/Cache';
 import Device from '../models/Device';
 import Project, { IProject } from '../models/Project';
 import User, { IUser } from '../models/User';
@@ -85,50 +86,6 @@ export async function getProjectInfo(req: Request, res: Response) {
   }
 }
 
-export async function removeMember(req: Request, res: Response) {
-  const { userId } = req.body;
-  const project = req.project as IProject;
-  try {
-    logger.info(
-      `Removing member: ${userId} from project: ${project.projectId}`
-    );
-
-    const userToRemove = await User.findOne({ userId });
-    if (!userToRemove) {
-      logger.error(`User: ${userId} not found`);
-      res.status(404).json({ msg: 'User not found' });
-      return;
-    }
-
-    // make sure user is associated with project
-    if (!project.members.includes(userToRemove._id as Types.ObjectId)) {
-      logger.error(
-        `User: ${userId} not associated with project: ${project.projectId}`
-      );
-      res.status(400).json({ msg: 'User not associated with project' });
-      return;
-    }
-
-    if (project.ownerId === userToRemove.userId) {
-      logger.error(`Cannot remove owner from project`);
-      res.status(400).json({ msg: 'Cannot remove owner from project' });
-      return;
-    }
-
-    await project.updateOne({ $pull: { members: userToRemove._id } });
-    await userToRemove.deleteOne();
-    logger.info(
-      `Member: ${userId} removed successfully from project: ${project.projectId}`
-    );
-    res.status(200).json({ message: 'Member removed successfully' });
-    return;
-  } catch (error) {
-    logger.error(`Error removing member: ${error}`);
-    res.status(500).json({ msg: 'Internal Server Error' });
-    return;
-  }
-}
-
 export async function changeDeviceName(req: Request, res: Response) {
   const currentProject = req.project as IProject;
   const { deviceId, deviceName } = req.body;
@@ -136,13 +93,15 @@ export async function changeDeviceName(req: Request, res: Response) {
   try {
     logger.info(`Changing device name ${deviceId} to ${deviceName}`);
 
-    const device = await Device.findOne({ deviceId });
+    const device = await Device.findOne({ deviceId: deviceId });
 
     if (!device) {
       logger.error(`Device: ${deviceId} not found`);
       res.status(404).json({ msg: 'Device not found' });
       return;
     }
+
+    console.log('device found');
 
     // make sure device is associated with project
     if (!currentProject.devices.includes(device._id as Types.ObjectId)) {
@@ -158,44 +117,10 @@ export async function changeDeviceName(req: Request, res: Response) {
     await device.save();
 
     logger.info(`Device name changed successfully: ${deviceId}`);
-    res.status(200).json({ message: 'Device name changed successfully' });
+    res.status(200).json({ message: 'Device name changed successfully', device});
     return;
   } catch (error) {
     logger.error(`Error changing device name: ${error}`);
-    res.status(500).json({ msg: 'Internal Server Error' });
-    return;
-  }
-}
-
-export async function changeMemberName(req: Request, res: Response) {
-  const currentProject = req.project as IProject;
-  const { userId, name } = req.body;
-
-  try {
-    logger.info(`Changing member name ${userId} to ${name}`);
-
-    const user = await User.findOne({ userId });
-
-    if (!user) {
-      logger.error(`User: ${userId} not found`);
-      res.status(404).json({ msg: 'User not found' });
-      return;
-    } else if (!currentProject.members.includes(user._id as Types.ObjectId)) {
-      // make sure user is associated with project
-      logger.error(
-        `User: ${userId} not associated with project: ${currentProject.projectId}`
-      );
-      res.status(400).json({ msg: 'User not associated with project' });
-      return;
-    }
-
-    user.name = name;
-    await user.save();
-    logger.info(`Member name changed successfully: ${userId}`);
-    res.status(200).json({ message: 'Member name changed successfully' });
-    return;
-  } catch (error) {
-    logger.error(`Error changing member name: ${error}`);
     res.status(500).json({ msg: 'Internal Server Error' });
     return;
   }
@@ -214,7 +139,7 @@ export async function fetchDevicesHandler(req: Request, res: Response) {
         currentProject.fitbitUserId,
         currentProject.fitbitAccessToken,
         currentProject.projectId,
-        { id: 'Project', name: 'Project' }
+        { id: 'Project', name: 'Project'}
       );
       devicesForProject.push(...projectDevices);
     }
@@ -222,8 +147,8 @@ export async function fetchDevicesHandler(req: Request, res: Response) {
     const tempUsers = await User.find({
       _id: { $in: currentProject.members },
       isTempUser: true,
-      fitbitUserId: { $exists: true, $ne: null },
-      fitbitAccessToken: { $exists: true, $ne: null },
+      fitbitUserId: { $exists: true, $ne: null},
+      fitbitAccessToken: { $exists: true, $ne: null}
     });
 
     for (const tempUser of tempUsers) {
@@ -231,7 +156,7 @@ export async function fetchDevicesHandler(req: Request, res: Response) {
         tempUser.fitbitUserId!,
         tempUser.fitbitAccessToken!,
         currentProject.projectId,
-        { id: tempUser.userId, name: tempUser.name }
+        { id: tempUser.userId, name: tempUser.name}
       );
       devicesForProject.push(...userDevice);
     }
@@ -241,6 +166,7 @@ export async function fetchDevicesHandler(req: Request, res: Response) {
     );
     res.status(200).json(devicesForProject);
     return;
+    
   } catch (error) {
     logger.error(`Error fetching devices: ${error}`);
     res.status(500).json({ msg: 'Internal Server Error' });
@@ -379,40 +305,134 @@ export async function fetchDataHandler(req: Request, res: Response) {
   }
 }
 
+export async function getCachedFiles(req: Request, res: Response) {
+  const currentProject = req.project as IProject;
+  const { deviceId } = req.query;
+
+  try {
+    logger.info(`Retrieving cached files for project: ${currentProject.projectId}`);
+
+    const query: { projectId: string; deviceId?: string} = { projectId: currentProject.projectId};
+    if (deviceId && typeof deviceId === 'string') {
+      query['deviceId'] = deviceId;
+    }
+
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+    const cachedFiles = await Cache.find({ ...query, createdAt: { $gte: oneWeekAgo } });
+
+    const cachedFileswithUrls = cachedFiles.map(file => ({
+      deviceId: file.deviceId,
+      downloadUrl: `${process.env.API_URL}/project/cache/download/${file._id}`,
+      createdAt: file.createdAt,
+      key: file.key
+    }));
+
+    res.status(200).json(cachedFileswithUrls);
+  } catch (error) {
+    logger.error(`Error retrieving cached files: ${error}`);
+  }
+}
+
+export async function downloadCachedFile(req: Request, res: Response) {
+  const cacheId = req.params.id;
+
+  try {
+    const cachedFile = await Cache.findById(cacheId);
+    if (!cachedFile) {
+      res.status(404).json({ msg: 'Cached file not found'});
+      return;
+    }
+
+    res.setHeader('Content-Disposition', `attachment; filename=${cachedFile.key}.csv`);
+    res.set('Content-Type', 'text/csv');
+    res.send(cachedFile.data);
+    return;
+  } catch (error) {
+    logger.error(`Error serving cached file: ${error}`);
+    res.status(500).json({ msg: 'Internal Server Error'});
+    return;
+  }
+}
+
 export async function downloadDataHandler(req: Request, res: Response) {
   const currentProject = req.project as IProject;
   const { deviceId, dataType, date, detailLevel } = req.query;
+  
+  if (!deviceId || typeof deviceId !== 'string') {
+    res.status(400).json({ msg: 'Invalid or missing deviceId' });
+    return;
+  }
+
   try {
     logger.info(`Downloading data for project: ${currentProject.projectId}`);
 
-    if (!currentProject.fitbitUserId || !currentProject.fitbitAccessToken) {
-      logger.error(
-        `Fitbit account not linked to project: ${currentProject.projectId}`
-      );
-      res.status(400).json({ message: 'Fitbit account not linked to project' });
+    const cacheKey = `${currentProject.projectId}-${deviceId}-${dataType}-${date}-${detailLevel}`;
+    const cachedData = await Cache.findOne({ key: cacheKey, projectId: currentProject.projectId, deviceId });
+
+    if (cachedData) {
+      logger.info(`Serving cached data for ${cacheKey}`);
+      res.setHeader('Content-Disposition', `attachment; filename=${currentProject.projectId}-${date}-${deviceId}.csv`);
+      res.set('Content-Type', 'text/csv');
+      res.send(cachedData.data);
       return;
     }
-    const data = await fetchIntradayData(
+
+    const device = await Device.findOne({
+      deviceId: deviceId,
+      _id: { $in: currentProject.devices }
+    });
+
+    if (!device) {
+      logger.error(`Device: ${deviceId} not found in project ${currentProject.projectId}`);
+      res.status(404).json({ msg: 'Device not found' });
+      return;
+    }
+
+   let data: any[] = [];
+
+   if (device.owner === 'Project' && currentProject.fitbitUserId && currentProject.fitbitAccessToken) {
+    data = await fetchIntradayData(
       currentProject.fitbitUserId,
       currentProject.fitbitAccessToken,
       dataType as string,
       date as string,
       detailLevel as string
     );
-    const csv = data.map((d) => `${d.timestamp},${d.value}`).join('\n') + '\n';
-    res.setHeader(
-      'Content-Disposition',
-      `attachment; filename="${deviceId}-${date}-${detailLevel}.csv"`
-    );
-    res.set('Content-Type', 'text/csv');
-    logger.info(
-      `Data downloaded successfully for project: ${currentProject.projectId}`
-    );
-    res.send(csv);
-    return;
+   } else {
+    const user = await User.findOne({ userId: device.owner});
+    
+    if (user && user.isTempUser && user.fitbitUserId && user.fitbitAccessToken) {
+      data = await fetchIntradayData(
+        user.fitbitUserId,
+        user.fitbitAccessToken,
+        dataType as string,
+        date as string,
+        detailLevel as string
+      );
+    }
+   }
+
+   const csv = data.map((d) => `${d.timestamp},${d.value}`).join('\n') + '\n';
+
+   const newCache = new Cache({
+    key: cacheKey,
+    projectId: currentProject.projectId,
+    deviceId,
+    data: csv,
+    createdAt: new Date()
+   });
+
+   await newCache.save();
+
+   res.setHeader('Content-Disposition', `attachment; filename=${currentProject.projectId}-${date}-${deviceId}.csv`);
+   res.set('Content-Type', 'text/csv');
+   logger.info(`Data downloaded successfuly for project: ${currentProject.projectId}`);
+   res.send(csv);
   } catch (error) {
     logger.error(`Error downloading data: ${error}`);
     res.status(500).json({ msg: 'Internal Server Error' });
-    return;
   }
+
 }

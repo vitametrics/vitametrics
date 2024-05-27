@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { body } from 'express-validator';
+import { body, cookie } from 'express-validator';
 
 import AdminController from '../controllers/AdminController';
 import { asyncHandler } from '../handlers/asyncHandler';
@@ -43,7 +43,7 @@ router.post(
   '/delete-project',
   verifySession,
   checkProjectMembership,
-  verifyRole('admin'),
+  verifyRole('owner'),
   validationHandler(projectIdValidation),
   asyncHandler(AdminController.deleteProject)
 );
@@ -53,7 +53,9 @@ router.get(
   verifySession,
   checkProjectMembership,
   verifyRole('admin'),
-  validationHandler(projectIdValidation),
+  validationHandler([
+    cookie('projectId').not().isEmpty().withMessage('No projectId provided')
+  ]),
   asyncHandler(AdminController.getAvailableUsers)
 );
 

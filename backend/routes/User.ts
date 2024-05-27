@@ -32,6 +32,15 @@ router.post(
 );
 
 router.post(
+  '/change-member-name',
+  verifySession,
+  validationHandler([
+    body('name').not().isEmpty().withMessage('Name is required'),
+  ]),
+  asyncHandler(UserController.changeName)
+);
+
+router.post(
   '/change-password',
   verifySession,
   validationHandler([
