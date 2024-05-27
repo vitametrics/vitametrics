@@ -35,7 +35,7 @@ const DataOverview = () => {
 
   const detailLevelTypes = [
     {
-      value: "1sesc",
+      value: "1sec",
       label: "1 second",
     },
     {
