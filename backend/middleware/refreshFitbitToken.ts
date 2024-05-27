@@ -97,8 +97,6 @@ async function refreshUserToken(user: IUser) {
 async function refreshProjectToken(project: IProject) {
   const { fitbitAccessToken, fitbitRefreshToken, lastTokenRefresh } = project;
 
-  console.log('refreshing project token');
-
   if (!fitbitAccessToken || !fitbitRefreshToken || !lastTokenRefresh) {
     return;
   }

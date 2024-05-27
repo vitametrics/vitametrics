@@ -11,6 +11,8 @@ import {
   changeDeviceName,
   getCachedFiles,
   downloadCachedFile,
+  removeDevice,
+  deleteCachedFiles,
 } from '../controllers/ProjectController';
 import { asyncHandler } from '../handlers/asyncHandler';
 import { validationHandler } from '../handlers/validationHandler';
@@ -42,6 +44,17 @@ router.post(
   verifyRole('admin'),
   asyncHandler(changeDeviceName)
 );
+
+router.post(
+  '/remove-device',
+  verifySession,
+  validationHandler([
+    body('deviceId').not().isEmpty().withMessage('Device ID is required'),
+  ]),
+  checkProjectMembership,
+  verifyRole('admin'),
+  asyncHandler(removeDevice)
+)
 
 router.post(
   '/fetch-devices',
@@ -80,6 +93,17 @@ router.get(
   refreshFitbitToken,
   asyncHandler(fetchIntradayDataHandler)
 );
+
+router.post(
+  '/delete-cached-files',
+  verifySession,
+  validationHandler([
+    body('deviceId').not().isEmpty().withMessage('Device ID is required')
+  ]),
+  checkProjectMembership,
+  verifyRole('admin'),
+  asyncHandler(deleteCachedFiles)
+)
 
 router.get(
   '/get-cached-files',
