@@ -84,23 +84,21 @@ router.get(
 router.get(
   '/get-cached-files',
   verifySession,
-  validationHandler([
-    query('deviceId').optional()
-  ]),
+  validationHandler([query('deviceId').optional()]),
   checkProjectMembership,
   refreshFitbitToken,
   asyncHandler(getCachedFiles)
-)
+);
 
 router.get(
   '/cache/download/:id',
   verifySession,
   validationHandler([
-    param('id').not().isEmpty().withMessage('File ID is required')
+    param('id').not().isEmpty().withMessage('File ID is required'),
   ]),
   checkProjectMembership,
   asyncHandler(downloadCachedFile)
-)
+);
 
 router.get(
   '/download-data',

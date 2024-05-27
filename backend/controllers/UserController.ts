@@ -148,7 +148,7 @@ class UserController {
   static async changeName(req: Request, res: Response) {
     const currentUser = req.user as IUser;
     const { name } = req.body;
-  
+
     try {
       logger.info(`Changing member name ${currentUser.userId} to ${name}`);
 
@@ -159,7 +159,7 @@ class UserController {
         res.status(404).json({ msg: 'User not found' });
         return;
       }
-  
+
       user.name = name;
 
       await user.save();
