@@ -7,7 +7,10 @@ import useSearch from "../../../hooks/useSearch";
 import { Fragment, useState } from "react";
 import { MembersContainerProps } from "../../../types/Member";
 
-const MembersContainer: React.FC<MembersContainerProps> = ({ onClick }) => {
+const MembersContainer: React.FC<MembersContainerProps> = ({
+  onClick,
+  toggleInviteMenu,
+}) => {
   const { project } = useProject();
   const itemsPerPageOptions = [5, 10, 15, 20];
   const {
@@ -45,7 +48,17 @@ const MembersContainer: React.FC<MembersContainerProps> = ({ onClick }) => {
 
   return (
     <div className="flex flex-col bg-white rounded-xl shadow-lg p-10 mb-12">
-      <h2 className="text-2xl text-primary font-bold mb-3">Members</h2>
+      <h2 className="text-2xl text-primary font-bold mb-3">
+        {project.projectName} Members
+      </h2>
+      {(project.isOwner || project.isAdmin) && (
+        <button
+          onClick={() => toggleInviteMenu(true)}
+          className="p-2 text-lg flex flex-row gap-2 mb-5 justify-center items-center rounded-xl w-[150px] bg-primary font-bold text-white shadow-lg hover:bg-hoverPrimary"
+        >
+          Invite
+        </button>
+      )}
       {project.members && project.members.length === 0 ? (
         <span className="text-primary text-lg">No members found</span>
       ) : (
@@ -80,7 +93,9 @@ const MembersContainer: React.FC<MembersContainerProps> = ({ onClick }) => {
             indexOfLastItem={indexOfLastMember}
           />
           <MembersList members={currentMembers} onClick={onClick} />
-          <span className="h-[0.5px] bg-[#d3d7df] w-full mb-3"></span>
+          {currentMembers.length !== 0 && (
+            <span className="h-[0.5px] bg-[#d3d7df] w-full mb-3"></span>
+          )}
 
           <div
             id="pagination"

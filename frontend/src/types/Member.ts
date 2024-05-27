@@ -28,4 +28,5 @@ export interface MemberInfoProps {
 
  export interface MembersContainerProps {
     onClick: (arg0: boolean, arg1: string) => void;
+    toggleInviteMenu: (show: boolean) => void;
   }

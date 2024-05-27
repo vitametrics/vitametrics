@@ -12,6 +12,7 @@ const MembersList: React.FC<MembersListProps> = ({ members, onClick }) => {
         <button className="py-2 text-left">EMAIL</button>
         <button className="py-2 text-left">ROLE</button>
       </div>
+
       {members.map((member) => (
         <Fragment>
           <span className="h-[0.5px] bg-[#d3d7df] w-full"></span>
@@ -28,6 +29,9 @@ const MembersList: React.FC<MembersListProps> = ({ members, onClick }) => {
           </div>
         </Fragment>
       ))}
+      {members && members.length === 0 && (
+        <div className="text-primary">No results found</div>
+      )}
     </Fragment>
   );
 };

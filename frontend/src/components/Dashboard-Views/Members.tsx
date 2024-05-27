@@ -293,21 +293,12 @@ const Members = () => {
         handleRemoveMember={handleRemoveMember}
         handleClose={handleClose}
       />
-      <h2 className="w-full text-4xl font-bold p-5 pb-0 text-primary">
-        {project.projectName} Members
-      </h2>
-      {(project.isOwner || project.isAdmin) && (
-        <div className="flex p-5 w-full">
-          <button
-            onClick={() => toggleInviteMenu(true)}
-            className="p-2 text-2xl flex flex-row gap-2 justify-center items-center rounded-xl w-[230px] bg-primary font-bold text-white shadow-lg hover:bg-hoverPrimary"
-          >
-            Invite
-          </button>
-        </div>
-      )}
+
       <span className="p-5">
-        <MembersContainer onClick={toggleMemberInfo} />
+        <MembersContainer
+          onClick={toggleMemberInfo}
+          toggleInviteMenu={toggleInviteMenu}
+        />
       </span>
     </motion.div>
   );
