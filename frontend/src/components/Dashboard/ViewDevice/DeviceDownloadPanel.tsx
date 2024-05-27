@@ -99,8 +99,8 @@ const DeviceDownloadPanel: React.FC<DeviceDownloadPanelProps> = ({
 
       const response = await axios.get(DOWNLOAD_DATA_ENDPOINT, {
         params: {
-          deviceIds: [deviceId],
-          dataTypes: [downloadDataType],
+          deviceIds: deviceId,
+          dataTypes: downloadDataType,
           startDate: startDate,
           endDate: endDate,
           detailLevel: downloadDetailLevel,
