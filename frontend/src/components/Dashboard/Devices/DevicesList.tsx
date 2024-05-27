@@ -24,17 +24,20 @@ const DevicesList: React.FC<DeviceListProps> = ({ devices, onDeviceClick }) => {
     async (deviceId: string) => {
       const deviceName = editingDevices[deviceId];
       try {
-        await axios.post(
+        const response = await axios.post(
           CHANGE_DEVICE_NAME_ENDPOINT,
           { deviceId: deviceId, deviceName: deviceName, projectId: projectId },
           { withCredentials: true }
         );
+        //request returns updated device
+        const updatedDevice = response.data.device;
         const updatedDevices = projectDevices.map((device) => {
           if (device.deviceId === deviceId) {
-            return { ...device, deviceName: deviceName };
+            return updatedDevice;
           }
           return device;
         });
+
         setProjectDevices(updatedDevices);
         handleCancelEdit(deviceId);
       } catch (error) {
