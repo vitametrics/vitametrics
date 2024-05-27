@@ -8,6 +8,7 @@ import path from 'path';
 
 import logger from '../middleware/logger';
 import { sendEmail } from '../middleware/util/emailUtil';
+import Cache from '../models/Cache';
 import Device from '../models/Device';
 import Project from '../models/Project';
 import User, { IUser } from '../models/User';
@@ -130,10 +131,10 @@ class AdminController {
       }
 
       const members = project.members;
-      const deviceIds = project.devices;
+      const deviceIds = project.devices.map((device) => device._id);
 
       if (deviceIds && deviceIds.length > 0) {
-        await Device.deleteMany({ deviceId: { $in: deviceIds } });
+        await Device.deleteMany({ _id: { $in: deviceIds } });
       }
 
       if (members && members.length > 0) {
@@ -144,6 +145,8 @@ class AdminController {
           );
         }
       }
+
+      await Cache.deleteMany({ projectId: project.projectId });
 
       await Project.findOneAndDelete({ projectId });
       logger.info(
@@ -288,6 +291,12 @@ class AdminController {
             .json({ msg: 'User is already a member of the project' });
           return;
         } else {
+          if (user.isTempUser && role !== 'tempUser') {
+            logger.error('Cannot change temp user role');
+            res.status(400).json({ msg: 'User already exists as Participant' });
+            return;
+          }
+
           user.projects.push(project._id as Types.ObjectId);
 
           await user.save();
@@ -396,15 +405,15 @@ class AdminController {
       }
 
       if (user.isTempUser) {
-        console.log('was temp user')
-        const userDevices = project.devices.filter((device: any) => device.owner === user.userId );
+        const userDevices = project.devices.filter(
+          (device: any) => device.owner === user.userId
+        );
         const deviceIdsToRemove = userDevices.map((device: any) => device._id);
 
-        console.log(userDevices);
-        console.log(deviceIdsToRemove);
-
-        project.devices = project.devices.filter((device: any) => !deviceIdsToRemove.includes(device._id));
-        await Device.deleteMany({ _id: { $in: deviceIdsToRemove }});
+        project.devices = project.devices.filter(
+          (device: any) => !deviceIdsToRemove.includes(device._id)
+        );
+        await Device.deleteMany({ _id: { $in: deviceIdsToRemove } });
       }
 
       project.members = updatedMembers;
