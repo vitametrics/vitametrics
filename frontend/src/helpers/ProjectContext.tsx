@@ -116,6 +116,12 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
+    if (projectId) {
+      fetchDownloadHistory();
+    }
+  }, [projectId]);
+
+  useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get("id");
     if (id) {
