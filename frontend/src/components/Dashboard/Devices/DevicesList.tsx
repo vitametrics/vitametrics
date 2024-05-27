@@ -1,16 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Fragment, useCallback, useState } from "react";
+import { Fragment } from "react";
 import { DeviceListProps } from "../../../types/Device";
 import FullBatteryLevel from "../../../assets/FullBatteryLevel";
 import MediumBatteryLevel from "../../../assets/MediumBatteryLevel";
 import LowBatteryLevel from "../../../assets/LowBatteryLevel";
-import axios from "axios";
-import { useProject } from "../../../helpers/ProjectContext";
-import EditIcon from "../../../assets/EditIcon";
-import ConfirmIcon from "../../../assets/ConfirmIcon";
-import CancelIcon from "../../../assets/CancelIcon";
-
-const CHANGE_DEVICE_NAME_ENDPOINT = `${process.env.API_URL}/project/change-device-name`;
 
 const DevicesList: React.FC<DeviceListProps> = ({ devices, onDeviceClick }) => {
   const truncateName = (name: string) => {
