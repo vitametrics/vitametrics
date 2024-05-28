@@ -99,10 +99,20 @@ const DeviceDownloadPanel: React.FC<DeviceDownloadPanelProps> = ({
         withCredentials: true,
       });
 
+      let fileName = fileNameInput;
+
+      if (fileName === "") {
+        if (selectedDataTypes.length > 1) {
+          fileName = "achive.zip";
+        } else {
+          fileName = `${project.projectId}-${startDate}-${endDate}-${deviceId}.csv`;
+        }
+      }
+
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      //link.setAttribute("download", );
+      link.setAttribute("download", fileName);
       document.body.appendChild(link);
       link.click();
       link.parentNode?.removeChild(link);
