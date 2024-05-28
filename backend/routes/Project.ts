@@ -14,6 +14,7 @@ import {
   removeDevice,
   deleteCachedFiles,
   unlinkFitbitAccount,
+  toggleNotifications,
 } from '../controllers/ProjectController';
 import { asyncHandler } from '../handlers/asyncHandler';
 import { validationHandler } from '../handlers/validationHandler';
@@ -63,7 +64,15 @@ router.put(
   checkProjectMembership,
   verifyRole('admin'),
   asyncHandler(unlinkFitbitAccount)
-)
+);
+
+router.put(
+  '/toggle-notifications',
+  verifySession,
+  checkProjectMembership,
+  verifyRole('admin'),
+  asyncHandler(toggleNotifications)
+);
 
 router.post(
   '/fetch-devices',
