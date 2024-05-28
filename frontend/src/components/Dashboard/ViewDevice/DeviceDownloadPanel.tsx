@@ -43,6 +43,7 @@ const DeviceDownloadPanel: React.FC<DeviceDownloadPanelProps> = ({
       { value: "1min", label: "1 minute" },
       { value: "5min", label: "5 minutes" },
       { value: "15min", label: "15 minutes" },
+      { value: "1day", label: "1 day" },
     ];
     if (selectedDataTypes.length === 1 && selectedDataTypes[0] === "heart") {
       return [{ value: "1sec", label: "1 second" }, ...baseOptions];
