@@ -7,6 +7,7 @@ export interface Member {
     emailVerified: boolean;
     isOwner: boolean;
     isAdmin: boolean;
+    isTempUser: boolean;
 }
 
 export interface OverviewMembersListProps {

@@ -112,7 +112,7 @@ const MemberInfo: React.FC<MemberInfoProps> = ({
         ) : (
           <div className="items-center flex flex-row">
             {member.isOwner ? "Owner" : member.isAdmin ? "Admin" : "User"}
-            {project.isOwner && !member.isOwner && (
+            {project.isOwner && !member.isOwner && !member.isTempUser && (
               <EditButton onClick={() => setIsEditing(true)} />
             )}
           </div>
