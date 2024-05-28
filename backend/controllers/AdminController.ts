@@ -10,7 +10,7 @@ import logger from '../middleware/logger';
 import { sendEmail } from '../middleware/util/emailUtil';
 import Cache from '../models/Cache';
 import Device from '../models/Device';
-import Project from '../models/Project';
+import Project, { IProject } from '../models/Project';
 import User, { IUser } from '../models/User';
 
 interface IPopulatedUser {
@@ -473,6 +473,47 @@ class AdminController {
       }
     } catch (error) {
       logger.error(`Error removing member: ${error}`);
+      res.status(500).json({ msg: 'Internal Server Error' });
+      return;
+    }
+  }
+
+  static async changeUserRole(req: Request, res: Response) {
+    const currentProject = req.project as IProject;
+    const {userId, role} = req.body;
+
+    try {
+      logger.info(`Changing role for user: ${userId} to: ${role}`);
+
+      const user = await User.findOne({ userId });
+      if (!user) {
+        logger.error(`User: ${userId} not found`);
+        res.status(404).json({ msg: 'User not found' });
+        return;
+      }
+
+      if (currentProject.ownerId === userId) {
+        logger.error('Cannot change project owner role');
+        res.status(400).json({ msg: 'Cannot change project owner role' });
+        return;
+      }
+
+      if (role === 'admin') {
+        if (!currentProject.admins.includes(user._id as Types.ObjectId)) {
+          currentProject.admins.push(user._id as Types.ObjectId);
+        }
+      } else {
+        currentProject.admins = currentProject.admins.filter(
+          (admin) => admin.toString() !== (user._id as Types.ObjectId).toString()
+        );
+      }
+
+      await currentProject.save();
+
+      res.status(200).json({ msg: 'User role updated successfully'});
+      return;
+    } catch (error) {
+      logger.error(`Error changing user role: ${error}`);
       res.status(500).json({ msg: 'Internal Server Error' });
       return;
     }

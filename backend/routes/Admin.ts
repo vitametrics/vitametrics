@@ -105,6 +105,18 @@ router.post(
 );
 
 router.post(
+  '/change-user-role',
+  verifySession,
+  checkProjectMembership,
+  verifyRole('admin'),
+  validationHandler([
+    body('userId').not().isEmpty().withMessage('No userId provided'),
+    body('role').not().isEmpty().withMessage('Role is required'),
+  ]),
+  asyncHandler(AdminController.changeUserRole)
+);
+
+router.post(
   '/change-project-description',
   verifySession,
   checkProjectMembership,
