@@ -37,6 +37,14 @@ const UserDashboard = () => {
   const [projectIdToDelete, setProjectIdToDelete] = useState<string>("");
   const itemsPerPageOptions = [5, 10, 15, 20];
   const [msg, setMsg] = useState("");
+  const role =
+    userRole === "siteOwner"
+      ? "Owner"
+      : userRole === "siteAdmin"
+        ? "Admin"
+        : userRole === "user"
+          ? "User"
+          : "Temp User";
 
   const handleItemsPerPageChange = (
     event: React.ChangeEvent<HTMLSelectElement>
@@ -164,7 +172,7 @@ const UserDashboard = () => {
       />
       <div className="p-20 bg-lightmodeSecondary h-full">
         <h1 className="text-4xl mb-5 font-libreFranklin font-bold text-primary">
-          Welcome back, {}
+          Welcome back, {role}
         </h1>
 
         <div className="flex flex-col bg-white rounded-xl shadow-lg font-libreFranklin p-10">

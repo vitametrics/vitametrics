@@ -63,6 +63,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isFrontendUpToDate, setIsFrontendUpToDate] = useState<boolean>(false);
   const [health, setHealth] = useState(false);
   const [siteMembers, setSiteMembers] = useState<any[]>([]);
+
   const [showBackDrop, setShowBackDrop] = useState(false);
 
   const login = async () => {
@@ -164,8 +165,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const response = await axios.get(FETCH_SITE_MEMBERS_ENDPOINT, {
         withCredentials: true,
       });
-
-      console.log(response.data);
       setSiteMembers(response.data);
     } catch (error) {
       console.error("Error fetching site members:", error);
