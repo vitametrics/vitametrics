@@ -108,7 +108,7 @@ const UserDashboard = () => {
         { withCredentials: true }
       );
 
-      const project = response.data.project;
+      const project = response.data;
       console.log("project that was created");
       console.log(project);
       //try this fix!
