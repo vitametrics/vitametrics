@@ -3,11 +3,11 @@ import { useProject } from "../helpers/ProjectContext";
 import { useState, useEffect, Fragment } from "react";
 import { WarningIcon } from "../assets/WarningIcon";
 import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
 import useDebounce from "../helpers/useDebounce";
 import axios from "axios";
 import { useSearchParams } from "react-router-dom";
 import { DashboardNavbar } from "../components/DashboardNavbar";
+import useCustomInView from "../hooks/useCustomInView";
 
 const Settings = () => {
   const { isEmailVerified, userEmail, isOwner } = useAuth();
@@ -197,10 +197,7 @@ const Settings = () => {
     hidden: { opacity: 0 },
     show: { opacity: 1 },
   };
-  const { ref, inView } = useInView({
-    threshold: 0.1, // Adjust based on when you want the animation to trigger (1 = fully visible)
-    triggerOnce: true, // Ensures the animation only plays once
-  });
+  const { ref, inView } = useCustomInView();
 
   return (
     <Fragment>

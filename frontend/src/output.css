@@ -1827,54 +1827,6 @@ html {
   background-image: linear-gradient(to right, #c471f5 0%, #fa71cd 100%);
 }
 
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 30px;
-  margin: 0 10px;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: 0.4s;
-  border-radius: 34px;
-}
-
-.switch input {
-  display: none;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 20px;
-  width: 20px;
-  left: 5px;
-  bottom: 5px;
-  background-color: white;
-  transition: 0.4s;
-  border-radius: 50px;
-}
-
-input:checked + .slider {
-  background-color: #1b1b1b;
-}
-
-input:checked + .slider:hover {
-  background-color: #2b2a2a;
-}
-
-input:checked + .slider:before {
-  transform: translateX(30px);
-}
-
 .slick-slide > div {
   margin: 0 10px;
 }
@@ -2023,6 +1975,66 @@ nav.animated-parent {
     padding-right: 0;
     padding-top: 0;
   }
+}
+
+.switch {
+  width: 80px;
+  height: 40px;
+}
+
+/* Button */
+
+.toggle {
+  position: absolute;
+  visibility: hidden;
+}
+
+.toggle + label {
+  display: block;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  padding: 2px;
+  width: 80px;
+  height: 30px;
+  background-color: #dddddd;
+  border-radius: 30px;
+}
+
+.toggle + label:before,
+.toggle + label:after {
+  display: block;
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  bottom: 1px;
+  content: "";
+}
+
+.toggle + label:before {
+  right: 1px;
+  background-color: #f1f1f1;
+  border-radius: 30px;
+  transition: background 0.4s;
+}
+
+.toggle + label:after {
+  width: 30px;
+  background-color: #fff;
+  border-radius: 100%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  transition: margin 0.4s;
+}
+
+.toggle:checked + label:before {
+  background-color: #8ce196;
+}
+
+.toggle:checked + label:after {
+  margin-left: 48px;
 }
 
 .hover\:cursor-pointer:hover {

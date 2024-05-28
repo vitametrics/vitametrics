@@ -14,6 +14,7 @@ import {
 } from "../../services/projectService";
 import { oAuthLogin } from "../../services/projectService";
 import { useState } from "react";
+import NotificationToggle from "../Dashboard/DashboardSettings/NotificationToggle";
 
 const DashboardSettings = () => {
   const { ref, inView } = useCustomInView();
@@ -71,6 +72,9 @@ const DashboardSettings = () => {
       </h2>
 
       <div className="flex flex-col gap-3">
+        <h2 className="text-lg font-bold">Toggle Email Notifications</h2>
+        <NotificationToggle />
+
         {isAccountLinked ? (
           <Fragment>
             {msg && <p className="text-red-500">{msg}</p>}
@@ -98,25 +102,27 @@ const DashboardSettings = () => {
         <span className="mb-5">
           <ChangeDescriptionField />
         </span>
-        <span className="mb-5">
-          <ChangeOwnerEmailField />
-        </span>
         {project.isOwner && (
-          <span className="mb-10">
-            <h2 className="text-lg font-bold">Delete Project</h2>
-            <p className="text-secondary text-md">
-              DISCLAIMER: This action is not reversible
-            </p>
+          <Fragment>
+            <span className="mb-5">
+              <ChangeOwnerEmailField />
+            </span>
+            <span className="mb-10">
+              <h2 className="text-lg font-bold">Delete Project</h2>
+              <p className="text-secondary text-md">
+                DISCLAIMER: This action is not reversible
+              </p>
 
-            <a href="#top">
-              <button
-                className="p-4 w-[300px] bg-red-500 text-white rounded-lg font-bold hover:bg-red-400"
-                onClick={() => toggleDeleteProjectMenu(true)}
-              >
-                Delete Project
-              </button>
-            </a>
-          </span>
+              <a href="#top">
+                <button
+                  className="p-4 w-[300px] bg-red-500 text-white rounded-lg font-bold hover:bg-red-400"
+                  onClick={() => toggleDeleteProjectMenu(true)}
+                >
+                  Delete Project
+                </button>
+              </a>
+            </span>
+          </Fragment>
         )}
       </div>
     </motion.div>

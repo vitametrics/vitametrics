@@ -58,6 +58,7 @@ interface Project {
   devices: Device[];
   isAdmin: boolean;
   isOwner: boolean;
+  areNotificationsEnabled: boolean;
 }
 
 const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -73,6 +74,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
     devices: [],
     isAdmin: false,
     isOwner: false,
+    areNotificationsEnabled: false,
   };
 
   const GET_PROJECT_ENDPOINT = `${process.env.API_URL}/project/info`;
@@ -84,6 +86,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   const [startDate, setStartDate] = useState(new Date("2024-02-09"));
   const [rangeStartDate, setRangeStartDate] = useState(new Date("2024-02-10"));
   const [rangeEndDate, setRangeEndDate] = useState(new Date("2024-02-11"));
+
   const [downloadStartDate, setDownloadStartDate] = useState(
     new Date("2024-02-10")
   );
