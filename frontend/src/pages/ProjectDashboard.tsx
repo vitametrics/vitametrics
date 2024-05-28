@@ -19,7 +19,7 @@ const ProjectDashboard = () => {
   };
 
   useEffect(() => {
-    if (searchParams.get("id") === "null") {
+    if (searchParams.get("id") === "null" || !searchParams.get("id")) {
       window.location.href = "/dashboard";
     }
   }, []);
