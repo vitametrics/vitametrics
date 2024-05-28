@@ -40,6 +40,7 @@ interface ProjectContextProps {
   project: Project;
   updateProject: (updates: Partial<Project>) => void;
   downloadHistory: any[];
+  setDownloadHistory: (arg0: any[]) => void;
   fetchDeviceDetails: (deviceId: string) => any;
 }
 
@@ -123,8 +124,6 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       const response = await axios.get(DOWNLOAD_HISTORY_ENDPOINT, {
         withCredentials: true,
       });
-
-      console.log(response.data);
       setDownloadHistory(response.data);
     } catch (error) {
       console.error(error);
@@ -387,6 +386,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         fetchProjectDevices,
         setProjectDevices,
         downloadHistory,
+        setDownloadHistory,
       }}
     >
       {children}

@@ -1,15 +1,36 @@
 import { useProject } from "../../../helpers/ProjectContext";
+import axios from "axios";
 
 interface DeviceCacheProps {
   deviceId: string;
 }
 
+const CLEAR_CACHE_ENDPOINT = `${process.env.API_URL}/project/delete-cached-files`;
+
 const DeviceCache: React.FC<DeviceCacheProps> = ({ deviceId }) => {
-  const { downloadHistory } = useProject();
+  const { downloadHistory, setDownloadHistory } = useProject();
 
   const deviceCache = downloadHistory.filter(
     (download) => download.deviceId === deviceId
   );
+
+  const handleClearCache = async () => {
+    try {
+      await axios.post(
+        CLEAR_CACHE_ENDPOINT,
+        {
+          deviceId: deviceId,
+        },
+        { withCredentials: true }
+      );
+
+      setDownloadHistory(
+        downloadHistory.filter((download) => download.deviceId !== deviceId)
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="flex flex-col h-full">
@@ -22,12 +43,17 @@ const DeviceCache: React.FC<DeviceCacheProps> = ({ deviceId }) => {
         </div>
       ) : (
         <div className="flex flex-col">
+          <button
+            className="bg-red-400 p-2 w-[200px] text-white rounded hover:bg-red-300"
+            onClick={() => handleClearCache()}
+          >
+            Clear Cache
+          </button>
           <div className="grid grid-cols-3 text-primary font-bold my-2">
             <span>File Name</span>
             <span>Download Date</span>
             <span> Action</span>
           </div>
-
           {deviceCache.map((cache) => (
             <div className="hover:bg-slate-50 flex flex-col">
               <span className="h-[0.5px] bg-[#d3d7df] w-full"></span>
@@ -37,7 +63,12 @@ const DeviceCache: React.FC<DeviceCacheProps> = ({ deviceId }) => {
               >
                 <span className="w-1/3">{cache.key}</span>
                 <span className="w-1/3">{cache.createdAt}</span>
-                <span className="w-1/3 text-primary">Delete</span>
+                <span
+                  className="w-1/3 text-primary"
+                  onClick={() => window.open(cache.downloadUrl)}
+                >
+                  Download
+                </span>
               </div>
             </div>
           ))}
