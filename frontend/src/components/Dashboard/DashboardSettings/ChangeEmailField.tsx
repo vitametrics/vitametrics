@@ -58,13 +58,13 @@ const ChangeEmailField = () => {
   return (
     <form onSubmit={handleSubmit}>
       <div className="flex flex-col">
-        <label htmlFor="desc" className="text-secondary font-bold text-xl mb-2">
+        <label htmlFor="desc" className="text-primary font-bold text-lg mb-1">
           New Owner Email
         </label>
-        <div className="text-sm mb-2 text-secondary">
+        <div className="text-sm mb-1 text-secondary">
           Current Email: {project.ownerEmail}
         </div>
-        <p className={`${error ? "text-red-500" : "text-green-500"} text-lg `}>
+        <p className={`${error ? "text-red-500" : "text-green-500"} text-md `}>
           {message}
         </p>
         <input
@@ -72,12 +72,12 @@ const ChangeEmailField = () => {
           value={changeEmailInput}
           onChange={(e) => setChangeEmailInput(e.target.value)}
           maxLength={MAX_CHARS}
-          className="w-[500px] p-3 rounded-lg mb-3 text-primary border-[2px] border-solid border-[#d2d1d1]"
+          className="w-[500px] p-2 rounded-lg mb-3 text-primary border-[2px] border-solid border-[#d2d1d1]"
         />
       </div>
       <button
         type="submit"
-        className="p-3 bg-primary text-white rounded-xl w-[300px] font-bold hover:bg-hoverPrimary shadow-lg"
+        className="p-2 bg-primary text-white rounded w-[250px] font-bold hover:bg-hoverPrimary shadow-lg"
       >
         Change Owner Email
       </button>

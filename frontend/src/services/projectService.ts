@@ -31,6 +31,19 @@ export const deleteProjectService = async (projectId: string) => {
   }
 }
 
+export const unlinkFitBitAccountService = async () => {
+  const UNLINK_FITBIT_ACCOUNT_ENDPOINT = `${process.env.API_URL}/project/unlink-fitbit`;
+  try {
+    await axios.put(
+      UNLINK_FITBIT_ACCOUNT_ENDPOINT,
+      { withCredentials: true }
+    );
+  } catch (error) {
+    throw new Error('Failed to unlink the Fitbit account: ' + error);
+  }
+}
+
+
 export const oAuthLogin = async () => {
   window.location.href = "https://vitametrics.org/api/auth";
 };

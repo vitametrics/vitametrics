@@ -6,5 +6,5 @@ export const formatDate = (date: Date) => {
         : date.getMonth() + 1;
     const day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
     const year = date.getFullYear();
-    return `${year}-${month}-${day}`;
+    return `${month}/${day}/${year}`;
   };

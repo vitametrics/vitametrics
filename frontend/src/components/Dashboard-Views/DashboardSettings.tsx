@@ -7,14 +7,20 @@ import ChangeNameField from "../Dashboard/DashboardSettings/ChangeNameField";
 import ChangeDescriptionField from "../Dashboard/DashboardSettings/ChangeDescription";
 import ChangeOwnerEmailField from "../Dashboard/DashboardSettings/ChangeEmailField";
 import DeleteProjectMenu from "../Dashboard/DeleteProjectMenu";
-import { deleteProjectService } from "../../services/projectService";
+import { Fragment } from "react";
+import {
+  deleteProjectService,
+  unlinkFitBitAccountService,
+} from "../../services/projectService";
 import { useState } from "react";
 
 const DashboardSettings = () => {
   const { ref, inView } = useCustomInView();
-  const { project, setShowBackDrop } = useProject();
+  const { project, setShowBackDrop, isAccountLinked, fetchProject } =
+    useProject();
   const { projects, setProjects } = useAuth();
   const [deleteProject, setDeleteProject] = useState(false);
+  const [msg, setMsg] = useState("");
 
   const toggleDeleteProjectMenu = (show: boolean) => {
     setDeleteProject(show);
@@ -33,6 +39,18 @@ const DashboardSettings = () => {
     window.location.href = "/dashboard";
   };
 
+  const handleUnlinkFitBitAccount = async () => {
+    await unlinkFitBitAccountService();
+    await fetchProject();
+
+    if (isAccountLinked) {
+      setMsg("An error occurred while unlinking FitBit account");
+      return;
+    }
+
+    window.location.reload();
+  };
+
   return (
     <motion.div
       variants={fadeInItemVariants}
@@ -47,25 +65,35 @@ const DashboardSettings = () => {
         show={deleteProject}
       />
 
-      <h2 className="w-full text-4xl font-libreFranklin font-bold mb-10">
+      <h2 className="w-full text-2xl font-libreFranklin font-bold mb-3">
         {project.projectName} Settings
       </h2>
-      <div className="flex flex-col gap-5">
-        <span className="mb-10">
-          <h2 className="text-2xl font-bold">Change Project Name</h2>
+
+      <div className="flex flex-col gap-3">
+        {isAccountLinked && (
+          <Fragment>
+            {msg && <p className="text-red-500">{msg}</p>}
+            <button
+              className="p-2 bg-red-400 hover:bg-red-300 rounded w-[200px] text-white font-bold"
+              onClick={() => handleUnlinkFitBitAccount()}
+            >
+              Unlink FitBit Account
+            </button>
+          </Fragment>
+        )}
+
+        <span className="mb-5">
           <ChangeNameField />
         </span>
-        <span className="mb-10">
-          <h2 className="text-2xl font-bold">Change Project Description</h2>
+        <span className="mb-5">
           <ChangeDescriptionField />
         </span>
-        <span className="mb-10">
-          <h2 className="text-2xl font-bold">Change Owner Email</h2>
+        <span className="mb-5">
           <ChangeOwnerEmailField />
         </span>
         {project.isOwner && (
           <span className="mb-10">
-            <h2 className="text-2xl font-bold">Delete Project</h2>
+            <h2 className="text-lg font-bold">Delete Project</h2>
             <p className="text-secondary text-md">
               DISCLAIMER: This action is not reversible
             </p>
