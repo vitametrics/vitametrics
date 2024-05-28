@@ -13,6 +13,7 @@ const AdminServiceStatus = () => {
     fetchVersion,
     isBackendUpToDate,
     isFrontendUpToDate,
+    health,
   } = useAuth();
 
   return (
@@ -55,7 +56,7 @@ const AdminServiceStatus = () => {
             <span>
               {isFrontendUpToDate ? "Up to date" : "Update available"}
             </span>
-            <span> Good </span>
+            <span> - </span>
           </div>
           <div className="bg-primary w-full text-white p-3 text-lg custom-grid">
             <span>
@@ -64,7 +65,7 @@ const AdminServiceStatus = () => {
             <span>Server</span>
             <span>{backendVersion}</span>
             <span>{isBackendUpToDate ? "Up to date" : "Update available"}</span>
-            <span> Good </span>
+            <span> {health ? "Good" : "Bad"} </span>
           </div>
         </div>
       </div>

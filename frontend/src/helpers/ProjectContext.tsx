@@ -225,16 +225,13 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
             deviceStartDate <= rangeStartDate &&
             deviceEndDate >= rangeEndDate
           ) {
-            console.log("no need to fetch data for: " + deviceId);
             return false;
           } else {
-            console.log("need to fetch data for: " + deviceId);
             return true;
           }
         }
       }
     }
-    console.log("need to fetch data for: " + deviceId);
     return true;
   };
 
@@ -256,12 +253,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         console.log(response.data);
         const newDeviceData = response.data;
 
-        console.log(
-          "searching through the previous devices data: " + devicesData
-        );
         setDevicesData((prevDevicesData) => {
-          console.log("previously was: " + prevDevicesData);
-
           let existingIndex = -1;
 
           for (const device of prevDevicesData) {
@@ -295,32 +287,9 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         });
       } catch (error) {
         console.error(error);
-        //setDevicesData(testDevicesData);
       }
     }
   };
-
-  /*
-  useEffect(() => {
-    if (selectedDevices.length > 0) {
-      //setDevicesData([]);
-      selectedDevices.forEach((deviceId) => {
-        fetchDevice(deviceId);
-      });
-    }
-  }, [rangeStartDate, rangeEndDate, selectedDevices]);*/
-
-  /*
-  const fetchDevices = async () => {
-    try {
-      for (const device of selectedDevices) {
-        fetchDevice(device);
-      }
-    } catch (error) {
-      console.error(error);
-      //setDevicesData(testDevicesData);
-    }
-  };*/
 
   const fetchProjectDevices = async () => {
     try {
@@ -398,7 +367,7 @@ const useProject = () => {
   const context = useContext(ProjectContext);
 
   if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error("useProject must be used within an AuthProvider");
   }
 
   return context;
