@@ -109,15 +109,15 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       : []
   );
 
-  const testDevices = [
-    {
-      deviceId: "2570612980",
-      deviceName: "Alta HR",
-      deviceVersion: "Alta HR",
-      lastSyncTime: "2024-02-10T00:00:00.000Z",
-      batteryLevel: "4",
-    },
-  ];
+  // const testDevices = [
+  //   {
+  //     deviceId: "2570612980",
+  //     deviceName: "Alta HR",
+  //     deviceVersion: "Alta HR",
+  //     lastSyncTime: "2024-02-10T00:00:00.000Z",
+  //     batteryLevel: "4",
+  //   },
+  // ];
 
   const [downloadHistory, setDownloadHistory] = useState<any[]>([]);
   const DOWNLOAD_HISTORY_ENDPOINT = `${process.env.API_URL}/project/get-cached-files`;
@@ -172,7 +172,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       setProject(response.data.project);
       //update with tempDevices
       updateProject({
-        devices: testDevices,
+        devices: response.data.project.devices,
       });
       setIsAccountLinked(response.data.isAccountLinked);
     } catch (error) {

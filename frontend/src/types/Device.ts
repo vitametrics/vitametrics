@@ -61,6 +61,7 @@ export interface HeartData {
   export interface Device {
     deviceId: string;
     deviceName: string;
+    ownerName: string;
     deviceVersion: string;
     batteryLevel: string;
     lastSyncTime: string;

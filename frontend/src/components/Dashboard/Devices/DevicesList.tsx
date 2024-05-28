@@ -17,7 +17,7 @@ const DevicesList: React.FC<DeviceListProps> = ({ devices, onDeviceClick }) => {
         className="grid grid-cols-5 w-full text-primary items-center font-bold"
       >
         <button className="p-2">NAME</button>
-        <button className="p-2">ID</button>
+        <button className="p-2">OWNER</button>
         <button className="p-2">VERSION</button>
         <button>LAST SYNC DATE</button>
         <button>BATTERY LEVEL</button>
@@ -33,7 +33,7 @@ const DevicesList: React.FC<DeviceListProps> = ({ devices, onDeviceClick }) => {
               {truncateName(device.deviceName)}
             </span>
 
-            <span className="text-primary">{device.deviceId}</span>
+            <span className="text-primary">{device.ownerName}</span>
             <span className="text-primary">{device.deviceVersion}</span>
             <span className="text-primary">{device.lastSyncTime}</span>
             <span className="text-primary text-center flex flex-row items-center justify-center gap-2">
