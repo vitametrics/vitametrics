@@ -211,7 +211,7 @@ const Settings = () => {
         initial="hidden"
         animate={inView ? "show" : "hidden"}
         ref={ref}
-        className="w-full h-full flex flex-col p-[3.75rem] text-primary "
+        className="w-full h-screen flex flex-col p-[3.75rem] text-primary "
       >
         {renderDeleteMenu()}
         <h2 className="w-full text-4xl font-libreFranklin font-bold mb-10">

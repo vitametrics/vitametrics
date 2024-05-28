@@ -112,8 +112,7 @@ const UserDashboard = () => {
       setProjectName("");
       await setProjects([...projects, project]);
       setMsg("");
-      console.log("redirecting to... ");
-      navigate(`/dashboard/project?id=${project.projectId}&view=overview`);
+      window.location.href = `/dashboard/project?id=${project.projectId}&view=overview`;
     } catch (error) {
       const errorMessage = getErrorMessage(error);
       setMsg(errorMessage);
