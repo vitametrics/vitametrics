@@ -97,10 +97,9 @@ const DeviceDownloadPanel: React.FC<DeviceDownloadPanelProps> = ({
           archiveName: fileNameInput,
         },
         withCredentials: true,
-        responseType: "blob", // Ensures the response is treated as a blob
+        responseType: "blob",
       });
 
-      // Retrieve the filename from the Content-Disposition header
       const contentDisposition = response.headers["content-disposition"];
       let fileName = "download";
       if (contentDisposition) {
@@ -110,16 +109,15 @@ const DeviceDownloadPanel: React.FC<DeviceDownloadPanelProps> = ({
         }
       }
 
-      // Create a URL and link to trigger the download
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", fileName); // Use the filename from the header
+      link.setAttribute("download", fileName);
       document.body.appendChild(link);
       link.click();
       link.parentNode?.removeChild(link);
 
-      setDownloadFlag(false);
+      setDownloadFlag(true);
       setDownloadMsg("Data downloaded successfully");
     } catch (error) {
       setDownloadMsg("Data failed to download");
