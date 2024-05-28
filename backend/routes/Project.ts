@@ -137,14 +137,16 @@ router.get(
   '/download-data',
   verifySession,
   validationHandler([
-    query('deviceId').not().isEmpty().withMessage('Device ID is required'),
-    query('dataType').not().isEmpty().withMessage('Data type is required'),
-    query('date').not().isEmpty().withMessage('Date is required'),
+    query('deviceIds').not().isEmpty().withMessage('Device IDs are required'),
+    query('dataTypes').not().isEmpty().withMessage('Data types are required'),
+    query('startDate').not().isEmpty().withMessage('Start date is required'),
+    query('endDate').not().isEmpty().withMessage('End date is required'),
     query('detailLevel')
       .not()
       .isEmpty()
       .withMessage('Detail level is required'),
   ]),
+  query('archiveName').optional(),
   checkProjectMembership,
   refreshFitbitToken,
   asyncHandler(downloadDataHandler)

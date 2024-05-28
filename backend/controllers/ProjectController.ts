@@ -1,4 +1,6 @@
 import { Request, Response } from 'express';
+import fs from 'fs';
+import path from 'path';
 
 import { Types } from 'mongoose';
 
@@ -10,6 +12,10 @@ import Cache from '../models/Cache';
 import Device from '../models/Device';
 import Project, { IProject } from '../models/Project';
 import User, { IUser } from '../models/User';
+import { DateTime } from 'luxon';
+import { zip } from 'zip-a-folder';
+
+const VALID_INTRADAY_INTERVALS = ['1sec', '1min', '5min', '15min'];
 
 export async function getProjectInfo(req: Request, res: Response) {
   try {
@@ -468,105 +474,169 @@ export async function downloadCachedFile(req: Request, res: Response) {
 
 export async function downloadDataHandler(req: Request, res: Response) {
   const currentProject = req.project as IProject;
-  const { deviceId, dataType, date, detailLevel } = req.query;
+  const deviceIds = (req.query.deviceIds as string).split(',');
+  const dataTypes = (req.query.dataTypes as string).split(',');
+  const startDate = req.query.startDate as string;
+  const endDate = req.query.endDate as string;
+  const detailLevel = req.query.detailLevel as string;
+  const archiveName = req.query.archiveName as string;
 
-  if (!deviceId || typeof deviceId !== 'string') {
-    res.status(400).json({ msg: 'Invalid or missing deviceId' });
+  if (!deviceIds || !Array.isArray(deviceIds) || deviceIds.length === 0) {
+    res.status(400).json({ msg: 'Invalid or missing deviceIds' });
+    return;
+  }
+
+  if (!dataTypes || !Array.isArray(dataTypes) || dataTypes.length === 0) {
+    res.status(400).json({ msg: 'Invalid or missing dataTypes' });
+    return;
+  }
+
+  if (!startDate || !endDate) {
+    res.status(400).json({ msg: 'Start date and end date are required'});
     return;
   }
 
   try {
-    logger.info(`Downloading data for project: ${currentProject.projectId}`);
+    logger.info(`Batch downloading data for project: ${currentProject.projectId}`);
 
-    const cacheKey = `${currentProject.projectId}-${deviceId}-${dataType}-${date}-${detailLevel}`;
-    const cachedData = await Cache.findOne({
-      key: cacheKey,
-      projectId: currentProject.projectId,
-      deviceId,
-    });
+    const dataToZip = [];
+    const cacheKeys = [];
+    const dateRange = getDateRange(startDate as string, endDate as string);
 
-    if (cachedData) {
-      logger.info(`Serving cached data for ${cacheKey}`);
-      res.setHeader(
-        'Content-Disposition',
-        `attachment; filename=${currentProject.projectId}-${date}-${deviceId}.csv`
-      );
-      res.set('Content-Type', 'text/csv');
-      res.send(cachedData.data);
-      return;
-    }
+    for (const deviceId of deviceIds) {
+      for (const date of dateRange) {
+        const dailyData: { [timestamp: string]: { [dataType: string]: string } } = {};
 
-    const device = await Device.findOne({
-      deviceId: deviceId,
-      _id: { $in: currentProject.devices },
-    });
+        for (const dataType of dataTypes) {
+          const cacheKey = `${currentProject.projectId}-${deviceId}-${dataType}-${date}-${detailLevel}`;
+          cacheKeys.push(cacheKey);
 
-    if (!device) {
-      logger.error(
-        `Device: ${deviceId} not found in project ${currentProject.projectId}`
-      );
-      res.status(404).json({ msg: 'Device not found' });
-      return;
-    }
+          let cachedData = await Cache.findOne({ key: cacheKey, projectId: currentProject.projectId, deviceId });
 
-    let data: any[] = [];
+          if (!cachedData) {
+            const device = await Device.findOne({ deviceId, projectId: currentProject.projectId});
+            
+            if (!device) {
+              logger.error(`Device: ${deviceId} not found in project ${currentProject.projectId}`);
+              res.status(404).json({ msg: 'Device not found'});
+              return;
+            }
 
-    if (
-      device.owner === 'Project' &&
-      currentProject.fitbitUserId &&
-      currentProject.fitbitAccessToken
-    ) {
-      data = await fetchIntradayData(
-        currentProject.fitbitUserId,
-        currentProject.fitbitAccessToken,
-        dataType as string,
-        date as string,
-        detailLevel as string
-      );
-    } else {
-      const user = await User.findOne({ userId: device.owner });
+            let data: any[] = [];
+            let accessToken: string;
+            let userId: string;
 
-      if (
-        user &&
-        user.isTempUser &&
-        user.fitbitUserId &&
-        user.fitbitAccessToken
-      ) {
-        data = await fetchIntradayData(
-          user.fitbitUserId,
-          user.fitbitAccessToken,
-          dataType as string,
-          date as string,
-          detailLevel as string
-        );
+            if (currentProject.fitbitAccessToken && currentProject.fitbitUserId) {
+              accessToken = currentProject.fitbitAccessToken;
+              userId = currentProject.fitbitUserId;
+            } else {
+              const user = await User.findOne({ userId: device.owner});
+
+              if (user && user.isTempUser && user.fitbitUserId && user.fitbitAccessToken) {
+                accessToken = user.fitbitAccessToken;
+                userId = user.fitbitUserId;
+              } else {
+                logger.error(`Fitbit credentials not found for device owner: ${device.owner}`);
+                res.status(400).json({ msg: 'Fitbit credentials not found for device owner'});
+                return;
+              }
+            }
+
+            if (VALID_INTRADAY_INTERVALS.includes(detailLevel)) {
+              data = await fetchIntradayData(userId, accessToken, dataType, date, detailLevel);
+            } else {
+              data = await fetchData(userId, accessToken, date, date);
+            }
+
+            const csvData = data.map((d) => `${d.timestamp},${d.value}`).join('\n') + '\n';
+
+            const newCache = new Cache({
+              key: cacheKey,
+              projectId: currentProject.projectId,
+              deviceId,
+              data: csvData,
+              createdAt: new Date(),
+            });
+
+            await newCache.save();
+            cachedData = newCache;
+          }
+
+          cachedData.data.split('\n').forEach((line) => {
+            if (!line.trim()) return;
+            const [ timestamp, value ] = line.split(',');
+            if (!dailyData[timestamp]) {
+              dailyData[timestamp] = {};
+            }
+            dailyData[timestamp][dataType] = value;
+          });
+        }
+
+        const fileName = `${currentProject.projectId}-${date}-${deviceId}.csv`;
+        const headers = ['Timestamp', ...dataTypes].join(',');
+        const rows = Object.keys(dailyData).sort().map(timestamp => {
+          const values = dataTypes.map(dataType => dailyData[timestamp][dataType] || '');
+          return [timestamp, ...values].join(',');
+        });
+
+        const csvContent = [headers, ...rows].join('\n');
+        dataToZip.push({ fileName, data: csvContent });
       }
     }
 
-    const csv = data.map((d) => `${d.timestamp},${d.value}`).join('\n') + '\n';
+    const tempFolderPath = path.resolve(__dirname, `../tmp/${currentProject.projectId}-${Date.now()}`);
+    fs.mkdirSync(tempFolderPath, { recursive: true });
 
-    const newCache = new Cache({
-      key: cacheKey,
-      projectId: currentProject.projectId,
-      deviceId,
-      data: csv,
-      createdAt: new Date(),
-    });
+    for (const { fileName, data} of dataToZip) {
+      const filePath = path.join(tempFolderPath, fileName);
+      fs.writeFileSync(filePath, data);
+    }
 
-    await newCache.save();
+    const zipFileName = `${archiveName || 'archive'}.zip`;
+    const tempZipFolderPath = path.resolve(__dirname, '../tmp_zip');
+    fs.mkdirSync(tempZipFolderPath, { recursive: true });
+    const zipFilePath = path.join(tempZipFolderPath, zipFileName);
 
-    res.setHeader(
-      'Content-Disposition',
-      `attachment; filename=${currentProject.projectId}-${date}-${deviceId}.csv`
-    );
-    res.set('Content-Type', 'text/csv');
-    logger.info(
-      `Data downloaded successfuly for project: ${currentProject.projectId}`
-    );
-    res.send(csv);
+    await zip(tempFolderPath, zipFilePath);
+
+    fs.rmSync(tempFolderPath, { recursive: true, force: true});
+
+    if (dataToZip.length === 1) {
+      const singleFile = dataToZip[0];
+      const singleFileName = `${archiveName || singleFile.fileName}`;
+      res.setHeader('Content-Disposition', `attachment; filename=${singleFileName}`);
+      res.set('Content-Type', 'text/csv');
+      res.send(singleFile.data);
+      return;
+    } else {
+      res.setHeader('Content-Disposition', `attachment; filename=${zipFileName}`);
+      res.sendFile(zipFilePath, (error) => {
+        if (error) {
+          logger.error(`Error sending zip file: ${error}`);
+          res.status(500).json({ msg: 'Internal Server Error'});
+          return;
+        } else {
+          fs.unlinkSync(zipFilePath);
+        }    
+      });
+    }
+    res.status(200);
     return;
   } catch (error) {
     logger.error(`Error downloading data: ${error}`);
-    res.status(500).json({ msg: 'Internal Server Error' });
+    res.status(500).json({ msg: 'Internal Server Error'});
     return;
   }
+}
+
+function getDateRange(startDate: string, endDate: string ): string[] {
+  const start = DateTime.fromFormat(startDate, 'MM/dd/yyyy');
+  const end = DateTime.fromFormat(endDate, 'MM/dd/yyyy');
+  const range = [];
+
+  for (let dt = start; dt <= end; dt = dt.plus({ days: 1})) {
+    range.push(dt.toISODate()!);
+  }
+
+  return range;
 }
