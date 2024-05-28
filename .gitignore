@@ -25,6 +25,8 @@ frontend/dist-ssr
 # backend ignore
 backend/build
 backend/fitaddon/build
+backend/tmp
+backend/tmp_zip
 .env
 .env.save # for server B)
 
