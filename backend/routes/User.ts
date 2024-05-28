@@ -32,6 +32,25 @@ router.post(
 );
 
 router.post(
+  '/forgot-password',
+  validationHandler([
+    body('email').isEmail().withMessage('Valid email is required'),
+  ]),
+  asyncHandler(UserController.forgotPassword)
+);
+
+router.post(
+  '/reset-password',
+  validationHandler([
+    body('password')
+      .isLength({ min: 6 })
+      .withMessage('Password must be at least 6 characters'),
+    body('token').not().isEmpty().withMessage('Token is required'),
+  ]),
+  asyncHandler(UserController.resetPassword)
+);
+
+router.post(
   '/change-member-name',
   verifySession,
   validationHandler([
