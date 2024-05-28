@@ -20,49 +20,37 @@ const verifyRole = (role: string) => {
           .json({ msg: 'Unauthorized - User not logged in' });
       }
 
-      if (
-        (!projectId && currentUser.role === 'siteAdmin') ||
-        currentUser.role === 'siteOwner'
-      ) {
+      if (currentUser.role === 'siteOwner' || currentUser.role === 'siteAdmin') {
         return next();
-      } else if (projectId) {
-        const currentProject = (await Project.findOne({
-          projectId,
-        })) as IProject;
+      }
 
-        if (!currentProject) {
-          logger.error('[verifyRole] Project not found');
-          return res.status(404).json({ msg: 'Project not found' });
-        }
+      if (!projectId) {
+        logger.error('[verifyRole] No projectId provided');
+        return res.status(400).json({ msg: 'Bad Request - No projectId provided' });
+      }
 
-        if (currentProject.ownerId === currentUser.userId) {
-          return next();
-        }
+      const currentProject = await Project.findOne({ projectId }) as IProject;
 
-        const isAdmin =
-          currentUser.role === 'siteAdmin' ||
-          currentProject.admins.includes(currentUser._id as Types.ObjectId);
-        const isMember = currentUser.projects.some((projId) =>
-          projId.equals(currentProject._id as string)
-        );
+      if (!currentProject) {
+        logger.error('[verifyRole] Project not found');
+        return res.status(404).json({ msg: 'Project not found' });
+      }
 
-        if (isAdmin && role === 'user' && isMember) {
-          return next();
-        }
-      } else {
-        logger.error(
-          `[verifyRole] Access denied - User does not have the required role`
-        );
-        return res.status(403).json({
-          msg: 'Access denied - User does not have the required role',
-        });
+      if (currentProject.ownerId === currentUser.userId) {
+        return next();
+      }
+
+      const isAdmin = currentProject.admins.includes(currentUser._id as Types.ObjectId);
+      const isMember = currentUser.projects.some((projId) => projId.equals(currentProject._id as Types.ObjectId));
+
+      if (role === 'admin' && isAdmin && isMember) {
+        return next();
       }
     } catch (error) {
-      logger.error(`[verifyRole] Error verifying role: ${error}`);
-      res.status(500).json({ msg: 'Internal Server Error' });
-      return;
+      logger.error('[verifyRole] Error verifying role', error);
+      return res.status(500).json({ msg: 'Internal Server Error' });
     }
-  };
+  }
 };
 
 export default verifyRole;

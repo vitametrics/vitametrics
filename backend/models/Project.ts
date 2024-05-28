@@ -9,9 +9,9 @@ export interface IProject extends Document {
   ownerId: string;
   ownerName: string;
   ownerEmail: string;
-  fitbitUserId: string;
-  fitbitAccessToken: string;
-  fitbitRefreshToken: string;
+  fitbitUserId: string | undefined;
+  fitbitAccessToken: string | undefined;
+  fitbitRefreshToken: string | undefined;
   lastTokenRefresh: Date | undefined;
   areNotificationsEnabled: boolean;
   members: Types.ObjectId[];

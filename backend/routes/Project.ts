@@ -70,7 +70,7 @@ router.put(
   '/toggle-notifications',
   verifySession,
   checkProjectMembership,
-  verifyRole('admin'),
+  verifyRole('owner'),
   asyncHandler(toggleNotifications)
 );
 

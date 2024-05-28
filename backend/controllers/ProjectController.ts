@@ -195,9 +195,9 @@ export async function unlinkFitbitAccount(req: Request, res: Response) {
       return;
     }
 
-    project.fitbitUserId = "";
-    project.fitbitAccessToken = "";
-    project.fitbitRefreshToken = "";
+    project.fitbitUserId = undefined;
+    project.fitbitAccessToken = undefined;
+    project.fitbitRefreshToken = undefined;
     project.lastTokenRefresh = undefined;
 
     await project.save();
