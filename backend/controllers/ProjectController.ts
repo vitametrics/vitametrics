@@ -32,7 +32,7 @@ export async function getProjectInfo(req: Request, res: Response) {
     })
       .select('-fitbitAccessToken -fitbitRefreshToken -lastTokenRefresh')
       .populate('members', 'userId email name role emailVerified isTempUser')
-      .populate('devices', 'deviceId deviceName deviceVersion owner ownerName')
+      .populate('devices', 'deviceId deviceName deviceVersion owner ownerName lastSyncTime batteryLevel')
       .populate('admins', 'userId');
 
     if (!project) {
