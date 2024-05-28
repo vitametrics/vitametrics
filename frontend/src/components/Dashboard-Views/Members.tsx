@@ -244,7 +244,7 @@ const Members = () => {
         return prev;
       });
       handleClose();
-      setMsg("Temp User invited!");
+      setMsg("Participant invited!");
     } catch (error: any) {
       setMsg(error.response.data.msg);
       setSearchParams((prev) => {

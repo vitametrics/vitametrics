@@ -21,7 +21,7 @@ interface Project {
 }
 
 const UserDashboard = () => {
-  const { projects, setProjects, userRole } = useAuth();
+  const { projects, setProjects, userRole, fetchInstanceProjects } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -44,7 +44,7 @@ const UserDashboard = () => {
         ? "Admin"
         : userRole === "user"
           ? "User"
-          : "Temp User";
+          : "Participant";
 
   const handleItemsPerPageChange = (
     event: React.ChangeEvent<HTMLSelectElement>
@@ -115,9 +115,8 @@ const UserDashboard = () => {
       );
 
       const project = response.data.project;
-      const updatedProjects = [...projects, project];
-      setProjects(updatedProjects);
-
+      //try this fix!
+      await fetchInstanceProjects();
       navigate(`/dashboard/project?id=${project.projectId}&view=overview`);
       setMsg("");
     } catch (error) {

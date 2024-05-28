@@ -282,7 +282,7 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
           {showTempUserDropdown && (
             <div className="w-full bg-white rounded-lg mt-1 shadow-lg p-2">
               {filteredTempUsers.length === 0 ? (
-                <span className="text-primary ">No temp users found</span>
+                <span className="text-primary ">No participants found</span>
               ) : (
                 <Fragment>
                   {filteredTempUsers.map((user) => (

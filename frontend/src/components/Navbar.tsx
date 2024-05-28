@@ -108,16 +108,6 @@ const Navbar = () => {
             id="navbar-default"
           >
             <ul className="font-medium flex flex-col justify-center items-center p-4 md:p-0 mt-4 border border-gray-100 rounded-lg  md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 dark:bg-transparent md:dark:bg-transparent">
-              <li>
-                <a
-                  href="/demo?view=data"
-                  className="block py-2 px-3 text-2xl  hover:text-gray-300 bg-transparent rounded md:bg-transparent  md:p-0  "
-                  aria-current="page"
-                >
-                  Demo
-                </a>
-              </li>
-
               {isAuthenticated ? (
                 <li>
                   <a

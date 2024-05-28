@@ -73,7 +73,7 @@ const MembersContainer: React.FC<MembersContainerProps> = ({
               <option value="owner">Owner</option>
               <option value="admin">Admin</option>
               <option value="user">User</option>
-              <option value="guest">Temp User</option>
+              <option value="guest">Participant</option>
             </select>
           </div>
           <input

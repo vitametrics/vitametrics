@@ -30,7 +30,7 @@ const MembersList: React.FC<MembersListProps> = ({ members, onClick }) => {
                   ? "Site Admin"
                   : member.role === "user"
                     ? "User"
-                    : "Temp User"}
+                    : "Participant"}
             </span>
           </div>
         </Fragment>
