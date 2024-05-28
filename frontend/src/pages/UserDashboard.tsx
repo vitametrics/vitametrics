@@ -109,12 +109,8 @@ const UserDashboard = () => {
       );
 
       const project = response.data.savedProject;
-      console.log("project that was created");
-      console.log(project);
-      //try this fix!
+
       await fetchInstanceProjects();
-      console.log("current projects");
-      console.log(projects);
 
       navigate(`/dashboard/project?id=${project.projectId}&view=overview`);
       setMsg("");
