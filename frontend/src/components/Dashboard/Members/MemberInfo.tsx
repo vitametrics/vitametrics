@@ -23,7 +23,7 @@ const MemberInfo: React.FC<MemberInfoProps> = ({
   const [msg, setMsg] = useState("");
   const [flag, setFlag] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const currMember = project.members.find((m) => m.userId === userId);
+  const currMember = project.members.find((m) => m.userId === member?.userId);
 
   const [role, setRole] = useState(
     currMember?.isOwner
@@ -35,15 +35,13 @@ const MemberInfo: React.FC<MemberInfoProps> = ({
           : "tempUser"
   );
 
-  console.log(role);
-
   const handleRoleChange = async (role: string) => {
     setIsEditing(false);
     try {
       const res = await axios.post(
         CHANGE_ROLE_ENDPOINT,
         {
-          userId: userId,
+          userId: member?.userId,
           role: role,
         },
         { withCredentials: true }
