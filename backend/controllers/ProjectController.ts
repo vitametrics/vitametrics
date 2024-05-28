@@ -195,6 +195,13 @@ export async function unlinkFitbitAccount(req: Request, res: Response) {
       return;
     }
 
+    const devices = await Device.find({ projectId: currentProject.projectId, owner: 'Project' });
+
+    for (const device of devices) {
+      await Cache.deleteMany({ deviceId: device.deviceId, projectID: currentProject.projectId });
+      await device.deleteOne();
+    }
+
     project.fitbitUserId = undefined;
     project.fitbitAccessToken = undefined;
     project.fitbitRefreshToken = undefined;
@@ -354,68 +361,68 @@ export async function fetchIntradayDataHandler(req: Request, res: Response) {
   }
 }
 
-export async function fetchDataHandler(req: Request, res: Response) {
-  const currentProject = req.project as IProject;
-  const { startDate, endDate } = req.query;
-  try {
-    logger.info(`Fetching data for project: ${currentProject.projectId}`);
+// export async function fetchDataHandler(req: Request, res: Response) {
+//   const currentProject = req.project as IProject;
+//   const { startDate, endDate } = req.query;
+//   try {
+//     logger.info(`Fetching data for project: ${currentProject.projectId}`);
 
-    if (!currentProject.fitbitUserId || !currentProject.fitbitAccessToken) {
-      logger.error(
-        `Fitbit account not linked to project: ${currentProject.projectId}`
-      );
-      res.status(400).json({ message: 'Fitbit account not linked to project' });
-      return;
-    }
-    const projectFitbitUserId = currentProject.fitbitUserId;
-    const projectFitbitAccessToken = currentProject.fitbitAccessToken;
+//     if (!currentProject.fitbitUserId || !currentProject.fitbitAccessToken) {
+//       logger.error(
+//         `Fitbit account not linked to project: ${currentProject.projectId}`
+//       );
+//       res.status(400).json({ message: 'Fitbit account not linked to project' });
+//       return;
+//     }
+//     const projectFitbitUserId = currentProject.fitbitUserId;
+//     const projectFitbitAccessToken = currentProject.fitbitAccessToken;
 
-    const projectData = await fetchData(
-      projectFitbitUserId,
-      projectFitbitAccessToken,
-      startDate as string,
-      endDate as string
-    );
+//     const projectData = await fetchData(
+//       projectFitbitUserId,
+//       projectFitbitAccessToken,
+//       startDate as string,
+//       endDate as string
+//     );
 
-    const tempUsers = await User.find({
-      projects: currentProject._id,
-      isTempUser: true,
-    });
+//     const tempUsers = await User.find({
+//       projects: currentProject._id,
+//       isTempUser: true,
+//     });
 
-    const tempUserData = await Promise.all(
-      tempUsers.map(async (tempUser) => {
-        if (!tempUser.fitbitUserId || !tempUser.fitbitAccessToken) {
-          logger.error(
-            `Fitbit account not linked to temporary user: ${tempUser.userId}`
-          );
-          return null;
-        }
+//     const tempUserData = await Promise.all(
+//       tempUsers.map(async (tempUser) => {
+//         if (!tempUser.fitbitUserId || !tempUser.fitbitAccessToken) {
+//           logger.error(
+//             `Fitbit account not linked to temporary user: ${tempUser.userId}`
+//           );
+//           return null;
+//         }
 
-        return await fetchData(
-          tempUser.fitbitUserId,
-          tempUser.fitbitAccessToken,
-          startDate as string,
-          endDate as string
-        );
-      })
-    );
+//         return await fetchData(
+//           tempUser.fitbitUserId,
+//           tempUser.fitbitAccessToken,
+//           startDate as string,
+//           endDate as string
+//         );
+//       })
+//     );
 
-    const allData = {
-      projectData,
-      tempUserData: tempUserData.filter((data) => data !== null),
-    };
+//     const allData = {
+//       projectData,
+//       tempUserData: tempUserData.filter((data) => data !== null),
+//     };
 
-    logger.info(
-      `Data fetched successfully for project: ${currentProject.projectId}`
-    );
-    res.json(allData);
-    return;
-  } catch (error) {
-    logger.error(`Error fetching data: ${error}`);
-    res.status(500).json({ msg: 'Internal Server Error' });
-    return;
-  }
-}
+//     logger.info(
+//       `Data fetched successfully for project: ${currentProject.projectId}`
+//     );
+//     res.json(allData);
+//     return;
+//   } catch (error) {
+//     logger.error(`Error fetching data: ${error}`);
+//     res.status(500).json({ msg: 'Internal Server Error' });
+//     return;
+//   }
+// }
 
 export async function deleteCachedFiles(req: Request, res: Response) {
   const currentProject = req.project as IProject;
@@ -511,8 +518,8 @@ export async function downloadDataHandler(req: Request, res: Response) {
   const currentProject = req.project as IProject;
   const deviceIds = (req.query.deviceIds as string).split(',');
   const dataTypes = (req.query.dataTypes as string).split(',');
-  const startDate = req.query.startDate as string;
-  const endDate = req.query.endDate as string;
+  const startDate = DateTime.fromFormat(req.query.startDate as string, 'MM/dd/yyyy').toISODate();
+  const endDate = DateTime.fromFormat(req.query.endDate as string, 'MM/dd/yyyy').toISODate();
   const detailLevel = req.query.detailLevel as string;
   const archiveName = req.query.archiveName as string;
 
@@ -527,7 +534,7 @@ export async function downloadDataHandler(req: Request, res: Response) {
   }
 
   if (!startDate || !endDate) {
-    res.status(400).json({ msg: 'Start date and end date are required'});
+    res.status(400).json({ msg: 'Start date and end date are required' });
     return;
   }
 
@@ -535,55 +542,56 @@ export async function downloadDataHandler(req: Request, res: Response) {
     logger.info(`Batch downloading data for project: ${currentProject.projectId}`);
 
     const dataToZip = [];
-    const cacheKeys = [];
-    const dateRange = getDateRange(startDate as string, endDate as string);
+    const dateRange = getDateRange(startDate, endDate);
+    const isIntraday = detailLevel && VALID_INTRADAY_INTERVALS.includes(detailLevel);
 
     for (const deviceId of deviceIds) {
+      const aggregatedData: { [date: string]: { [dataType: string]: string } } = {};
+
       for (const date of dateRange) {
         const dailyData: { [timestamp: string]: { [dataType: string]: string } } = {};
 
         for (const dataType of dataTypes) {
           const cacheKey = `${currentProject.projectId}-${deviceId}-${dataType}-${date}-${detailLevel}`;
-          cacheKeys.push(cacheKey);
-
           let cachedData = await Cache.findOne({ key: cacheKey, projectId: currentProject.projectId, deviceId });
 
           if (!cachedData) {
-            const device = await Device.findOne({ deviceId, projectId: currentProject.projectId});
-            
+            const device = await Device.findOne({ deviceId, projectId: currentProject.projectId });
+
             if (!device) {
               logger.error(`Device: ${deviceId} not found in project ${currentProject.projectId}`);
-              res.status(404).json({ msg: 'Device not found'});
+              res.status(404).json({ msg: 'Device not found' });
               return;
             }
 
             let data: any[] = [];
-            let accessToken: string;
-            let userId: string;
+            let accessToken: string = '';
+            let userId: string = '';
 
-            if (currentProject.fitbitAccessToken && currentProject.fitbitUserId) {
+            if (device.owner === 'Project' && currentProject.fitbitAccessToken && currentProject.fitbitUserId) {
               accessToken = currentProject.fitbitAccessToken;
               userId = currentProject.fitbitUserId;
             } else {
-              const user = await User.findOne({ userId: device.owner});
-
-              if (user && user.isTempUser && user.fitbitUserId && user.fitbitAccessToken) {
+              const user = await User.findOne({ userId: device.owner });
+              if (user && user.isTempUser && user.fitbitAccessToken && user.fitbitUserId) {
                 accessToken = user.fitbitAccessToken;
                 userId = user.fitbitUserId;
-              } else {
-                logger.error(`Fitbit credentials not found for device owner: ${device.owner}`);
-                res.status(400).json({ msg: 'Fitbit credentials not found for device owner'});
-                return;
               }
             }
 
-            if (VALID_INTRADAY_INTERVALS.includes(detailLevel)) {
-              data = await fetchIntradayData(userId, accessToken, dataType, date, detailLevel);
-            } else {
-              data = await fetchData(userId, accessToken, date, date);
+            if (!accessToken || !userId) {
+              logger.error(`Fitbit credentials not found for device owner: ${device.owner}`);
+              res.status(400).json({ msg: 'Fitbit credentials not found for device owner'});
+              return;
             }
 
-            const csvData = data.map((d) => `${d.timestamp},${d.value}`).join('\n') + '\n';
+            if (isIntraday) {
+              data = await fetchIntradayData(userId, accessToken, dataType, date, detailLevel);
+            } else {
+              data = await fetchData(userId, accessToken, startDate, endDate, dataType);
+            }
+
+            const csvData = data.map((d) => `${d.timestamp || d.dateTime},${d.value}`).join('\n') + '\n';
 
             const newCache = new Cache({
               key: cacheKey,
@@ -599,7 +607,7 @@ export async function downloadDataHandler(req: Request, res: Response) {
 
           cachedData.data.split('\n').forEach((line) => {
             if (!line.trim()) return;
-            const [ timestamp, value ] = line.split(',');
+            const [timestamp, value] = line.split(',');
             if (!dailyData[timestamp]) {
               dailyData[timestamp] = {};
             }
@@ -607,66 +615,87 @@ export async function downloadDataHandler(req: Request, res: Response) {
           });
         }
 
-        const fileName = `${currentProject.projectId}-${date}-${deviceId}.csv`;
-        const headers = ['Timestamp', ...dataTypes].join(',');
-        const rows = Object.keys(dailyData).sort().map(timestamp => {
-          const values = dataTypes.map(dataType => dailyData[timestamp][dataType] || '');
-          return [timestamp, ...values].join(',');
+        if (isIntraday) {
+          const headers = ['Timestamp', ...dataTypes].join(',');
+          const rows = Object.keys(dailyData).sort().map((timestamp) => {
+            const values = dataTypes.map((dataType) => dailyData[timestamp][dataType] || '');
+            return [timestamp, ...values].join(',');
+          });
+
+          const csvContent = [headers, ...rows].join('\n');
+          const fileName = `${currentProject.projectId}-${deviceId}-${date}.csv`;
+          dataToZip.push({ fileName, data: csvContent });
+        } else {
+          Object.keys(dailyData).forEach((timestamp) => {
+            const dateKey = timestamp.split('T')[0];
+            if (!aggregatedData[dateKey]) {
+              aggregatedData[dateKey] = {};
+            }
+            Object.assign(aggregatedData[dateKey], dailyData[timestamp]);
+          });
+        }
+      }
+
+      if (!isIntraday) {
+        const headers = ['Date', ...dataTypes].join(',');
+        const rows = Object.keys(aggregatedData).sort().map((date) => {
+          const values = dataTypes.map((dataType) => aggregatedData[date][dataType] || '');
+          return [date, ...values].join(',');
         });
 
         const csvContent = [headers, ...rows].join('\n');
-        dataToZip.push({ fileName, data: csvContent });
+        const singleFileName = `${archiveName || `${currentProject.projectId}-${deviceId}.csv`}`;
+        res.setHeader('Content-Disposition', `attachment; filename=${singleFileName}`);
+        res.set('Content-Type', 'text/csv');
+        res.send(csvContent);
+        return;
       }
     }
 
-    const tempFolderPath = path.resolve(__dirname, `../tmp/${currentProject.projectId}-${Date.now()}`);
-    fs.mkdirSync(tempFolderPath, { recursive: true });
+    if (isIntraday && dataToZip.length > 1) {
+      const tempFolderPath = path.resolve(__dirname, `../tmp/${currentProject.projectId}-${Date.now()}`);
+      fs.mkdirSync(tempFolderPath, { recursive: true });
 
-    for (const { fileName, data} of dataToZip) {
-      const filePath = path.join(tempFolderPath, fileName);
-      fs.writeFileSync(filePath, data);
-    }
+      for (const { fileName, data } of dataToZip) {
+        const filePath = path.join(tempFolderPath, fileName);
+        fs.writeFileSync(filePath, data);
+      }
 
-    const zipFileName = `${archiveName || 'archive'}.zip`;
-    const tempZipFolderPath = path.resolve(__dirname, '../tmp_zip');
-    fs.mkdirSync(tempZipFolderPath, { recursive: true });
-    const zipFilePath = path.join(tempZipFolderPath, zipFileName);
+      const zipFileName = `${archiveName || 'archive'}.zip`;
+      const tempZipFolderPath = path.resolve(__dirname, '../tmp_zip');
+      fs.mkdirSync(tempZipFolderPath, { recursive: true });
+      const zipFilePath = path.join(tempZipFolderPath, zipFileName);
 
-    await zip(tempFolderPath, zipFilePath);
+      await zip(tempFolderPath, zipFilePath);
 
-    fs.rmSync(tempFolderPath, { recursive: true, force: true});
+      fs.rmSync(tempFolderPath, { recursive: true, force: true });
 
-    if (dataToZip.length === 1) {
+      res.setHeader('Content-Disposition', `attachment; filename=${zipFileName}`);
+      res.sendFile(zipFilePath, (error) => {
+        if (error) {
+          logger.error(`Error sending zip file: ${error}`);
+          res.status(500).json({ msg: 'Internal Server Error' });
+          return;
+        } else {
+          fs.unlinkSync(zipFilePath);
+        }
+      });
+    } else if (isIntraday && dataToZip.length === 1) {
       const singleFile = dataToZip[0];
       const singleFileName = `${archiveName || singleFile.fileName}`;
       res.setHeader('Content-Disposition', `attachment; filename=${singleFileName}`);
       res.set('Content-Type', 'text/csv');
       res.send(singleFile.data);
-      return;
-    } else {
-      res.setHeader('Content-Disposition', `attachment; filename=${zipFileName}`);
-      res.sendFile(zipFilePath, (error) => {
-        if (error) {
-          logger.error(`Error sending zip file: ${error}`);
-          res.status(500).json({ msg: 'Internal Server Error'});
-          return;
-        } else {
-          fs.unlinkSync(zipFilePath);
-        }    
-      });
     }
-    res.status(200);
-    return;
   } catch (error) {
     logger.error(`Error downloading data: ${error}`);
-    res.status(500).json({ msg: 'Internal Server Error'});
-    return;
+    res.status(500).json({ msg: 'Internal Server Error' });
   }
 }
 
 function getDateRange(startDate: string, endDate: string ): string[] {
-  const start = DateTime.fromFormat(startDate, 'MM/dd/yyyy');
-  const end = DateTime.fromFormat(endDate, 'MM/dd/yyyy');
+  const start = DateTime.fromISO(startDate);
+  const end = DateTime.fromISO(endDate);
   const range = [];
 
   for (let dt = start; dt <= end; dt = dt.plus({ days: 1})) {

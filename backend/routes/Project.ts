@@ -5,7 +5,7 @@ import { query, body, param } from 'express-validator';
 import {
   getProjectInfo,
   fetchDevicesHandler,
-  fetchDataHandler,
+  // fetchDataHandler,
   fetchIntradayDataHandler,
   downloadDataHandler,
   changeDeviceName,
@@ -82,18 +82,18 @@ router.post(
   asyncHandler(fetchDevicesHandler)
 );
 
-router.get(
-  '/fetch-data',
-  verifySession,
-  validationHandler([
-    query('id').not().isEmpty().withMessage('Device ID is required'),
-    query('startDate').not().isEmpty().withMessage('Start date is required'),
-    query('endDate').not().isEmpty().withMessage('End date is required'),
-  ]),
-  checkProjectMembership,
-  refreshFitbitToken,
-  asyncHandler(fetchDataHandler)
-);
+// router.get(
+//   '/fetch-data',
+//   verifySession,
+//   validationHandler([
+//     query('id').not().isEmpty().withMessage('Device ID is required'),
+//     query('startDate').not().isEmpty().withMessage('Start date is required'),
+//     query('endDate').not().isEmpty().withMessage('End date is required'),
+//   ]),
+//   checkProjectMembership,
+//   refreshFitbitToken,
+//   asyncHandler(fetchDataHandler)
+// );
 
 router.get(
   '/fetch-intraday',
