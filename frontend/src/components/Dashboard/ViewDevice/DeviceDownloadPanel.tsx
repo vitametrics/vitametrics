@@ -107,6 +107,10 @@ const DeviceDownloadPanel: React.FC<DeviceDownloadPanelProps> = ({
         } else {
           fileName = `${project.projectId}-${startDate}-${endDate}-${deviceId}.csv`;
         }
+
+        if (startDate === endDate) {
+          fileName = `${project.projectId}-${startDate}-${deviceId}.csv`;
+        }
       }
 
       const url = window.URL.createObjectURL(new Blob([response.data]));
