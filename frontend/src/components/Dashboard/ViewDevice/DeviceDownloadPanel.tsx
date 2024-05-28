@@ -97,29 +97,30 @@ const DeviceDownloadPanel: React.FC<DeviceDownloadPanelProps> = ({
           archiveName: fileNameInput,
         },
         withCredentials: true,
+        responseType: "blob", // Ensures the response is treated as a blob
       });
 
-      let fileName = fileNameInput;
-
-      if (fileName === "") {
-        if (selectedDataTypes.length > 1) {
-          fileName = "achive.zip";
-        } else {
-          fileName = `${project.projectId}-${startDate}-${endDate}-${deviceId}.csv`;
-        }
-
-        if (startDate === endDate) {
-          fileName = `${project.projectId}-${startDate}-${deviceId}.csv`;
+      // Retrieve the filename from the Content-Disposition header
+      const contentDisposition = response.headers["content-disposition"];
+      let fileName = "download";
+      if (contentDisposition) {
+        const matches = contentDisposition.match(/filename="?(.+)"?/);
+        if (matches && matches.length > 1) {
+          fileName = matches[1];
         }
       }
 
+      // Create a URL and link to trigger the download
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", fileName);
+      link.setAttribute("download", fileName); // Use the filename from the header
       document.body.appendChild(link);
       link.click();
       link.parentNode?.removeChild(link);
+
+      setDownloadFlag(false);
+      setDownloadMsg("Data downloaded successfully");
     } catch (error) {
       setDownloadMsg("Data failed to download");
       setDownloadFlag(false);
