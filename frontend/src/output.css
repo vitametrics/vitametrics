@@ -1653,7 +1653,7 @@ video {
 
 html {
   min-height: 100%;
-  background-color: #faf9f6;
+  background-color: #f7faff;
   overflow-x: hidden;
   scroll-behavior: smooth;
 }
@@ -2294,10 +2294,6 @@ nav.animated-parent {
 
   .md\:border-0 {
     border-width: 0px;
-  }
-
-  .md\:bg-transparent {
-    background-color: transparent;
   }
 
   .md\:bg-white {
