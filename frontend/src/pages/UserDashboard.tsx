@@ -237,13 +237,13 @@ const UserDashboard = () => {
                     className="text-center hover:cursor-pointer"
                     onClick={() => handleProjectClick(project.projectId)}
                   >
-                    {project.devices?.length || 0}
+                    {project.devices?.length || project.devicesCount || 0}
                   </label>
                   <label
                     className="text-center hover:cursor-pointer"
                     onClick={() => handleProjectClick(project.projectId)}
                   >
-                    {project.members?.length || 1}
+                    {project.members?.length || project.membersCount || 1}
                   </label>
                   <button
                     className="p-2 bg-transparent text-white rounded-lg flex items-center justify-center hover:cursor-pointer"
