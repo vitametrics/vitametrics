@@ -2097,6 +2097,11 @@ nav.animated-parent {
   background-color: rgb(248 250 252 / var(--tw-bg-opacity));
 }
 
+.hover\:bg-primary3:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(43 46 71 / var(--tw-bg-opacity));
+}
+
 .hover\:text-gray-300:hover {
   --tw-text-opacity: 1;
   color: rgb(209 213 219 / var(--tw-text-opacity));

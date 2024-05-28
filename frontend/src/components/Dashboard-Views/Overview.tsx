@@ -17,11 +17,11 @@ const Overview = () => {
       ref={ref}
       className="w-full h-full flex flex-col p-10 bg-whitePrimary font-libreFranklin"
     >
-      <h2 className="w-full text-4xl text-primary p-5 pb-0 mb-5 font-bold">
+      <h2 className="w-full text-3xl text-primary p-5 pb-0 font-bold">
         {project.projectName} Overview
       </h2>
       <div className="p-5 w-full flex-col">
-        <h2 className="text-2xl text-primary mb-5">
+        <h2 className="text-xl text-primary mb-5">
           {project.projectDescription}
         </h2>
         <OverviewMembers />
