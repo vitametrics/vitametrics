@@ -6,13 +6,12 @@ import Devices from "../components/Dashboard-Views/Devices";
 import Overview from "../components/Dashboard-Views/Overview";
 import Members from "../components/Dashboard-Views/Members";
 import DashboardSettings from "../components/Dashboard-Views/DashboardSettings";
-import AuthenticationBanner from "../components/Dashboard/AuthenticationBanner";
 import ViewDevice from "../components/Dashboard-Views/ViewDevice";
 import { useSearchParams } from "react-router-dom";
 import { useProject } from "../helpers/ProjectContext";
 
 const ProjectDashboard = () => {
-  const { showBackDrop, isAccountLinked } = useProject();
+  const { showBackDrop } = useProject();
   const [searchParams, setSearchParams] = useSearchParams({ view: "overview" });
   const view = searchParams.get("view") || "overview";
   const setPage = (newView: string) => {
@@ -50,10 +49,7 @@ const ProjectDashboard = () => {
         <div className="w-[75px]">
           <StickySidebar setPage={setPage} path="dashboard/project" />
         </div>
-        <div className="flex w-full h-full flex-col">
-          {!isAccountLinked && <AuthenticationBanner />}
-          {renderComponent()}
-        </div>
+        <div className="flex w-full h-full flex-col">{renderComponent()}</div>
       </div>
     </div>
   );
