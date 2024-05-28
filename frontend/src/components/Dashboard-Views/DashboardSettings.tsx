@@ -12,6 +12,7 @@ import {
   deleteProjectService,
   unlinkFitBitAccountService,
 } from "../../services/projectService";
+import { oAuthLogin } from "../../services/projectService";
 import { useState } from "react";
 
 const DashboardSettings = () => {
@@ -70,7 +71,7 @@ const DashboardSettings = () => {
       </h2>
 
       <div className="flex flex-col gap-3">
-        {isAccountLinked && (
+        {isAccountLinked ? (
           <Fragment>
             {msg && <p className="text-red-500">{msg}</p>}
             <button
@@ -78,6 +79,15 @@ const DashboardSettings = () => {
               onClick={() => handleUnlinkFitBitAccount()}
             >
               Unlink FitBit Account
+            </button>
+          </Fragment>
+        ) : (
+          <Fragment>
+            <button
+              className="p-2 bg-secondary2 hover:bg-secondary rounded w-[200px] text-white font-bold"
+              onClick={oAuthLogin}
+            >
+              Link FitBit Account
             </button>
           </Fragment>
         )}

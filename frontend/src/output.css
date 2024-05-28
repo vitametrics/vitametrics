@@ -730,6 +730,10 @@ video {
   margin-top: 6rem;
 }
 
+.mt-3 {
+  margin-top: 0.75rem;
+}
+
 .mt-4 {
   margin-top: 1rem;
 }
@@ -740,10 +744,6 @@ video {
 
 .mt-auto {
   margin-top: auto;
-}
-
-.mt-3 {
-  margin-top: 0.75rem;
 }
 
 .box-border {
@@ -1336,11 +1336,6 @@ video {
   background-color: rgb(234 179 8 / var(--tw-bg-opacity));
 }
 
-.bg-green-400 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(74 222 128 / var(--tw-bg-opacity));
-}
-
 .bg-hero-texture {
   background-image: url('/src/assets/images/hero-texture.png');
 }
@@ -1661,12 +1656,6 @@ html {
   background-color: #faf9f6;
   overflow-x: hidden;
   scroll-behavior: smooth;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    background-color: #1e1d20;
-  }
 }
 
 #root {
@@ -2108,11 +2097,6 @@ nav.animated-parent {
 .hover\:bg-slate-50:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(248 250 252 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-green-300:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(134 239 172 / var(--tw-bg-opacity));
 }
 
 .hover\:text-gray-300:hover {

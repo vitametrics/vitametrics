@@ -11,12 +11,6 @@ html {
   scroll-behavior: smooth;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    background-color: #1e1d20;
-  }
-}
-
 #root {
   scroll-behavior: smooth;
 }

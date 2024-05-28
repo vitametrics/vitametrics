@@ -49,7 +49,7 @@ const MembersContainer: React.FC<MembersContainerProps> = ({
   return (
     <div className="flex flex-col bg-white rounded-xl shadow-lg p-10 mb-12">
       <h2 className="text-2xl text-primary font-bold mb-3">
-        Your Instance Members
+        Your Instance's Members
       </h2>
       <button
         onClick={() => toggleInviteMenu(true)}
