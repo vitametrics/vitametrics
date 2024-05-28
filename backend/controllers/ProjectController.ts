@@ -185,20 +185,55 @@ export async function unlinkFitbitAccount(req: Request, res: Response) {
   const currentProject = req.project as IProject;
 
   try {
+
     logger.info(`Unlinking fitbit account for project: ${currentProject.projectId}`);
 
-    currentProject.fitbitUserId = "";
-    currentProject.fitbitAccessToken = "";
-    currentProject.fitbitRefreshToken = "";
-    currentProject.lastTokenRefresh = undefined;
+    const project = await Project.findOne({ projectId: currentProject.projectId });
+    if (!project) {
+      logger.error(`Project: ${currentProject.projectId} not found`);
+      res.status(404).json({ msg: 'Project not found' });
+      return;
+    }
 
-    await currentProject.save();
+    project.fitbitUserId = "";
+    project.fitbitAccessToken = "";
+    project.fitbitRefreshToken = "";
+    project.lastTokenRefresh = undefined;
+
+    await project.save();
 
     logger.info(`Fitbit account unlinked successfully for project: ${currentProject.projectId}`);
     res.status(200).json({ msg: 'Fitbit account unlinked successfully' });
     return;
   } catch (error) {
     logger.error(`Error unlinking Fitbit account: ${error}`);
+    res.status(500).json({ msg: 'Internal Server Error' });
+    return;
+  }
+}
+
+export async function toggleNotifications(req: Request, res: Response) {
+  const currentProject = req.project as IProject;
+
+  try {
+    logger.info(`Toggling notifications for project: ${currentProject.projectId}`);
+
+    const project = await Project.findOne({ projectId: currentProject.projectId });
+
+    if (!project) {
+      logger.error(`Project: ${currentProject.projectId} not found`);
+      res.status(404).json({ msg: 'Project not found' });
+      return;
+    }
+
+    project.areNotificationsEnabled = !project.areNotificationsEnabled;
+
+    await project.save();
+
+    res.status(200).json({ msg: 'Notifications toggled successfully', areNotificationsEnabled: project.areNotificationsEnabled});
+
+  } catch (error) {
+    logger.error(`Error toggling notifications: ${error}`);
     res.status(500).json({ msg: 'Internal Server Error' });
     return;
   }

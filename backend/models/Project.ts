@@ -13,6 +13,7 @@ export interface IProject extends Document {
   fitbitAccessToken: string;
   fitbitRefreshToken: string;
   lastTokenRefresh: Date | undefined;
+  areNotificationsEnabled: boolean;
   members: Types.ObjectId[];
   admins: (Types.ObjectId | IUser)[];
   devices: Types.ObjectId[];
@@ -29,6 +30,7 @@ const projectSchema = new mongoose.Schema(
     fitbitAccessToken: { type: String, required: false },
     fitbitRefreshToken: { type: String, required: false },
     lastTokenRefresh: { type: Date },
+    areNotificationsEnabled: { type: Boolean, default: true },
     creationDate: { type: Date, default: Date.now },
     members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     admins: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],

@@ -65,12 +65,17 @@ class AdminController {
 
       if (process.env.NODE_ENV === 'production') {
         logger.info(
-          `Sending email to user: email: ${user.email}, link: ${process.env.BASE_URL}/dashboard/project?id=${newProjectId}`
+          `Sending email to user: email: ${user.email}, link: ${process.env.BASE_URL}/dashboard/project?id=${newProjectId}&view=overview`
         );
         await sendEmail({
           to: user.email,
           subject: 'Your new project',
-          text: `You have created a new project: ${projectName}. Access it here: ${process.env.BASE_URL}/dashboard/project?id=${newProjectId}`,
+          text: `You have created a new project: ${projectName}. Access it here: ${process.env.BASE_URL}/dashboard/project?id=${newProjectId}&view=overview`,
+        });
+        await sendEmail({
+          to: process.env.ADMIN_EMAIL as string,
+          subject: '[INFO] Vitametrics - New Project Created',
+          text: `A new project has been created by ${user.name}. Access it here: ${process.env.BASE_URL}/dashboard/project?id=${newProjectId}&view=overview`,
         });
         res
           .status(200)
@@ -230,11 +235,13 @@ class AdminController {
               subject: `Vitametrics: Invitation to Participate`,
               text: `Please associate your account with Fitbit by following this link: ${fitbitAuthLink}`,
             });
-            await sendEmail({
-              to: project.ownerEmail,
-              subject: `[INFO] Vitametrics: ${project.projectName} - New Member Added`,
-              text: `A new member has been added to your project by ${req.user?.name}.\nThe users role is set to 'tempUser'.\n\nYou can manage your project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}`,
-            });
+            if (project.areNotificationsEnabled) {
+              await sendEmail({
+                to: project.ownerEmail,
+                subject: `[INFO] Vitametrics: ${project.projectName} - New Member Added`,
+                text: `A new member has been added to your project by ${req.user?.name}.\nThe users role is set to 'tempUser'.\n\nYou can manage your project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}`,
+              });
+            }
             res
               .status(200)
               .json({ msg: 'Temp member added successfully', project });
@@ -266,11 +273,13 @@ class AdminController {
               subject: 'Vitametrics: Invitation to Join',
               text: `You have been invited to join the project: ${project.projectName}. Please set your password by following this link: ${process.env.BASE_URL}/set-password?token=${passwordToken}&projectId=${project.projectId}`,
             });
-            await sendEmail({
-              to: project.ownerEmail,
-              subject: `[INFO] Vitametrics: ${project.projectName} - New Member Added`,
-              text: `A new member has been added to your project by ${req.user?.name}.\nThe users role is set to 'user'.\nTo manage your project, use this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}&view=overview`,
-            });
+            if (project.areNotificationsEnabled) {
+              await sendEmail({
+                to: project.ownerEmail,
+                subject: `[INFO] Vitametrics: ${project.projectName} - New Member Added`,
+                text: `A new member has been added to your project by ${req.user?.name}.\nThe users role is set to 'user'.\nTo manage your project, use this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}&view=overview`,
+              });
+            }
             res.status(200).json({ msg: 'Member invited successfully' });
             return;
           } else {
@@ -313,11 +322,13 @@ class AdminController {
                 subject: `Vitametrics: Admin Invitation to ${project.projectName}`,
                 text: `You have been invited to join ${project.projectName} as an admin. You can access the project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}&view=overview`,
               });
-              await sendEmail({
-                to: project.ownerEmail,
-                subject: `[INFO] Vitametrics: Admin Added to ${project.projectName}`,
-                text: `A new admin has been added to your project by ${req.user?.name}.\n\nYou can manage your project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}`,
-              });
+              if (project.areNotificationsEnabled) {
+                await sendEmail({
+                  to: project.ownerEmail,
+                  subject: `[INFO] Vitametrics: Admin Added to ${project.projectName}`,
+                  text: `A new admin has been added to your project by ${req.user?.name}.\n\nYou can manage your project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}`,
+                });
+              }
               res.status(200).json({ msg: 'Admin added successfully' });
               return;
             } else {
@@ -339,11 +350,13 @@ class AdminController {
                 text: `You have been added to the project: ${project.projectName} with the role ${role as string | 'user'}. You can access the project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}&view=overview`,
               });
             }
-            await sendEmail({
-              to: project.ownerEmail,
-              subject: `[INFO] Vitametrics: ${project.projectName} - Member Added`,
-              text: `A new member has been added to your project by ${req.user?.name}.\n\nYou can manage your project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}`,
-            });
+            if (project.areNotificationsEnabled) {
+              await sendEmail({
+                to: project.ownerEmail,
+                subject: `[INFO] Vitametrics: ${project.projectName} - Member Added`,
+                text: `A new member has been added to your project by ${req.user?.name}.\n\nYou can manage your project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}`,
+              });
+            }
             res.status(200).json({ msg: 'Member added successfully' });
             return;
           } else {
@@ -442,11 +455,13 @@ class AdminController {
             text: `You have been removed from the project: ${project.projectName}.`,
           });
         }
-        await sendEmail({
-          to: project.ownerEmail,
-          subject: `[INFO] ${project.projectName} - Member Removed`,
-          text: `A member has been removed from your project by ${req.user?.name}.\n\nYou can manage your project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}`,
-        });
+        if (project.areNotificationsEnabled) {
+          await sendEmail({
+            to: project.ownerEmail,
+            subject: `[INFO] ${project.projectName} - Member Removed`,
+            text: `A member has been removed from your project by ${req.user?.name}.\n\nYou can manage your project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}`,
+          });
+        }
         res.status(200).json({ msg: 'Member removed successfully' });
         return;
       } else {
