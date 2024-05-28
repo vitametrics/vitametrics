@@ -110,9 +110,10 @@ const UserDashboard = () => {
       const project = response.data.project;
       toggleCreateProjectMenu(false);
       setProjectName("");
-      setProjects([...projects, project]);
+      await setProjects([...projects, project]);
       setMsg("");
-      handleProjectClick(project.projectId);
+      console.log("redirecting to... ");
+      navigate(`/dashboard/project?id=${project.projectId}&view=overview`);
     } catch (error) {
       const errorMessage = getErrorMessage(error);
       setMsg(errorMessage);
