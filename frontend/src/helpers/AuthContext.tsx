@@ -25,11 +25,11 @@ interface AuthContextProps {
   setUserRole: (auth0: string) => void;
   health: boolean;
   fetchSiteMembers: () => void;
-  siteProjects: any[];
   siteMembers: any[];
   showBackDrop: boolean;
   setShowBackDrop: (auth0: boolean) => void;
   setSiteMembers: (auth0: any[]) => void;
+  fetchInstanceProjects: () => void;
 }
 
 interface Project {
@@ -63,7 +63,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isFrontendUpToDate, setIsFrontendUpToDate] = useState<boolean>(false);
   const [health, setHealth] = useState(false);
   const [siteMembers, setSiteMembers] = useState<any[]>([]);
-  const [siteProjects, setSiteProjects] = useState<any[]>([]);
   const [showBackDrop, setShowBackDrop] = useState(false);
 
   const login = async () => {
@@ -179,8 +178,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         withCredentials: true,
       });
 
-      console.log(response.data.users);
-      setSiteProjects(response.data.users);
+      console.log(response.data);
+      setProjects(response.data);
     } catch (error) {
       console.error("Error fetching site members:", error);
     }
@@ -210,11 +209,11 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setUserRole,
         health,
         fetchSiteMembers,
-        siteProjects,
         siteMembers,
         setSiteMembers,
         showBackDrop,
         setShowBackDrop,
+        fetchInstanceProjects,
       }}
     >
       {children}

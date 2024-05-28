@@ -143,7 +143,7 @@ const UserDashboard = () => {
   };
 
   return (
-    <div className="h-screen bg-lightmodePrimary font-ralewayBold">
+    <div className="h-full bg-lightmodePrimary font-ralewayBold">
       <DashboardNavbar />
       <div className={`backdrop ${showBackDrop ? "show" : ""}`}></div>
 
