@@ -146,7 +146,9 @@ const DeviceDownloadPanel: React.FC<DeviceDownloadPanelProps> = ({
           className=" bg-white text-primary rounded-tr-lg rounded-br-lg p-2 border-gray-300 border"
           onClick={() => setFileNameInput("")}
         >
-          {selectedDataTypes.length > 1 ? ".zip" : ".csv"}
+          {selectedDataTypes.length > 1 || downloadStartDate === downloadEndDate
+            ? ".zip"
+            : ".csv"}
         </span>
       </span>
 
