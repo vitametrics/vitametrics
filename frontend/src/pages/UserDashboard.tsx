@@ -106,11 +106,12 @@ const UserDashboard = () => {
         { withCredentials: true }
       );
 
-      console.log(response.data.project);
       const project = response.data.project;
-      await setProjects([...projects, project]);
-      setMsg("");
+      const updatedProjects = [...projects, project];
+      setProjects(updatedProjects);
+
       navigate(`/dashboard/project?id=${project.projectId}&view=overview`);
+      setMsg("");
     } catch (error) {
       const errorMessage = getErrorMessage(error);
       setMsg(errorMessage);
