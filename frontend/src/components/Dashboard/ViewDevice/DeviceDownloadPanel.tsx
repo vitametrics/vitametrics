@@ -86,11 +86,6 @@ const DeviceDownloadPanel: React.FC<DeviceDownloadPanelProps> = ({
       const startDate = formatDate(downloadStartDate);
       const endDate = formatDate(downloadEndDate);
 
-      let filename = fileNameInput;
-      if (filename === "") {
-        filename = `device-${deviceId}-${startDate}-${endDate}-${selectedDataTypes.join("-")}`;
-      }
-
       const response = await axios.get(DOWNLOAD_DATA_ENDPOINT, {
         params: {
           deviceIds: deviceId,
@@ -99,7 +94,7 @@ const DeviceDownloadPanel: React.FC<DeviceDownloadPanelProps> = ({
           endDate: endDate,
           detailLevel: downloadDetailLevel,
           projectId: project.projectId,
-          archiveName: filename,
+          archiveName: fileNameInput,
         },
         withCredentials: true,
       });

@@ -26,16 +26,16 @@ const DevicesList: React.FC<DeviceListProps> = ({ devices, onDeviceClick }) => {
         <Fragment key={device.deviceId}>
           <span className="h-[0.5px] bg-[#d3d7df] w-full"></span>
           <div
-            className="grid grid-cols-5 w-full items-center text-center p-2 hover:cursor-pointer hover:bg-slate-50"
+            className="grid grid-cols-5 w-full items-center text-center py-2 hover:cursor-pointer hover:bg-slate-50"
             onClick={() => onDeviceClick(device.deviceId)}
           >
-            <span className="text-primary ml-2">
+            <span className="text-primary">
               {truncateName(device.deviceName)}
             </span>
 
-            <span className="text-primary ml-2">{device.deviceId}</span>
-            <span className="text-primary ml-2">{device.deviceVersion}</span>
-            <span className="text-primary ml-2">{device.lastSyncTime}</span>
+            <span className="text-primary">{device.deviceId}</span>
+            <span className="text-primary">{device.deviceVersion}</span>
+            <span className="text-primary">{device.lastSyncTime}</span>
             <span className="text-primary text-center flex flex-row items-center justify-center gap-2">
               {parseInt(device.batteryLevel) >= 70 ? (
                 <FullBatteryLevel />
