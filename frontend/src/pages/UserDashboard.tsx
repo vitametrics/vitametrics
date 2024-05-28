@@ -10,15 +10,9 @@ import useDebounce from "../helpers/useDebounce";
 import axios from "axios";
 import { deleteProjectService } from "../services/projectService";
 import DeleteIcon from "../assets/DeleteIcon";
+import { Project } from "../types/Project";
 
 const CREATE_PROJECT_ENDPOINT = `${process.env.API_URL}/admin/create-project`;
-
-interface Project {
-  projectId: string;
-  projectName: string;
-  deviceCount: number;
-  memberCount: number;
-}
 
 const UserDashboard = () => {
   const { projects, setProjects, userRole, fetchInstanceProjects } = useAuth();
@@ -115,8 +109,13 @@ const UserDashboard = () => {
       );
 
       const project = response.data.project;
+      console.log("project that was created");
+      console.log(project);
       //try this fix!
       await fetchInstanceProjects();
+      console.log("current projects");
+      console.log(projects);
+
       navigate(`/dashboard/project?id=${project.projectId}&view=overview`);
       setMsg("");
     } catch (error) {
@@ -242,13 +241,13 @@ const UserDashboard = () => {
                     className="text-center hover:cursor-pointer"
                     onClick={() => handleProjectClick(project.projectId)}
                   >
-                    {project.deviceCount}
+                    {project.devices?.length || 0}
                   </label>
                   <label
                     className="text-center hover:cursor-pointer"
                     onClick={() => handleProjectClick(project.projectId)}
                   >
-                    {project.memberCount}
+                    {project.members?.length || 1}
                   </label>
                   <button
                     className="p-2 bg-transparent text-white rounded-lg flex items-center justify-center hover:cursor-pointer"
