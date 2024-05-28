@@ -8,7 +8,9 @@ const NotificationToggle = () => {
   const { project, updateProject } = useProject();
   const [msg, setMsg] = useState("");
   const [flag, setFlag] = useState(false);
-  const [isEnabled, setIsEnabled] = useState(project.areNotificationsEnabled);
+  const [isEnabled, setIsEnabled] = useState(
+    project.areNotificationsEnabled ?? false
+  );
 
   useEffect(() => {
     setIsEnabled(project.areNotificationsEnabled);
