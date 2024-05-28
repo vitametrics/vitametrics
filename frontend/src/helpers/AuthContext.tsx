@@ -23,6 +23,13 @@ interface AuthContextProps {
   userRole: string;
   isAdmin: boolean;
   setUserRole: (auth0: string) => void;
+  health: boolean;
+  fetchSiteMembers: () => void;
+  siteProjects: any[];
+  siteMembers: any[];
+  showBackDrop: boolean;
+  setShowBackDrop: (auth0: boolean) => void;
+  setSiteMembers: (auth0: any[]) => void;
 }
 
 interface Project {
@@ -54,6 +61,10 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [latestVersion, setLatestVersion] = useState<string>("");
   const [isBackendUpToDate, setIsBackendUpToDate] = useState<boolean>(false);
   const [isFrontendUpToDate, setIsFrontendUpToDate] = useState<boolean>(false);
+  const [health, setHealth] = useState(false);
+  const [siteMembers, setSiteMembers] = useState<any[]>([]);
+  const [siteProjects, setSiteProjects] = useState<any[]>([]);
+  const [showBackDrop, setShowBackDrop] = useState(false);
 
   const login = async () => {
     if (!isAuthenticated) {
@@ -68,8 +79,11 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setIsOwner(response.data.user.role === "siteOwner");
         setIsAdmin(response.data.user.role === "siteAdmin");
         setUserRole(response.data.user.role);
-        if (isOwner) {
+        if (isOwner || isAdmin) {
           await fetchVersion();
+          await fetchHealth();
+          await fetchSiteMembers();
+          await fetchInstanceProjects();
         }
         setProjects(response.data.user.projects);
       } catch (error) {
@@ -115,6 +129,9 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []); // Empty dependency array to run only on mount
 
   const FETCH_VERSION_ENDPOINT = `${process.env.API_URL}/version`;
+  const FETCH_HEALTH_ENDPOINT = `${process.env.API_URL}/health`;
+  const FETCH_SITE_MEMBERS_ENDPOINT = `${process.env.API_URL}/owner/users`;
+  const FETCH_INSTANCE_PROJECTS_ENDPOINT = `${process.env.API_URL}/owner/projects`;
 
   const fetchVersion = async () => {
     try {
@@ -131,6 +148,43 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const fetchHealth = async () => {
+    try {
+      await axios.get(FETCH_HEALTH_ENDPOINT, {
+        withCredentials: true,
+      });
+      setHealth(true);
+    } catch (error) {
+      setHealth(false);
+      console.error("Error fetching health:", error);
+    }
+  };
+
+  const fetchSiteMembers = async () => {
+    try {
+      const response = await axios.get(FETCH_SITE_MEMBERS_ENDPOINT, {
+        withCredentials: true,
+      });
+
+      console.log(response.data);
+      setSiteMembers(response.data);
+    } catch (error) {
+      console.error("Error fetching site members:", error);
+    }
+  };
+
+  const fetchInstanceProjects = async () => {
+    try {
+      const response = await axios.get(FETCH_INSTANCE_PROJECTS_ENDPOINT, {
+        withCredentials: true,
+      });
+
+      console.log(response.data.users);
+      setSiteProjects(response.data.users);
+    } catch (error) {
+      console.error("Error fetching site members:", error);
+    }
+  };
   return (
     <AuthContext.Provider
       value={{
@@ -154,6 +208,13 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         userRole,
         isAdmin,
         setUserRole,
+        health,
+        fetchSiteMembers,
+        siteProjects,
+        siteMembers,
+        setSiteMembers,
+        showBackDrop,
+        setShowBackDrop,
       }}
     >
       {children}
