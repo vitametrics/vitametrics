@@ -79,7 +79,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setIsOwner(response.data.user.role === "siteOwner");
         setIsAdmin(response.data.user.role === "siteAdmin");
         setUserRole(response.data.user.role);
-        await fetchInstanceProjects();
 
         if (isOwner || isAdmin) {
           await fetchVersion();
@@ -87,6 +86,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           await fetchSiteMembers();
         }
         setProjects(response.data.user.projects);
+        await fetchInstanceProjects();
       } catch (error) {
         console.log(error);
       } finally {
