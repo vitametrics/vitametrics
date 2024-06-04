@@ -116,7 +116,7 @@ const MemberInfo: React.FC<MemberInfoProps> = ({
               : member.isAdmin
                 ? "Admin"
                 : member.isTempUser
-                  ? "Temp User"
+                  ? "Participant"
                   : "User"}
             {project.isOwner && !member.isOwner && !member.isTempUser && (
               <EditButton onClick={() => setIsEditing(true)} />

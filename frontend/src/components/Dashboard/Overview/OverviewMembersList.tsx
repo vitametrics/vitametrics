@@ -29,7 +29,7 @@ const OverviewMembersList: React.FC<OverviewMembersListProps> = ({
                 : member.isAdmin
                   ? "Admin"
                   : member.isTempUser
-                    ? "Temp User"
+                    ? "Participant"
                     : "User"}
             </span>
           </div>
