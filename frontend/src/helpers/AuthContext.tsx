@@ -16,8 +16,7 @@ interface AuthContextProps {
   setProjects: (auth0: any[]) => void;
   latestVersion: string;
   currVersion: string;
-  isBackendUpToDate: boolean;
-  isFrontendUpToDate: boolean;
+  isUpToDate: boolean;
   fetchVersion: () => void;
   userRole: string;
   isAdmin: boolean;
@@ -57,8 +56,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [projects, setProjects] = useState<Project[]>([]);
   const [currVersion, setCurrVersion] = useState<string>("");
   const [latestVersion, setLatestVersion] = useState<string>("");
-  const [isBackendUpToDate, setIsBackendUpToDate] = useState<boolean>(false);
-  const [isFrontendUpToDate, setIsFrontendUpToDate] = useState<boolean>(false);
+  const [isUpToDate, setIsUpToDate] = useState<boolean>(false);
   const [health, setHealth] = useState(false);
   const [siteMembers, setSiteMembers] = useState<any[]>([]);
 
@@ -137,9 +135,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const response = await axios.get(FETCH_VERSION_ENDPOINT, {
         withCredentials: true,
       });
-      setCurrVersion(response.data.version);
-      setIsBackendUpToDate(response.data.isBackendUpToDate);
-      setIsFrontendUpToDate(response.data.isFrontendUpToDate);
+      setCurrVersion(response.data.siteVersion);
+      setIsUpToDate(response.data.isUpToDate);
       setLatestVersion(response.data.latestVersion);
     } catch (error) {
       console.error("Error fetching version:", error);
@@ -197,8 +194,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setProjects,
         currVersion,
         latestVersion,
-        isBackendUpToDate,
-        isFrontendUpToDate,
+        isUpToDate,
         fetchVersion,
         userRole,
         isAdmin,

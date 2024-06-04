@@ -7,14 +7,7 @@ import HealthyIcon from "../../assets/HealthyIcon";
 
 const AdminServiceStatus = () => {
   const { ref, inView } = useCustomInView();
-  const {
-    frontendVersion,
-    backendVersion,
-    fetchVersion,
-    isBackendUpToDate,
-    isFrontendUpToDate,
-    health,
-  } = useAuth();
+  const { currVersion, fetchVersion, isUpToDate } = useAuth();
 
   return (
     <motion.div
@@ -48,24 +41,11 @@ const AdminServiceStatus = () => {
             <span> Connection to Fitbit </span>
           </div>
           <div className="bg-primary w-full text-white p-3 text-lg custom-grid">
-            <span>
-              {isFrontendUpToDate ? <HealthyIcon /> : <UnhealthyIcon />}
-            </span>
-            <span>Client</span>
-            <span>{frontendVersion}</span>
-            <span>
-              {isFrontendUpToDate ? "Up to date" : "Update available"}
-            </span>
-            <span> - </span>
-          </div>
-          <div className="bg-primary w-full text-white p-3 text-lg custom-grid">
-            <span>
-              {isBackendUpToDate ? <HealthyIcon /> : <UnhealthyIcon />}{" "}
-            </span>
+            <span>{isUpToDate ? <HealthyIcon /> : <UnhealthyIcon />}</span>
             <span>Server</span>
-            <span>{backendVersion}</span>
-            <span>{isBackendUpToDate ? "Up to date" : "Update available"}</span>
-            <span> {health ? "Good" : "Bad"} </span>
+            <span>{currVersion}</span>
+            <span>{isUpToDate ? "Up to date" : "Update available"}</span>
+            <span> - </span>
           </div>
         </div>
       </div>
