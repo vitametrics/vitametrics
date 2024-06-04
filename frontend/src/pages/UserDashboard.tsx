@@ -65,6 +65,9 @@ const UserDashboard = () => {
   }, []);
 
   const toggleCreateProjectMenu = (show: boolean) => {
+    console.log("from toggle creating project menu..");
+    console.log(projects);
+    console.log(currentProjects);
     setSearchParams((prev) => {
       prev.set("createProject", show.toString());
       return prev;
