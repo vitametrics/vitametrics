@@ -1,13 +1,12 @@
 import { fadeInItemVariants } from "../../hooks/animationVariant";
 import useCustomInView from "../../hooks/useCustomInView";
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useAuth } from "../../helpers/AuthContext";
 
 const AdminOverview = () => {
   const { ref, inView } = useCustomInView();
-  const [uptodate] = useState(true);
-  const { currVersion, latestVersion, fetchVersion } = useAuth();
+  const { currVersion, latestVersion, fetchVersion, isUpToDate } = useAuth();
 
   useEffect(() => {
     console.log("called!");
@@ -34,12 +33,14 @@ const AdminOverview = () => {
         Check For Updates
       </button>
       <div className="flex flex-col mt-5">
-        <span className="w-full h-[5px] bg-logoColor" />
+        <span
+          className={`w-full h-[5px] ${isUpToDate ? "bg-green-400" : "bg-logoColor"}`}
+        />
         <span className="bg-primary2 w-full text-white p-3 font-bold text-xl">
           Application Version
         </span>
         <span className="bg-primary w-full text-white p-3 text-lg">
-          {uptodate
+          {isUpToDate
             ? `Up to date -- Your current version is ${currVersion}`
             : `Update available: Your current version is ${currVersion} and the latest version is ${latestVersion}`}
         </span>
