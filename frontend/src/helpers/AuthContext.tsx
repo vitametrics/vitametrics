@@ -14,9 +14,8 @@ interface AuthContextProps {
   isOwner: boolean;
   projects: any[];
   setProjects: (auth0: any[]) => void;
-  frontendVersion: string;
-  backendVersion: string;
   latestVersion: string;
+  currVersion: string;
   isBackendUpToDate: boolean;
   isFrontendUpToDate: boolean;
   fetchVersion: () => void;
@@ -56,8 +55,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [userEmail, setUserEmail] = useState<string>("");
   const [userId, setUserId] = useState<string>("");
   const [projects, setProjects] = useState<Project[]>([]);
-  const [frontendVersion, setFrontendVersion] = useState<string>("");
-  const [backendVersion, setBackendVersion] = useState<string>("");
+  const [currVersion, setCurrVersion] = useState<string>("");
   const [latestVersion, setLatestVersion] = useState<string>("");
   const [isBackendUpToDate, setIsBackendUpToDate] = useState<boolean>(false);
   const [isFrontendUpToDate, setIsFrontendUpToDate] = useState<boolean>(false);
@@ -139,8 +137,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const response = await axios.get(FETCH_VERSION_ENDPOINT, {
         withCredentials: true,
       });
-      setFrontendVersion(response.data.frontendVersion);
-      setBackendVersion(response.data.backendVersion);
+      setCurrVersion(response.data.version);
       setIsBackendUpToDate(response.data.isBackendUpToDate);
       setIsFrontendUpToDate(response.data.isFrontendUpToDate);
       setLatestVersion(response.data.latestVersion);
@@ -198,8 +195,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         isOwner,
         projects,
         setProjects,
-        frontendVersion,
-        backendVersion,
+        currVersion,
         latestVersion,
         isBackendUpToDate,
         isFrontendUpToDate,

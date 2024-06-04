@@ -7,11 +7,11 @@ import { useAuth } from "../../helpers/AuthContext";
 const AdminOverview = () => {
   const { ref, inView } = useCustomInView();
   const [uptodate] = useState(true);
-  const { frontendVersion, backendVersion, fetchVersion } = useAuth();
+  const { currVersion, latestVersion, fetchVersion } = useAuth();
 
   useEffect(() => {
     console.log("called!");
-    if (!frontendVersion || !backendVersion) {
+    if (!currVersion) {
       fetchVersion();
     }
   }, []);
@@ -40,8 +40,8 @@ const AdminOverview = () => {
         </span>
         <span className="bg-primary w-full text-white p-3 text-lg">
           {uptodate
-            ? `Up to date -- Frontend: ${frontendVersion} Backend: ${backendVersion}`
-            : `Update available: Your current version is 0.11.1 and the latest version is 0.11.2`}
+            ? `Up to date -- Your current version is ${currVersion}`
+            : `Update available: Your current version is ${currVersion} and the latest version is ${latestVersion}`}
         </span>
       </div>
     </motion.div>
