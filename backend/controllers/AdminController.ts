@@ -263,9 +263,17 @@ class AdminController {
             role: 'user',
             setPasswordToken: passwordToken,
             passwordTokenExpiry: tokenExpiry,
+            projects: [project._id],
           });
 
           await newUser.save();
+
+          project.members.push(newUser._id as Types.ObjectId);
+          if (role === 'admin') {
+            project.admins.push(newUser._id as Types.ObjectId);
+          }
+
+          await project.save();
 
           if (process.env.NODE_ENV === 'production') {
             await sendEmail({

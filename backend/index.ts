@@ -39,23 +39,13 @@ configureRoutes(app, passport);
 connectDB();
 
 app.get('/version', async (req: Request, res: Response) => {
-  const backendPackagePath = path.join(__dirname, 'package.json');
-  const frontendPackagePath = path.join(
-    __dirname,
-    '..',
-    'frontend',
-    'package.json'
+  const versionPackagePath = path.join(__dirname, '..', 'package.json');
+
+  const packageJson = JSON.parse(
+    fs.readFileSync(versionPackagePath, 'utf8')
   );
 
-  const backendPackageJson = JSON.parse(
-    fs.readFileSync(backendPackagePath, 'utf8')
-  );
-  const frontendPackageJson = JSON.parse(
-    fs.readFileSync(frontendPackagePath, 'utf8')
-  );
-
-  const backendVersion = backendPackageJson.version;
-  const frontendVersion = frontendPackageJson.version;
+  const siteVersion = packageJson.version;
 
   try {
     const response = await axios.get(
@@ -64,15 +54,12 @@ app.get('/version', async (req: Request, res: Response) => {
     const latestRelease = response.data;
     const latestVersion = latestRelease.tag_name;
 
-    const isBackendUpToDate = backendVersion === latestVersion;
-    const isFrontendUpToDate = frontendVersion === latestVersion;
+    const isUpToDate = siteVersion === latestVersion;
 
     return res.json({
-      backendVersion,
-      frontendVersion,
+      siteVersion,
       latestVersion,
-      isBackendUpToDate,
-      isFrontendUpToDate,
+      isUpToDate,
     });
   } catch (error) {
     logger.error(`Error fetching latest release: ${error}`);
