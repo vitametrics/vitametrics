@@ -13,8 +13,8 @@ import {
   downloadCachedFile,
   removeDevice,
   deleteCachedFiles,
-  unlinkFitbitAccount,
   toggleNotifications,
+  unlinkFitbitAccount,
 } from '../controllers/ProjectController';
 import { asyncHandler } from '../handlers/asyncHandler';
 import { validationHandler } from '../handlers/validationHandler';
@@ -58,13 +58,23 @@ router.post(
   asyncHandler(removeDevice)
 );
 
-router.put(
-  '/unlink-fitbit',
+router.get(
+  '/fitbit-accounts',
   verifySession,
+  checkProjectMembership,
+  asyncHandler(getProjectInfo)
+)
+
+router.get(
+  '/unlink-fitbit-account',
+  verifySession,
+  validationHandler([
+    body('fitbitUserId').not().isEmpty().withMessage('Fitbit user ID is required')
+  ]),
   checkProjectMembership,
   verifyRole('admin'),
   asyncHandler(unlinkFitbitAccount)
-);
+)
 
 router.put(
   '/toggle-notifications',

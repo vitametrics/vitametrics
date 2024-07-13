@@ -4,6 +4,7 @@ export interface IDevice extends Document {
   owner: string;
   ownerName: string;
   projectId: string;
+  fitbitUserId: string;
   deviceName: string;
   deviceVersion: string;
   batteryLevel: string;
@@ -15,6 +16,7 @@ const deviceSchema = new mongoose.Schema({
   owner: { type: String, required: true },
   ownerName: { type: String, required: true },
   projectId: { type: String, required: true },
+  fitbitUserId: { type: String, required: true },
   deviceName: { type: String, default: '' },
   deviceVersion: { type: String, default: '' },
   batteryLevel: { type: String, default: '0%' },

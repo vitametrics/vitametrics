@@ -6,6 +6,8 @@ import crypto from 'crypto';
 import CodeVerifier from '../models/CodeVerifier';
 import Project from '../models/Project';
 import User from '../models/User';
+import FitbitAccount from '../models/FitbitAccount';
+import { Types } from 'mongoose';
 
 const router = express.Router();
 
@@ -42,10 +44,7 @@ router.get('/auth', async (req: Request, res: Response) => {
 
     const authUrl = `https://www.fitbit.com/oauth2/authorize?${queryParams.toString()}`;
 
-    if (!req.cookies.projectId) {
-      res.cookie('projectId', projectId);
-    }
-
+    res.cookie('projectId', projectId);
     res.cookie('userId', userId);
     res.redirect(authUrl);
   } catch (err) {
@@ -122,14 +121,35 @@ router.get('/callback', async (req: Request, res: Response) => {
       res.clearCookie('userId');
       return res.redirect('/');
     } else {
-      project.fitbitUserId = fitbitUserID;
-      project.fitbitAccessToken = accessToken;
-      project.fitbitRefreshToken = refreshToken;
-      project.lastTokenRefresh = new Date();
 
-      await project.save();
+      let fitbitAccount = await FitbitAccount.findOne({
+        userId: fitbitUserID,
+        projectID: project._id
+      });
+
+      if (fitbitAccount) {
+        fitbitAccount.accessToken = accessToken;
+        fitbitAccount.refreshToken = refreshToken;
+        fitbitAccount.lastTokenRefresh = new Date();
+      } else {
+        fitbitAccount = new FitbitAccount({
+          userId: fitbitUserID,
+          accessToken,
+          refreshToken,
+          lastTokenRefresh: new Date(),
+          projectId: project._id
+        });
+      }
+
+      await fitbitAccount.save();
+
+      if (project.fitbitAccounts.includes(fitbitAccount._id as Types.ObjectId)) {
+        project.fitbitAccounts.push(fitbitAccount._id as Types.ObjectId);
+        await project.save();
+      }
 
       res.clearCookie('userId');
+      res.clearCookie('projectId');
       // this should not handle redirects. fine for now i guess.
       return res.redirect(`/dashboard/project?id=${projectId}&view=overview`);
     }
