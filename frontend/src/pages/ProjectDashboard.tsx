@@ -9,6 +9,7 @@ import DashboardSettings from "../components/Dashboard-Views/DashboardSettings";
 import ViewDevice from "../components/Dashboard-Views/ViewDevice";
 import { useSearchParams } from "react-router-dom";
 import { useProject } from "../helpers/ProjectContext";
+import Accounts from "../components/Dashboard-Views/Accounts/Accounts";
 
 const ProjectDashboard = () => {
   const { showBackDrop } = useProject();
@@ -32,6 +33,8 @@ const ProjectDashboard = () => {
         return <Devices />;
       case "members":
         return <Members />;
+      case "accounts":
+        return <Accounts />;
       case "settings":
         return <DashboardSettings />;
       case "device":

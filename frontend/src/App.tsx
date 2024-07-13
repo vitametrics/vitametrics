@@ -1,4 +1,5 @@
 import React, { ReactNode, lazy, Suspense } from "react";
+import "./output.css";
 import {
   BrowserRouter as Router,
   Route,
@@ -19,7 +20,13 @@ const Settings = lazy(() => import("./pages/Settings"));
 const Admin = lazy(() => import("./pages/Admin"));
 import { useAuth } from "./helpers/AuthContext";
 import { ProjectProvider } from "./helpers/ProjectContext";
-const LoadingFallback = () => <div>Loading...</div>;
+import { GridLoader } from "react-spinners";
+
+const LoadingFallback = () => (
+  <div className="flex items-center justify-center h-screen">
+    <GridLoader color="#EF8759" />
+  </div>
+);
 interface AuthRouteProps {
   children: ReactNode;
   redirectTo: string;

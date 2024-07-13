@@ -8,21 +8,16 @@ import ChangeDescriptionField from "../Dashboard/DashboardSettings/ChangeDescrip
 import ChangeOwnerEmailField from "../Dashboard/DashboardSettings/ChangeEmailField";
 import DeleteProjectMenu from "../Dashboard/DeleteProjectMenu";
 import { Fragment } from "react";
-import {
-  deleteProjectService,
-  unlinkFitBitAccountService,
-} from "../../services/projectService";
+import { deleteProjectService } from "../../services/projectService";
 import { oAuthLogin } from "../../services/projectService";
 import { useState } from "react";
 import NotificationToggle from "../Dashboard/DashboardSettings/NotificationToggle";
 
 const DashboardSettings = () => {
   const { ref, inView } = useCustomInView();
-  const { project, setShowBackDrop, isAccountLinked, fetchProject } =
-    useProject();
+  const { project, setShowBackDrop } = useProject();
   const { projects, setProjects } = useAuth();
   const [deleteProject, setDeleteProject] = useState(false);
-  const [msg, setMsg] = useState("");
 
   const toggleDeleteProjectMenu = (show: boolean) => {
     setDeleteProject(show);
@@ -39,18 +34,6 @@ const DashboardSettings = () => {
     setShowBackDrop(false);
 
     window.location.href = "/dashboard";
-  };
-
-  const handleUnlinkFitBitAccount = async () => {
-    await unlinkFitBitAccountService();
-    await fetchProject();
-
-    if (isAccountLinked) {
-      setMsg("An error occurred while unlinking FitBit account");
-      return;
-    }
-
-    window.location.reload();
   };
 
   return (
@@ -75,26 +58,14 @@ const DashboardSettings = () => {
         <h2 className="text-lg font-bold">Toggle Email Notifications</h2>
         <NotificationToggle />
 
-        {isAccountLinked ? (
-          <Fragment>
-            {msg && <p className="text-red-500">{msg}</p>}
-            <button
-              className="p-2 bg-red-400 hover:bg-red-300 rounded w-[200px] text-white font-bold"
-              onClick={() => handleUnlinkFitBitAccount()}
-            >
-              Unlink FitBit Account
-            </button>
-          </Fragment>
-        ) : (
-          <Fragment>
-            <button
-              className="p-2 bg-secondary2 hover:bg-secondary rounded w-[200px] text-white font-bold"
-              onClick={oAuthLogin}
-            >
-              Link FitBit Account
-            </button>
-          </Fragment>
-        )}
+        <Fragment>
+          <button
+            className="p-2 bg-secondary2 hover:bg-secondary rounded w-[200px] text-white font-bold"
+            onClick={oAuthLogin}
+          >
+            Link FitBit Account
+          </button>
+        </Fragment>
 
         <span className="mb-5">
           <ChangeNameField />
