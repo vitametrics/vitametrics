@@ -9,7 +9,7 @@ export interface IFitbitAccount extends Document {
 }
 
 const fitbitAccountSchema = new Schema({
-    userID: { type: String, required: true },
+    userId: { type: String, required: true },
     accessToken: { type: String, required: true },
     refreshToken: { type: String, required: true },
     lastTokenRefresh: { type: Date, required: true },

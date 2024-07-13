@@ -27,10 +27,30 @@ router.get('/auth', async (req: Request, res: Response) => {
     return res.status(400).json({ msg: 'projectId is missing' });
   }
 
-  const codeVerifier = crypto.randomBytes(32).toString('hex');
-  const codeChallenge = createCodeChallenge(codeVerifier);
+  if (!userId) {
+    return res.status(400).json({ msg: 'User Id is missing' });
+  }
 
   try {
+
+    const project = await Project.findOne({ projectId });
+    if (!project) {
+      return res.status(404).json({ msg: 'Project not found'});
+    }
+
+    const user = await User.findOne({ userId });
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found'});
+    }
+
+    const isMember = project.members.some(memberId => memberId.equals(user._id as Types.ObjectId));
+    if (!isMember && !user.isTempUser) {
+      return res.status(403).json({ msg: 'User is not a member of this project'});
+    }
+
+    const codeVerifier = crypto.randomBytes(32).toString('hex');
+    const codeChallenge = createCodeChallenge(codeVerifier);
+
     await new CodeVerifier({ value: codeVerifier, projectId, userId }).save();
     const queryParams = new URLSearchParams({
       client_id: process.env.FITBIT_CLIENT_ID as string,
@@ -58,11 +78,27 @@ router.get('/callback', async (req: Request, res: Response) => {
   const userId = req.cookies.userId;
   const code = req.query.code as string;
 
-  if (!projectId) {
-    return res.status(400).json({ msg: 'projectId cookie is missing' });
+  if (!projectId || !userId) {
+    return res.status(400).json({ msg: 'projectId or userId cookie is missing' });
   }
 
   try {
+
+    const project = await Project.findOne({ projectId });
+    if (!project) {
+      return res.status(404).json({ msg: 'Project not found'});
+    }
+
+    const user = await User.findOne({ userId });
+    if (!user) {
+      return res.status(404).json({msg: 'User not found'});
+    }
+
+    const isMember = project.members.some(memberId => memberId.equals(user._id as Types.ObjectId));
+    if (!isMember && !user.isTempUser) {
+      return res.status(403).json({ msg: 'User is not a member of this project'});
+    }
+
     const verifier = await CodeVerifier.findOne({ projectId, userId })
       .sort({ createdAt: -1 })
       .limit(1);
@@ -102,16 +138,9 @@ router.get('/callback', async (req: Request, res: Response) => {
     );
 
     const fitbitUserID = profileResponse.data.user.encodedId;
-    const project = await Project.findOne({ projectId });
 
-    if (!project) {
-      return res.status(404).send('Project not found');
-    }
-
-    const user = await User.findOne({ userId });
-    if (!user) {
-      return res.status(404).send('User not found');
-    } else if (user.isTempUser) {
+  
+    if (user.isTempUser) {
       user.fitbitUserId = fitbitUserID;
       user.fitbitAccessToken = accessToken;
       user.fitbitRefreshToken = refreshToken;
