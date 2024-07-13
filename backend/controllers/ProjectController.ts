@@ -14,22 +14,18 @@ import Project, { IProject } from '../models/Project';
 import User, { IUser } from '../models/User';
 import { DateTime } from 'luxon';
 import { zip } from 'zip-a-folder';
+import FitbitAccount from '../models/FitbitAccount';
+import { request } from 'http';
+import { sendEmail } from '../middleware/util/emailUtil';
 
 const VALID_INTRADAY_INTERVALS = ['1sec', '1min', '5min', '15min'];
 
 export async function getProjectInfo(req: Request, res: Response) {
   try {
     const currentUser = req.user as IUser;
+    const projectId = req.query.projectId as string;
 
-    logger.info(`Fetching project info with projectId: ${req.query.projectId}`);
-
-    let isAccountLinked = false;
-    let isAdmin = false;
-    let isOwner = false;
-
-    const project = await Project.findOne({
-      projectId: req.query.projectId as string,
-    })
+    const project = await Project.findOne({ projectId })
       .select('-fitbitAccessToken -fitbitRefreshToken -lastTokenRefresh')
       .populate('members', 'userId email name role emailVerified isTempUser')
       .populate('devices', 'deviceId deviceName deviceVersion owner ownerName lastSyncTime batteryLevel')
@@ -41,30 +37,15 @@ export async function getProjectInfo(req: Request, res: Response) {
       return;
     }
 
-    if (project.fitbitUserId) {
-      isAccountLinked = true;
-    }
+    let isAccountLinked = project.fitbitAccounts.length > 0;
+    let isAdmin = project.isAdmin(currentUser.userId);
+    let isOwner = project.isOwner(currentUser.userId);
 
-    const membersWithRole = project.members.map((member) => {
-      const memberObj = member as unknown as IUser;
-      const isOwner = project.ownerId === memberObj.userId;
-      const isAdmin = project.admins.some((admin) => {
-        const adminObj = admin as IUser & { _id: Types.ObjectId };
-        return adminObj._id.equals(memberObj._id as Types.ObjectId);
-      });
-      return {
-        ...memberObj.toObject(),
-        isOwner,
-        isAdmin,
-      };
-    });
-
-    isAdmin = project.admins.some((admin) => {
-      const adminObj = admin as IUser;
-      return adminObj.userId === currentUser.userId;
-    });
-
-    isOwner = project.ownerId === currentUser.userId;
+    const membersWithRole = project.members.map((member) => ({
+      member: member as unknown as IUser,
+      isOwner: project.isOwner((member as unknown as IUser).userId),
+      isAdmin: project.isAdmin((member as unknown as IUser).userId),
+    }));
 
     logger.info(`Project info fetched successfully: ${project.projectId}`);
     res.cookie('projectId', project.projectId);
@@ -81,6 +62,7 @@ export async function getProjectInfo(req: Request, res: Response) {
         devices: project.devices,
         isAdmin,
         isOwner,
+        areNotificationsEnabled: project.areNotificationsEnabled,
       },
       isAccountLinked,
     });
@@ -97,7 +79,7 @@ export async function changeDeviceName(req: Request, res: Response) {
   const { deviceId, deviceName } = req.body;
 
   try {
-    logger.info(`Changing device name ${deviceId} to ${deviceName}`);
+    logger.info(`Changing device name for ${deviceId} to ${deviceName}`);
 
     const device = await Device.findOne({
       deviceId: deviceId,
@@ -105,32 +87,22 @@ export async function changeDeviceName(req: Request, res: Response) {
     });
 
     if (!device) {
-      logger.error(`Device: ${deviceId} not found`);
-      res.status(404).json({ msg: 'Device not found' });
-      return;
+      throw new Error('Device not found');
     }
 
-    // make sure device is associated with project
-    if (!currentProject.devices.includes(device._id as Types.ObjectId)) {
-      logger.error(
-        `Device: ${deviceId} not associated with project: ${currentProject.projectId}`
-      );
-      res.status(400).json({ msg: 'Device not associated with project' });
-      return;
+    if (!currentProject.hasDevice(device._id as Types.ObjectId)) {
+      throw new Error('Device not associated with project');
     }
 
     device.deviceName = deviceName;
-
     await device.save();
 
     logger.info(`Device name changed successfully: ${deviceId}`);
-    res
-      .status(200)
-      .json({ message: 'Device name changed successfully', device });
+    res.status(200).json({ message: 'Device name changed successfully', device });
     return;
-  } catch (error) {
+  } catch (error: any) {
     logger.error(`Error changing device name: ${error}`);
-    res.status(500).json({ msg: 'Internal Server Error' });
+    res.status(error.message === 'Device not found' ? 404 : 400).json({ msg: error.message });
     return;
   }
 }
@@ -140,77 +112,87 @@ export async function removeDevice(req: Request, res: Response) {
   const { deviceId } = req.body;
 
   try {
-    logger.info(
-      `Removing device: ${deviceId} from project: ${currentProject.projectId}`
-    );
+    logger.info(`Removing device: ${deviceId} from project: ${currentProject.projectId}`);
 
     const device = await Device.findOne({ deviceId: deviceId });
     if (!device) {
-      logger.error(`Device: ${deviceId} not found`);
-      res.status(404).json({ msg: 'Device not found' });
-      return;
+      throw new Error('Device not found');
     }
 
-    if (!currentProject.devices.includes(device._id as Types.ObjectId)) {
-      logger.error(
-        `Device: ${deviceId} not associated with project: ${currentProject.projectId}`
-      );
-      res.status(400).json({ msg: 'Device not associated with project' });
-      return;
+    if (!currentProject.hasDevice(device._id as Types.ObjectId)) {
+      throw new Error('Device not associated with project');
     }
 
-    currentProject.devices = currentProject.devices.filter(
-      (id) => !id.equals(device._id as Types.ObjectId)
-    );
+    await currentProject.removeDevice(device._id as Types.ObjectId);
+    await Device.findByIdAndDelete(device._id as Types.ObjectId);
+    Cache.deleteMany({ projectId: currentProject.projectId, deviceId });
 
-    await currentProject.save();
-
-    await Device.findByIdAndDelete(device._id);
-
-    await Cache.deleteMany({ projectId: currentProject.projectId, deviceId });
-
-    logger.info(
-      `Device: ${deviceId} removed successfully from project: ${currentProject.projectId}`
-    );
+    logger.info(`Device: ${deviceId} removed successfully from project: ${currentProject.projectId}`);
     res.status(200).json({ msg: 'Device removed successfully' });
     return;
-  } catch (error) {
+  } catch (error: any) {
     logger.error(`Error removing device: ${error}`);
-    res.status(500).json({ msg: 'Internal Server Error' });
+    res.status(error.message === 'Device not found' ? 404 : 400).json({ msg: error.message });
     return;
+  }
+}
+
+export async function getProjectFitbitAccounts(req: Request, res: Response) {
+  const currentProject = req.project as IProject;
+
+  try {
+    logger.info(`Fetching Fitbit accounts for project: ${currentProject.projectId}`);
+
+    const fitbitAccounts = await FitbitAccount.find({ projectId: currentProject.projectId })
+      .select('userId lastTokenRefresh')
+
+    const accountsWithDevices = await Promise.all(fitbitAccounts.map(async (account) => {
+      const devices = await Device.find({
+        projectId: currentProject.projectId,
+        fitbitUserId: account.userId
+      }).select('deviceId deviceName deviceVersion batteryLevel lastSyncTime');
+
+      return {
+        _id: account._id,
+        userId: account.userId,
+        lastTokenRefresh: account.lastTokenRefresh,
+        devices: devices
+      };
+    }));
+
+    res.status(200).json(accountsWithDevices);
+  } catch (error) {
+    logger.error(`Error fetching Fitbit accounts with devices: ${error}`);
+    res.status(500).json({ msg: 'Internal Server Error'});
   }
 }
 
 export async function unlinkFitbitAccount(req: Request, res: Response) {
   const currentProject = req.project as IProject;
+  const fitbitUserId = req.body.fitbitUserId as string;
 
   try {
+    logger.info(`Unlinking Fitbit account from project: ${currentProject.projectId}`);
 
-    logger.info(`Unlinking fitbit account for project: ${currentProject.projectId}`);
+    const fitbitAccount = await FitbitAccount.findOne({
+      _id: fitbitUserId as unknown as Types.ObjectId,
+      projectId: currentProject._id
+    });
 
-    const project = await Project.findOne({ projectId: currentProject.projectId });
-    if (!project) {
-      logger.error(`Project: ${currentProject.projectId} not found`);
-      res.status(404).json({ msg: 'Project not found' });
+    if (!fitbitAccount) {
+      res.status(404).json({ msg: 'Fitbit account not found in this project'});
       return;
     }
 
-    const devices = await Device.find({ projectId: currentProject.projectId, owner: 'Project' });
+    await Device.deleteMany({ projectId: currentProject.projectId, fitbitUserId: fitbitAccount.userId});
+    await Cache.deleteMany({ projectId: currentProject.projectId, fitbitUserId: fitbitAccount.userId});
+    await FitbitAccount.findByIdAndDelete(fitbitUserId as unknown as Types.ObjectId);
 
-    for (const device of devices) {
-      await Cache.deleteMany({ deviceId: device.deviceId, projectID: currentProject.projectId });
-      await device.deleteOne();
-    }
-
-    project.fitbitUserId = undefined;
-    project.fitbitAccessToken = undefined;
-    project.fitbitRefreshToken = undefined;
-    project.lastTokenRefresh = undefined;
-
-    await project.save();
+    currentProject.fitbitAccounts = currentProject.fitbitAccounts.filter(id => !id.equals(fitbitUserId as unknown as Types.ObjectId));
+    await currentProject.save();
 
     logger.info(`Fitbit account unlinked successfully for project: ${currentProject.projectId}`);
-    res.status(200).json({ msg: 'Fitbit account unlinked successfully' });
+    res.status(200).json({ msg: 'Fitbit account linked successfully'});
     return;
   } catch (error) {
     logger.error(`Error unlinking Fitbit account: ${error}`);
@@ -254,12 +236,14 @@ export async function fetchDevicesHandler(req: Request, res: Response) {
 
     const devicesForProject = [];
 
-    if (currentProject.fitbitUserId && currentProject.fitbitAccessToken) {
+    const fitbitAccounts = await FitbitAccount.find({ _id: { $in: currentProject.fitbitAccounts }});
+
+    for (const fitbitAccount of fitbitAccounts) {
       const projectDevices = await fetchDevices(
-        currentProject.fitbitUserId,
-        currentProject.fitbitAccessToken,
+        fitbitAccount.userId,
+        fitbitAccount.accessToken,
         currentProject.projectId,
-        { id: 'Project', name: 'Project' }
+        { id: fitbitAccount.userId, name: 'Project'}
       );
       devicesForProject.push(...projectDevices);
     }
@@ -296,68 +280,68 @@ export async function fetchDevicesHandler(req: Request, res: Response) {
 export async function fetchIntradayDataHandler(req: Request, res: Response) {
   const currentProject = req.project as IProject;
   try {
-    logger.info(
-      `Fetching intraday data for project: ${currentProject.projectId}`
-    );
+    logger.info(`Fetching intraday data for project: ${currentProject.projectId}`);
 
     const { dataType, date, detailLevel } = req.query;
-    if (!currentProject.fitbitUserId || !currentProject.fitbitAccessToken) {
-      logger.error(
-        `Fitbit account not linked to project: ${currentProject.projectId}`
-      );
-      res.status(400).json({ message: 'Fitbit account not linked to project' });
+
+    const fitbitAccounts = await FitbitAccount.find({ _id: { $in: currentProject.fitbitAccounts }});
+
+    if (fitbitAccounts.length === 0) {
+      logger.error(`No fitbit accounts linked to project: ${currentProject.projectId}`);
+      res.status(400).json({ msg: 'No fitbit accounts linked to project'});
       return;
     }
 
-    const projectFitbitUserId = currentProject.fitbitUserId;
-    const projectFitbitAccessToken = currentProject.fitbitAccessToken;
 
-    const projectData = await fetchIntradayData(
-      projectFitbitUserId,
-      projectFitbitAccessToken,
-      dataType as string,
-      date as string,
-      detailLevel as string
+    const projectData = await Promise.all(
+      fitbitAccounts.map(async (account) => {
+        return {
+          fitbitUserId: account.userId,
+          data: await fetchIntradayData(
+            account.userId,
+            account.accessToken,
+            dataType as string,
+            date as string,
+            detailLevel as string
+          )
+        };
+      })
     );
 
     const tempUsers = await User.find({
       projects: currentProject._id,
       isTempUser: true,
+      fitbitUserId: { $exists: true, $ne: null },
+      fitbitAccessToken: { $exists: true, $ne: null }
     });
 
     const tempUserData = await Promise.all(
       tempUsers.map(async (tempUser) => {
-        if (!tempUser.fitbitUserId || !tempUser.fitbitAccessToken) {
-          logger.error(
-            `Fitbit account not linked to temporary user: ${tempUser.userId}`
-          );
-          return null;
-        }
-
-        return await fetchIntradayData(
-          tempUser.fitbitUserId,
-          tempUser.fitbitAccessToken,
-          dataType as string,
-          date as string,
-          detailLevel as string
-        );
+        return {
+          userId: tempUser.userId,
+          data: await fetchIntradayData(
+            tempUser.fitbitUserId!,
+            tempUser.fitbitAccessToken!,
+            dataType as string,
+            date as string,
+            detailLevel as string
+          )
+        };
       })
     );
 
     const allData = {
       projectData,
-      tempUserData: tempUserData.filter((data) => data !== null),
+      tempUserData,
     };
 
     logger.info(
       `Intraday data fetched successfully for project: ${currentProject.projectId}`
     );
     res.json(allData);
-    return;
   } catch (error) {
     logger.error(`Error fetching intraday data: ${error}`);
     res.status(500).json({ msg: 'Internal Server Error' });
-    return;
   }
 }
 
@@ -545,7 +529,35 @@ export async function downloadDataHandler(req: Request, res: Response) {
     const dateRange = getDateRange(startDate, endDate);
     const isIntraday = detailLevel && VALID_INTRADAY_INTERVALS.includes(detailLevel);
 
+    const projectFitbitAccounts = await FitbitAccount.find({ _id: { $in: currentProject.fitbitAccounts }});
+
     for (const deviceId of deviceIds) {
+      const device = await Device.findOne({ deviceId, projectId: currentProject.projectId });
+      
+      if (!device) {
+        logger.error(`Device: ${deviceId} not found in project ${currentProject.projectId}`);
+        continue;
+      }
+
+      let accessToken: string | undefined;
+      let userId: string | undefined;
+
+      const fitbitAccount = projectFitbitAccounts.find(account => account.userId === device.fitbitUserId);
+
+      if (fitbitAccount) {
+        accessToken = fitbitAccount.accessToken;
+        userId = fitbitAccount.userId;
+      } else {
+        const user = await User.findOne({ userId: device.owner, isTempUser: true });
+        if (user && user.isTempUser && user.fitbitAccessToken && user.fitbitUserId ) {
+          accessToken = user.fitbitAccessToken;
+          userId = user.fitbitUserId;
+        } else {
+          logger.error(`Fitbit credentials not found for device: ${deviceId}`);
+          continue;
+        }
+      }
+
       const aggregatedData: { [date: string]: { [dataType: string]: string } } = {};
 
       for (const date of dateRange) {
@@ -556,34 +568,7 @@ export async function downloadDataHandler(req: Request, res: Response) {
           let cachedData = await Cache.findOne({ key: cacheKey, projectId: currentProject.projectId, deviceId });
 
           if (!cachedData) {
-            const device = await Device.findOne({ deviceId, projectId: currentProject.projectId });
-
-            if (!device) {
-              logger.error(`Device: ${deviceId} not found in project ${currentProject.projectId}`);
-              res.status(404).json({ msg: 'Device not found' });
-              return;
-            }
-
             let data: any[] = [];
-            let accessToken: string = '';
-            let userId: string = '';
-
-            if (device.owner === 'Project' && currentProject.fitbitAccessToken && currentProject.fitbitUserId) {
-              accessToken = currentProject.fitbitAccessToken;
-              userId = currentProject.fitbitUserId;
-            } else {
-              const user = await User.findOne({ userId: device.owner });
-              if (user && user.isTempUser && user.fitbitAccessToken && user.fitbitUserId) {
-                accessToken = user.fitbitAccessToken;
-                userId = user.fitbitUserId;
-              }
-            }
-
-            if (!accessToken || !userId) {
-              logger.error(`Fitbit credentials not found for device owner: ${device.owner}`);
-              res.status(400).json({ msg: 'Fitbit credentials not found for device owner'});
-              return;
-            }
 
             if (isIntraday) {
               data = await fetchIntradayData(userId, accessToken, dataType, date, detailLevel);
@@ -644,15 +629,22 @@ export async function downloadDataHandler(req: Request, res: Response) {
         });
 
         const csvContent = [headers, ...rows].join('\n');
-        const singleFileName = `${archiveName || `${currentProject.projectId}-${deviceId}.csv`}`;
-        res.setHeader('Content-Disposition', `attachment; filename=${singleFileName}`);
-        res.set('Content-Type', 'text/csv');
-        res.send(csvContent);
-        return;
+        const fileName = `${currentProject.projectId}-${deviceId}.csv`;
+        dataToZip.push({ fileName, data: csvContent });
       }
     }
 
-    if (isIntraday && dataToZip.length > 1) {
+    if (dataToZip.length === 0) {
+      res.status(400).json({ msg: 'No data found for the specified devices'});
+    }
+
+    if (dataToZip.length === 1) {
+      const singleFile = dataToZip[0];
+      const singleFileName = `${archiveName || singleFile.fileName}`;
+      res.setHeader('Content-Disposition', `attachment: filename=${singleFileName}`);
+      res.set('Content-Type', 'text/csv');
+      res.send(singleFile.data);
+    } else {
       const tempFolderPath = path.resolve(__dirname, `../tmp/${currentProject.projectId}-${Date.now()}`);
       fs.mkdirSync(tempFolderPath, { recursive: true });
 
@@ -680,12 +672,6 @@ export async function downloadDataHandler(req: Request, res: Response) {
           fs.unlinkSync(zipFilePath);
         }
       });
-    } else if (isIntraday && dataToZip.length === 1) {
-      const singleFile = dataToZip[0];
-      const singleFileName = `${archiveName || singleFile.fileName}`;
-      res.setHeader('Content-Disposition', `attachment; filename=${singleFileName}`);
-      res.set('Content-Type', 'text/csv');
-      res.send(singleFile.data);
     }
   } catch (error) {
     logger.error(`Error downloading data: ${error}`);

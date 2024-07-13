@@ -209,11 +209,25 @@ class AdminController {
 
       const user = await User.findOne({ email });
 
-      const newUserId = crypto.randomBytes(16).toString('hex');
-      const passwordToken = crypto.randomBytes(32).toString('hex');
-      const tokenExpiry = new Date(Date.now() + 3600000);
-
       if (!user) {
+        const newUserId = crypto.randomBytes(16).toString('hex');
+        const passwordToken = crypto.randomBytes(32).toString('hex');
+        const tokenExpiry = new Date(Date.now() + 3600000);
+
+        const newUser = new User({
+          userId: newUserId,
+          email,
+          name,
+          role: role === 'tempUser' ? 'user' : role,
+          isTempUser: role === 'tempUser',
+          projects: [project._id],
+          setPasswordToken: role !== 'tempUser' ? passwordToken : undefined,
+          passwordTokenExpiry: role !== 'tempUser' ? tokenExpiry : undefined,
+        });
+
+        await newUser.save();
+        await project.addMember(newUser._id as Types.ObjectId, role);
+        
         if (role === 'tempUser') {
           const tempUser = new User({
             userId: newUserId,

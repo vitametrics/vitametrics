@@ -40,8 +40,7 @@ class UserController {
           projectName: project.projectName,
           memberCount: project.members.length,
           deviceCount: project.devices.length,
-          isOwner: project.ownerId === user.userId,
-          hasFitbitAccountLinked: project.fitbitAccessToken !== '',
+          isOwner: project.ownerId === user.userId
         }));
         logger.info(`User: ${currentUser.email} fetched successfully`);
         res.json({
