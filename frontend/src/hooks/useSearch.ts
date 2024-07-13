@@ -9,6 +9,7 @@ const useSearch = (items: any[], setCurrentPage: (page: number) => void) => {
     setCurrentPage(1);
   };
 
+  console.log(items)
   // Filter members based on the search term
   const filteredItems = items.filter((item) =>
     item.name?.toLowerCase().includes(searchTerm.toLowerCase())
