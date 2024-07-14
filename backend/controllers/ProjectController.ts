@@ -191,7 +191,7 @@ export async function unlinkFitbitAccount(req: Request, res: Response) {
     await Cache.deleteMany({ projectId: currentProject.projectId, fitbitUserId: fitbitAccount.userId});
     await FitbitAccount.deleteMany({ project_id: currentProject._id, userId: fitbitAccount.userId });
 
-    currentProject.fitbitAccounts = currentProject.fitbitAccounts.filter(id => !id.equals(fitbitUserId as unknown as Types.ObjectId));
+    currentProject.fitbitAccounts = currentProject.fitbitAccounts.filter(id => !id.equals(fitbitAccount._id as Types.ObjectId));
     await currentProject.save();
 
     logger.info(`Fitbit account unlinked successfully for project: ${currentProject.projectId}`);
