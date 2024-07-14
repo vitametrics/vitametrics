@@ -15,6 +15,7 @@ import {
   deleteCachedFiles,
   toggleNotifications,
   unlinkFitbitAccount,
+  getProjectFitbitAccounts,
 } from '../controllers/ProjectController';
 import { asyncHandler } from '../handlers/asyncHandler';
 import { validationHandler } from '../handlers/validationHandler';
@@ -62,7 +63,7 @@ router.get(
   '/fitbit-accounts',
   verifySession,
   checkProjectMembership,
-  asyncHandler(getProjectInfo)
+  asyncHandler(getProjectFitbitAccounts)
 )
 
 router.get(
