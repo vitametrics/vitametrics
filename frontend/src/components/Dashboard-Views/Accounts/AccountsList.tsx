@@ -153,7 +153,7 @@ const AccountsList: React.FC<AccountsListProps> = ({
               ))}
               <button
                 onClick={() => unlinkFitbitAccount(account.userId)}
-                className="p-2 font-bold w-[100px] bg-red-400 mt-2"
+                className="p-2 font-bold w-[100px] bg-red-400 mt-2 text-white rounded-lg"
               >
                 Unlink
               </button>
