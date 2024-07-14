@@ -49,6 +49,20 @@ export const addFitbitAccount = async (projectId: string, code: string) => {
 }
 
 
+export const unlinkFitbitAccount = async (accountId: string) => {
+    try{
+         await axios.delete(`${process.env.API_URL}/project/unlink-fitbit-account`, {
+            params: {
+              accountId: accountId,
+            },
+            withCredentials: true,
+          });
+        
+    } catch (error) {
+        console.error("Error unlinking fitbit account:", error);
+    }
+}
+
 
 
 

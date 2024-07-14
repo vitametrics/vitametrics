@@ -8,6 +8,7 @@ import { useSearchParams } from "react-router-dom";
 import FullBatteryLevel from "../../../assets/FullBatteryLevel";
 import LowBatteryLevel from "../../../assets/LowBatteryLevel";
 import MediumBatteryLevel from "../../../assets/MediumBatteryLevel";
+import { unlinkFitbitAccount } from "../../../helpers/fitbit";
 
 interface AccountsListProps {
   accounts: any;
@@ -150,6 +151,12 @@ const AccountsList: React.FC<AccountsListProps> = ({
                   </div>
                 </div>
               ))}
+              <button
+                onClick={() => unlinkFitbitAccount(account.userId)}
+                className="p-2 font-bold w-[100px] bg-red-400 mt-2"
+              >
+                Unlink
+              </button>
             </div>
           )}
         </Fragment>
