@@ -3,12 +3,14 @@ import axios from "axios";
 
 export const fetchFitbitAccounts = async (projectId: string) => {
     try{
-     const res = await axios.get(`${process.env.API_URL}/project/fit-bit-accounts`, {
+     const res = await axios.get(`${process.env.API_URL}/project/fitbit-accounts`, {
         params: {
           projectId: projectId,
         },
         withCredentials: true,
       });
+      console.log("from fitbit service:")
+      console.log(res.data);
     return res.data;
     } catch (error) {
         console.error("Error fetching fitbit accounts:", error);
