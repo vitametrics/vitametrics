@@ -21,6 +21,11 @@ const AccountsContainer = () => {
   console.log("from accounts container:");
   console.log(fitbitAccounts);
   const enableDropdown = (userId: string) => {
+    if (activeAccountId === userId) {
+      setActiveAccountId("");
+      return;
+    }
+
     setActiveAccountId(userId);
   };
 
