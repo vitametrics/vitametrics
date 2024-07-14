@@ -5,7 +5,7 @@ export interface IFitbitAccount extends Document {
     accessToken: string;
     refreshToken: string;
     lastTokenRefresh: Date;
-    projectId: mongoose.Types.ObjectId;
+    project_id: mongoose.Types.ObjectId;
 }
 
 const fitbitAccountSchema = new Schema({
@@ -13,7 +13,7 @@ const fitbitAccountSchema = new Schema({
     accessToken: { type: String, required: true },
     refreshToken: { type: String, required: true },
     lastTokenRefresh: { type: Date, required: true },
-    projectId: { type: mongoose.Types.ObjectId, required: true },
+    project_id: { type: mongoose.Types.ObjectId, required: true },
 }, { timestamps: true });
 
 const FitbitAccount = mongoose.model<IFitbitAccount>('FitbitAccount', fitbitAccountSchema);

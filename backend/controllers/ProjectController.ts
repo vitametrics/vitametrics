@@ -146,7 +146,7 @@ export async function getProjectFitbitAccounts(req: Request, res: Response) {
   try {
     logger.info(`Fetching Fitbit accounts for project: ${currentProject.projectId}`);
 
-    const fitbitAccounts = await FitbitAccount.find({ projectId: currentProject._id })
+    const fitbitAccounts = await FitbitAccount.find({ project_id: currentProject._id })
       .select('userId lastTokenRefresh')
 
     const accountsWithDevices = await Promise.all(fitbitAccounts.map(async (account) => {
@@ -178,7 +178,7 @@ export async function unlinkFitbitAccount(req: Request, res: Response) {
     logger.info(`Unlinking Fitbit account from project: ${currentProject.projectId}`);
 
     const fitbitAccount = await FitbitAccount.findOne({
-      _id: fitbitUserId as unknown as Types.ObjectId,
+      userId: fitbitUserId,
       projectId: currentProject._id
     });
 
