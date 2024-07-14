@@ -66,7 +66,7 @@ router.get(
   asyncHandler(getProjectFitbitAccounts)
 )
 
-router.get(
+router.post(
   '/unlink-fitbit-account',
   verifySession,
   validationHandler([

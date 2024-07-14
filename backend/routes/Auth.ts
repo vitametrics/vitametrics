@@ -172,7 +172,7 @@ router.get('/callback', async (req: Request, res: Response) => {
 
       await fitbitAccount.save();
 
-      if (project.fitbitAccounts.includes(fitbitAccount._id as Types.ObjectId)) {
+      if (!project.fitbitAccounts.includes(fitbitAccount._id as Types.ObjectId)) {
         project.fitbitAccounts.push(fitbitAccount._id as Types.ObjectId);
         await project.save();
       }

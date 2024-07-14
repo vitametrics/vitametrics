@@ -12,6 +12,7 @@ import Cache from '../models/Cache';
 import Device from '../models/Device';
 import Project, { IProject } from '../models/Project';
 import User, { IUser } from '../models/User';
+import FitbitAccount from '../models/FitbitAccount';
 
 interface IPopulatedUser {
   _id: Types.ObjectId;
@@ -152,6 +153,8 @@ class AdminController {
       }
 
       await Cache.deleteMany({ projectId: project.projectId });
+
+      await FitbitAccount.deleteMany({ project_id: project._id});
 
       await Project.findOneAndDelete({ projectId });
       logger.info(
