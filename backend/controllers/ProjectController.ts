@@ -37,14 +37,18 @@ export async function getProjectInfo(req: Request, res: Response) {
       return;
     }
 
-    let isAccountLinked = project.fitbitAccounts.length > 0;
     let isAdmin = project.isAdmin(currentUser.userId);
     let isOwner = project.isOwner(currentUser.userId);
 
-    const membersWithRole = project.members.map((member) => ({
-      isOwner: project.isOwner((member as unknown as IUser).userId),
-      isAdmin: project.isAdmin((member as unknown as IUser).userId),
-      ...member
+    const membersWithRole = await Promise.all(project.members.map(async (memberId) => {
+      const member = await User.findById(memberId).select('userId email name role emailVerified isTempUser');
+      if (member) {
+        return {
+          ...member.toObject(),
+          isOwner: project.isOwner(member.userId),
+          isAdmin: project.isAdmin(member.userId)
+        }
+      }
     }));
 
     logger.info(`Project info fetched successfully: ${project.projectId}`);
@@ -64,7 +68,6 @@ export async function getProjectInfo(req: Request, res: Response) {
         isOwner,
         areNotificationsEnabled: project.areNotificationsEnabled,
       },
-      isAccountLinked,
     });
     return;
   } catch (error) {
