@@ -65,7 +65,7 @@ const Devices = () => {
       className="w-full h-full flex flex-col p-10 whitePrimary"
     >
       <Fragment>
-        {devices.length > 0 ? (
+        {devices && devices.length > 0 ? (
           <section className="p-5">
             <div className="flex flex-col bg-white rounded-xl shadow-lg p-10">
               <h2 className="text-2xl text-primary font-bold mb-5">
