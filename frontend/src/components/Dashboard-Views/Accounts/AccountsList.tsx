@@ -116,6 +116,9 @@ const AccountsList: React.FC<AccountsListProps> = ({
               <p className="font-bold text-primary mb-3">
                 Devices linked with {account.userId}
               </p>
+              {account.devices.length === 0 && (
+                <div className="text-primary">No devices linked</div>
+              )}
               {account.devices.map((device: any) => (
                 <div
                   onClick={() => handleDeviceClick(device.deviceId)}
