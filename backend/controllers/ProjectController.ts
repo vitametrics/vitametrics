@@ -42,9 +42,9 @@ export async function getProjectInfo(req: Request, res: Response) {
     let isOwner = project.isOwner(currentUser.userId);
 
     const membersWithRole = project.members.map((member) => ({
-      member: member as unknown as IUser,
       isOwner: project.isOwner((member as unknown as IUser).userId),
       isAdmin: project.isAdmin((member as unknown as IUser).userId),
+      ...member
     }));
 
     logger.info(`Project info fetched successfully: ${project.projectId}`);
