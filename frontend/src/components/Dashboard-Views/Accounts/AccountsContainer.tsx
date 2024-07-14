@@ -122,7 +122,7 @@ const AccountsContainer = () => {
       </h2>
       {(project.isOwner || project.isAdmin) && (
         <button
-          onClick={oAuthLogin}
+          onClick={() => oAuthLogin()}
           className="p-1 text-lg flex flex-row gap-2 mb-5 justify-center items-center rounded-lg w-[150px] bg-primary font-bold text-white shadow-lg hover:bg-hoverPrimary"
         >
           Link
