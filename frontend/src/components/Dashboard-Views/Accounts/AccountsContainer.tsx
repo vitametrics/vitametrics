@@ -5,6 +5,7 @@ import PaginationControls from "../../../components/Dashboard/PaginationControls
 import useSearch from "../../../hooks/useAccountSearch";
 import { Fragment, useState } from "react";
 import AccountsList from "./AccountsList";
+import { oAuthLogin } from "../../../services/projectService";
 
 const AccountsContainer = () => {
   const { project, fitbitAccounts } = useProject();
@@ -17,7 +18,8 @@ const AccountsContainer = () => {
   } = usePagination();
 
   const [activeAccountId, setActiveAccountId] = useState("");
-
+  console.log("from accounts container:");
+  console.log(fitbitAccounts);
   const enableDropdown = (userId: string) => {
     setActiveAccountId(userId);
   };
@@ -99,7 +101,7 @@ const AccountsContainer = () => {
   ];*/
 
   const { searchTerm, handleSearchChange, filteredItems } = useSearch(
-    fitbitAccounts?.filter((account) => account.userId !== ""),
+    fitbitAccounts,
     setCurrentPage
   );
 
@@ -120,7 +122,7 @@ const AccountsContainer = () => {
       </h2>
       {(project.isOwner || project.isAdmin) && (
         <button
-          onClick={() => console.log("clicked!")}
+          onClick={oAuthLogin}
           className="p-1 text-lg flex flex-row gap-2 mb-5 justify-center items-center rounded-lg w-[150px] bg-primary font-bold text-white shadow-lg hover:bg-hoverPrimary"
         >
           Link
