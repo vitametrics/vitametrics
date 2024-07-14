@@ -153,7 +153,7 @@ router.get('/callback', async (req: Request, res: Response) => {
 
       let fitbitAccount = await FitbitAccount.findOne({
         userId: fitbitUserID,
-        projectID: project._id
+        project_id: project._id
       });
 
       if (fitbitAccount) {
@@ -166,7 +166,7 @@ router.get('/callback', async (req: Request, res: Response) => {
           accessToken,
           refreshToken,
           lastTokenRefresh: new Date(),
-          projectId: project._id
+          project_id: project._id
         });
       }
 

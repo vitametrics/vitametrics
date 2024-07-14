@@ -42,7 +42,7 @@ const checkProjectMembership = async (
         res.status(404).json({ msg: 'Project not found' });
         return;
       }
-      logger.info('[checkProjectMembership] Site owner access granted');
+      logger.info('[checkProjectMembership] Site owner/admin access granted');
       req.project = project as IProject;
       return next();
     }
