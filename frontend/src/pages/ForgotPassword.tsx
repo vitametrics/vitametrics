@@ -1,48 +1,37 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
-import axios from "axios";
 import Navbar from "../components/Navbar";
 import logo from "../assets/images/vitamix.webp";
 import Footer from "../components/Footer";
-import { useAuth } from "../helpers/AuthContext";
 import useDebounce from "../helpers/useDebounce";
 import { useNavigate } from "react-router-dom";
-import LockIcon from "../assets/LockIcon";
 import MailIcon from "../assets/MailIcon";
+import { forgotPassword } from "../services/authService";
 
-const Login = () => {
-  const LOGIN_ENDPOINT = `${process.env.API_URL}/login`;
-
+const ForgotPassword = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const debouncedEmail = useDebounce(email, 100);
-  const debouncedPassword = useDebounce(password, 100);
   const [msg, setMsg] = useState("");
-  const { login } = useAuth();
+  const [success, setSuccess] = useState(false);
 
   const handleKeyDown = (event: any) => {
     if (event.key === "Enter") {
-      handleLogin();
+      handleForgotPassword();
     }
   };
 
-  const handleLogin = async () => {
+  const handleForgotPassword = async () => {
     try {
-      const response = await axios.post(
-        LOGIN_ENDPOINT,
-        { email: debouncedEmail, password: debouncedPassword },
-        { withCredentials: true }
-      );
-
-      if (response.data) {
-        login();
-      }
+      await forgotPassword(debouncedEmail);
+      setSuccess(true);
+      setMsg("Password reset link sent to your email");
     } catch (error: any) {
       const errorMessage =
         error.response && error.response.data
           ? error.response.data.message
           : "An unknown error occurred";
+      setSuccess(false);
       setMsg(errorMessage);
     }
   };
@@ -62,10 +51,14 @@ const Login = () => {
               />
             </a>
             <h2 className="font-bold text-4xl w-72 mt-5 mb-5 text-center text-primary">
-              {" "}
-              Login{" "}
+              Forgot Password
             </h2>
-            <a className="text-red-500 mb-3"> {msg} </a>
+            <a
+              className={` mb-3 ${success ? "text-green-700" : "text-red-500"} `}
+            >
+              {" "}
+              {msg}{" "}
+            </a>
             <p className="text-primary mr-auto">Email</p>
             <div className="flex items-center w-full bg-inputBg p-1 rounded-lg">
               <MailIcon />
@@ -77,29 +70,19 @@ const Login = () => {
                 onKeyDown={handleKeyDown}
               />
             </div>
-            <p className="text-primary mr-auto mt-3">Password</p>
-            <div className="flex items-center w-full bg-inputBg p-1 rounded-lg">
-              <LockIcon />
-              <input
-                className="p-[10px] w-full text-black"
-                type="password"
-                placeholder="Enter your password"
-                onChange={(e) => setPassword(e.target.value)}
-                onKeyDown={handleKeyDown}
-              />
-            </div>
+
             <a
-              href="/forgot-password"
+              href="/login"
               className="text-desc opacity-60 mt-2 mr-auto hover:opacity-80"
             >
-              Forgot Password?
+              Login instead?
             </a>
             <button
-              onKeyDown={handleLogin}
-              onClick={handleLogin}
+              onKeyDown={handleKeyDown}
+              onClick={() => handleForgotPassword()}
               className="p-3 mt-5 bg-secondary hover:bg-hoverSecondary w-full rounded-lg cursor-pointer font-bold text-white"
             >
-              Login
+              Send Verification Link
             </button>
           </div>
         </div>
@@ -109,4 +92,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgotPassword;
