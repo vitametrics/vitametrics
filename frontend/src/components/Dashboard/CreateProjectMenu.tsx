@@ -43,16 +43,18 @@ const CreateProjectMenu: React.FC<CreateProjectMenuProps> = ({
         type="text"
         className="p-3 mb-3 rounded-lg border-b-1 text-primary"
         value={projectName}
+        placeholder="Enter your project name"
         onChange={(e) => setProjectName(e.target.value)}
       />
       <p className="text-primary font-bold">Enter Project Description</p>
       <textarea
+        placeholder="Enter your project description"
         className="p-3 mb-3 rounded-lg border-b-1 text-primary max-h-[300px]"
         rows={5}
         onChange={(e) => setProjectDescription(e.target.value)}
       ></textarea>
       <button
-        className="bg-tertiary p-4 text-xl w-full rounded-lg text-white font-bold"
+        className="bg-tertiary hover:bg-hoverTertiary p-4 text-xl w-full rounded-lg text-white font-bold"
         onClick={handleCreateProject}
       >
         Create

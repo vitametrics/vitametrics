@@ -180,7 +180,7 @@ const UserDashboard = () => {
             {userRole !== "user" && (
               <button
                 onClick={() => toggleCreateProjectMenu(true)}
-                className="p-2 bg-primary text-white rounded-lg mb-5 text-xl w-[150px] mr-auto font-bold"
+                className="p-2 bg-primary text-white rounded-lg mb-5 text-xl w-[150px] mr-auto font-bold hover:bg-hoverPrimary"
               >
                 New Project
               </button>
