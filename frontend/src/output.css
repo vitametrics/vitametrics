@@ -2112,7 +2112,7 @@ h3,
 h4,
 h5,
 h6 {
-  transition: color 0.5s ease;
+  transition: color 0.3s ease;
   text-decoration: none;
 }
 
@@ -2123,6 +2123,11 @@ h6 {
 .hover\:bg-gray-100:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-gray-200:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(229 231 235 / var(--tw-bg-opacity));
 }
 
 .hover\:bg-hoverPrimary:hover {
@@ -2185,24 +2190,14 @@ h6 {
   background-color: rgb(248 250 252 / var(--tw-bg-opacity));
 }
 
-.hover\:bg-slate-300:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(203 213 225 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-slate-200:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(226 232 240 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-gray-200:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(229 231 235 / var(--tw-bg-opacity));
-}
-
 .hover\:text-gray-300:hover {
   --tw-text-opacity: 1;
   color: rgb(209 213 219 / var(--tw-text-opacity));
+}
+
+.hover\:text-hoverPrimary:hover {
+  --tw-text-opacity: 1;
+  color: rgb(158 162 188 / var(--tw-text-opacity));
 }
 
 .hover\:opacity-80:hover {
@@ -2229,16 +2224,6 @@ h6 {
   --tw-ring-color: transparent;
 }
 
-.dark\:border-\[\#1F1C23\]:is(.dark *) {
-  --tw-border-opacity: 1;
-  border-color: rgb(31 28 35 / var(--tw-border-opacity));
-}
-
-.dark\:bg-\[\#1F1C23\]:is(.dark *) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(31 28 35 / var(--tw-bg-opacity));
-}
-
 .dark\:bg-transparent:is(.dark *) {
   background-color: transparent;
 }
@@ -2251,11 +2236,6 @@ h6 {
   background-image: url('/src/assets/images/hero-texture.png');
 }
 
-.dark\:text-gray-400:is(.dark *) {
-  --tw-text-opacity: 1;
-  color: rgb(156 163 175 / var(--tw-text-opacity));
-}
-
 .dark\:text-white:is(.dark *) {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
@@ -2264,11 +2244,6 @@ h6 {
 .dark\:hover\:bg-gray-700:hover:is(.dark *) {
   --tw-bg-opacity: 1;
   background-color: rgb(55 65 81 / var(--tw-bg-opacity));
-}
-
-.dark\:focus\:ring-gray-600:focus:is(.dark *) {
-  --tw-ring-opacity: 1;
-  --tw-ring-color: rgb(75 85 99 / var(--tw-ring-opacity));
 }
 
 @media (min-width: 640px) {
@@ -2426,11 +2401,6 @@ h6 {
     color: rgb(209 213 219 / var(--tw-text-opacity));
   }
 
-  .md\:dark\:bg-\[\#1F1C23\]:is(.dark *) {
-    --tw-bg-opacity: 1;
-    background-color: rgb(31 28 35 / var(--tw-bg-opacity));
-  }
-
   .md\:dark\:bg-transparent:is(.dark *) {
     background-color: transparent;
   }
@@ -2461,16 +2431,6 @@ h6 {
 
   .lg\:pb-16 {
     padding-bottom: 4rem;
-  }
-
-  .lg\:text-3xl {
-    font-size: 1.875rem;
-    line-height: 2.25rem;
-  }
-
-  .lg\:text-xl {
-    font-size: 1.25rem;
-    line-height: 1.75rem;
   }
 
   .lg\:text-2xl {

@@ -20,21 +20,30 @@ const Footer = () => {
             <li>
               <a
                 href="/PrivacyPolicy"
-                className=" me-4 md:me-6 text-xl font-bold"
+                className=" me-4 md:me-6 text-xl font-bold hover:text-hoverPrimary"
               >
                 Privacy Policy
               </a>
-              <a href="/TOS" className=" me-4 md:me-6 text-xl font-bold">
+              <a
+                href="/TOS"
+                className=" me-4 md:me-6 text-xl font-bold hover:text-hoverPrimary"
+              >
                 Terms and Service
               </a>
             </li>
             <li>
-              <a href="/FAQs" className="font-bold me-4 md:me-6 text-xl">
+              <a
+                href="/FAQs"
+                className="font-bold me-4 md:me-6 text-xl hover:text-hoverPrimary"
+              >
                 FAQs
               </a>
             </li>
             <li>
-              <a href="#" className=" text-xl font-bold">
+              <a
+                href="#"
+                className=" text-xl font-bold hover:text-hoverPrimary"
+              >
                 Credits
               </a>
             </li>

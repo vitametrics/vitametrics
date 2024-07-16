@@ -46,7 +46,7 @@ const Navbar = () => {
               onClick={toggleDropdown}
               data-collapse-toggle="navbar-dropdown"
               type="button"
-              className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+              className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
               aria-controls="navbar-dropdown"
               aria-expanded={isDropdownOpen}
             >
@@ -70,7 +70,7 @@ const Navbar = () => {
             <div
               className={`${
                 isDropdownOpen ? "block" : "hidden"
-              } w-full md:hidden mt-4 border border-gray-100  rounded-lg bg-transparent md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-[#1F1C23] md:dark:bg-[#1F1C23] dark:border-[#1F1C23]`}
+              } w-full md:hidden mt-4 border border-gray-100  rounded-lg bg-transparent md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white `}
               id="navbar-dropdown"
             >
               <ul className="flex flex-col font-medium p-4 md:p-0">
@@ -132,7 +132,7 @@ const Navbar = () => {
                   <li>
                     <a
                       href="/login"
-                      className="block py-2 px-3 text-2xl  rounded hover:text-gray-300 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0  md:dark:hover:text-grey-200 dark:hover:bg-gray-700 dark:hover: md:dark:hover:bg-transparent font-bold"
+                      className="block py-2 px-3 text-2xl  rounded hover:text-hoverPrimary md:hover:bg-transparent md:border-0  md:p-0   font-bold"
                     >
                       Login
                     </a>
