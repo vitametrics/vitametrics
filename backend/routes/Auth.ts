@@ -31,9 +31,9 @@ function verifyState(state: string): { projectId: string; userId: string; isVali
   try {
     const decoded = Buffer.from(state, 'base64').toString();
     const [projectId, userId, timestamp, randomString, hash] = decoded.split(':');
-    
+
     const data = `${projectId}:${userId}:${timestamp}:${randomString}`;
-    const computedHash = crypto.createHash('sha256').update(data).digest('hex');
+    const computedHash = crypto.createHash('sha256').update(data).digest('base64');
 
     const isValid = (computedHash === hash) && (Date.now() - parseInt(timestamp) < 3600000); // 1 hour token expiry (shouldnt even hit this limit)
 
@@ -46,9 +46,6 @@ function verifyState(state: string): { projectId: string; userId: string; isVali
 router.get('/auth', async (req: Request, res: Response) => {
   const projectId = (req.query.projectId as string);
   const userId = (req.query.userId as string) || (req.user?.userId as string);
-
-  console.log('projectId:', projectId);
-  console.log('userId:', userId);
 
   if (!projectId || !userId) {
     return res.status(400).json({ msg: 'projectId or userId is missing' });
