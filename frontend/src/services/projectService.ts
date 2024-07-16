@@ -44,6 +44,6 @@ export const unlinkFitBitAccountService = async () => {
 }
 
 
-export const oAuthLogin = async () => {
-  window.location.href = "https://vitametrics.org/api/auth";
+export const oAuthLogin = async (projectId: string) => {
+  window.location.href = "https://vitametrics.org/api/auth?projectId=" + projectId;
 };

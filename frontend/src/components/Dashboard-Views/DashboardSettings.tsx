@@ -9,7 +9,6 @@ import ChangeOwnerEmailField from "../Dashboard/DashboardSettings/ChangeEmailFie
 import DeleteProjectMenu from "../Dashboard/DeleteProjectMenu";
 import { Fragment } from "react";
 import { deleteProjectService } from "../../services/projectService";
-import { oAuthLogin } from "../../services/projectService";
 import { useState } from "react";
 import NotificationToggle from "../Dashboard/DashboardSettings/NotificationToggle";
 
@@ -57,15 +56,6 @@ const DashboardSettings = () => {
       <div className="flex flex-col gap-3">
         <h2 className="text-lg font-bold">Toggle Email Notifications</h2>
         <NotificationToggle />
-
-        <Fragment>
-          <button
-            className="p-2 bg-secondary2 hover:bg-secondary rounded w-[200px] text-white font-bold"
-            onClick={oAuthLogin}
-          >
-            Link FitBit Account
-          </button>
-        </Fragment>
 
         <span className="mb-5">
           <ChangeNameField />

@@ -8,7 +8,7 @@ import AccountsList from "./AccountsList";
 import { oAuthLogin } from "../../../services/projectService";
 
 const AccountsContainer = () => {
-  const { project, fitbitAccounts } = useProject();
+  const { project, projectId, fitbitAccounts } = useProject();
   const itemsPerPageOptions = [5, 10, 15, 20];
   const {
     currentPage,
@@ -25,82 +25,6 @@ const AccountsContainer = () => {
     }
     setActiveAccountId(userId);
   };
-
-  /*
-  const testAccounts = [
-    {
-      userId: "AIEGNOPGPAG",
-      lastTokenRefresh: "2021-10-10T00:00:00.000Z",
-      devices: [
-        {
-          deviceId: "fitbitdeviceid",
-          deviceVersion: "Charge 4",
-          batteryLevel: "60",
-          lastSyncTime: "2023-07-12T10:30:00Z",
-        },
-        {
-          deviceId: "fitbitdeviceid",
-          deviceVersion: "Versa 3",
-          batteryLevel: "100",
-          lastSyncTime: "2023-07-12T10:30:00Z",
-        },
-      ],
-    },
-    {
-      userId: "ERMWHAT",
-      lastTokenRefresh: "2021-10-10T00:00:00.000Z",
-      devices: [
-        {
-          deviceId: "fitbitdeviceid",
-          deviceVersion: "fitbitdeviceversion",
-          batteryLevel: "60",
-          lastSyncTime: "2023-07-12T10:30:00Z",
-        },
-        {
-          deviceId: "fitbitdeviceid",
-          deviceVersion: "fitbitdeviceversion",
-          batteryLevel: "60",
-          lastSyncTime: "2023-07-12T10:30:00Z",
-        },
-      ],
-    },
-    {
-      userId: "OKAYBUDDY",
-      lastTokenRefresh: "2021-10-10T00:00:00.000Z",
-      devices: [
-        {
-          deviceId: "fitbitdeviceid",
-          deviceVersion: "fitbitdeviceversion",
-          batteryLevel: "60",
-          lastSyncTime: "2023-07-12T10:30:00Z",
-        },
-        {
-          deviceId: "fitbitdeviceid",
-          deviceVersion: "fitbitdeviceversion",
-          batteryLevel: "60",
-          lastSyncTime: "2023-07-12T10:30:00Z",
-        },
-      ],
-    },
-    {
-      userId: "HEREWEGOAGAIN",
-      lastTokenRefresh: "2021-10-10T00:00:00.000Z",
-      devices: [
-        {
-          deviceId: "fitbitdeviceid",
-          deviceVersion: "fitbitdeviceversion",
-          batteryLevel: "60",
-          lastSyncTime: "2023-07-12T10:30:00Z",
-        },
-        {
-          deviceId: "fitbitdeviceid",
-          deviceVersion: "fitbitdeviceversion",
-          batteryLevel: "60",
-          lastSyncTime: "2023-07-12T10:30:00Z",
-        },
-      ],
-    },
-  ];*/
 
   const { searchTerm, handleSearchChange, filteredItems } = useSearch(
     fitbitAccounts,
@@ -124,7 +48,7 @@ const AccountsContainer = () => {
       </h2>
       {(project.isOwner || project.isAdmin) && (
         <button
-          onClick={() => oAuthLogin()}
+          onClick={() => oAuthLogin(projectId)}
           className="p-1 text-lg flex flex-row gap-2 mb-5 justify-center items-center rounded-lg w-[150px] bg-primary font-bold text-white shadow-lg hover:bg-hoverPrimary"
         >
           Link
