@@ -27,17 +27,20 @@ const ForgotPassword = () => {
       setSuccess(true);
       setMsg("Password reset link sent to your email");
     } catch (error: any) {
-      const errorMessage =
-        error.response && error.response.data
-          ? error.response.data.message
-          : "An unknown error occurred";
+      if (email === "") {
+        const errorMessage = "Please enter your email";
+        setSuccess(false);
+        setMsg(errorMessage);
+        return;
+      }
+      const errorMessage = "Failed to send password reset link";
       setSuccess(false);
       setMsg(errorMessage);
     }
   };
 
   return (
-    <div className="h-full w-full bg-fixed overflow-y-hidden font-leagueSpartanBold ">
+    <div className="h-full w-full bg-fixed overflow-y-hidden  font-neueHassUnica">
       <Navbar />
       <div className="flex flex-col justify-center items-center p-0 md:p-10">
         <div className="flex flex-row h-screen items-center justify-center">
@@ -50,11 +53,11 @@ const ForgotPassword = () => {
                 alt="VitametricsLogo"
               />
             </a>
-            <h2 className="font-bold text-4xl w-72 mt-5 mb-5 text-center text-primary">
+            <h2 className="font-bold text-3xl w-72 mt-5 mb-3 text-center text-primary">
               Forgot Password
             </h2>
             <a
-              className={` mb-3 ${success ? "text-green-700" : "text-red-500"} `}
+              className={` mb-2 ${success ? "text-green-700" : "text-red-500"} `}
             >
               {" "}
               {msg}{" "}

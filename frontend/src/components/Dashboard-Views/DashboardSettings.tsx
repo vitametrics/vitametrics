@@ -49,7 +49,7 @@ const DashboardSettings = () => {
         show={deleteProject}
       />
 
-      <h2 className="w-full text-2xl font-libreFranklin font-bold mb-3">
+      <h2 className="w-full text-2xl font-bold mb-3">
         {project.projectName} Settings
       </h2>
 

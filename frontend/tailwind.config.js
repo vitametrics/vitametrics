@@ -56,6 +56,7 @@ export default {
       leagueSpartanLight: ["LeagueSpartan-Light", "sans-serif"],
       libreFranklinBold: ["Libre Franklin", "sans-serif"],
       libreFranklin: ["Libre Franklin", "sans-serif"],
+      neueHassUnica: ["neue-haas-unica", "sans-serif"],
     },
   },
   plugins: ["@tailwindcss/forms"],

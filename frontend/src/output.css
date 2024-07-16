@@ -1133,6 +1133,11 @@ video {
   border-style: none;
 }
 
+.border-\[\#45496a\] {
+  --tw-border-opacity: 1;
+  border-color: rgb(69 73 106 / var(--tw-border-opacity));
+}
+
 .border-\[\#6d6c6c\] {
   --tw-border-opacity: 1;
   border-color: rgb(109 108 108 / var(--tw-border-opacity));
@@ -1166,10 +1171,6 @@ video {
 .border-t-\[\#F28D59\] {
   --tw-border-opacity: 1;
   border-top-color: rgb(242 141 89 / var(--tw-border-opacity));
-}
-
-.bg-\[\#00000080\] {
-  background-color: #00000080;
 }
 
 .bg-\[\#1E1D20\] {
@@ -1504,6 +1505,10 @@ video {
   font-family: Libre Franklin, sans-serif;
 }
 
+.font-neueHassUnica {
+  font-family: neue-haas-unica, sans-serif;
+}
+
 .font-ralewayBold {
   font-family: Raleway-Bold, sans-serif;
 }
@@ -1564,6 +1569,10 @@ video {
   font-weight: 600;
 }
 
+.font-thin {
+  font-weight: 100;
+}
+
 .italic {
   font-style: italic;
 }
@@ -1608,6 +1617,11 @@ video {
   color: rgb(34 197 94 / var(--tw-text-opacity));
 }
 
+.text-green-700 {
+  --tw-text-opacity: 1;
+  color: rgb(21 128 61 / var(--tw-text-opacity));
+}
+
 .text-lightPrimary {
   --tw-text-opacity: 1;
   color: rgb(235 235 235 / var(--tw-text-opacity));
@@ -1641,11 +1655,6 @@ video {
 .text-yellow-500 {
   --tw-text-opacity: 1;
   color: rgb(234 179 8 / var(--tw-text-opacity));
-}
-
-.text-green-700 {
-  --tw-text-opacity: 1;
-  color: rgb(21 128 61 / var(--tw-text-opacity));
 }
 
 .underline {
@@ -1686,6 +1695,7 @@ html {
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: cover;
+  /*edit bg image opacity*/
   /*background-size: contain 100%;*/
   background-position: center;
 }
@@ -1742,6 +1752,14 @@ html {
   src:
     url("./assets/fonts/Raleway-Bold.woff2") format("woff2"),
     url("./assets/fonts/Raleway-Bold.woff") format("woff");
+}
+
+@font-face {
+  font-family: "neue-haas-unica", sans-serif;
+
+  font-weight: 400;
+
+  font-style: normal;
 }
 
 @font-face {
@@ -2077,6 +2095,13 @@ input:focus {
   outline: none;
 }
 
+.bg-container {
+  background-color: #f7faff;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* Horizontal offset, vertical offset, blur radius, color */
+}
+
 /*make hover effect on text transition smoothly*/
 
 a,
@@ -2088,6 +2113,7 @@ h4,
 h5,
 h6 {
   transition: color 0.5s ease;
+  text-decoration: none;
 }
 
 .hover\:cursor-pointer:hover {
@@ -2159,13 +2185,24 @@ h6 {
   background-color: rgb(248 250 252 / var(--tw-bg-opacity));
 }
 
+.hover\:bg-slate-300:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(203 213 225 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-slate-200:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(226 232 240 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-gray-200:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+}
+
 .hover\:text-gray-300:hover {
   --tw-text-opacity: 1;
   color: rgb(209 213 219 / var(--tw-text-opacity));
-}
-
-.hover\:underline:hover {
-  text-decoration-line: underline;
 }
 
 .hover\:opacity-80:hover {
@@ -2429,6 +2466,16 @@ h6 {
   .lg\:text-3xl {
     font-size: 1.875rem;
     line-height: 2.25rem;
+  }
+
+  .lg\:text-xl {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+
+  .lg\:text-2xl {
+    font-size: 1.5rem;
+    line-height: 2rem;
   }
 }
 

@@ -65,18 +65,20 @@ const Devices = () => {
       className="w-full h-full flex flex-col p-10 whitePrimary"
     >
       <Fragment>
-        {devices && devices.length > 0 ? (
-          <section className="p-5">
-            <div className="flex flex-col bg-white rounded-xl shadow-lg p-10">
-              <h2 className="text-2xl text-primary font-bold mb-5">
-                {project.projectName} Devices
-              </h2>
-              <button
-                onClick={handleFetchDevices}
-                className="p-2 text-lg flex flex-row gap-2 justify-center items-center rounded-xl w-[150px] bg-primary hover:bg-hoverPrimary text-white shadow-lg font-bold mb-5"
-              >
-                Fetch
-              </button>
+        <div className="flex flex-col bg-white rounded-xl shadow-lg p-10">
+          <h2 className="text-2xl text-primary font-bold mb-5">
+            {project.projectName} Devices
+          </h2>
+          <button
+            onClick={handleFetchDevices}
+            className="p-2 text-lg flex flex-row gap-2 justify-center items-center rounded-xl w-[150px] bg-primary hover:bg-hoverPrimary text-white shadow-lg font-bold mb-5"
+          >
+            Fetch
+          </button>
+          {devices.length === 0 ? (
+            <span className="text-primary text-lg">No devices found</span>
+          ) : (
+            <Fragment>
               <input
                 type="text"
                 placeholder="Search For Name"
@@ -92,6 +94,7 @@ const Devices = () => {
                 currentPage={currentPage}
                 indexOfLastItem={indexOfLastMember}
               />
+
               <DevicesList
                 devices={currentDevices}
                 onDeviceClick={handleDeviceClick}
@@ -103,24 +106,9 @@ const Devices = () => {
                 currentPage={currentPage}
                 setCurrentPage={setCurrentPage}
               />
-            </div>
-          </section>
-        ) : (
-          <div className="flex flex-col gap-5 p-5">
-            <h2 className="text-4xl text-primary font-bold mb-5">
-              {project.projectName} Devices
-            </h2>
-            <button
-              onClick={handleFetchDevices}
-              className="p-2 text-xl flex flex-row gap-2 justify-center items-center rounded-xl w-[150px] bg-primary text-white shadow-lg font-bold hover:bg-hoverPrimary"
-            >
-              Fetch
-            </button>
-            <h2 className="text-2xl font-bold text-primary">
-              No Devices Found.
-            </h2>
-          </div>
-        )}
+            </Fragment>
+          )}
+        </div>
       </Fragment>
     </motion.div>
   );

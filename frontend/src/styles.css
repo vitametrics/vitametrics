@@ -20,6 +20,7 @@ html {
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: cover;
+  /*edit bg image opacity*/
   /*background-size: contain 100%;*/
   background-position: center;
 }
@@ -69,6 +70,12 @@ html {
   src:
     url("./assets/fonts/Raleway-Bold.woff2") format("woff2"),
     url("./assets/fonts/Raleway-Bold.woff") format("woff");
+}
+
+@font-face {
+  font-family: "neue-haas-unica", sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
 
 @font-face {
@@ -374,6 +381,12 @@ input:focus {
   outline: none;
 }
 
+.bg-container {
+  background-color: #f7faff;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Horizontal offset, vertical offset, blur radius, color */
+}
+
 /*make hover effect on text transition smoothly*/
 a,
 p,
@@ -384,4 +397,15 @@ h4,
 h5,
 h6 {
   transition: color 0.5s ease;
+}
+
+a,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-decoration: none;
 }

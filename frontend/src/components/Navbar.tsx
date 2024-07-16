@@ -27,7 +27,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="bg-transparent px-10 md:px-32 py-5 nav fixed top-0 w-full z-50 animated-parent font-leagueSpartanBold">
+    <nav className="bg-transparent px-10 md:px-32 py-5 nav fixed top-0 w-full z-50 animated-parent font-neueHassUnica">
       <div className="flex flex-row w-full bg-glass rounded-xl top-0 flex-wrap items-center justify-between mx-auto p-3 animated-container">
         <a
           href="/"
@@ -93,7 +93,7 @@ const Navbar = () => {
                   <li>
                     <button
                       onClick={() => navigate("/login")}
-                      className="block py-2 px-3 text-xl"
+                      className="block py-2 px-3 text-xl font-bold"
                     >
                       Login
                     </button>
@@ -132,7 +132,7 @@ const Navbar = () => {
                   <li>
                     <a
                       href="/login"
-                      className="block py-2 px-3 text-2xl  rounded hover:text-gray-300 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0  md:dark:hover:text-grey-200 dark:hover:bg-gray-700 dark:hover: md:dark:hover:bg-transparent"
+                      className="block py-2 px-3 text-2xl  rounded hover:text-gray-300 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0  md:dark:hover:text-grey-200 dark:hover:bg-gray-700 dark:hover: md:dark:hover:bg-transparent font-bold"
                     >
                       Login
                     </a>

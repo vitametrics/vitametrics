@@ -48,11 +48,11 @@ const Login = () => {
   };
 
   return (
-    <div className="h-full w-full bg-fixed overflow-y-hidden font-leagueSpartanBold ">
+    <div className="h-full w-full bg-fixed overflow-y-hidden  font-neueHassUnica ">
       <Navbar />
       <div className="flex flex-col justify-center items-center p-0 md:p-10">
         <div className="flex flex-row h-screen items-center justify-center">
-          <div className="flex flex-col pt-32 items-center justify-center bg-glass w-full h-full md:w-[500px] md:h-[600px]  p-20 md:pt-20 rounded-none md:rounded-xl ">
+          <div className="flex flex-col pt-32 items-center justify-center bg-container w-full h-full md:w-[500px] md:h-[600px]  p-20 md:pt-20 rounded-none md:rounded-xl ">
             <a href="/" className="mb-5">
               <img
                 src={logo}
