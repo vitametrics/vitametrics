@@ -32,6 +32,8 @@ async function fetchDevices(
       }
     )) as AxiosResponse<FitbitDeviceInfo[]>;
 
+    console.log(fitbitUserId);
+
     const validDevices = deviceResponse.data.filter(
       (device) => device.deviceVersion !== 'MobileTrack'
     );
@@ -56,6 +58,7 @@ async function fetchDevices(
         ownerName: owner.name,
         projectId: projectId,
         deviceId: device.id,
+        fitbitUserId: fitbitUserId,
         deviceVersion: device.deviceVersion,
         batteryLevel: device.batteryLevel,
         deviceName: device.deviceVersion,
