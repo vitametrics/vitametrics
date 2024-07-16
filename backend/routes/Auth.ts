@@ -81,6 +81,7 @@ router.get('/auth', async (req: Request, res: Response) => {
       response_type: 'code',
       code_challenge: codeChallenge,
       code_challenge_method: 'S256',
+      prompt: 'login consent',
       scope:
         'activity heartrate location nutrition oxygen_saturation respiratory_rate settings sleep social temperature weight profile',
       redirect_uri: process.env.REDIRECT_URI as string,
