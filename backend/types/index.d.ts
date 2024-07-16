@@ -13,11 +13,3 @@ declare module 'express-serve-static-core' {
     project?: IProject;
   }
 }
-
-declare module 'express-session' {
-  interface SessionData {
-    authToken?: string;
-    projectId?: string;
-    userId?: string;
-  }
-}
