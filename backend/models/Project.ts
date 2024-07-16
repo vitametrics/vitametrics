@@ -14,8 +14,8 @@ export interface IProject extends Document {
   admins: (Types.ObjectId | IUser)[];
   devices: Types.ObjectId[];
   fitbitAccounts: mongoose.Types.ObjectId[];
-  isMember(userId: string): boolean;
-  isAdmin(userId: string): boolean;
+  isMember(userId: Types.ObjectId): boolean;
+  isAdmin(userId: Types.ObjectId): boolean;
   isOwner(userId: string): boolean;
   hasDevice(deviceId: Types.ObjectId): boolean;
   removeDevice(deviceId: Types.ObjectId): Promise<void>;
@@ -41,12 +41,12 @@ const projectSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-projectSchema.methods.isMember = function( this: IProject, userId: string): boolean {
-  return this.members.some((memberId) => memberId.toString() === userId);
+projectSchema.methods.isMember = function( this: IProject, userId: Types.ObjectId): boolean {
+  return this.members.some((member) => member._id.equals(userId));
 };
 
-projectSchema.methods.isAdmin = function(this: IProject, userId: string): boolean {
-  return this.admins.some((adminId) => adminId.toString() === userId);
+projectSchema.methods.isAdmin = function(this: IProject, userId: Types.ObjectId): boolean {
+  return this.admins.some((admin) => (admin._id as Types.ObjectId).equals(userId));
 };
 
 projectSchema.methods.isOwner = function(this: IProject, userId: string): boolean {

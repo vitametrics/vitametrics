@@ -37,7 +37,7 @@ export async function getProjectInfo(req: Request, res: Response) {
       return;
     }
 
-    let isAdmin = project.isAdmin(currentUser.userId);
+    let isAdmin = project.isAdmin(currentUser.userId as unknown as Types.ObjectId);
     let isOwner = project.isOwner(currentUser.userId);
 
     const membersWithRole = await Promise.all(project.members.map(async (memberId) => {
@@ -46,7 +46,7 @@ export async function getProjectInfo(req: Request, res: Response) {
         return {
           ...member.toObject(),
           isOwner: project.isOwner(member.userId),
-          isAdmin: project.isAdmin(member.userId)
+          isAdmin: project.isAdmin(member.userId as unknown as Types.ObjectId)
         }
       }
     }));
