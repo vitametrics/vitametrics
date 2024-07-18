@@ -40,7 +40,7 @@ class UserController {
           projectName: project.projectName,
           memberCount: project.members.length,
           deviceCount: project.devices.length,
-          isOwner: project.ownerId === user.userId
+          isOwner: project.ownerId === user.userId,
         }));
         logger.info(`User: ${currentUser.email} fetched successfully`);
         res.json({
@@ -92,10 +92,10 @@ class UserController {
     try {
       logger.info(`Resetting password for token: ${token}`);
 
-      const user = await User.findOne({ setPasswordToken: token});
+      const user = await User.findOne({ setPasswordToken: token });
       if (!user) {
         logger.error(`Invalid or expired token: ${token}`);
-        res.status(400).json({ msg: 'Invalid or expired token'});
+        res.status(400).json({ msg: 'Invalid or expired token' });
         return;
       }
 
@@ -106,7 +106,7 @@ class UserController {
       await user.save();
 
       logger.info(`Password reset successfully for user: ${user.email}`);
-      res.status(200).json({ msg: 'Password has been reset successfully'});
+      res.status(200).json({ msg: 'Password has been reset successfully' });
       return;
     } catch (error) {
       logger.error(`Error resetting password: ${error}`);
@@ -124,13 +124,15 @@ class UserController {
       const user = await User.findOne({ email });
       if (!user) {
         logger.error(`User: ${email} not found`);
-        res.status(404).json({ msg: 'User not found'});
+        res.status(404).json({ msg: 'User not found' });
         return;
       }
 
       if (user.isTempUser) {
         logger.error(`Cannot reset password for temporary user: ${email}`);
-        res.status(400).json({ msg: 'Cannot reset password for temporary user' });
+        res
+          .status(400)
+          .json({ msg: 'Cannot reset password for temporary user' });
         return;
       }
 
@@ -143,14 +145,14 @@ class UserController {
       await sendEmail({
         to: user.email,
         subject: 'Vitametrics Password Reset',
-        text: `Please reset your password using this link: ${resetLink}`
+        text: `Please reset your password using this link: ${resetLink}`,
       });
-      
+
       logger.info(`Password reset email sent to: ${email}`);
-      res.status(200).json({ msg: 'Password reset email sent'});
+      res.status(200).json({ msg: 'Password reset email sent' });
     } catch (error) {
       logger.error(`Error resetting password: ${error}`);
-      res.status(500).json({ msg: 'Internal Server Error'});
+      res.status(500).json({ msg: 'Internal Server Error' });
     }
   }
 

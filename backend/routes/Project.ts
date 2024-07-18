@@ -2,13 +2,13 @@ import express from 'express';
 
 import { query, body, param } from 'express-validator';
 
+import ProjectController from '../controllers/ProjectController';
 import { asyncHandler } from '../handlers/asyncHandler';
 import { validationHandler } from '../handlers/validationHandler';
 import checkProjectMembership from '../middleware/checkProjectMembership';
 import refreshFitbitToken from '../middleware/refreshFitbitToken';
 import verifyRole from '../middleware/verifyRole';
 import verifySession from '../middleware/verifySession';
-import ProjectController from '../controllers/ProjectController';
 
 const router = express.Router();
 
@@ -50,18 +50,21 @@ router.get(
   verifySession,
   checkProjectMembership,
   asyncHandler(ProjectController.getProjectFitbitAccounts)
-)
+);
 
 router.post(
   '/unlink-fitbit-account',
   verifySession,
   validationHandler([
-    body('fitbitUserId').not().isEmpty().withMessage('Fitbit user ID is required')
+    body('fitbitUserId')
+      .not()
+      .isEmpty()
+      .withMessage('Fitbit user ID is required'),
   ]),
   checkProjectMembership,
   verifyRole('admin'),
   asyncHandler(ProjectController.unlinkFitbitAccount)
-)
+);
 
 router.put(
   '/toggle-notifications',

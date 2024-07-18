@@ -36,53 +36,84 @@ const projectSchema = new mongoose.Schema(
     members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     admins: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     devices: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Devices' }],
-    fitbitAccounts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'FitbitAccount' }]
+    fitbitAccounts: [
+      { type: mongoose.Schema.Types.ObjectId, ref: 'FitbitAccount' },
+    ],
   },
   { timestamps: true }
 );
 
-projectSchema.methods.isMember = function( this: IProject, userId: Types.ObjectId): boolean {
+projectSchema.methods.isMember = function (
+  this: IProject,
+  userId: Types.ObjectId
+): boolean {
   return this.members.some((member) => member._id.equals(userId));
 };
 
-projectSchema.methods.isAdmin = function(this: IProject, userId: Types.ObjectId): boolean {
-  return this.admins.some((admin) => (admin._id as Types.ObjectId).equals(userId));
+projectSchema.methods.isAdmin = function (
+  this: IProject,
+  userId: Types.ObjectId
+): boolean {
+  return this.admins.some((admin) =>
+    (admin._id as Types.ObjectId).equals(userId)
+  );
 };
 
-projectSchema.methods.isOwner = function(this: IProject, userId: string): boolean {
+projectSchema.methods.isOwner = function (
+  this: IProject,
+  userId: string
+): boolean {
   return this.ownerId === userId;
 };
 
-projectSchema.methods.hasDevice = function(this: IProject, deviceId: Types.ObjectId): boolean {
-  return this.devices.some((device) => device.equals(deviceId))
+projectSchema.methods.hasDevice = function (
+  this: IProject,
+  deviceId: Types.ObjectId
+): boolean {
+  return this.devices.some((device) => device.equals(deviceId));
 };
 
-projectSchema.methods.removeDevice = async function(this: IProject, deviceId: Types.ObjectId): Promise<void> {
+projectSchema.methods.removeDevice = async function (
+  this: IProject,
+  deviceId: Types.ObjectId
+): Promise<void> {
   this.devices = this.devices.filter((device) => !device.equals(deviceId));
   await this.save();
 };
 
-projectSchema.methods.unlinkFitbitAccount = async function(this: IProject, fitbitAccountId: Types.ObjectId): Promise<void> {
-  this.fitbitAccounts = this.fitbitAccounts.filter(accountId => !accountId.equals(fitbitAccountId));
+projectSchema.methods.unlinkFitbitAccount = async function (
+  this: IProject,
+  fitbitAccountId: Types.ObjectId
+): Promise<void> {
+  this.fitbitAccounts = this.fitbitAccounts.filter(
+    (accountId) => !accountId.equals(fitbitAccountId)
+  );
   await this.save();
 };
 
-projectSchema.methods.addFitbitAccount = async function(this: IProject, accountId: Types.ObjectId ): Promise<void> {
-  if (!this.fitbitAccounts.some(id => id.equals(accountId))) {
+projectSchema.methods.addFitbitAccount = async function (
+  this: IProject,
+  accountId: Types.ObjectId
+): Promise<void> {
+  if (!this.fitbitAccounts.some((id) => id.equals(accountId))) {
     this.fitbitAccounts.push(accountId);
     await this.save();
   }
 };
 
-projectSchema.methods.deviceCount = function(this: IProject) {
+projectSchema.methods.deviceCount = function (this: IProject) {
   return this.devices.length;
 };
 
-projectSchema.methods.memberCount = function(this: IProject) {
+projectSchema.methods.memberCount = function (this: IProject) {
   return this.members.length;
 };
 
-projectSchema.methods.addMember = async function(this: IProject, userId: Types.ObjectId, role: string): Promise<void> {
+projectSchema.methods.addMember = async function (
+  this: IProject,
+  userId: Types.ObjectId,
+  role: string
+): Promise<void> {
   this.members.push(userId);
   if (role === 'admin') {
     this.admins.push(userId);

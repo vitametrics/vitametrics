@@ -10,9 +10,9 @@ import logger from '../middleware/logger';
 import { sendEmail } from '../middleware/util/emailUtil';
 import Cache from '../models/Cache';
 import Device from '../models/Device';
+import FitbitAccount from '../models/FitbitAccount';
 import Project, { IProject } from '../models/Project';
 import User, { IUser } from '../models/User';
-import FitbitAccount from '../models/FitbitAccount';
 
 interface IPopulatedUser {
   _id: Types.ObjectId;
@@ -154,7 +154,7 @@ class AdminController {
 
       await Cache.deleteMany({ projectId: project.projectId });
 
-      await FitbitAccount.deleteMany({ project_id: project._id});
+      await FitbitAccount.deleteMany({ project_id: project._id });
 
       await Project.findOneAndDelete({ projectId });
       logger.info(
@@ -230,7 +230,7 @@ class AdminController {
 
         await newUser.save();
         await project.addMember(newUser._id as Types.ObjectId, role);
-        
+
         if (role === 'tempUser') {
           const tempUser = new User({
             userId: newUserId,
@@ -456,10 +456,12 @@ class AdminController {
 
         const cacheDeleteResult = await Cache.deleteMany({
           projectId: project.projectId,
-          deviceId: { $in: deviceIds}
+          deviceId: { $in: deviceIds },
         });
 
-        logger.info(`Deleted ${cacheDeleteResult.deletedCount} cache entries for devices removed from project: ${project.projectId}`);
+        logger.info(
+          `Deleted ${cacheDeleteResult.deletedCount} cache entries for devices removed from project: ${project.projectId}`
+        );
       }
 
       project.members = updatedMembers;
@@ -505,7 +507,7 @@ class AdminController {
 
   static async changeUserRole(req: Request, res: Response) {
     const currentProject = req.project as IProject;
-    const {userId, role} = req.body;
+    const { userId, role } = req.body;
 
     try {
       logger.info(`Changing role for user: ${userId} to: ${role}`);
@@ -529,13 +531,14 @@ class AdminController {
         }
       } else {
         currentProject.admins = currentProject.admins.filter(
-          (admin) => admin.toString() !== (user._id as Types.ObjectId).toString()
+          (admin) =>
+            admin.toString() !== (user._id as Types.ObjectId).toString()
         );
       }
 
       await currentProject.save();
 
-      res.status(200).json({ msg: 'User role updated successfully'});
+      res.status(200).json({ msg: 'User role updated successfully' });
       return;
     } catch (error) {
       logger.error(`Error changing user role: ${error}`);

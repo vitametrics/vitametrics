@@ -2,12 +2,12 @@ import express, { Request, Response } from 'express';
 
 import axios from 'axios';
 import crypto from 'crypto';
+import { Types } from 'mongoose';
 
 import CodeVerifier from '../models/CodeVerifier';
+import FitbitAccount from '../models/FitbitAccount';
 import Project from '../models/Project';
 import User from '../models/User';
-import FitbitAccount from '../models/FitbitAccount';
-import { Types } from 'mongoose';
 
 const router = express.Router();
 
@@ -27,15 +27,24 @@ function generateState(projectId: string, userId: string): string {
   return Buffer.from(`${data}:${hash}`).toString('base64');
 }
 
-function verifyState(state: string): { projectId: string; userId: string; isValid: boolean} {
+function verifyState(state: string): {
+  projectId: string;
+  userId: string;
+  isValid: boolean;
+} {
   try {
     const decoded = Buffer.from(state, 'base64').toString();
-    const [projectId, userId, timestamp, randomString, hash] = decoded.split(':');
+    const [projectId, userId, timestamp, randomString, hash] =
+      decoded.split(':');
 
     const data = `${projectId}:${userId}:${timestamp}:${randomString}`;
-    const computedHash = crypto.createHash('sha256').update(data).digest('base64');
+    const computedHash = crypto
+      .createHash('sha256')
+      .update(data)
+      .digest('base64');
 
-    const isValid = (computedHash === hash) && (Date.now() - parseInt(timestamp) < 3600000); // 1 hour token expiry (shouldnt even hit this limit)
+    const isValid =
+      computedHash === hash && Date.now() - parseInt(timestamp) < 3600000; // 1 hour token expiry (shouldnt even hit this limit)
 
     return { projectId, userId, isValid };
   } catch (error) {
@@ -44,7 +53,7 @@ function verifyState(state: string): { projectId: string; userId: string; isVali
 }
 
 router.get('/auth', async (req: Request, res: Response) => {
-  const projectId = (req.query.projectId as string);
+  const projectId = req.query.projectId as string;
   const userId = (req.query.userId as string) || (req.user?.userId as string);
 
   if (!projectId || !userId) {
@@ -54,17 +63,19 @@ router.get('/auth', async (req: Request, res: Response) => {
   try {
     const project = await Project.findOne({ projectId });
     if (!project) {
-      return res.status(404).json({ msg: 'Project not found'});
+      return res.status(404).json({ msg: 'Project not found' });
     }
 
     const user = await User.findOne({ userId });
     if (!user) {
-      return res.status(404).json({ msg: 'User not found'});
+      return res.status(404).json({ msg: 'User not found' });
     }
 
     const isMember = project.isMember(user._id as Types.ObjectId);
     if (!isMember && !user.isTempUser) {
-      return res.status(403).json({ msg: 'User is not a member of this project'});
+      return res
+        .status(403)
+        .json({ msg: 'User is not a member of this project' });
     }
 
     const codeVerifier = crypto.randomBytes(32).toString('hex');
@@ -72,7 +83,12 @@ router.get('/auth', async (req: Request, res: Response) => {
 
     const state = generateState(projectId, userId);
 
-    await new CodeVerifier({ value: codeVerifier, projectId, userId, state }).save();
+    await new CodeVerifier({
+      value: codeVerifier,
+      projectId,
+      userId,
+      state,
+    }).save();
     const queryParams = new URLSearchParams({
       client_id: process.env.FITBIT_CLIENT_ID as string,
       response_type: 'code',
@@ -99,7 +115,7 @@ router.get('/callback', async (req: Request, res: Response) => {
   const state = req.query.state as string;
 
   if (!state) {
-    return res.status(400).json({ msg: 'Missing state'});
+    return res.status(400).json({ msg: 'Missing state' });
   }
 
   try {
@@ -123,17 +139,19 @@ router.get('/callback', async (req: Request, res: Response) => {
 
     const project = await Project.findOne({ projectId });
     if (!project) {
-      return res.status(404).json({ msg: 'Project not found'});
+      return res.status(404).json({ msg: 'Project not found' });
     }
 
     const user = await User.findOne({ userId });
     if (!user) {
-      return res.status(404).json({ msg: 'User not found'});
+      return res.status(404).json({ msg: 'User not found' });
     }
 
     const isMember = project.isMember(user._id as Types.ObjectId);
     if (!isMember) {
-      return res.status(403).json({ msg: 'User is not a member of this project'});
+      return res
+        .status(403)
+        .json({ msg: 'User is not a member of this project' });
     }
 
     const params = new URLSearchParams({
@@ -167,7 +185,6 @@ router.get('/callback', async (req: Request, res: Response) => {
 
     const fitbitUserID = profileResponse.data.user.encodedId;
 
-  
     if (user.isTempUser) {
       user.fitbitUserId = fitbitUserID;
       user.fitbitAccessToken = accessToken;
@@ -177,10 +194,9 @@ router.get('/callback', async (req: Request, res: Response) => {
       await user.save();
       return res.redirect('/');
     } else {
-
       let fitbitAccount = await FitbitAccount.findOne({
         userId: fitbitUserID,
-        project_id: project._id
+        project_id: project._id,
       });
 
       if (fitbitAccount) {
@@ -193,13 +209,15 @@ router.get('/callback', async (req: Request, res: Response) => {
           accessToken,
           refreshToken,
           lastTokenRefresh: new Date(),
-          project_id: project._id
+          project_id: project._id,
         });
       }
 
       await fitbitAccount.save();
 
-      if (!project.fitbitAccounts.includes(fitbitAccount._id as Types.ObjectId)) {
+      if (
+        !project.fitbitAccounts.includes(fitbitAccount._id as Types.ObjectId)
+      ) {
         project.fitbitAccounts.push(fitbitAccount._id as Types.ObjectId);
         await project.save();
       }

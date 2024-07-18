@@ -3,6 +3,7 @@ import express, { Request, Response } from 'express';
 import crypto from 'crypto';
 import { body } from 'express-validator';
 
+import ProjectController from '../controllers/ProjectController';
 import { validationHandler } from '../handlers/validationHandler';
 import logger from '../middleware/logger';
 import { sendEmail } from '../middleware/util/emailUtil';
@@ -10,7 +11,6 @@ import verifyRole from '../middleware/verifyRole';
 import verifySession from '../middleware/verifySession';
 import Project from '../models/Project';
 import User from '../models/User';
-import { unlinkFitbitAccount } from '../controllers/ProjectController';
 
 const router = express.Router();
 
@@ -74,26 +74,36 @@ router.post(
   }
 );
 // get all instance users
-router.get('/users', verifySession, verifyRole('siteOwner'), async (req: Request, res: Response) => {
-  try {
-    const users = await User.find();
-    return res.status(200).json(users);
-  } catch (error) {
-    logger.error(`Error fetching users: ${error}`);
-    return res.status(500).json({ msg: 'Internal Server Error'});
+router.get(
+  '/users',
+  verifySession,
+  verifyRole('siteOwner'),
+  async (req: Request, res: Response) => {
+    try {
+      const users = await User.find();
+      return res.status(200).json(users);
+    } catch (error) {
+      logger.error(`Error fetching users: ${error}`);
+      return res.status(500).json({ msg: 'Internal Server Error' });
+    }
   }
-});
+);
 
 // get all instance projects
-router.get('/projects', verifySession, verifyRole('siteOwner'), async (req: Request, res: Response) => {
-  try {
-    const projects = await Project.find();
-    return res.status(200).json(projects);
-  } catch (error) {
-    logger.error(`Error fetching projects: ${error}`);
-    return res.status(500).json({ msg: 'Internal Server Error'});
+router.get(
+  '/projects',
+  verifySession,
+  verifyRole('siteOwner'),
+  async (req: Request, res: Response) => {
+    try {
+      const projects = await Project.find();
+      return res.status(200).json(projects);
+    } catch (error) {
+      logger.error(`Error fetching projects: ${error}`);
+      return res.status(500).json({ msg: 'Internal Server Error' });
+    }
   }
-});
+);
 
 // edit specific user on instance
 router.put(
@@ -110,18 +120,20 @@ router.put(
       const { id } = req.params;
       const updateData = req.body;
 
-      const updatedUser = await User.findByIdAndUpdate(id, updateData, { new: true});
+      const updatedUser = await User.findByIdAndUpdate(id, updateData, {
+        new: true,
+      });
       if (!updatedUser) {
-        return res.status(404).json({ msg: 'User not found'});
+        return res.status(404).json({ msg: 'User not found' });
       }
 
       return res.status(200).json(updatedUser);
     } catch (error) {
       logger.error(`Error updating user: ${error}`);
-      return res.status(500).json({ msg: 'Internal Server Error'});
+      return res.status(500).json({ msg: 'Internal Server Error' });
     }
   }
-)
+);
 
 // edit specific project by id on instance
 router.put(
@@ -129,65 +141,83 @@ router.put(
   verifySession,
   verifyRole('siteOwner'),
   validationHandler([
-    body('projectName').optional().isString().withMessage('Project name is required'),
-    body('projectDescription').optional().isString().withMessage('Project description is required'),
-    body('ownerId').optional().isString().withMessage('Owner ID is required')
+    body('projectName')
+      .optional()
+      .isString()
+      .withMessage('Project name is required'),
+    body('projectDescription')
+      .optional()
+      .isString()
+      .withMessage('Project description is required'),
+    body('ownerId').optional().isString().withMessage('Owner ID is required'),
   ]),
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      const updateData = req. body;
+      const updateData = req.body;
 
-      const updatedProject = await Project.findByIdAndUpdate(id, updateData, { new: true });
+      const updatedProject = await Project.findByIdAndUpdate(id, updateData, {
+        new: true,
+      });
       if (!updatedProject) {
-        return res.status(404).json({ msg: 'Project not found'});
+        return res.status(404).json({ msg: 'Project not found' });
       }
 
       return res.status(200).json(updatedProject);
     } catch (error) {
       logger.error(`Error updating project: ${error}`);
-      return res.status(500).json({ msg: 'Internal Server Error'})
+      return res.status(500).json({ msg: 'Internal Server Error' });
     }
   }
 );
 
-// delete user by id on instance 
-router.delete('/user/:id', verifySession, verifyRole('siteOwner'), async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
+// delete user by id on instance
+router.delete(
+  '/user/:id',
+  verifySession,
+  verifyRole('siteOwner'),
+  async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
 
-    const user = await User.findByIdAndDelete(id);
-    if (!user) {
-      return res.status(404).json({ msg: 'User not found'});
+      const user = await User.findByIdAndDelete(id);
+      if (!user) {
+        return res.status(404).json({ msg: 'User not found' });
+      }
+
+      await User.findByIdAndDelete(id);
+
+      res.status(200).json({ msg: 'User deleted successfully' });
+    } catch (error) {
+      logger.error(`Error deleting user: ${error}`);
+      return res.status(500).json({ msg: 'Internal Server Error' });
     }
-
-    await User.findByIdAndDelete(id);
-
-    res.status(200).json({ msg: 'User deleted successfully'});
-  } catch (error) {
-    logger.error(`Error deleting user: ${error}`);
-    return res.status(500).json({ msg: 'Internal Server Error'});
   }
-});
+);
 
 // delete project by id on instance
-router.delete('/project/:id', verifySession, verifyRole('siteOwner'), async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
+router.delete(
+  '/project/:id',
+  verifySession,
+  verifyRole('siteOwner'),
+  async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
 
-    const project = await Project.findById(id);
-    if (!project) {
-      return res.status(404).json({ msg: 'Project not found'});
+      const project = await Project.findById(id);
+      if (!project) {
+        return res.status(404).json({ msg: 'Project not found' });
+      }
+
+      await Project.findByIdAndDelete(id);
+
+      return res.status(200).json({ msg: 'Project deleted successfully' });
+    } catch (error) {
+      logger.error(`Error deleting project: ${error}`);
+      return res.status(500).json({ msg: 'Internal Server Error' });
     }
-
-    await Project.findByIdAndDelete(id);
-
-    return res.status(200).json({ msg: 'Project deleted successfully'});
-  } catch (error) {
-    logger.error(`Error deleting project: ${error}`);
-    return res.status(500).json({ msg: 'Internal Server Error'});
   }
-});
+);
 
 // unlink fitbit account from project
 router.put(
@@ -200,17 +230,19 @@ router.put(
     try {
       const project = await Project.findById(id);
       if (!project) {
-        return res.status(404).json({ msg: 'Project not found'});
+        return res.status(404).json({ msg: 'Project not found' });
       }
 
-      await unlinkFitbitAccount({project} as any, res);
+      project.unlinkFitbitAccount(id);
 
-      return res.status(200).json({ msg: 'Fitbit account unlinked successfully'});
+      return res
+        .status(200)
+        .json({ msg: 'Fitbit account unlinked successfully' });
     } catch (error) {
       logger.error(`Error unlinking fitbit account: ${error}`);
-      return res.status(500).json({ msg: 'Internal Server Error'});
+      return res.status(500).json({ msg: 'Internal Server Error' });
     }
   }
-)
+);
 
 export default router;
