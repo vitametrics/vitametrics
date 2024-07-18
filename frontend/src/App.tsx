@@ -10,6 +10,7 @@ import Home from "./pages/Home"; // Regular import for Home
 const Dashboard = lazy(() => import("./pages/UserDashboard"));
 const ProjectDashboard = lazy(() => import("./pages/ProjectDashboard"));
 const Login = lazy(() => import("./pages/Login"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const FAQs = lazy(() => import("./pages/FAQs"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TOS = lazy(() => import("./pages/TOS"));
@@ -121,6 +122,16 @@ function App() {
               <UnauthenticatedRoute redirectTo="/dashboard">
                 <Suspense fallback={<LoadingFallback />}>
                   <Login />
+                </Suspense>
+              </UnauthenticatedRoute>
+            }
+          />
+          <Route
+            path="/forgot-password"
+            element={
+              <UnauthenticatedRoute redirectTo="/dashboard">
+                <Suspense fallback={<LoadingFallback />}>
+                  <ForgotPassword />
                 </Suspense>
               </UnauthenticatedRoute>
             }

@@ -34,7 +34,7 @@ const DeleteProjectMenu: React.FC<DeleteProjectMenuProps> = ({
       </p>
       <div className="flex flex-row justify-around items-center gap-2">
         <button
-          className="text-white p-3 bg-red-400 rounded-lg w-full"
+          className="text-white p-3 bg-red-400 hover:bg-red-300 rounded-lg w-full"
           onClick={() => {
             handleDelete();
             toggleMenu(false);
@@ -43,7 +43,7 @@ const DeleteProjectMenu: React.FC<DeleteProjectMenuProps> = ({
           Yes, Delete it
         </button>
         <button
-          className="text-white p-3 bg-secondary rounded-xl w-full"
+          className="text-white p-3 bg-secondary hover:bg-hoverSecondary rounded-xl w-full"
           onClick={() => toggleMenu(false)}
         >
           Cancel

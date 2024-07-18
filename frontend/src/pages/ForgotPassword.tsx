@@ -1,58 +1,50 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
-import axios from "axios";
 import Navbar from "../components/Navbar";
 import logo from "../assets/images/vitamix.webp";
 import Footer from "../components/Footer";
-import { useAuth } from "../helpers/AuthContext";
 import useDebounce from "../helpers/useDebounce";
 import { useNavigate } from "react-router-dom";
-import LockIcon from "../assets/LockIcon";
 import MailIcon from "../assets/MailIcon";
+import { forgotPassword } from "../services/authService";
 
-const Login = () => {
-  const LOGIN_ENDPOINT = `${process.env.API_URL}/login`;
-
+const ForgotPassword = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const debouncedEmail = useDebounce(email, 100);
-  const debouncedPassword = useDebounce(password, 100);
   const [msg, setMsg] = useState("");
-  const { login } = useAuth();
+  const [success, setSuccess] = useState(false);
 
   const handleKeyDown = (event: any) => {
     if (event.key === "Enter") {
-      handleLogin();
+      handleForgotPassword();
     }
   };
 
-  const handleLogin = async () => {
+  const handleForgotPassword = async () => {
     try {
-      const response = await axios.post(
-        LOGIN_ENDPOINT,
-        { email: debouncedEmail, password: debouncedPassword },
-        { withCredentials: true }
-      );
-
-      if (response.data) {
-        login();
-      }
+      await forgotPassword(debouncedEmail);
+      setSuccess(true);
+      setMsg("Password reset link sent to your email");
     } catch (error: any) {
-      const errorMessage =
-        error.response && error.response.data
-          ? error.response.data.message
-          : "An unknown error occurred";
+      if (email === "") {
+        const errorMessage = "Please enter your email";
+        setSuccess(false);
+        setMsg(errorMessage);
+        return;
+      }
+      const errorMessage = "Failed to send password reset link";
+      setSuccess(false);
       setMsg(errorMessage);
     }
   };
 
   return (
-    <div className="h-full w-full bg-fixed overflow-y-hidden  font-neueHassUnica ">
+    <div className="h-full w-full bg-fixed overflow-y-hidden  font-neueHassUnica">
       <Navbar />
       <div className="flex flex-col justify-center items-center p-0 md:p-10">
         <div className="flex flex-row h-screen items-center justify-center">
-          <div className="flex flex-col pt-32 items-center justify-center bg-container w-full h-full md:w-[500px] md:h-[600px]  p-20 md:pt-20 rounded-none md:rounded-xl ">
+          <div className="flex flex-col pt-32 items-center justify-center bg-glass w-full h-full md:w-[500px] md:h-[600px]  p-20 md:pt-20 rounded-none md:rounded-xl ">
             <a href="/" className="mb-5">
               <img
                 src={logo}
@@ -61,11 +53,15 @@ const Login = () => {
                 alt="VitametricsLogo"
               />
             </a>
-            <h2 className="font-bold text-4xl w-72 mt-5 mb-5 text-center text-primary">
-              {" "}
-              Login{" "}
+            <h2 className="font-bold text-3xl w-72 mt-5 mb-3 text-center text-primary">
+              Forgot Password
             </h2>
-            <a className="text-red-500 mb-3"> {msg} </a>
+            <a
+              className={` mb-2 ${success ? "text-green-700" : "text-red-500"} `}
+            >
+              {" "}
+              {msg}{" "}
+            </a>
             <p className="text-primary mr-auto">Email</p>
             <div className="flex items-center w-full bg-inputBg p-1 rounded-lg">
               <MailIcon />
@@ -77,29 +73,19 @@ const Login = () => {
                 onKeyDown={handleKeyDown}
               />
             </div>
-            <p className="text-primary mr-auto mt-3">Password</p>
-            <div className="flex items-center w-full bg-inputBg p-1 rounded-lg">
-              <LockIcon />
-              <input
-                className="p-[10px] w-full text-black"
-                type="password"
-                placeholder="Enter your password"
-                onChange={(e) => setPassword(e.target.value)}
-                onKeyDown={handleKeyDown}
-              />
-            </div>
+
             <a
-              href="/forgot-password"
+              href="/login"
               className="text-desc opacity-60 mt-2 mr-auto hover:opacity-80"
             >
-              Forgot Password?
+              Login instead?
             </a>
             <button
-              onKeyDown={handleLogin}
-              onClick={handleLogin}
+              onKeyDown={handleKeyDown}
+              onClick={() => handleForgotPassword()}
               className="p-3 mt-5 bg-secondary hover:bg-hoverSecondary w-full rounded-lg cursor-pointer font-bold text-white"
             >
-              Login
+              Send Verification Link
             </button>
           </div>
         </div>
@@ -109,4 +95,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgotPassword;

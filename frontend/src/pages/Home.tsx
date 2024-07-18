@@ -6,7 +6,7 @@ const Footer = lazy(() => import("../components/Footer"));
 
 const Home = () => {
   return (
-    <div className="h-full w-full bg-fixed flex flex-col font-leagueSpartanBold">
+    <div className="h-full w-full bg-fixed flex flex-col font-neueHassUnica">
       <Navbar />
       <Banner />
       <Suspense fallback={<div>Loading...</div>}>

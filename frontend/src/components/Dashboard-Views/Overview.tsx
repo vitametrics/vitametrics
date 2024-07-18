@@ -15,7 +15,7 @@ const Overview = () => {
       initial="hidden"
       animate={inView ? "show" : "hidden"}
       ref={ref}
-      className="w-full h-full flex flex-col p-10 bg-whitePrimary font-libreFranklin"
+      className="w-full h-full flex flex-col p-10 bg-whitePrimary"
     >
       <h2 className="w-full text-3xl text-primary p-5 pb-0 font-bold">
         {project.projectName} Overview

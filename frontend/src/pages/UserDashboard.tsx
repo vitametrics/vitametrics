@@ -148,7 +148,7 @@ const UserDashboard = () => {
   };
 
   return (
-    <div className="h-full bg-lightmodePrimary font-ralewayBold">
+    <div className="h-full bg-lightmodePrimary font-neueHassUnica">
       <DashboardNavbar />
       <div className={`backdrop ${showBackDrop ? "show" : ""}`}></div>
 
@@ -168,11 +168,11 @@ const UserDashboard = () => {
         handleDelete={handleDeleteProject}
       />
       <div className="p-20 bg-lightmodeSecondary h-full">
-        <h1 className="text-4xl mb-5 font-libreFranklin font-bold text-primary">
+        <h1 className="text-4xl mb-5 font-bold text-primary">
           Welcome back, {role}
         </h1>
 
-        <div className="flex flex-col bg-white rounded-xl shadow-lg font-libreFranklin p-10">
+        <div className="flex flex-col bg-white rounded-xl shadow-lg p-10">
           <div className=" flex flex-col items-center pb-0">
             <span className="text-left text-primary text-2xl mr-auto mb-3 font-bold">
               Projects
@@ -180,7 +180,7 @@ const UserDashboard = () => {
             {userRole !== "user" && (
               <button
                 onClick={() => toggleCreateProjectMenu(true)}
-                className="p-2 bg-primary text-white rounded-lg mb-5 text-xl w-[150px] mr-auto font-bold"
+                className="p-2 bg-primary text-white rounded-lg mb-5 text-xl w-[150px] mr-auto font-bold hover:bg-hoverPrimary"
               >
                 New Project
               </button>
@@ -229,7 +229,7 @@ const UserDashboard = () => {
             {currentProjects.map((project: Project) => (
               <Fragment key={project.projectId}>
                 <span className="h-[0.75px] rounded-xl w-full bg-gray-200"></span>
-                <div className="grid grid-cols-4 w-full items-center hover:cursor-pointer">
+                <div className="grid grid-cols-4 w-full items-center hover:cursor-pointer hover:bg-gray-200">
                   <label
                     className="text-center hover:cursor-pointer"
                     onClick={() => handleProjectClick(project.projectId)}

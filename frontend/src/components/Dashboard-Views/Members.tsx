@@ -261,7 +261,7 @@ const Members = () => {
       ref={ref}
       initial="hidden"
       animate={inView ? "show" : "hidden"}
-      className="w-full h-full flex flex-col p-10 font-libreFranklin"
+      className="w-full h-full flex flex-col p-10"
     >
       <InviteMenu
         projectName={project.projectName}
@@ -294,12 +294,10 @@ const Members = () => {
         handleClose={handleClose}
       />
 
-      <span className="p-5">
-        <MembersContainer
-          onClick={toggleMemberInfo}
-          toggleInviteMenu={toggleInviteMenu}
-        />
-      </span>
+      <MembersContainer
+        onClick={toggleMemberInfo}
+        toggleInviteMenu={toggleInviteMenu}
+      />
     </motion.div>
   );
 };

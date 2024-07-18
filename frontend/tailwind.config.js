@@ -37,6 +37,7 @@ export default {
       textColor: {
         primary: "#45496a",
         primary2: "#32354f",
+        hoverPrimary: "#9ea2bc",
         primary3: "#2b2e47",
         secondary: "#7d8bae",
         secondary2: "#6b6f8e",
@@ -56,6 +57,7 @@ export default {
       leagueSpartanLight: ["LeagueSpartan-Light", "sans-serif"],
       libreFranklinBold: ["Libre Franklin", "sans-serif"],
       libreFranklin: ["Libre Franklin", "sans-serif"],
+      neueHassUnica: ["neue-haas-unica", "sans-serif"],
     },
   },
   plugins: ["@tailwindcss/forms"],
