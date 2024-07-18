@@ -2,27 +2,13 @@ import express from 'express';
 
 import { query, body, param } from 'express-validator';
 
-import {
-  getProjectInfo,
-  fetchDevicesHandler,
-  // fetchDataHandler,
-  fetchIntradayDataHandler,
-  downloadDataHandler,
-  changeDeviceName,
-  getCachedFiles,
-  downloadCachedFile,
-  removeDevice,
-  deleteCachedFiles,
-  toggleNotifications,
-  unlinkFitbitAccount,
-  getProjectFitbitAccounts,
-} from '../controllers/ProjectController';
 import { asyncHandler } from '../handlers/asyncHandler';
 import { validationHandler } from '../handlers/validationHandler';
 import checkProjectMembership from '../middleware/checkProjectMembership';
 import refreshFitbitToken from '../middleware/refreshFitbitToken';
 import verifyRole from '../middleware/verifyRole';
 import verifySession from '../middleware/verifySession';
+import ProjectController from '../controllers/ProjectController';
 
 const router = express.Router();
 
@@ -33,7 +19,7 @@ router.get(
     query('projectId').not().isEmpty().withMessage('Project ID is required'),
   ]),
   checkProjectMembership,
-  asyncHandler(getProjectInfo)
+  asyncHandler(ProjectController.getProjectInfo)
 );
 
 router.post(
@@ -45,7 +31,7 @@ router.post(
   ]),
   checkProjectMembership,
   verifyRole('admin'),
-  asyncHandler(changeDeviceName)
+  asyncHandler(ProjectController.changeDeviceName)
 );
 
 router.post(
@@ -56,14 +42,14 @@ router.post(
   ]),
   checkProjectMembership,
   verifyRole('admin'),
-  asyncHandler(removeDevice)
+  asyncHandler(ProjectController.removeDevice)
 );
 
 router.get(
   '/fitbit-accounts',
   verifySession,
   checkProjectMembership,
-  asyncHandler(getProjectFitbitAccounts)
+  asyncHandler(ProjectController.getProjectFitbitAccounts)
 )
 
 router.post(
@@ -74,7 +60,7 @@ router.post(
   ]),
   checkProjectMembership,
   verifyRole('admin'),
-  asyncHandler(unlinkFitbitAccount)
+  asyncHandler(ProjectController.unlinkFitbitAccount)
 )
 
 router.put(
@@ -82,7 +68,7 @@ router.put(
   verifySession,
   checkProjectMembership,
   verifyRole('owner'),
-  asyncHandler(toggleNotifications)
+  asyncHandler(ProjectController.toggleNotifications)
 );
 
 router.post(
@@ -90,21 +76,8 @@ router.post(
   verifySession,
   checkProjectMembership,
   refreshFitbitToken,
-  asyncHandler(fetchDevicesHandler)
+  asyncHandler(ProjectController.fetchDevicesHandler)
 );
-
-// router.get(
-//   '/fetch-data',
-//   verifySession,
-//   validationHandler([
-//     query('id').not().isEmpty().withMessage('Device ID is required'),
-//     query('startDate').not().isEmpty().withMessage('Start date is required'),
-//     query('endDate').not().isEmpty().withMessage('End date is required'),
-//   ]),
-//   checkProjectMembership,
-//   refreshFitbitToken,
-//   asyncHandler(fetchDataHandler)
-// );
 
 router.get(
   '/fetch-intraday',
@@ -120,7 +93,7 @@ router.get(
   ]),
   checkProjectMembership,
   refreshFitbitToken,
-  asyncHandler(fetchIntradayDataHandler)
+  asyncHandler(ProjectController.fetchIntradayDataHandler)
 );
 
 router.post(
@@ -131,7 +104,7 @@ router.post(
   ]),
   checkProjectMembership,
   verifyRole('admin'),
-  asyncHandler(deleteCachedFiles)
+  asyncHandler(ProjectController.deleteCachedFiles)
 );
 
 router.get(
@@ -140,7 +113,7 @@ router.get(
   validationHandler([query('deviceId').optional()]),
   checkProjectMembership,
   refreshFitbitToken,
-  asyncHandler(getCachedFiles)
+  asyncHandler(ProjectController.getCachedFiles)
 );
 
 router.get(
@@ -150,7 +123,7 @@ router.get(
     param('id').not().isEmpty().withMessage('File ID is required'),
   ]),
   checkProjectMembership,
-  asyncHandler(downloadCachedFile)
+  asyncHandler(ProjectController.downloadCachedFile)
 );
 
 router.get(
@@ -169,7 +142,7 @@ router.get(
   query('archiveName').optional(),
   checkProjectMembership,
   refreshFitbitToken,
-  asyncHandler(downloadDataHandler)
+  asyncHandler(ProjectController.downloadDataHandler)
 );
 
 export default router;
