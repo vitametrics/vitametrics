@@ -28,6 +28,8 @@ interface AuthContextProps {
   setShowBackDrop: (auth0: boolean) => void;
   setSiteMembers: (auth0: any[]) => void;
   fetchInstanceProjects: () => void;
+  siteAccounts: any;
+  fetchSiteAccounts: () => void;
 }
 
 interface Project {
@@ -45,6 +47,12 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const AUTH_ENDPOINT = `${process.env.API_URL}/user/auth/status`;
   const LOGOUT_ENDPOINT = `${process.env.API_URL}/logout`;
   const LOGIN_ENDPOINT = `${process.env.API_URL}/login`;
+  const FETCH_VERSION_ENDPOINT = `${process.env.API_URL}/version`;
+  const FETCH_HEALTH_ENDPOINT = `${process.env.API_URL}/health`;
+  const FETCH_SITE_MEMBERS_ENDPOINT = `${process.env.API_URL}/owner/users`;
+  const FETCH_INSTANCE_PROJECTS_ENDPOINT = `${process.env.API_URL}/owner/projects`;
+  const FETCH_INSTANCE_ACCOUNTS_ENDPOINT = `${process.env.API_URL}/owner/fitbit`;
+
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoadingAuth, setIsLoadingAuth] = useState<boolean>(true);
   const [isEmailVerified, setIsEmailVerified] = useState<boolean>(false);
@@ -59,6 +67,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isUpToDate, setIsUpToDate] = useState<boolean>(false);
   const [health, setHealth] = useState(false);
   const [siteMembers, setSiteMembers] = useState<any[]>([]);
+  const [siteAccounts, setSiteAccounts] = useState<any[]>([]);
 
   const [showBackDrop, setShowBackDrop] = useState(false);
 
@@ -80,6 +89,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           await fetchVersion();
           await fetchHealth();
           await fetchSiteMembers();
+          await fetchSiteAccounts();
         }
         setProjects(response.data.user.projects);
         await fetchInstanceProjects();
@@ -122,12 +132,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     login();
-  }, []); // Empty dependency array to run only on mount
-
-  const FETCH_VERSION_ENDPOINT = `${process.env.API_URL}/version`;
-  const FETCH_HEALTH_ENDPOINT = `${process.env.API_URL}/health`;
-  const FETCH_SITE_MEMBERS_ENDPOINT = `${process.env.API_URL}/owner/users`;
-  const FETCH_INSTANCE_PROJECTS_ENDPOINT = `${process.env.API_URL}/owner/projects`;
+  }, []);
 
   const fetchVersion = async () => {
     try {
@@ -165,13 +170,23 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const fetchSiteAccounts = async () => {
+    try {
+      const response = await axios.get(FETCH_INSTANCE_ACCOUNTS_ENDPOINT, {
+        withCredentials: true,
+      });
+      setSiteAccounts(response.data);
+    } catch (error) {
+      console.error("Error fetching site members:", error);
+    }
+  };
+
   const fetchInstanceProjects = async () => {
     try {
       const response = await axios.get(FETCH_INSTANCE_PROJECTS_ENDPOINT, {
         withCredentials: true,
       });
 
-      console.log(response.data);
       setProjects(response.data);
     } catch (error) {
       console.error("Error fetching site members:", error);
@@ -205,6 +220,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         showBackDrop,
         setShowBackDrop,
         fetchInstanceProjects,
+        siteAccounts,
+        fetchSiteAccounts,
       }}
     >
       {children}

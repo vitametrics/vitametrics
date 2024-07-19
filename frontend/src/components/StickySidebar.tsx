@@ -2,6 +2,7 @@ import OverviewIcon from "../assets/OverviewIcon";
 import DeviceIcon from "../assets/DeviceIcon";
 import MembersIcon from "../assets/MembersIcon";
 import SettingsIcon from "../assets/SettingsIcon";
+import AccountsIcon from "../assets/AccountsIcon";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
@@ -65,7 +66,7 @@ const StickySidebar: React.FC<StickySidebarProps> = ({ setPage, path }) => {
             } flex-col flex justify-center text-[0.75rem] px-4 py-2 rounded-xl items-center text-white hover:bg-secondary2 p-4 hover:cursor-pointer`}
             onClick={() => handlePageChange("accounts")}
           >
-            <DeviceIcon />
+            <AccountsIcon />
             Accounts
           </div>
         </li>
