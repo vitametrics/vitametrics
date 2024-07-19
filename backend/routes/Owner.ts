@@ -107,7 +107,7 @@ router.get(
           const devices = await Device.find({ fitbitUserId: account.userId });
 
           const projects = await Project.find({ fitbitAccounts: { $in: [account._id] } })
-          .select('projectName');
+          .select('projectName projectId');
 
           return {
             _id: account._id,

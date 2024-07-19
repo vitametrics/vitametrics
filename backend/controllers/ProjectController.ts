@@ -124,6 +124,42 @@ class ProjectController {
     }
   }
 
+  // static async changeFitbitAccountNickname(req: Request, res: Response) {
+  //   const currentProject = req.project as IProject;
+  //   const { fitbitUserId, name } = req.body;
+
+  //   try {
+  //     logger.info(
+  //       `Changing name for account ${fitbitUserId} for project: ${currentProject.projectId}`
+  //     );
+
+  //     const fitbitAccount = await FitbitAccount.findOne({ fitbitUserId });
+  //     if (!fitbitAccount) {
+  //       logger.error(`Fitbit account not found: ${fitbitUserId}`);
+  //       res.status(404).json({ msg: 'Fitbit account not found' });
+  //       return;
+  //     }
+
+  //     if (!currentProject.fitbitAccounts.includes(fitbitAccount._id as Types.ObjectId)) {
+  //       logger.error(
+  //         `Fitbit account not linked to project: ${fitbitUserId}`
+  //       );
+  //       res.status(400).json({ msg: 'Fitbit account not linked to project' });
+  //       return;
+  //     }
+
+  //     fitbitAccount.name = name;
+  //     await fitbitAccount.save();
+  //     logger.info(`Name changed successfully for account: ${fitbitUserId}`);
+  //     res.status(200).json({ msg: 'Name changed successfully' });
+  //     return;
+  //   } catch (error) {
+  //     logger.error(`Error changing account name: ${error}`);
+  //     res.status(500).json({ msg: 'Internal Server Error' });
+  //     return;
+  //   }
+  // }
+
   static async removeDevice(req: Request, res: Response) {
     const currentProject = req.project as IProject;
     const { deviceId } = req.body;
@@ -199,46 +235,6 @@ class ProjectController {
     }
   }
 
-  static async addFitbitAccountToProject(req: Request, res: Response) {
-    const currentProject = req.project as IProject;
-    const fitbitUserId = req.body.fitbitUserId as string;
-
-    try {
-      logger.info(
-        `Adding Fitbit account to project: ${currentProject.projectId}`
-      );
-
-      const fitbitAccount = await FitbitAccount.findOne({
-        userId: fitbitUserId,
-      });
-
-      if (!fitbitAccount) {
-        res.status(404).json({ msg: 'Fitbit account not found' });
-        return;
-      }
-
-      if (currentProject.fitbitAccounts.includes(fitbitAccount._id as Types.ObjectId)) {
-        res.status(400).json({ msg: 'Fitbit account already linked' });
-        return;
-      }
-
-      currentProject.fitbitAccounts.push(fitbitAccount._id as Types.ObjectId);
-      await currentProject.save();
-
-      logger.info(
-        `Fitbit account added successfully to project: ${currentProject.projectId}`
-      );
-      res.status(200).json({ msg: 'Fitbit account linked successfully' });
-      return;
-    } catch (error) {
-      logger.error(`Error adding Fitbit account to project: ${error}`);
-      res.status(500).json({ msg: 'Internal Server Error' });
-      return;
-    }
-
-
-  }
-
   static async unlinkFitbitAccount(req: Request, res: Response) {
     const currentProject = req.project as IProject;
     const fitbitUserId = req.body.fitbitUserId as string;
@@ -272,6 +268,8 @@ class ProjectController {
         projectId: currentProject.projectId,
         fitbitUserId: fitbitAccount.userId,
       });
+
+      await fitbitAccount.deleteOne();
 
       currentProject.fitbitAccounts = currentProject.fitbitAccounts.filter(
         (id) => !id.equals(fitbitAccount._id as Types.ObjectId)

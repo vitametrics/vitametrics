@@ -502,6 +502,34 @@ class AdminController {
     }
   }
 
+  // static async changeFitbitAccountNickname(req: Request, res: Response) {
+  //   const currentProject = req.project as IProject;
+  //   const { fitbitUserId, name } = req.body;
+
+  //   try {
+  //     logger.info(
+  //       `Changing name for account ${fitbitUserId} for project: ${currentProject.projectId}`
+  //     );
+
+  //     const fitbitAccount = await FitbitAccount.findOne({ fitbitUserId });
+  //     if (!fitbitAccount) {
+  //       logger.error(`Fitbit account not found: ${fitbitUserId}`);
+  //       res.status(404).json({ msg: 'Fitbit account not found' });
+  //       return;
+  //     }
+
+  //     fitbitAccount.name = name;
+  //     await fitbitAccount.save();
+  //     logger.info(`Name changed successfully for account: ${fitbitUserId}`);
+  //     res.status(200).json({ msg: 'Name changed successfully' });
+  //     return;
+  //   } catch (error) {
+  //     logger.error(`Error changing account name: ${error}`);
+  //     res.status(500).json({ msg: 'Internal Server Error' });
+  //     return;
+  //   }
+  // }
+
   static async changeUserRole(req: Request, res: Response) {
     const currentProject = req.project as IProject;
     const { userId, role } = req.body;
