@@ -126,6 +126,16 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [window.location.search]);
 
+  /*
+  useEffect(() => {
+    if (projectId){
+      if (fitbitAccounts.length > 0) {
+        
+
+      }
+    }
+  }, [fitbitAccounts]);*/
+
   useEffect(() => {
     if (projectId) {
       fetchProject(projectId).then((data) => {
@@ -133,7 +143,9 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
           setProject(data);
           updateProject({ devices: data.devices });
           if (fitbitAccounts.length === 0) {
+            console.log("fetching fitbit accounts");
             fetchFBAccounts(projectId).then(setFitbitAccounts);
+            console.log("fitbit accounts fetched");
           }
         }
       });

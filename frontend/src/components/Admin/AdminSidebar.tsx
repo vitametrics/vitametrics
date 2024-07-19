@@ -1,10 +1,11 @@
 import DataIcon from "../../assets/DataIcon";
 import OverviewIcon from "../../assets/OverviewIcon";
-import DeviceIcon from "../../assets/DeviceIcon";
+import StatusIcon from "../../assets/StatusIcon";
 import MembersIcon from "../../assets/MembersIcon";
 import SettingsIcon from "../../assets/SettingsIcon";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import AccountsIcon from "../../assets/AccountsIcon";
 
 interface AdminSidebarProps {
   setPage: (arg0: string) => void;
@@ -53,7 +54,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ setPage, path }) => {
           } flex-row flex text-[0.75rem] px-4 py-2 justify-start  items-center text-white hover:bg-secondary2 p-4 hover:cursor-pointer gap-2`}
           onClick={() => handlePageChange("settings")}
         >
-          <DataIcon />
+          <SettingsIcon />
           Settings
         </li>
         <li className="text-sm text-white p-2 text-center bg-primary3 font-bold">
@@ -66,8 +67,17 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ setPage, path }) => {
           } flex-row flex text-[0.75rem] px-4 py-2 justify-start items-center text-white hover:bg-secondary2 p-4 hover:cursor-pointer gap-2`}
           onClick={() => handlePageChange("status")}
         >
-          <DeviceIcon />
+          <StatusIcon />
           Status
+        </li>
+        <li
+          className={`${
+            currentPage === "accounts" ? " bg-secondary2" : ""
+          } flex-row flex text-[0.75rem] px-4 py-2 justify-start items-center text-white hover:bg-secondary2 p-4 hover:cursor-pointer gap-2`}
+          onClick={() => handlePageChange("accounts")}
+        >
+          <AccountsIcon />
+          Accounts
         </li>
         <li
           className={`${
@@ -84,7 +94,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ setPage, path }) => {
           } flex-row flex text-[0.75rem] px-4 py-2 justify-start items-center text-white hover:bg-secondary2 p-4 hover:cursor-pointer gap-2`}
           onClick={() => handlePageChange("projects")}
         >
-          <SettingsIcon />
+          <DataIcon />
           Projects
         </li>
       </ul>

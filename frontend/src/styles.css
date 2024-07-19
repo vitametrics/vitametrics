@@ -395,8 +395,9 @@ h2,
 h3,
 h4,
 h5,
-h6 {
-  transition: color 0.3s ease;
+h6,
+li {
+  transition: all 0.3s ease;
 }
 
 a,

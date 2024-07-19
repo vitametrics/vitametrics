@@ -8,6 +8,7 @@ import AdminServiceStatus from "../components/Admin/AdminServiceStatus";
 import AdminSettings from "../components/Admin/AdminSettings";
 import AdminOverview from "../components/Admin/AdminOverview";
 import AdminSidebar from "../components/Admin/AdminSidebar";
+import AdminAccounts from "../components/Admin/AdminAccounts";
 import { useAuth } from "../helpers/AuthContext";
 
 const Admin = () => {
@@ -31,6 +32,8 @@ const Admin = () => {
         return <AdminMembersManagement />;
       case "projects":
         return <AdminProjectManagement />;
+      case "accounts":
+        return <AdminAccounts />;
       default:
         return <AdminOverview />;
     }
