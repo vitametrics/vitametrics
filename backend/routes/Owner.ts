@@ -106,8 +106,12 @@ router.get(
         fitbitAccounts.map(async (account: IFitbitAccount) => {
           const devices = await Device.find({ fitbitUserId: account.userId });
 
+          const projects = await Project.find({ fitbitAccounts: { $in: [account._id] } })
+          .select('projectName');
+
           return {
             _id: account._id,
+            projects: projects,
             userId: account.userId,
             devices: devices
           };
