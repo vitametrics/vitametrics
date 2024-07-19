@@ -396,7 +396,8 @@ h3,
 h4,
 h5,
 h6,
-li {
+li,
+button {
   transition: all 0.3s ease;
 }
 
@@ -409,4 +410,23 @@ h4,
 h5,
 h6 {
   text-decoration: none;
+}
+
+/*make dropdowns smoothly expand and collapse*/
+.dropdown {
+  transition: all 0.3s ease;
+}
+
+.collapsible-content {
+  max-height: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.2s ease-out,
+    opacity 0.2s ease-out;
+  opacity: 0;
+}
+
+.collapsible-content.expanded {
+  max-height: 1000px; /* Large enough to accommodate the expanded content */
+  opacity: 1;
 }

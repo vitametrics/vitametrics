@@ -1038,6 +1038,10 @@ video {
   gap: 0.75rem;
 }
 
+.gap-4 {
+  gap: 1rem;
+}
+
 .gap-5 {
   gap: 1.25rem;
 }
@@ -1251,6 +1255,11 @@ video {
 .bg-gray-200 {
   --tw-bg-opacity: 1;
   background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+}
+
+.bg-gray-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(107 114 128 / var(--tw-bg-opacity));
 }
 
 .bg-green-400 {
@@ -1499,10 +1508,6 @@ video {
 
 .font-leagueSpartanBold {
   font-family: LeagueSpartan-Bold, sans-serif;
-}
-
-.font-libreFranklin {
-  font-family: Libre Franklin, sans-serif;
 }
 
 .font-neueHassUnica {
@@ -2112,7 +2117,8 @@ h3,
 h4,
 h5,
 h6,
-li {
+li,
+button {
   transition: all 0.3s ease;
 }
 
@@ -2125,6 +2131,27 @@ h4,
 h5,
 h6 {
   text-decoration: none;
+}
+
+/*make dropdowns smoothly expand and collapse*/
+
+.dropdown {
+  transition: all 0.3s ease;
+}
+
+.collapsible-content {
+  max-height: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.2s ease-out,
+    opacity 0.2s ease-out;
+  opacity: 0;
+}
+
+.collapsible-content.expanded {
+  max-height: 1000px;
+  /* Large enough to accommodate the expanded content */
+  opacity: 1;
 }
 
 .hover\:cursor-pointer:hover {

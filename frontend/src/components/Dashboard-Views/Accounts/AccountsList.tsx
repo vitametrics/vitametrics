@@ -112,53 +112,59 @@ const AccountsList: React.FC<AccountsListProps> = ({
               </button>
             </span>
           </div>
-          {account.userId === activeAccountId && (
-            <div className="py-4 bg-gray-100">
-              <p className="font-bold text-primary mb-3">
-                Devices linked with {account.userId}
-              </p>
-              {account.devices.length === 0 && (
-                <div className="text-primary">No devices linked</div>
-              )}
-              {account.devices.map((device: any) => (
-                <div
-                  onClick={() => handleDeviceClick(device.deviceId)}
-                  key={device.deviceId}
-                  className="py-3 grid grid-cols-4  items-center mb-3 hover:bg-slate-100 px-2 rounded-lg hover:cursor-pointer border border-gray-300"
+          <div
+            className={`collapsible-content ${
+              account.userId === activeAccountId ? "expanded" : ""
+            }`}
+          >
+            {account.userId === activeAccountId && (
+              <div className="py-4 bg-gray-100">
+                <p className="font-bold text-primary mb-3">
+                  Devices linked with {account.userId}
+                </p>
+                {account.devices.length === 0 && (
+                  <div className="text-primary">No devices linked</div>
+                )}
+                {account.devices.map((device: any) => (
+                  <div
+                    onClick={() => handleDeviceClick(device.deviceId)}
+                    key={device.deviceId}
+                    className="py-3 grid grid-cols-4  items-center mb-3 hover:bg-slate-100 px-2 rounded-lg hover:cursor-pointer border border-gray-300"
+                  >
+                    <div className="flex gap-3 items-center">
+                      <span className="border border-gray-300 rounded-lg bg-transparent  p-4"></span>
+                      {device.deviceVersion}
+                    </div>
+
+                    <div className="flex flex-row">
+                      <div className="text-primary">ID:</div>
+                      <div className="">{device.deviceId}</div>
+                    </div>
+
+                    <div className="text-primary">
+                      Last Synced: {device.lastSyncTime}
+                    </div>
+                    <div className="text-primary flex gap-1">
+                      {device.batteryLevel}%
+                      {parseInt(device.batteryLevel) >= 70 ? (
+                        <FullBatteryLevel />
+                      ) : parseInt(device.batteryLevel) >= 30 ? (
+                        <MediumBatteryLevel />
+                      ) : (
+                        <LowBatteryLevel />
+                      )}
+                    </div>
+                  </div>
+                ))}
+                <button
+                  onClick={() => unlinkFitbitAccount(account.userId)}
+                  className="p-2 font-bold w-[100px] bg-red-400 mt-2 text-white rounded-lg"
                 >
-                  <div className="flex gap-3 items-center">
-                    <span className="border border-gray-300 rounded-lg bg-transparent  p-4"></span>
-                    {device.deviceVersion}
-                  </div>
-
-                  <div className="flex flex-row">
-                    <div className="text-primary">ID:</div>
-                    <div className="">{device.deviceId}</div>
-                  </div>
-
-                  <div className="text-primary">
-                    Last Synced: {device.lastSyncTime}
-                  </div>
-                  <div className="text-primary flex gap-1">
-                    {device.batteryLevel}%
-                    {parseInt(device.batteryLevel) >= 70 ? (
-                      <FullBatteryLevel />
-                    ) : parseInt(device.batteryLevel) >= 30 ? (
-                      <MediumBatteryLevel />
-                    ) : (
-                      <LowBatteryLevel />
-                    )}
-                  </div>
-                </div>
-              ))}
-              <button
-                onClick={() => unlinkFitbitAccount(account.userId)}
-                className="p-2 font-bold w-[100px] bg-red-400 mt-2 text-white rounded-lg"
-              >
-                Unlink
-              </button>
-            </div>
-          )}
+                  Unlink
+                </button>
+              </div>
+            )}
+          </div>
         </Fragment>
       ))}
       {accounts && accounts.length === 0 && (
