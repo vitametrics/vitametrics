@@ -41,9 +41,7 @@ connectDB();
 app.get('/version', async (req: Request, res: Response) => {
   const versionPackagePath = path.join(__dirname, '..', 'package.json');
 
-  const packageJson = JSON.parse(
-    fs.readFileSync(versionPackagePath, 'utf8')
-  );
+  const packageJson = JSON.parse(fs.readFileSync(versionPackagePath, 'utf8'));
 
   const siteVersion = packageJson.version;
 
