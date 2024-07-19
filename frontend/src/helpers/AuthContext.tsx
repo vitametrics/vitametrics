@@ -31,6 +31,7 @@ interface AuthContextProps {
   siteAccounts: any;
   fetchSiteAccounts: () => void;
   siteProjects: any;
+  fetchUserProjects: () => void;
 }
 
 interface Project {
@@ -183,6 +184,18 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const fetchUserProjects = async () => {
+    try {
+      const response = await axios.get(AUTH_ENDPOINT, {
+        withCredentials: true,
+      });
+
+      setProjects(response.data.user.projects);
+    } catch (error) {
+      console.error("Error fetching site members:", error);
+    }
+  };
+
   const fetchInstanceProjects = async () => {
     try {
       const response = await axios.get(FETCH_INSTANCE_PROJECTS_ENDPOINT, {
@@ -225,6 +238,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         fetchInstanceProjects,
         siteAccounts,
         fetchSiteAccounts,
+        fetchUserProjects,
       }}
     >
       {children}
