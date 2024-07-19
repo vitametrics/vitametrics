@@ -40,7 +40,7 @@ class ProjectController {
       }
 
       const isAdmin = project.isAdmin(
-        currentUser.userId as unknown as Types.ObjectId
+        currentUser._id as Types.ObjectId
       );
       const isOwner = project.isOwner(currentUser.userId);
 
@@ -54,7 +54,7 @@ class ProjectController {
               ...member.toObject(),
               isOwner: project.isOwner(member.userId),
               isAdmin: project.isAdmin(
-                member.userId as unknown as Types.ObjectId
+                member._id as Types.ObjectId
               ),
             };
           }

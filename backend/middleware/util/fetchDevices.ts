@@ -31,7 +31,7 @@ async function fetchDevices(
         headers: { Authorization: `Bearer ${fitbitAccessToken}` },
       }
     )) as AxiosResponse<FitbitDeviceInfo[]>;
-
+    
     console.log(fitbitUserId);
 
     const validDevices = deviceResponse.data.filter(
