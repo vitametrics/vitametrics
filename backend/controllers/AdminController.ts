@@ -13,11 +13,8 @@ import Device from '../models/Device';
 import FitbitAccount from '../models/FitbitAccount';
 import Project, { IProject } from '../models/Project';
 import User, { IUser } from '../models/User';
+import { IPopulatedUser } from '../types';
 
-interface IPopulatedUser {
-  _id: Types.ObjectId;
-  userId: string;
-}
 class AdminController {
   static async createProject(req: Request, res: Response) {
     const projectName = req.body.projectName as string;
@@ -548,23 +545,16 @@ class AdminController {
   }
 
   static async changeProjectOwnerEmail(req: Request, res: Response) {
+    const currentProject = req.project as IProject;
     const newOwnerEmail = req.body.newOwnerEmail as string;
-    const projectId = req.body.projectId as string;
 
     try {
       logger.info(
-        `Changing project owner email to: ${newOwnerEmail} for project: ${projectId}`
+        `Changing project owner email to: ${newOwnerEmail} for project: ${currentProject.projectId}`
       );
 
-      const project = await Project.findOne({ projectId });
-      if (!project) {
-        logger.error(`Project: ${projectId} not found`);
-        res.status(404).json({ msg: 'Project not found' });
-        return;
-      }
-
-      project.ownerEmail = newOwnerEmail;
-      await project.save();
+      currentProject.ownerEmail = newOwnerEmail;
+      await currentProject.save();
       res.status(200).json({ msg: 'Project owner email changed successfully' });
       return;
     } catch (error) {
@@ -577,25 +567,19 @@ class AdminController {
   static async changeProjectName(req: Request, res: Response) {
     const currentUser = req.user as IUser;
     const newProjectName = req.body.newProjectName as string;
-    const projectId = req.body.projectId as string;
+    const currentProject = req.project as IProject;
 
     try {
       logger.info(
-        `[${currentUser.name}, ${currentUser.id}] Changing project name to: ${newProjectName} for project: ${projectId}`
+        `[${currentUser.name}, ${currentUser.id}] Changing project name to: ${newProjectName} for project: ${currentProject.projectId}`
       );
 
-      const project = await Project.findOne({ projectId });
-      if (!project) {
-        logger.error(`Project: ${projectId} not found`);
-        res.status(404).json({ msg: 'Project not found' });
-        return;
-      }
 
       const existingProject = await Project.findOne({
         projectName: newProjectName,
         ownerId: currentUser.userId,
       });
-      if (existingProject && existingProject._id !== project._id) {
+      if (existingProject) {
         logger.error(
           `User already has a project with the name: ${newProjectName}`
         );
@@ -605,8 +589,8 @@ class AdminController {
         return;
       }
 
-      project.projectName = newProjectName;
-      await project.save();
+      currentProject.projectName = newProjectName;
+      await currentProject.save();
       res.status(200).json({ msg: 'Project name changed successfully' });
       return;
     } catch (error) {
@@ -619,22 +603,15 @@ class AdminController {
   static async changeProjectDescription(req: Request, res: Response) {
     const currentUser = req.user as IUser;
     const newProjectDescription = req.body.newProjectDescription as string;
-    const projectId = req.body.projectId as string;
+    const currentProject = req.project as IProject;
 
     try {
       logger.info(
-        `[${currentUser.name}, ${currentUser.id}] Changing project description to: ${newProjectDescription} for project: ${projectId}`
+        `[${currentUser.name}, ${currentUser.id}] Changing project description to: ${newProjectDescription} for project: ${currentProject}`
       );
 
-      const project = await Project.findOne({ projectId });
-      if (!project) {
-        logger.error(`Project: ${projectId} not found`);
-        res.status(404).json({ msg: 'Project not found' });
-        return;
-      }
-
-      project.projectDescription = newProjectDescription;
-      await project.save();
+      currentProject.projectDescription = newProjectDescription;
+      await currentProject.save();
       res.status(200).json({ msg: 'Project description changed successfully' });
       return;
     } catch (error) {

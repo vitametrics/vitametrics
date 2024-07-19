@@ -7,6 +7,11 @@ declare global {
   }
 }
 
+export interface IPopulatedUser {
+  _id: Types.ObjectId;
+  userId: string;
+}
+
 declare module 'express-serve-static-core' {
   interface Request {
     user?: Express.User;
