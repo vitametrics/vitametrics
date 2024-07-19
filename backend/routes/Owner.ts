@@ -5,12 +5,17 @@ import { body } from 'express-validator';
 
 import ProjectController from '../controllers/ProjectController';
 import { validationHandler } from '../handlers/validationHandler';
+import { param } from 'express-validator';
 import logger from '../middleware/logger';
 import { sendEmail } from '../middleware/util/emailUtil';
 import verifyRole from '../middleware/verifyRole';
 import verifySession from '../middleware/verifySession';
 import Project from '../models/Project';
 import User from '../models/User';
+import FitbitAccount, { IFitbitAccount } from '../models/FitbitAccount';
+import Device from '../models/Device';
+import Cache from '../models/Cache';
+import { Types } from 'mongoose';
 
 const router = express.Router();
 
@@ -88,6 +93,71 @@ router.get(
     }
   }
 );
+
+router.get(
+  '/fitbit',
+  verifySession,
+  verifyRole('siteAdmin'),
+  async (req: Request, res: Response) => {
+    try {
+      const fitbitAccounts = await FitbitAccount.find();
+
+      const accountsWithDevices = await Promise.all(
+        fitbitAccounts.map(async (account: IFitbitAccount) => {
+          const devices = await Device.find({ fitbitUserId: account.userId });
+
+          return {
+            _id: account._id,
+            userId: account.userId,
+            devices: devices
+          };
+        })
+      );
+
+      return res.status(200).json(accountsWithDevices);
+    } catch (error) {
+      logger.error(`Error fetching fitbit accounts: ${error}`);
+      return res.status(500).json({ msg: 'Internal Server Error'});
+    }
+  }
+)
+
+router.delete(
+  '/fitbit/:id',
+  verifySession,
+  validationHandler([
+    param('id').not().isEmpty().withMessage('Fitbit ID is required'),
+  ]),
+  verifyRole('siteAdmin'),
+  async (req: Request, res: Response) => {
+    const id = req.params.id;
+
+    try {
+      logger.info(`Deleting fitbit account: ${id}`);
+
+      const fitbitAccount = await FitbitAccount.findOne({ fitbitUserId: id });
+      if (!fitbitAccount) {
+        return res.status(404).json({ msg: 'Fitbit account not found' });
+      }
+
+      const projects = await Project.find({ fitbitAccounts: { $in: [fitbitAccount._id ] } });
+      for (const project of projects) {
+        project.fitbitAccounts = project.fitbitAccounts.filter(
+          (objId) => !objId.equals(fitbitAccount._id as Types.ObjectId)
+        )
+        await project.save();
+      }
+      Device.deleteMany({ fitbitUserId: id});
+      Cache.deleteMany({ fitbitUserId: id});
+  
+      await fitbitAccount.deleteOne();
+      return res.status(200).json({ msg: 'Fitbit account deleted successfully' });
+    } catch (error) {
+      logger.error(`Error deleting fitbit account: ${error}`);
+      return res.status(500).json({ msg: 'Internal Server Error' });
+    }
+  }
+)
 
 // get all instance projects
 router.get(

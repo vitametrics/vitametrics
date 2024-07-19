@@ -53,6 +53,19 @@ router.get(
 );
 
 router.post(
+  '/link-fitbit-account',
+  verifySession,
+  validationHandler([
+    body('fitbitUserId')
+      .not()
+      .isEmpty()
+      .withMessage('Fitbit user ID is required'),
+  ]),
+  checkProjectMembership,
+  asyncHandler(ProjectController.addFitbitAccountToProject)
+);
+
+router.post(
   '/unlink-fitbit-account',
   verifySession,
   validationHandler([
@@ -62,7 +75,6 @@ router.post(
       .withMessage('Fitbit user ID is required'),
   ]),
   checkProjectMembership,
-  verifyRole('admin'),
   asyncHandler(ProjectController.unlinkFitbitAccount)
 );
 
