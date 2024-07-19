@@ -37,7 +37,7 @@ const AdminSettings = () => {
       initial="hidden"
       animate={inView ? "show" : "hidden"}
       ref={ref}
-      className="w-full h-full flex flex-col p-10 bg-whitePrimary font-libreFranklin"
+      className="w-full h-full flex flex-col p-10 bg-whitePrimary font-neueHassUnica"
     >
       <h1 className="w-full text-4xl font-bold text-primary pb-0">
         Admin Settings

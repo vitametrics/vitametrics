@@ -211,7 +211,7 @@ const Settings = () => {
         className="w-full h-screen flex flex-col p-[3.75rem] text-primary "
       >
         {renderDeleteMenu()}
-        <h2 className="w-full text-4xl font-libreFranklin font-bold mb-10">
+        <h2 className="w-full text-4xl font-neueHassUnica font-bold mb-10">
           Your Settings
         </h2>
 

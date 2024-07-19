@@ -97,7 +97,7 @@ const SetPassword = () => {
   };
 
   return (
-    <div className="h-full w-full bg-fixed overflow-y-hidden font-leagueSpartanBold ">
+    <div className="h-full w-full bg-fixed overflow-y-hidden font-neueHassUnica ">
       <Navbar />
       <div className="flex flex-col justify-center items-center p-0 md:p-10">
         <div className="flex flex-row h-screen items-center justify-center">

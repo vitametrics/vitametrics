@@ -5,6 +5,7 @@ import useSearch from "../../../hooks/useAccountSearch";
 import { Fragment, useState } from "react";
 import AccountsList from "./AdminAccountsList";
 import { useAuth } from "../../../helpers/AuthContext";
+import { useEffect } from "react";
 
 const AccountsContainer = () => {
   const { siteAccounts, fetchSiteAccounts } = useAuth();
@@ -15,6 +16,10 @@ const AccountsContainer = () => {
     itemsPerPage,
     handleItemsPerPageChange,
   } = usePagination();
+
+  useEffect(() => {
+    if (siteAccounts.length === 0) fetchSiteAccounts();
+  }, []);
 
   const [activeAccountId, setActiveAccountId] = useState("");
   const enableDropdown = (userId: string) => {
@@ -45,9 +50,6 @@ const AccountsContainer = () => {
       <h2 className="text-2xl text-primary font-bold mb-3">
         Your Instance's Fitbit Accounts
       </h2>
-      <button className="p-1 text-lg flex flex-row gap-2 mb-5 justify-center items-center rounded-lg w-[150px] bg-primary font-bold text-white shadow-lg hover:bg-hoverPrimary">
-        Link
-      </button>
       {siteAccounts && siteAccounts.length === 0 ? (
         <span className="text-primary text-lg">No accounts found</span>
       ) : (

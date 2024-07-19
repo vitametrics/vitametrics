@@ -11,7 +11,7 @@ const MailSettings = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col font-libreFranklin bg-primary">
+    <div className="w-full h-full flex flex-col font-neueHassUnica bg-primary">
       <div className="flex flex-col w-full gap-5">
         <span className="bg-primary2 text-white font-bold text-xl px-5 py-3">
           Mail Environment Variable Configurations

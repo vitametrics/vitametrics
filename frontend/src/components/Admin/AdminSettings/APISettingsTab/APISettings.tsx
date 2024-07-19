@@ -3,7 +3,7 @@ import ChangeFitbitSettings from "./ChangeFitbitSettings";
 
 const APISettings = () => {
   return (
-    <div className="w-full h-full flex flex-col font-libreFranklin ">
+    <div className="w-full h-full flex flex-col font-neueHassUnica ">
       <div className="flex flex-col w-full gap-5">
         <ChangeAPISettings />
         <ChangeFitbitSettings />

@@ -40,7 +40,7 @@ const Admin = () => {
   }, [view]);
 
   return (
-    <div className="h-full font-libreFranklin bg-whitePrimary text-black">
+    <div className="h-full font-neueHassUnica bg-whitePrimary text-black">
       <DashboardNavbar />
       <div className={`backdrop ${showBackDrop ? "show" : ""}`}></div>
       <div className={`backdrop ${showBackDrop ? "show" : ""}`}></div>

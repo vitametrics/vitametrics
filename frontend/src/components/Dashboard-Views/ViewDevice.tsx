@@ -50,7 +50,7 @@ const ViewDevice = () => {
       ref={ref}
       initial="hidden"
       animate={inView ? "show" : "hidden"}
-      className="w-full h-full flex flex-col p-10 font-libreFranklin text-primary"
+      className="w-full h-full flex flex-col p-10 font-neueHassUnica text-primary"
     >
       <span id="options" className="flex flex-row">
         <span

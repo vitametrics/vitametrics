@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 
 const TOS = () => {
   return (
-    <div className="font-leagueSpartan bg-fixed ">
+    <div className=" font-neueHassUnica bg-fixed ">
       <Navbar />
       <div className="py-10 md:px-32">
         <div className="bg-glass p-10 rounded-xl mt-20">

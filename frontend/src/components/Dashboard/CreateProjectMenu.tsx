@@ -28,7 +28,7 @@ const CreateProjectMenu: React.FC<CreateProjectMenuProps> = ({
       variants={fadeInItemVariants}
       initial="hidden"
       animate="show"
-      className="opacity-transition absolute w-full p-10 z-20 bg-[#e8e8e8] flex flex-col left-0 md:left-1/2 md:top-1/2 transform-center md:w-[500px] rounded-xl text-primary shadow-lg font-libreFranklin"
+      className="opacity-transition absolute w-full p-10 z-20 bg-[#e8e8e8] flex flex-col left-0 md:left-1/2 md:top-1/2 transform-center md:w-[500px] rounded-xl text-primary shadow-lg font-neueHassUnica"
     >
       <button
         onClick={() => toggleMenu(false)}

@@ -138,7 +138,7 @@ const AdminMembersManagement = () => {
       initial="hidden"
       animate={inView ? "show" : "hidden"}
       ref={ref}
-      className="w-full h-full flex flex-col p-10 bg-whitePrimary font-libreFranklin"
+      className="w-full h-full flex flex-col p-10 bg-whitePrimary  font-neueHassUnica"
     >
       <InviteMenu
         showInviteMenu={showInviteMenu}
