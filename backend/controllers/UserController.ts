@@ -141,7 +141,7 @@ class UserController {
       user.passwordTokenExpiry = new Date(Date.now() + 3600000); // 1 hour expiry
       await user.save();
 
-      const resetLink = `${process.env.API_URL}/reset-password?token=${token}`;
+      const resetLink = `${process.env.BASE_URL}/set-password?token=${token}`;
       await sendEmail({
         to: user.email,
         subject: 'Vitametrics Password Reset',
