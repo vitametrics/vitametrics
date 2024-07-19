@@ -83,7 +83,7 @@ const AccountsList: React.FC<AccountsListProps> = ({
         <button className="py-2 text-left text-lg">REFRESH TOKEN</button>
       </div>
 
-      {Object.entries(accounts).map(([_, [dummyValue, fitbitUserIdDict]]) => {
+      {Object.entries(accounts).map(([_, [, fitbitUserIdDict]]) => {
         const fitbitUserId = Object.keys(fitbitUserIdDict)[0];
         const account = fitbitUserIdDict[fitbitUserId];
 
