@@ -15,7 +15,7 @@ import { Project } from "../types/Project";
 const CREATE_PROJECT_ENDPOINT = `${process.env.API_URL}/admin/create-project`;
 
 const UserDashboard = () => {
-  const { projects, setProjects, userRole, fetchInstanceProjects } = useAuth();
+  const { projects, setProjects, userRole, fetchUserProjects } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -113,7 +113,7 @@ const UserDashboard = () => {
 
       const project = response.data.savedProject;
 
-      await fetchInstanceProjects();
+      await fetchUserProjects();
 
       navigate(`/dashboard/project?id=${project.projectId}&view=overview`);
       setMsg("");

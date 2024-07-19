@@ -30,6 +30,7 @@ interface AuthContextProps {
   fetchInstanceProjects: () => void;
   siteAccounts: any;
   fetchSiteAccounts: () => void;
+  siteProjects: any;
 }
 
 interface Project {
@@ -68,6 +69,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [health, setHealth] = useState(false);
   const [siteMembers, setSiteMembers] = useState<any[]>([]);
   const [siteAccounts, setSiteAccounts] = useState<any[]>([]);
+  const [siteProjects, setSiteProjects] = useState<any[]>([]);
 
   const [showBackDrop, setShowBackDrop] = useState(false);
 
@@ -187,7 +189,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         withCredentials: true,
       });
 
-      setProjects(response.data);
+      setSiteProjects(response.data);
     } catch (error) {
       console.error("Error fetching site members:", error);
     }
@@ -219,6 +221,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setSiteMembers,
         showBackDrop,
         setShowBackDrop,
+        siteProjects,
         fetchInstanceProjects,
         siteAccounts,
         fetchSiteAccounts,
