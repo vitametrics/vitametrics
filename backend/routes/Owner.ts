@@ -106,8 +106,12 @@ router.get(
         fitbitAccounts.map(async (account: IFitbitAccount) => {
           const devices = await Device.find({ fitbitUserId: account.userId });
 
+          const projects = await Project.find({ fitbitAccounts: { $in: [account._id] } })
+          .select('projectName projectId');
+
           return {
             _id: account._id,
+            projects: projects,
             userId: account.userId,
             devices: devices
           };
@@ -147,8 +151,8 @@ router.delete(
         )
         await project.save();
       }
-      Device.deleteMany({ fitbitUserId: id});
-      Cache.deleteMany({ fitbitUserId: id});
+      await Device.deleteMany({ fitbitUserId: id});
+      await Cache.deleteMany({ fitbitUserId: id});
   
       await fitbitAccount.deleteOne();
       return res.status(200).json({ msg: 'Fitbit account deleted successfully' });
@@ -291,19 +295,22 @@ router.delete(
 
 // unlink fitbit account from project
 router.put(
-  '/project/:id/unlink-fitbit',
+  '/unlink-fitbit-account/:id',
   verifySession,
   verifyRole('siteOwner'),
   async (req: Request, res: Response) => {
     const { id } = req.params;
+    const projectId = req.body.projectId;
 
     try {
-      const project = await Project.findById(id);
+      const project = await Project.findOne({ projectId });
       if (!project) {
         return res.status(404).json({ msg: 'Project not found' });
       }
 
       project.unlinkFitbitAccount(id);
+      await Cache.deleteMany({ fitbitUserId: id, projectId });
+      await Device.deleteMany({ fitbitUserId: id, projectId });
 
       return res
         .status(200)
