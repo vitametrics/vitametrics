@@ -76,24 +76,42 @@ class OwnerController {
         try {
             logger.info('Fetching all site fitbit accounts');
         
-            const fitbitAccounts = await FitbitAccount.find();
+            const fitbitAccounts = await FitbitAccount.find().lean();
 
-            const accountsWithDevices = await Promise.all(
-                fitbitAccounts.map(async (account: IFitbitAccount) => {
-                    const devices = await Device.find({ fitbitUserId: account.userId });
+            const accountsWithProjectsAndDevices = await Promise.all(fitbitAccounts.map(async (account) => {
+                const projects = await Project.find({ fitbitAccounts: { $in: [account._id] } })
+                    .select('projectId projectName')
+                    .lean();
 
-                    const projects = await Project.find({ fitbitAccounts: { $in: [ account._id ]}})
-                    .select('projectName projectId');
+                const projectIds = projects.map(p => p.projectId);
 
-                    return {
-                        projects: projects,
-                        userId: account.userId,
-                        devices: devices
+                const devices = await Device.find({
+                    fitbitUserId: account.userId,
+                    projectId: { $in: projectIds }
+                }).select('deviceId deviceName deviceVersion batteryLevel lastSyncTime projectId').lean();
+
+                const devicesByProject = devices.reduce((devAcc, device) => {
+                    if (!devAcc[device.projectId]) {
+                        devAcc[device.projectId] = [];
                     }
-                })
-            );
+                    devAcc[device.projectId].push(device);
+                    return devAcc;
+                }, {} as { [key: string]: typeof devices });
 
-            res.status(200).json(accountsWithDevices);
+                return {
+                    userId: account.userId,
+                    accessToken: account.accessToken,
+                    refreshToken: account.refreshToken,
+                    lastTokenRefresh: account.lastTokenRefresh,
+                    projects: projects.map(project => ({
+                        projectId: project.projectId,
+                        projectName: project.projectName,
+                        devices: devicesByProject[project.projectId] || []
+                    }))
+                };
+            }));
+
+            res.status(200).json(accountsWithProjectsAndDevices);
             return;
         } catch (error) {
         logger.error(`Error fetching fitbit accounts: ${error}`);
