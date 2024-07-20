@@ -9,7 +9,7 @@ import InviteMenu from "./AdminMembers/InviteMenu";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 
-const REMOVE_MEMBER_ENDPOINT = `${process.env.API_URL}/owner/remove-member`;
+const REMOVE_MEMBER_ENDPOINT = `${process.env.API_URL}/owner/user`;
 
 const AdminMembersManagement = () => {
   const { ref, inView } = useCustomInView();
@@ -62,16 +62,9 @@ const AdminMembersManagement = () => {
   const handleRemoveMember = async (memberId: string) => {
     if (confirmDelete.confirm && confirmDelete.id === memberId) {
       try {
-        await axios.post(
-          REMOVE_MEMBER_ENDPOINT,
-          {
-            userId: memberId,
-            projectId: searchParams.get("id"),
-          },
-          {
-            withCredentials: true,
-          }
-        );
+        await axios.delete(`${REMOVE_MEMBER_ENDPOINT}/${memberId}`, {
+          withCredentials: true,
+        });
 
         handleClose();
       } catch (error) {
@@ -88,9 +81,10 @@ const AdminMembersManagement = () => {
     }
   }, [showInviteMenu]);
 
-  const handleClose = () => {
+  const handleClose = async () => {
     toggleMemberInfo(false, "");
     setConfirmDelete({ id: "", confirm: false });
+    await fetchSiteMembers();
   };
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {

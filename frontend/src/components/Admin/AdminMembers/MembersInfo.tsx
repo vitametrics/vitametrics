@@ -203,14 +203,16 @@ const MemberInfo: React.FC<MemberInfoProps> = ({
         )}
       </div>
       <button
-        onClick={() => handleRemoveMember(member.userId)}
+        onClick={() => {
+          handleRemoveMember(member._id);
+        }}
         className={`w-full mt-auto ${
-          confirmDelete.id === member.userId && confirmDelete.confirm
+          confirmDelete.id === member._id && confirmDelete.confirm
             ? "bg-yellow-500"
             : "bg-red-400"
         } text-white p-3 rounded-lg`}
       >
-        {confirmDelete.id === member.userId && confirmDelete.confirm
+        {confirmDelete.id === member._id && confirmDelete.confirm
           ? "Confirm Remove"
           : "Remove"}
       </button>
