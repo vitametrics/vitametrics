@@ -68,3 +68,13 @@ export interface HeartData {
   }
   
   
+
+  export interface ProjectDevice{
+    _id: string,
+    projectId: string,
+    deviceName: string,
+    deviceVersion: string,
+    batteryLevel: string,
+    deviceId: string,
+    lastSyncTime: string,
+  }
