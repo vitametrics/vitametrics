@@ -60,7 +60,7 @@ const AccountsList: React.FC<AccountsListProps> = ({
     <Fragment>
       <div
         id="options"
-        className="grid grid-cols-4 w-full text-primary items-center font-bold"
+        className="grid grid-cols-4 w-full text-primary bg-white items-center font-bold"
       >
         <button className="py-2 text-left ">USERID</button>
         <button className="py-2 text-left">LAST REFRESHED</button>
@@ -118,7 +118,7 @@ const AccountsList: React.FC<AccountsListProps> = ({
             }`}
           >
             {account.userId === activeAccountId && (
-              <div className="py-4 bg-gray-100">
+              <div className="py-4 bg-white">
                 <p className="font-bold text-primary mb-3">
                   Devices linked with {account.userId}
                 </p>

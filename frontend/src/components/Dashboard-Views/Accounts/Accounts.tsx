@@ -13,7 +13,7 @@ const Accounts = () => {
       initial="hidden"
       animate={inView ? "show" : "hidden"}
       ref={ref}
-      className="w-full h-full flex flex-col p-10 whitePrimary"
+      className="w-full h-full flex flex-col p-10 bg-whitePrimary"
     >
       <AccountsContainer />
     </motion.div>

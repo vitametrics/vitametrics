@@ -62,10 +62,10 @@ const Devices = () => {
       initial="hidden"
       animate={inView ? "show" : "hidden"}
       ref={ref}
-      className="w-full h-full flex flex-col p-10 whitePrimary"
+      className="w-full h-full flex flex-col p-10 bg-whitePrimary"
     >
       <Fragment>
-        <div className="flex flex-col bg-white rounded-xl shadow-lg p-10">
+        <div className="flex flex-col bg-white rounded-xl shadow-lg p-10 border-2 border-gray-300">
           <h2 className="text-2xl text-primary font-bold mb-5">
             {project.projectName} Devices
           </h2>

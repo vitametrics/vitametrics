@@ -34,7 +34,7 @@ const OverviewMembers = () => {
   );
 
   return (
-    <div className="flex flex-col bg-white rounded-xl shadow-lg p-10 mb-12">
+    <div className="flex flex-col bg-white rounded-xl shadow-lg p-10 mb-12 border-2 border-gray-300">
       <h2 className="text-2xl text-primary font-bold mb-3">Members</h2>
       {project.members && project.members.length === 0 ? (
         <span className="text-primary text-lg">No members found</span>

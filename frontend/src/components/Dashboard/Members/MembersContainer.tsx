@@ -47,7 +47,7 @@ const MembersContainer: React.FC<MembersContainerProps> = ({
   );
 
   return (
-    <div className="flex flex-col bg-white rounded-xl shadow-lg p-10 mb-12">
+    <div className="flex flex-col bg-white rounded-xl shadow-lg p-10 mb-12 border-2 border-gray-300">
       <h2 className="text-2xl text-primary font-bold mb-3">
         {project.projectName} Members
       </h2>
