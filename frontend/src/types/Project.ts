@@ -26,3 +26,11 @@ export interface ProjectInfoProps {
     handleDeleteProject: () => void;
     handleClose: () => void;
   }
+
+  export interface DashboardProject {
+    projectId: string;
+    projectName: string;
+    memberCount: number;
+    deviceCount: number;
+    isOwner: boolean;
+  }

@@ -10,7 +10,7 @@ import useDebounce from "../helpers/useDebounce";
 import axios from "axios";
 import { deleteProjectService } from "../services/projectService";
 import DeleteIcon from "../assets/DeleteIcon";
-import { Project } from "../types/Project";
+import { DashboardProject } from "../types/Project";
 
 const CREATE_PROJECT_ENDPOINT = `${process.env.API_URL}/admin/create-project`;
 
@@ -65,9 +65,6 @@ const UserDashboard = () => {
   }, []);
 
   const toggleCreateProjectMenu = (show: boolean) => {
-    console.log("from toggle creating project menu..");
-    console.log(projects);
-    console.log(currentProjects);
     setSearchParams((prev) => {
       prev.set("createProject", show.toString());
       return prev;
@@ -226,7 +223,7 @@ const UserDashboard = () => {
               <label className="text-center">ACTION</label>
             </div>
 
-            {currentProjects.map((project: Project) => (
+            {currentProjects.map((project: DashboardProject) => (
               <Fragment key={project.projectId}>
                 <span className="h-[0.75px] rounded-xl w-full bg-gray-200"></span>
                 <div className="grid grid-cols-4 w-full items-center hover:cursor-pointer hover:bg-gray-200">
@@ -240,19 +237,20 @@ const UserDashboard = () => {
                     className="text-center hover:cursor-pointer"
                     onClick={() => handleProjectClick(project.projectId)}
                   >
-                    {project.devices?.length || project.devicesCount || 0}
+                    {project.deviceCount || 0}
                   </label>
                   <label
                     className="text-center hover:cursor-pointer"
                     onClick={() => handleProjectClick(project.projectId)}
                   >
-                    {project.members?.length || project.membersCount || 1}
+                    {project.memberCount || 1}
                   </label>
                   <button
                     className="p-2 bg-transparent text-white rounded-lg flex items-center justify-center hover:cursor-pointer"
-                    onClick={() =>
-                      toggleDeleteProjectMenu(true, project.projectId)
-                    }
+                    onClick={() => {
+                      console.log(project);
+                      toggleDeleteProjectMenu(true, project.projectId);
+                    }}
                   >
                     <DeleteIcon />
                   </button>
