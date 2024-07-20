@@ -48,6 +48,7 @@ class UserController {
           user: {
             id: currentUser.userId,
             email: currentUser.email,
+            name: currentUser.name || 'User',
             role: currentUser.role,
             isEmailVerified: currentUser.emailVerified,
             projects: userProjects,
