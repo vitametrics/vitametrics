@@ -41,19 +41,24 @@ const verifyRole = (role: string) => {
         return res.status(404).json({ msg: 'Project not found' });
       }
 
-      if (currentProject.ownerId === currentUser.userId) {
+      if (currentProject.ownerId === currentUser.userId && role === 'owner') {
         return next();
       }
 
-      const isAdmin = currentProject.admins.includes(
-        currentUser._id as Types.ObjectId
-      );
-      const isMember = currentUser.projects.some((projId) =>
-        projId.equals(currentProject._id as Types.ObjectId)
-      );
+      const isAdmin = currentProject.isAdmin(currentUser._id as Types.ObjectId);
+      const isMember = currentProject.isMember(currentUser._id as Types.ObjectId);
 
-      if (role === 'admin' && isAdmin && isMember) {
+      if (isAdmin && role === 'admin') {
         return next();
+      } else {
+        if (isMember && role === 'member') {
+          return next();
+        }
+      
+        logger.error('[verifyRole] User does not have the required role');
+        return res
+          .status(403)
+          .json({ msg: 'Forbidden - User does not have the required role' });
       }
     } catch (error) {
       logger.error('[verifyRole] Error verifying role', error);

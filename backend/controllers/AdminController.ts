@@ -167,16 +167,12 @@ class AdminController {
   }
 
   static async getAvailableUsers(req: Request, res: Response) {
-    const projectId = req.cookies.projectId as string;
+    const currentProject = req.project as IProject;
 
     try {
-      const project = await Project.findOne({ projectId });
-      if (!project) {
-        res.status(404).json({ msg: 'Project not found' });
-        return;
-      }
+      logger.info(`Getting available users for project: ${currentProject.projectId}`);
 
-      const existingMemberIds = project.members.map((member) =>
+      const existingMemberIds = currentProject.members.map((member) =>
         member.toString()
       );
 
@@ -218,7 +214,7 @@ class AdminController {
           userId: newUserId,
           email,
           name,
-          role: role === 'tempUser' ? 'user' : role,
+          role: role === 'tempUser' ? 'tempUser': 'user',
           isTempUser: role === 'tempUser',
           projects: [project._id],
           setPasswordToken: role !== 'tempUser' ? passwordToken : undefined,
@@ -226,22 +222,8 @@ class AdminController {
         });
 
         await newUser.save();
-        await project.addMember(newUser._id as Types.ObjectId, role);
 
         if (role === 'tempUser') {
-          const tempUser = new User({
-            userId: newUserId,
-            email,
-            name,
-            role: 'user',
-            isTempUser: true,
-            projects: [project._id],
-          });
-
-          await tempUser.save();
-          project.members.push(tempUser._id as Types.ObjectId);
-          await project.save();
-
           const fitbitAuthLink = `${process.env.API_URL}/auth?userId=${newUserId}&projectId=${project.projectId}`;
           if (process.env.NODE_ENV === 'production') {
             await sendEmail({
@@ -252,42 +234,21 @@ class AdminController {
             if (project.areNotificationsEnabled) {
               await sendEmail({
                 to: project.ownerEmail,
-                subject: `[INFO] Vitametrics: ${project.projectName} - New Member Added`,
-                text: `A new member has been added to your project by ${req.user?.name}.\nThe users role is set to 'tempUser'.\n\nYou can manage your project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}`,
+                subject: `[INFO] Vitametrics: ${project.projectName} - New Participant Added`,
+                text: `A new participant has been added to your project by ${req.user?.name}.\nThe users role is set to 'tempUser'.\n\nYou can manage your project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}`,
               });
             }
             res
               .status(200)
               .json({ msg: 'Temp member added successfully', project });
             return;
-          } else {
-            logger.info(
-              `Temporary user invited to join project: ${project.projectName}. They can set link their Fitbit account by following this link: ${fitbitAuthLink}`
-            );
-            res
-              .status(200)
-              .json({ msg: 'Temp member added successfully', project });
-            return;
           }
         } else {
-          const newUser = new User({
-            userId: newUserId,
-            email: email,
-            name: name,
-            role: 'user',
-            setPasswordToken: passwordToken,
-            passwordTokenExpiry: tokenExpiry,
-            projects: [project._id],
-          });
 
-          await newUser.save();
-
-          project.members.push(newUser._id as Types.ObjectId);
           if (role === 'admin') {
             project.admins.push(newUser._id as Types.ObjectId);
+            await project.save();
           }
-
-          await project.save();
 
           if (process.env.NODE_ENV === 'production') {
             await sendEmail({
@@ -332,17 +293,12 @@ class AdminController {
 
           await user.save();
 
-          project.members.push(user._id as Types.ObjectId);
           if (role === 'admin') {
-            project.admins.push(user._id as Types.ObjectId);
-
-            await project.save();
-
             if (process.env.NODE_ENV === 'production') {
               await sendEmail({
                 to: user.email,
                 subject: `Vitametrics: Admin Invitation to ${project.projectName}`,
-                text: `You have been invited to join ${project.projectName} as an admin. You can access the project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}&view=overview`,
+                text: `You have been added to the project ${project.projectName} as an admin. You can access the project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}&view=overview`,
               });
               if (project.areNotificationsEnabled) {
                 await sendEmail({
@@ -360,33 +316,34 @@ class AdminController {
               res.status(200).json({ msg: 'Admin added successfully' });
               return;
             }
-          }
-
-          await project.save();
-
-          if (process.env.NODE_ENV === 'production') {
-            if (role !== 'tempUser') {
-              await sendEmail({
-                to: user.email,
-                subject: `Vitametrics: Invitation to ${project.projectName}`,
-                text: `You have been added to the project: ${project.projectName} with the role ${role as string | 'user'}. You can access the project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}&view=overview`,
-              });
-            }
-            if (project.areNotificationsEnabled) {
-              await sendEmail({
-                to: project.ownerEmail,
-                subject: `[INFO] Vitametrics: ${project.projectName} - Member Added`,
-                text: `A new member has been added to your project by ${req.user?.name}.\n\nYou can manage your project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}`,
-              });
-            }
-            res.status(200).json({ msg: 'Member added successfully' });
-            return;
           } else {
-            logger.info(
-              `User: ${user.email} added to project: ${project.projectName}`
-            );
-            res.status(200).json({ msg: 'Member added successfully' });
-            return;
+            project.addMember(user._id as Types.ObjectId, role);
+            await project.save();
+
+            if (process.env.NODE_ENV === 'production') {
+              if (role !== 'tempUser') {
+                await sendEmail({
+                  to: user.email,
+                  subject: `Vitametrics: Invitation to ${project.projectName}`,
+                  text: `You have been added to the project: ${project.projectName} with the role ${role as string | 'user'}. You can access the project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}&view=overview`,
+                });
+              }
+              if (project.areNotificationsEnabled) {
+                await sendEmail({
+                  to: project.ownerEmail,
+                  subject: `[INFO] Vitametrics: ${project.projectName} - Member Added`,
+                  text: `A new member has been added to your project by ${req.user?.name}.\n\nYou can manage your project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}`,
+                });
+              }
+              res.status(200).json({ msg: 'Member added successfully' });
+              return;
+            } else {
+              logger.info(
+                `User: ${user.email} added to project: ${project.projectName}`
+              );
+              res.status(200).json({ msg: 'Member added successfully' });
+              return;
+            }
           }
         }
       }
@@ -469,6 +426,11 @@ class AdminController {
       user.projects = user.projects.filter(
         (pid) => !pid.equals(project._id as Types.ObjectId)
       );
+
+      if (project.isAdmin(user._id as Types.ObjectId)) {
+        user.role = 'user';
+      }
+
       await user.save();
 
       if (process.env.NODE_ENV === 'production') {

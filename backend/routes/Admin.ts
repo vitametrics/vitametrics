@@ -14,28 +14,25 @@ const router = express.Router();
 router.post(
   '/create-project',
   verifySession,
-  verifyRole('siteAdmin'),
   validationHandler(createProjectValidation),
+  verifyRole('siteAdmin'),
   asyncHandler(AdminController.createProject)
 );
 
 router.post(
   '/delete-project',
   verifySession,
-  checkProjectMembership,
-  verifyRole('owner'),
   validationHandler(projectIdValidation),
+  verifyRole('owner'),
+  checkProjectMembership,
   asyncHandler(AdminController.deleteProject)
 );
 
 router.get(
   '/get-available-users',
   verifySession,
-  checkProjectMembership,
   verifyRole('admin'),
-  validationHandler([
-    cookie('projectId').not().isEmpty().withMessage('No projectId provided'),
-  ]),
+  checkProjectMembership,
   asyncHandler(AdminController.getAvailableUsers)
 );
 

@@ -25,7 +25,7 @@ router.post(
 router.get(
   '/users',
   verifySession,
-  verifyRole('siteOwner'),
+  verifyRole('siteAdmin'),
   asyncHandler(OwnerController.getUsers)
 );
 
@@ -50,7 +50,7 @@ router.delete(
 router.get(
   '/projects',
   verifySession,
-  verifyRole('siteOwner'),
+  verifyRole('siteAdmin'),
   asyncHandler(OwnerController.getSiteProjects)
 );
 
@@ -58,7 +58,7 @@ router.get(
 router.put(
   '/user/:id',
   verifySession,
-  verifyRole('siteOwner'),
+  verifyRole('siteAdmin'),
   validationHandler([
     body('email').optional().isEmail().withMessage('Valid email is required'),
     body('name').optional().isString().withMessage('Name is required'),
@@ -71,7 +71,7 @@ router.put(
 router.put(
   '/project/:id',
   verifySession,
-  verifyRole('siteOwner'),
+  verifyRole('siteAdmin'),
   validationHandler([
     body('projectName')
       .optional()
@@ -104,7 +104,7 @@ router.delete(
   validationHandler([
     param('id').not().isEmpty().withMessage('ID is required'),
   ]),
-  verifyRole('siteOwner'),
+  verifyRole('siteAdmin'),
   asyncHandler(OwnerController.deleteSiteProject)
 );
 
@@ -116,7 +116,7 @@ router.put(
     body('projectId').not().isEmpty().withMessage('Project ID is required'),
     param('id').not().isEmpty().withMessage('Fitbit ID is required'),
   ]),
-  verifyRole('siteOwner'),
+  verifyRole('siteAdmin'),
   asyncHandler(OwnerController.unlinkFitbitAccountFromProject)
 );
 

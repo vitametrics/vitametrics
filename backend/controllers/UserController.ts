@@ -163,45 +163,24 @@ class UserController {
       logger.info(`Setting password for token: ${token}`);
 
       const user = await User.findOne({ setPasswordToken: token });
-      const project = await Project.findOne({ projectId });
       if (!user) {
         logger.error(`Invalid or expired token: ${token}`);
         res.status(400).json({ msg: 'Invalid or expired token' });
         return;
       }
-
-      if (
-        (!project && user.role === 'siteAdmin') ||
-        user.role === 'siteOwner'
-      ) {
-        user.password = await argon2.hash(password);
-        user.emailVerified = true;
-        user.setPasswordToken = null;
-        user.passwordTokenExpiry = null;
-        await user.save();
-        logger.info(`Password set successfully for admin/owner: ${user.email}`);
-        res.status(200).json({
-          msg: 'Password has been set successfully',
-          email: user.email,
-        });
-        return;
-      } else if (!project) {
-        logger.error(`Project not found`);
-        res.status(404).json({ msg: 'Project not found' });
-        return;
-      }
+      const project = await Project.findOne({ projectId });
 
       user.password = await argon2.hash(password);
       user.emailVerified = true;
       user.setPasswordToken = null;
       user.passwordTokenExpiry = null;
-      user.projects.push(project._id as Types.ObjectId);
+
+      if (project) {
+        project.members.push(user._id as Types.ObjectId);
+        await project.save();
+      }
+
       await user.save();
-
-      project.members.push(user._id as Types.ObjectId);
-
-      await project.save();
-
       logger.info(`Password set successfully for user: ${user.email}`);
       res
         .status(200)
