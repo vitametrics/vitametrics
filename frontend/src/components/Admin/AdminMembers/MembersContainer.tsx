@@ -11,7 +11,7 @@ const MembersContainer: React.FC<MembersContainerProps> = ({
   onClick,
   toggleInviteMenu,
 }) => {
-  const { siteMembers } = useAuth();
+  const { siteMembers, isOwner } = useAuth();
   const itemsPerPageOptions = [5, 10, 15, 20];
   const {
     currentPage,
@@ -47,16 +47,18 @@ const MembersContainer: React.FC<MembersContainerProps> = ({
   );
 
   return (
-    <div className="flex flex-col bg-white rounded-xl shadow-lg p-10 mb-12">
+    <div className="flex flex-col bg-white rounded-xl shadow-lg p-10 mb-12 border-2 border-gray-300">
       <h2 className="text-2xl text-primary font-bold mb-3">
         Your Instance's Members
       </h2>
-      <button
-        onClick={() => toggleInviteMenu(true)}
-        className="p-2 bg-primary hover:bg-hoverPrimary text-white rounded mb-5 text-lg w-[150px] mr-auto font-bold"
-      >
-        Invite Admin
-      </button>
+      {isOwner && (
+        <button
+          onClick={() => toggleInviteMenu(true)}
+          className="p-2 bg-primary hover:bg-hoverPrimary text-white rounded mb-5 text-lg w-[150px] mr-auto font-bold"
+        >
+          Invite Admin
+        </button>
+      )}
 
       {siteMembers && siteMembers.length === 0 ? (
         <span className="text-primary text-lg">No members found</span>

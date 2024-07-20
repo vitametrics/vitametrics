@@ -41,7 +41,7 @@ const ProjectsContainer: React.FC<ProjectsContainerProps> = ({
   };
 
   return (
-    <div className="flex flex-col bg-white rounded-xl shadow-lg font-neueHassUnica p-10">
+    <div className="flex flex-col bg-white rounded-xl shadow-lg font-neueHassUnica p-10 border-2 border-gray-300">
       <div className=" flex flex-col items-center pb-0">
         <span className="text-left text-primary text-2xl mr-auto mb-3 font-bold">
           Your Instance's Projects
