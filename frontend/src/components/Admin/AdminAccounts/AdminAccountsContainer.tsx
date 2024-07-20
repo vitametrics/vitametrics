@@ -10,6 +10,7 @@ import { useEffect } from "react";
 const AccountsContainer = () => {
   const { siteAccounts, fetchSiteAccounts } = useAuth();
 
+  /*
   const testAccounts = [
     {
       userId: "BXVFHB",
@@ -86,9 +87,7 @@ const AccountsContainer = () => {
         },
       ],
     },
-  ];
-
-  console.log(Object.values(testAccounts[0])[0]);
+  ];*/
 
   const itemsPerPageOptions = [5, 10, 15, 20];
   const {
@@ -103,7 +102,7 @@ const AccountsContainer = () => {
   }, []);
 
   const { searchTerm, handleSearchChange, filteredItems } = useSearch(
-    testAccounts,
+    siteAccounts,
     setCurrentPage
   );
 
@@ -122,7 +121,7 @@ const AccountsContainer = () => {
       <h2 className="text-2xl text-primary font-bold mb-3">
         Your Instance's Fitbit Accounts
       </h2>
-      {testAccounts && testAccounts.length === 0 ? (
+      {siteAccounts && siteAccounts.length === 0 ? (
         <span className="text-primary text-lg">No accounts found</span>
       ) : (
         <Fragment>
