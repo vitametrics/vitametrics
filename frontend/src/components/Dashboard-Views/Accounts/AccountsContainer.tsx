@@ -57,7 +57,7 @@ const AccountsContainer = () => {
           Link
         </button>
       )}
-      {fitbitAccounts && fitbitAccounts.length === 0 ? (
+      {fitbitAccounts && fitbitAccounts?.length === 0 ? (
         <span className="text-primary text-lg">No accounts found</span>
       ) : (
         <Fragment>

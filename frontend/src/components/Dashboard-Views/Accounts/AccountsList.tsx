@@ -95,7 +95,7 @@ const AccountsList: React.FC<AccountsListProps> = ({
                 <p className="font-bold text-primary mb-3">
                   Devices linked with {account.userId}
                 </p>
-                {account.devices.length === 0 && (
+                {account.devices?.length === 0 && (
                   <div className="text-primary">No devices linked</div>
                 )}
                 {account.devices.map((device: any) => (
@@ -140,7 +140,7 @@ const AccountsList: React.FC<AccountsListProps> = ({
           </div>
         </Fragment>
       ))}
-      {accounts && accounts.length === 0 && (
+      {accounts && accounts?.length === 0 && (
         <div className="text-primary">No results found</div>
       )}
     </Fragment>
