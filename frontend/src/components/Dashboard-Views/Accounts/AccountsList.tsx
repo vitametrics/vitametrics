@@ -3,12 +3,13 @@
 import { Fragment } from "react";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { faClipboard } from "@fortawesome/free-solid-svg-icons";
 import { useSearchParams } from "react-router-dom";
 import FullBatteryLevel from "../../../assets/FullBatteryLevel";
 import LowBatteryLevel from "../../../assets/LowBatteryLevel";
 import MediumBatteryLevel from "../../../assets/MediumBatteryLevel";
 import { unlinkFitbitAccount } from "../../../helpers/fitbit";
+import { truncate } from "../../../hooks/truncate";
 
 interface AccountsListProps {
   accounts: any;
@@ -39,23 +40,6 @@ const AccountsList: React.FC<AccountsListProps> = ({
     );
   };
 
-  const [visibleTokens, setVisibleTokens] = useState<{
-    [key: string]: { accessToken: boolean; refreshToken: boolean };
-  }>({});
-
-  const toggleVisibility = (
-    accountId: string,
-    tokenType: "accessToken" | "refreshToken"
-  ) => {
-    setVisibleTokens((prevState) => ({
-      ...prevState,
-      [accountId]: {
-        ...prevState[accountId],
-        [tokenType]: !prevState[accountId]?.[tokenType],
-      },
-    }));
-  };
-
   return (
     <Fragment>
       <div
@@ -78,37 +62,27 @@ const AccountsList: React.FC<AccountsListProps> = ({
             <span className="text-primary">{account.userId}</span>
             <span className="text-primary">{account.lastTokenRefresh}</span>
             <span className="text-primary flex items-center">
-              {visibleTokens[account.userId]?.accessToken
-                ? account.accessToken
-                : "••••••••••••••"}
+              {truncate(account.accessToken, 10) + "**********"}
               <button
-                onClick={() => toggleVisibility(account.userId, "accessToken")}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigator.clipboard.writeText(account.accessToken);
+                }}
                 className="ml-2"
               >
-                <FontAwesomeIcon
-                  icon={
-                    visibleTokens[account.userId]?.accessToken
-                      ? faEyeSlash
-                      : faEye
-                  }
-                />
+                <FontAwesomeIcon icon={faClipboard} />
               </button>
             </span>
             <span className="text-primary flex items-center">
-              {visibleTokens[account.userId]?.refreshToken
-                ? account.refreshToken
-                : "••••••••••••••"}
+              {truncate(account.refreshToken, 10) + "**********"}
               <button
-                onClick={() => toggleVisibility(account.userId, "refreshToken")}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigator.clipboard.writeText(account.refreshToken);
+                }}
                 className="ml-2"
               >
-                <FontAwesomeIcon
-                  icon={
-                    visibleTokens[account.userId]?.refreshToken
-                      ? faEyeSlash
-                      : faEye
-                  }
-                />
+                <FontAwesomeIcon icon={faClipboard} />
               </button>
             </span>
           </div>
