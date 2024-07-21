@@ -54,7 +54,7 @@ const MembersContainer: React.FC<MembersContainerProps> = ({
       {(project.isOwner || project.isAdmin) && (
         <button
           onClick={() => toggleInviteMenu(true)}
-          className="p-2 text-lg flex flex-row gap-2 mb-5 justify-center items-center rounded-xl w-[150px] bg-primary font-bold text-white shadow-lg hover:bg-hoverPrimary"
+          className="p-2 text-lg flex flex-row gap-2 mb-5 justify-center items-center rounded w-[150px] bg-primary font-bold text-white shadow-lg hover:bg-hoverPrimary"
         >
           Invite
         </button>

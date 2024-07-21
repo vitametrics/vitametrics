@@ -4,7 +4,7 @@ import { fadeInItemVariants } from "../../hooks/animationVariant";
 
 interface DeleteProjectMenuProps {
   show: boolean;
-  toggleMenu: (show: boolean) => void;
+  toggleMenu: (show: boolean, id: string) => void;
   handleDelete: () => void; // Function to handle the deletion process
 }
 
@@ -23,7 +23,7 @@ const DeleteProjectMenu: React.FC<DeleteProjectMenuProps> = ({
       className="opacity-transition fixed w-full p-10 z-20 bg-[#e8e8e8] flex flex-col left-0 md:left-1/2 md:top-1/2 transform-center md:w-[500px] rounded-xl text-primary shadow-lg"
     >
       <span
-        onClick={() => toggleMenu(false)}
+        onClick={() => toggleMenu(false, "")}
         className="ml-auto item-3 hover:cursor-pointer"
       ></span>
       <h1 className="text-3xl mb-10 text-center w-full text-primary font-bold">
@@ -37,14 +37,14 @@ const DeleteProjectMenu: React.FC<DeleteProjectMenuProps> = ({
           className="text-white p-3 bg-red-400 hover:bg-red-300 rounded-lg w-full"
           onClick={() => {
             handleDelete();
-            toggleMenu(false);
+            toggleMenu(false, "");
           }}
         >
           Yes, Delete it
         </button>
         <button
           className="text-white p-3 bg-secondary hover:bg-hoverSecondary rounded-xl w-full"
-          onClick={() => toggleMenu(false)}
+          onClick={() => toggleMenu(false, "")}
         >
           Cancel
         </button>

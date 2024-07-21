@@ -31,6 +31,7 @@ interface AuthContextProps {
   siteAccounts: any;
   fetchSiteAccounts: () => void;
   siteProjects: any;
+  setSiteProjects: (auth0: any[]) => void;
   fetchUserProjects: () => void;
 }
 
@@ -239,6 +240,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         siteAccounts,
         fetchSiteAccounts,
         fetchUserProjects,
+        setSiteProjects,
       }}
     >
       {children}

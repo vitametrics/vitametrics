@@ -49,7 +49,7 @@ const CreateProjectMenu: React.FC<CreateProjectMenuProps> = ({
       <p className="text-primary font-bold">Enter Project Description</p>
       <textarea
         placeholder="Enter your project description"
-        className="p-3 mb-3 rounded-lg border-b-1 text-primary max-h-[300px]"
+        className="p-3 mb-3 rounded-lg border-b-1 text-primary max-h-[300px] border"
         rows={5}
         onChange={(e) => setProjectDescription(e.target.value)}
       ></textarea>

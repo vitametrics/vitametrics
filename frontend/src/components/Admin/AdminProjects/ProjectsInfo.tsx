@@ -19,6 +19,10 @@ const ProjectsInfo: React.FC<ProjectInfoProps> = ({
   handleClose,
 }) => {
   const { ref, inView } = useCustomInView();
+  const [confirmDelete, setConfirmDelete] = useState({
+    id: "",
+    confirm: false,
+  });
   const [editMode, setEditMode] = useState<{
     [key in EditableFields]: boolean;
   }>({
@@ -27,10 +31,21 @@ const ProjectsInfo: React.FC<ProjectInfoProps> = ({
     role: false,
   });
 
-  const { projects, setProjects } = useAuth();
-  const siteProject: Project | undefined = projects.filter(
-    (project) => project.projectId === projectId
-  )[0];
+  const deleteProject = async (id: string) => {
+    if (confirmDelete.confirm && confirmDelete.id === id) {
+      await handleDeleteProject();
+      setProjectIdToDelete("");
+      setConfirmDelete({ id, confirm: false });
+    } else {
+      setProjectIdToDelete(id);
+      setConfirmDelete({ id, confirm: true });
+    }
+  };
+
+  const { siteProjects, setSiteProjects } = useAuth();
+  const siteProject = siteProjects.find(
+    (project: Project) => project.projectId === projectId
+  );
   const [msg, setMsg] = useState("");
   const [flag, setFlag] = useState(false);
 
@@ -47,7 +62,9 @@ const ProjectsInfo: React.FC<ProjectInfoProps> = ({
   };
 
   useEffect(() => {
-    const siteProject = projects.find((m) => m.projectId === projectId);
+    const siteProject = siteProjects.find(
+      (m: Project) => m.projectId === projectId
+    );
     if (siteProject) {
       setEditedProject({
         projectName: siteProject.projectName,
@@ -55,7 +72,7 @@ const ProjectsInfo: React.FC<ProjectInfoProps> = ({
         ownerId: siteProject.ownerId,
       });
     }
-  }, [projects, projectId]);
+  }, [siteProjects, projectId]);
 
   if (!projectId) return null;
 
@@ -82,7 +99,7 @@ const ProjectsInfo: React.FC<ProjectInfoProps> = ({
       );
       console.log(response);
       const updatedProject = response.data;
-      const updatedProjects = projects.map((project) =>
+      const updatedProjects = siteProjects.map((project: Project) =>
         project.projectId === updatedProject.projectId
           ? updatedProject
           : project
@@ -90,7 +107,7 @@ const ProjectsInfo: React.FC<ProjectInfoProps> = ({
 
       setFlag(true);
       console.log(updatedProjects);
-      setProjects(updatedProjects);
+      setSiteProjects(updatedProjects);
       setEditedProject(updatedProject);
       setMsg("Project info updated");
     } catch (error) {
@@ -147,7 +164,7 @@ const ProjectsInfo: React.FC<ProjectInfoProps> = ({
         </Fragment>
       </div>
       <div className="text-xl mb-1 text-left flex items-center">
-        <strong className="mr-2">UID:</strong>
+        <strong className="mr-2">PID:</strong>
         {projectId}
       </div>
       <div className="text-xl mb-1 text-left flex flex-col">
@@ -192,11 +209,13 @@ const ProjectsInfo: React.FC<ProjectInfoProps> = ({
 
       <button
         onClick={() => {
-          setProjectIdToDelete(projectId), handleDeleteProject(), handleClose();
+          deleteProject(siteProject._id);
         }}
-        className={`w-full mt-auto bg-red-400 text-white p-3 rounded`}
+        className={`w-full mt-auto ${confirmDelete.id === siteProject._id ? "bg-yellow-500" : "bg-red-500"} text-white p-3 rounded`}
       >
-        Delete Project
+        {confirmDelete.id === siteProject._id
+          ? "Confirm Delete Project"
+          : "Delete Project"}
       </button>
     </motion.div>
   );

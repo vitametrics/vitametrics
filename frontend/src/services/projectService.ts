@@ -3,6 +3,8 @@ import axios from "axios";
 
 const CREATE_PROJECT_ENDPOINT = `${process.env.API_URL}/admin/create-project`;
 const DELETE_PROJECT_ENDPOINT = `${process.env.API_URL}/admin/delete-project`;
+const DELETE_SITE_PROJECT_ENDPOINT = `${process.env.API_URL}/owner/project`;
+
 
 export const createProjectService = async (projectName: string, projectDescription: string) => {
   try {
@@ -30,6 +32,19 @@ export const deleteProjectService = async (projectId: string) => {
     throw new Error('Failed to delete the project: ' + error);
   }
 }
+
+export const deleteSiteProject = async (projectId: string) => {
+  try {
+     await axios.delete(
+      `${DELETE_SITE_PROJECT_ENDPOINT}/${projectId}`,
+      { withCredentials: true }
+    );
+  
+  } catch (error) {
+    throw new Error('Failed to delete the project: ' + error);
+  }
+}
+
 
 export const unlinkFitBitAccountService = async () => {
   const UNLINK_FITBIT_ACCOUNT_ENDPOINT = `${process.env.API_URL}/project/unlink-fitbit`;

@@ -11,7 +11,7 @@ import useDebounce from "../../helpers/useDebounce";
 import { useSearchParams } from "react-router-dom";
 import CreateProjectMenu from "../Dashboard/CreateProjectMenu";
 import DeleteProjectMenu from "../Dashboard/DeleteProjectMenu";
-import { deleteProjectService } from "../../services/projectService";
+import { deleteSiteProject } from "../../services/projectService";
 import ProjectsInfo from "./AdminProjects/ProjectsInfo";
 
 const CREATE_PROJECT_ENDPOINT = `${process.env.API_URL}/admin/create-project`;
@@ -111,14 +111,13 @@ const AdminProjectManagement = () => {
   };
 
   const handleDeleteProject = async () => {
+    console.log("REQUESTED  ");
     if (!projectIdToDelete) return;
-
     try {
-      await deleteProjectService(projectIdToDelete);
-      setProjects(
-        projects.filter((project) => project.projectId !== projectIdToDelete)
-      );
+      await deleteSiteProject(projectIdToDelete);
+      await fetchInstanceProjects();
       setProjectIdToDelete("");
+      handleClose();
     } catch (error) {
       console.error(error);
     }
@@ -135,12 +134,14 @@ const AdminProjectManagement = () => {
     setShowBackDrop(false);
   };
 
-  const toggleDeleteProjectMenu = (show: boolean, projectId?: string) => {
+  const toggleDeleteProjectMenu = (show: boolean, id: string) => {
+    console.log("need to delete project:");
+    console.log(id);
     setSearchParams((prev) => {
       prev.set("deleteProject", show.toString());
       return prev;
     });
-    setProjectIdToDelete(projectId || ""); // Save or clear the project ID
+    setProjectIdToDelete(id); // Save or clear the project ID
     setShowBackDrop(show);
   };
 
