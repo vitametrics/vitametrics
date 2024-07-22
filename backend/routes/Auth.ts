@@ -82,7 +82,7 @@ router.get('/auth', async (req: Request, res: Response) => {
         state,
       }).save();
     } else {
-      
+
       state = generateState(projectId, userId);
 
       const user = await User.findOne({ userId });
@@ -207,74 +207,74 @@ router.get('/callback', async (req: Request, res: Response) => {
       } else {
         return res.status(404).json({ msg: 'User or account not found' });
       }
-    }
-
-    const isMember = project.isMember(user._id as Types.ObjectId);
-    if (!isMember) {
-      return res
-        .status(403)
-        .json({ msg: 'User is not a member of this project' });
-    }
-
-    const params = new URLSearchParams({
-      client_id: process.env.FITBIT_CLIENT_ID as string,
-      grant_type: 'authorization_code',
-      code,
-      redirect_uri: process.env.REDIRECT_URI as string,
-      code_verifier: codeVerifier,
-    });
-
-    const tokenResponse = await axios.post(
-      'https://api.fitbit.com/oauth2/token',
-      params.toString(),
-      {
-        headers: {
-          Authorization: `Basic ${Buffer.from(`${process.env.FITBIT_CLIENT_ID}:${process.env.FITBIT_CLIENT_SECRET}`).toString('base64')}`,
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      }
-    );
-
-    const accessToken = tokenResponse.data.access_token;
-    const refreshToken = tokenResponse.data.refresh_token;
-
-    const profileResponse = await axios.get(
-      'https://api.fitbit.com/1/user/-/profile.json',
-      {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      }
-    );
-
-    const fitbitUserID = profileResponse.data.user.encodedId;
-
-    let fitbitAccount = await FitbitAccount.findOne({
-      userId: fitbitUserID,
-      project_id: project._id,
-    });
-
-    if (fitbitAccount) {
-      fitbitAccount.accessToken = accessToken;
-      fitbitAccount.refreshToken = refreshToken;
-      fitbitAccount.lastTokenRefresh = new Date();
     } else {
-      fitbitAccount = new FitbitAccount({
+      const isMember = project.isMember(user._id as Types.ObjectId);
+      if (!isMember) {
+        return res
+          .status(403)
+          .json({ msg: 'User is not a member of this project' });
+      }
+
+      const params = new URLSearchParams({
+        client_id: process.env.FITBIT_CLIENT_ID as string,
+        grant_type: 'authorization_code',
+        code,
+        redirect_uri: process.env.REDIRECT_URI as string,
+        code_verifier: codeVerifier,
+      });
+  
+      const tokenResponse = await axios.post(
+        'https://api.fitbit.com/oauth2/token',
+        params.toString(),
+        {
+          headers: {
+            Authorization: `Basic ${Buffer.from(`${process.env.FITBIT_CLIENT_ID}:${process.env.FITBIT_CLIENT_SECRET}`).toString('base64')}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        }
+      );
+  
+      const accessToken = tokenResponse.data.access_token;
+      const refreshToken = tokenResponse.data.refresh_token;
+  
+      const profileResponse = await axios.get(
+        'https://api.fitbit.com/1/user/-/profile.json',
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+  
+      const fitbitUserID = profileResponse.data.user.encodedId;
+  
+      let fitbitAccount = await FitbitAccount.findOne({
         userId: fitbitUserID,
-        accessToken,
-        refreshToken,
-        lastTokenRefresh: new Date(),
         project_id: project._id,
       });
+  
+      if (fitbitAccount) {
+        fitbitAccount.accessToken = accessToken;
+        fitbitAccount.refreshToken = refreshToken;
+        fitbitAccount.lastTokenRefresh = new Date();
+      } else {
+        fitbitAccount = new FitbitAccount({
+          userId: fitbitUserID,
+          accessToken,
+          refreshToken,
+          lastTokenRefresh: new Date(),
+          project_id: project._id,
+        });
+      }
+  
+      await fitbitAccount.save();
+  
+      if (!project.fitbitAccounts.includes(fitbitAccount._id as Types.ObjectId)) {
+        project.fitbitAccounts.push(fitbitAccount._id as Types.ObjectId);
+        await project.save();
+      }
+  
+      // this should not handle redirects. fine for now i guess.
+      return res.redirect(`/dashboard/project?id=${projectId}&view=overview`);
     }
-
-    await fitbitAccount.save();
-
-    if (!project.fitbitAccounts.includes(fitbitAccount._id as Types.ObjectId)) {
-      project.fitbitAccounts.push(fitbitAccount._id as Types.ObjectId);
-      await project.save();
-    }
-
-    // this should not handle redirects. fine for now i guess.
-    return res.redirect(`/dashboard/project?id=${projectId}&view=overview`);
   } catch (err) {
     console.error('Error handling OAuth callback:', err);
     res.status(500).json({ success: false, msg: 'Internal Server Error' });
