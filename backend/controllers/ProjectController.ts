@@ -16,9 +16,6 @@ import Device from '../models/Device';
 import FitbitAccount from '../models/FitbitAccount';
 import Project, { IProject } from '../models/Project';
 import User, { IUser } from '../models/User';
-import getFitbitCredentials from '../middleware/getFitbitCredentials';
-import createZipFile from '../middleware/createZip';
-import generateCSV from '../middleware/generateCSV';
 
 const VALID_INTRADAY_INTERVALS = ['1sec', '1min', '5min', '15min'];
 class ProjectController {
@@ -567,25 +564,51 @@ class ProjectController {
 
     try {
       logger.info(`Batch downloading data for project: ${currentProject.projectId}`);
-
+  
       const dataToZip = [];
       const dateRange = getDateRange(startDate, endDate);
-
+  
+      const projectFitbitAccounts = await FitbitAccount.find({
+        _id: { $in: currentProject.fitbitAccounts },
+      });
+  
       for (const deviceId of deviceIds) {
-        const device = await Device.findOne({ deviceId, projectId: currentProject.projectId });
+        const device = await Device.findOne({
+          deviceId,
+          projectId: currentProject.projectId,
+        });
+  
         if (!device) {
           logger.error(`Device: ${deviceId} not found in project ${currentProject.projectId}`);
           continue;
         }
-
-        const { accessToken, userId } = await getFitbitCredentials(device, currentProject);
-        if (!accessToken || !userId) {
-          logger.error(`Fitbit credentials not found for device: ${deviceId}`);
-          continue;
+  
+        let accessToken: string | undefined;
+        let userId: string | undefined;
+  
+        const fitbitAccount = projectFitbitAccounts.find(
+          (account) => account.userId === device.fitbitUserId
+        );
+  
+        if (fitbitAccount) {
+          accessToken = fitbitAccount.accessToken;
+          userId = fitbitAccount.userId;
+        } else {
+          const user = await User.findOne({
+            userId: device.owner,
+            isTempUser: true,
+          });
+          if (user && user.fitbitAccessToken && user.fitbitUserId) {
+            accessToken = user.fitbitAccessToken;
+            userId = user.fitbitUserId;
+          } else {
+            logger.error(`Fitbit credentials not found for device: ${deviceId}`);
+            continue;
+          }
         }
-
-        const deviceData: { [date: string] : { [dataType: string]: any } } = {};
-
+  
+        const deviceData: { [date: string]: { [dataType: string]: any[] } } = {};
+  
         for (const date of dateRange) {
           for (const dataType of dataTypes) {
             let data;
@@ -594,40 +617,61 @@ class ProjectController {
             } else {
               data = await fetchIntradayData(userId, accessToken, dataType, date, detailLevel);
             }
-
             if (!deviceData[date]) deviceData[date] = {};
             deviceData[date][dataType] = data;
           }
         }
-
+  
         const csvContent = generateCSV(deviceData, dataTypes, useDailyData);
         const fileName = `${currentProject.projectId}-${deviceId}.csv`;
         dataToZip.push({ fileName, data: csvContent });
       }
-
+  
       if (dataToZip.length === 0) {
         res.status(400).json({ msg: 'No data found for the specified devices' });
         return;
       }
-
+  
       if (dataToZip.length === 1) {
         const singleFile = dataToZip[0];
-        res.setHeader('Content-Disposition', `attachment; filename=${archiveName || singleFile.fileName}`);
+        const singleFileName = `${archiveName || singleFile.fileName}`;
+        res.setHeader('Content-Disposition', `attachment; filename=${singleFileName}`);
         res.set('Content-Type', 'text/csv');
         res.send(singleFile.data);
       } else {
-        const zipFilePath = await createZipFile(dataToZip, currentProject.projectId, archiveName);
-        res.download(zipFilePath, `${archiveName || 'data'}.zip`, (err) => {
-          if (err) {
-            logger.error(`Error sending zip file: ${err}`);
-            res.status(500).json({ msg: 'Internal Server Error'});
+        const tempFolderPath = path.resolve(
+          __dirname,
+          `../tmp/${currentProject.projectId}-${Date.now()}`
+        );
+        fs.mkdirSync(tempFolderPath, { recursive: true });
+  
+        for (const { fileName, data } of dataToZip) {
+          const filePath = path.join(tempFolderPath, fileName);
+          fs.writeFileSync(filePath, data);
+        }
+  
+        const zipFileName = `${archiveName || 'archive'}.zip`;
+        const tempZipFolderPath = path.resolve(__dirname, '../tmp_zip');
+        fs.mkdirSync(tempZipFolderPath, { recursive: true });
+        const zipFilePath = path.join(tempZipFolderPath, zipFileName);
+  
+        await zip(tempFolderPath, zipFilePath);
+  
+        fs.rmSync(tempFolderPath, { recursive: true, force: true });
+  
+        res.setHeader('Content-Disposition', `attachment; filename=${zipFileName}`);
+        res.sendFile(zipFilePath, (error) => {
+          if (error) {
+            logger.error(`Error sending zip file: ${error}`);
+            res.status(500).json({ msg: 'Internal Server Error' });
+          } else {
+            fs.unlinkSync(zipFilePath);
           }
-          fs.unlinkSync(zipFilePath);
         });
       }
     } catch (error) {
       logger.error(`Error downloading data: ${error}`);
-      res.status(500).json({ msg: 'Internal Server Error'});
+      res.status(500).json({ msg: 'Internal Server Error' });
     }
   }
 }
