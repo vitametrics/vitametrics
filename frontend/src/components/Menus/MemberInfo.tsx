@@ -1,13 +1,14 @@
 import React, { useState, Fragment } from "react";
 import { motion } from "framer-motion";
-import useCustomInView from "../../../hooks/useCustomInView";
-import { fadeInItemVariants } from "../../../hooks/animationVariant";
-import { MemberInfoProps } from "../../../types/Member";
-import { useProject } from "../../../helpers/ProjectContext";
+import useCustomInView from "../../hooks/useCustomInView";
+import { fadeInItemVariants } from "../../hooks/animationVariant";
+import { MemberInfoProps } from "../../types/Member";
+import { useProject } from "../../helpers/ProjectContext";
 import axios from "axios";
-import SaveButton from "../../Buttons/SaveButton";
-import CancelButton from "../../Buttons/CancelButton";
-import EditButton from "../../Buttons/EditButton";
+import SaveButton from "../Buttons/SaveButton";
+import CancelButton from "../Buttons/CancelButton";
+import EditButton from "../Buttons/EditButton";
+import CloseButton from "../Buttons/CloseButton";
 
 const CHANGE_ROLE_ENDPOINT = `${process.env.API_URL}/admin/change-user-role`;
 
@@ -19,7 +20,7 @@ const MemberInfo: React.FC<MemberInfoProps> = ({
   handleClose,
 }) => {
   const { ref, inView } = useCustomInView();
-  const { project } = useProject();
+  const { project, fetchProject } = useProject();
   const [msg, setMsg] = useState("");
   const [flag, setFlag] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -46,8 +47,9 @@ const MemberInfo: React.FC<MemberInfoProps> = ({
         },
         { withCredentials: true }
       );
-      setMsg(res.data.msg);
       setFlag(true);
+      setMsg(res.data.msg);
+      fetchProject();
     } catch (error) {
       setFlag(false);
       setMsg("Error changing role");
@@ -63,14 +65,17 @@ const MemberInfo: React.FC<MemberInfoProps> = ({
       initial="hidden"
       animate={inView ? "show" : "hidden"}
       ref={ref}
-      className="absolute w-full h-full p-10 z-20 bg-[#e8e8e8] flex flex-col left-0 md:left-1/2 md:top-1/2 transform-center md:h-[35%] md:w-[500px] rounded-xl text-primary"
+      className="absolute w-full h-full p-10 z-20 bg-[#e8e8e8] flex flex-col left-0 md:left-1/2 md:top-1/2 transform-center md:h-[40%] md:w-[500px] rounded-xl text-primary"
     >
-      <button
-        onClick={() => {
-          handleClose(), setMsg("");
-        }}
-        className="ml-auto item-3"
-      ></button>
+      <span className="ml-auto">
+        <CloseButton
+          onClick={() => {
+            handleClose();
+            setMsg("");
+          }}
+        />
+      </span>
+
       <h1 className="text-2xl text-center font-bold text-primary">
         Member Info
       </h1>

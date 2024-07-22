@@ -1,11 +1,11 @@
-import { useProject } from "../../../helpers/ProjectContext";
-import Pagination from "../../Pagination";
-import usePagination from "../../../hooks/usePagination";
-import PaginationControls from "../PaginationControls";
-import MembersList from "./MembersList";
-import useSearch from "../../../hooks/useSearch";
+import { useProject } from "../../helpers/ProjectContext";
+import Pagination from "../Pagination/Pagination";
+import usePagination from "../../hooks/usePagination";
+import PaginationControls from "../Pagination/PaginationControls";
+import MembersList from "../Lists/MembersList";
+import useSearch from "../../hooks/useSearch";
 import { Fragment, useState } from "react";
-import { MembersContainerProps } from "../../../types/Member";
+import { MembersContainerProps } from "../../types/Member";
 
 const MembersContainer: React.FC<MembersContainerProps> = ({
   onClick,

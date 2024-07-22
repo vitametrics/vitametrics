@@ -1,6 +1,6 @@
-import Pagination from "../../Pagination";
+import Pagination from "../../Pagination/Pagination";
 import usePagination from "../../../hooks/usePagination";
-import PaginationControls from "../../Dashboard/PaginationControls";
+import PaginationControls from "../../Pagination/PaginationControls";
 import MembersList from "./MembersList";
 import useSearch from "../../../hooks/useSearch";
 import { Fragment, useState } from "react";

@@ -1,13 +1,14 @@
 import React, { useState, Fragment, useEffect } from "react";
 import { motion } from "framer-motion";
-import useCustomInView from "../../../hooks/useCustomInView";
-import { fadeInItemVariants } from "../../../hooks/animationVariant";
-import { MemberInfoProps } from "../../../types/Member";
-import EditButton from "../../Buttons/EditButton";
-import CancelButton from "../../Buttons/CancelButton";
-import SaveButton from "../../Buttons/SaveButton";
+import useCustomInView from "../../hooks/useCustomInView";
+import { fadeInItemVariants } from "../../hooks/animationVariant";
+import { MemberInfoProps } from "../../types/Member";
+import EditButton from "../Buttons/EditButton";
+import CancelButton from "../Buttons/CancelButton";
+import SaveButton from "../Buttons/SaveButton";
 import axios from "axios";
-import { useAuth } from "../../../helpers/AuthContext";
+import { useAuth } from "../../helpers/AuthContext";
+import CloseButton from "../Buttons/CloseButton";
 
 type EditableFields = "name" | "email" | "role";
 
@@ -76,7 +77,6 @@ const MemberInfo: React.FC<MemberInfoProps> = ({
         },
         { withCredentials: true }
       );
-      console.log(response);
       const updatedUser = response.data;
       const updatedMembers = siteMembers.map((member) =>
         member.userId === updatedUser.userId ? updatedUser : member
@@ -100,12 +100,13 @@ const MemberInfo: React.FC<MemberInfoProps> = ({
       ref={ref}
       className="absolute w-full h-[500px] p-10 z-20 bg-[#e8e8e8] flex flex-col left-0 md:left-1/2 md:top-1/2 transform-center md:h-[500px] md:w-[500px] rounded-xl text-primary"
     >
-      <button
-        onClick={() => {
-          handleClose(), setMsg("");
-        }}
-        className="ml-auto item-3"
-      ></button>
+      <span className="ml-auto">
+        <CloseButton
+          onClick={() => {
+            handleClose(), setMsg("");
+          }}
+        />
+      </span>
       <h1 className="text-2xl text-center font-bold text-primary">
         Member Info
       </h1>
@@ -216,7 +217,7 @@ const MemberInfo: React.FC<MemberInfoProps> = ({
             confirmDelete.id === member._id && confirmDelete.confirm
               ? "bg-yellow-500"
               : "bg-red-400"
-          } text-white p-3 rounded-lg`}
+          } text-white p-3 rounded`}
         >
           {confirmDelete.id === member._id && confirmDelete.confirm
             ? "Confirm Remove"

@@ -1,6 +1,5 @@
 import axios from "axios";
 
-
 export const fetchFitbitAccounts = async (projectId: string) => {
     try{
      const res = await axios.get(`${process.env.API_URL}/project/fitbit-accounts`, {

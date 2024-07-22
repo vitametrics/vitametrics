@@ -1,4 +1,4 @@
-import fitbitlogo from "../assets/images/fitbit.webp";
+import fitbitlogo from "../../assets/images/fitbit.webp";
 
 const Banner = () => {
   return (

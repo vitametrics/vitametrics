@@ -5,7 +5,7 @@ import { useProject } from "../../../helpers/ProjectContext";
 import { useSearchParams } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { formatDate } from "../../../helpers/formatDate";
+import { formatDate } from "../../../hooks/formatDate";
 
 interface DeviceDownloadPanelProps {
   deviceId: string;

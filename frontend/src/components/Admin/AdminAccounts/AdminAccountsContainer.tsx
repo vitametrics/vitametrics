@@ -1,6 +1,6 @@
-import Pagination from "../../Pagination";
+import Pagination from "../../Pagination/Pagination";
 import usePagination from "../../../hooks/usePagination";
-import PaginationControls from "../../../components/Dashboard/PaginationControls";
+import PaginationControls from "../../Pagination/PaginationControls";
 import useSearch from "../../../hooks/useAdminAccountSearch";
 import { Fragment } from "react";
 import AccountsList from "./AdminAccountsList";

@@ -1,8 +1,8 @@
-import OverviewIcon from "../assets/OverviewIcon";
-import DeviceIcon from "../assets/DeviceIcon";
-import MembersIcon from "../assets/MembersIcon";
-import SettingsIcon from "../assets/SettingsIcon";
-import AccountsIcon from "../assets/AccountsIcon";
+import OverviewIcon from "../../assets/OverviewIcon";
+import DeviceIcon from "../../assets/DeviceIcon";
+import MembersIcon from "../../assets/MembersIcon";
+import SettingsIcon from "../../assets/SettingsIcon";
+import AccountsIcon from "../../assets/AccountsIcon";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 

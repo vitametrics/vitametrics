@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { OverviewMembersListProps } from "../../../types/Device";
+import { OverviewMembersListProps } from "../../types/Device";
 
 const OverviewDevicesList: React.FC<OverviewMembersListProps> = ({
   devices,

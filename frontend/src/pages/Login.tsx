@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import axios from "axios";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/Navigation/Navbar";
 import logo from "../assets/images/vitamix.webp";
 import { useAuth } from "../helpers/AuthContext";
 import useDebounce from "../helpers/useDebounce";

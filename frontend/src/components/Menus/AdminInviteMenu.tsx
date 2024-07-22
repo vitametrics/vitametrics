@@ -2,8 +2,9 @@
 // components/InviteMenu.tsx
 import React, { Fragment } from "react";
 import { motion } from "framer-motion";
-import useCustomInView from "../../../hooks/useCustomInView";
-import { fadeInItemVariants } from "../../../hooks/animationVariant";
+import useCustomInView from "../../hooks/useCustomInView";
+import { fadeInItemVariants } from "../../hooks/animationVariant";
+import CloseButton from "../Buttons/CloseButton";
 
 interface InviteMenuProps {
   showInviteMenu: boolean;
@@ -48,10 +49,9 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
       ref={ref}
       className={`opacity-transition ${showBackDrop ? "show" : ""} absolute w-full h-full p-10 z-10 bg-[#e8e8e8] flex flex-col left-0 md:left-1/2 md:top-1/2 transform-center md:h-[500px] md:w-[500px] rounded-xl`}
     >
-      <button
-        onClick={() => toggleInviteMenu(false)}
-        className="item-3 ml-auto p-2"
-      ></button>
+      <span className="ml-auto">
+        <CloseButton onClick={() => toggleInviteMenu(false)} />
+      </span>
       <h1 className="text-2xl mb-3 text-center w-full font-bold text-primary">
         Invite Site Admins
       </h1>
@@ -65,7 +65,7 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
         <h1 className="text-xl mb-1 text-primary">Enter Name</h1>
         <input
           type="text"
-          className="w-full h-10 p-6 rounded-xl mb-5 text-primary"
+          className="w-full h-10 p-6 mb-5 text-primary rounded border-2 border-gray-300"
           placeholder="Enter member's name"
           value={nameInput}
           onChange={handleNameChange}
@@ -74,7 +74,7 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
         <span className="mb-5">
           <input
             type="text"
-            className="w-full h-10 p-6 rounded-xl text-primary"
+            className="w-full h-10 p-6 rounded border-2 border-gray-300 text-primary"
             placeholder="Enter member's email"
             value={emailInput}
             onChange={handleEmailInput}
@@ -83,7 +83,7 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
 
         <button
           onClick={handleInvite}
-          className="w-full p-3 rounded-xl text-white bg-primary hover:bg-hoverPrimary shadow-lg font-bold"
+          className="w-full p-3 rounded text-white bg-primary hover:bg-hoverPrimary shadow-lg font-bold"
         >
           Invite Site Admin
         </button>

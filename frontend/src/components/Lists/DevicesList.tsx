@@ -1,15 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Fragment } from "react";
-import { DeviceListProps } from "../../../types/Device";
-import FullBatteryLevel from "../../../assets/FullBatteryLevel";
-import MediumBatteryLevel from "../../../assets/MediumBatteryLevel";
-import LowBatteryLevel from "../../../assets/LowBatteryLevel";
+import { DeviceListProps } from "../../types/Device";
+import FullBatteryLevel from "../../assets/FullBatteryLevel";
+import MediumBatteryLevel from "../../assets/MediumBatteryLevel";
+import LowBatteryLevel from "../../assets/LowBatteryLevel";
+import { truncateName } from "../../hooks/truncate";
 
 const DevicesList: React.FC<DeviceListProps> = ({ devices, onDeviceClick }) => {
-  const truncateName = (name: string) => {
-    return name.length > 25 ? `${name.substring(0, 22)}...` : name;
-  };
-
   return (
     <Fragment>
       <div

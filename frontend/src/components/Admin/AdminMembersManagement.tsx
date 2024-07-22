@@ -4,8 +4,8 @@ import { fadeInItemVariants } from "../../hooks/animationVariant";
 import MembersContainer from "./AdminMembers/MembersContainer";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../helpers/AuthContext";
-import MemberInfo from "./AdminMembers/MembersInfo";
-import InviteMenu from "./AdminMembers/InviteMenu";
+import MemberInfo from "../Menus/AdminMembersInfo";
+import InviteMenu from "../Menus/AdminInviteMenu";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 

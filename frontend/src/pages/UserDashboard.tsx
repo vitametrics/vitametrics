@@ -1,26 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useAuth } from "../helpers/AuthContext";
-import { DashboardNavbar } from "../components/DashboardNavbar";
+import { DashboardNavbar } from "../components/Navigation/DashboardNavbar";
 import { useState, useEffect, Fragment } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import Pagination from "../components/Pagination";
-import CreateProjectMenu from "../components/Dashboard/CreateProjectMenu";
-import DeleteProjectMenu from "../components/Dashboard/DeleteProjectMenu";
+import CreateProjectMenu from "../components/Menus/CreateProjectMenu";
+import DeleteProjectMenu from "../components/Menus/DeleteProjectMenu";
 import useDebounce from "../helpers/useDebounce";
 import axios from "axios";
 import { deleteProjectService } from "../services/projectService";
-import useSearch from "../hooks/useProjectSearch";
-import DeleteIcon from "../assets/DeleteIcon";
-import { DashboardProject } from "../types/Project";
-import PaginationControls from "../components/Dashboard/PaginationControls";
+import ProjectsList from "../components/Lists/ProjectsList";
 
 const CREATE_PROJECT_ENDPOINT = `${process.env.API_URL}/admin/create-project`;
 
 const UserDashboard = () => {
   const { projects, setProjects, userRole, fetchUserProjects } = useAuth();
-  const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
-  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [showBackDrop, setShowBackDrop] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams({
     createProject: "false",
@@ -31,7 +25,6 @@ const UserDashboard = () => {
   const [projectDescription, setProjectDescription] = useState("");
   const debouncedProjectDescription = useDebounce(projectDescription, 100);
   const [projectIdToDelete, setProjectIdToDelete] = useState<string>("");
-  const itemsPerPageOptions = [5, 10, 15, 20];
   const [msg, setMsg] = useState("");
   const role =
     userRole === "siteOwner"
@@ -41,30 +34,6 @@ const UserDashboard = () => {
         : userRole === "user"
           ? "User"
           : "Participant";
-
-  const handleItemsPerPageChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setItemsPerPage(Number(event.target.value));
-    setCurrentPage(1);
-  };
-
-  const { searchTerm, handleSearchChange, filteredItems } = useSearch(
-    projects,
-    setCurrentPage
-  );
-
-  console.log(filteredItems);
-
-  const indexOfLastMember = Math.min(
-    currentPage * itemsPerPage,
-    filteredItems.length
-  );
-  const indexOfFirstMember = (currentPage - 1) * itemsPerPage;
-  const currentProjects = filteredItems.slice(
-    indexOfFirstMember,
-    indexOfLastMember
-  );
 
   const createProject = searchParams.get("createProject") === "true";
   const deleteProject = searchParams.get("deleteProject") === "true";
@@ -204,88 +173,11 @@ const UserDashboard = () => {
               </span>
             </Fragment>
           ) : (
-            <Fragment>
-              <div className=" flex flex-col items-center pb-0">
-                <input
-                  type="text"
-                  placeholder="Search"
-                  value={searchTerm}
-                  onChange={handleSearchChange}
-                  className="p-2 w-[300px] mr-auto border-2 border-gray-200 rounded-lg mb-2"
-                />
-                <div className="flex flex-row mr-auto gap-2 text-primary mb-3">
-                  <PaginationControls
-                    itemsPerPage={itemsPerPage}
-                    handleItemsPerPageChange={handleItemsPerPageChange}
-                    itemsPerPageOptions={itemsPerPageOptions}
-                    totalItems={filteredItems.length}
-                    currentPage={currentPage}
-                    indexOfLastItem={indexOfLastMember}
-                  />
-                </div>
-              </div>
-              <span className="h-[1px] rounded-xl bg-[#d3d7df] w-full"></span>{" "}
-              {/*line*/}
-              <div className="flex flex-col pt-0 h-full">
-                <div
-                  id="options"
-                  className="grid grid-cols-4 w-full text-primary items-center font-bold"
-                >
-                  <button className="p-2">NAME</button>
-                  <button className="p-2">DEVICES</button>
-                  <button className="p-2">MEMBERS</button>
-                  <label className="text-center">ACTION</label>
-                </div>
-
-                {currentProjects.map((project: DashboardProject) => (
-                  <Fragment key={project.projectId}>
-                    <span className="h-[0.75px] rounded-xl w-full bg-gray-200"></span>
-                    <div className="grid grid-cols-4 w-full items-center hover:cursor-pointer hover:bg-gray-200">
-                      <label
-                        className="text-center hover:cursor-pointer"
-                        onClick={() => handleProjectClick(project.projectId)}
-                      >
-                        {project.projectName}
-                      </label>
-                      <label
-                        className="text-center hover:cursor-pointer"
-                        onClick={() => handleProjectClick(project.projectId)}
-                      >
-                        {project.deviceCount || 0}
-                      </label>
-                      <label
-                        className="text-center hover:cursor-pointer"
-                        onClick={() => handleProjectClick(project.projectId)}
-                      >
-                        {project.memberCount || 1}
-                      </label>
-                      <button
-                        className="p-2 bg-transparent text-white rounded-lg flex items-center justify-center hover:cursor-pointer"
-                        onClick={() => {
-                          console.log(project);
-                          toggleDeleteProjectMenu(true, project.projectId);
-                        }}
-                      >
-                        <DeleteIcon />
-                      </button>
-                    </div>
-                  </Fragment>
-                ))}
-                <span className="h-[0.75px] rounded-xl w-full bg-gray-200"></span>
-                <div
-                  id="pagination"
-                  className="flex flex-row mt-auto ml-auto items-center"
-                >
-                  <span className="mr-5 text-primary"></span>
-                  <Pagination
-                    totalItems={projects.length}
-                    itemsPerPage={itemsPerPage}
-                    currentPage={currentPage}
-                    setCurrentPage={setCurrentPage}
-                  />
-                </div>
-              </div>
-            </Fragment>
+            <ProjectsList
+              projects={projects}
+              handleProjectClick={handleProjectClick}
+              toggleDeleteProjectMenu={toggleDeleteProjectMenu}
+            />
           )}
         </div>
       </div>

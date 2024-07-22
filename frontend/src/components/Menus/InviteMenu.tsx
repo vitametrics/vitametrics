@@ -2,10 +2,11 @@
 // components/InviteMenu.tsx
 import React, { useState, Fragment, useEffect } from "react";
 import { motion } from "framer-motion";
-import useCustomInView from "../../../hooks/useCustomInView";
-import { fadeInItemVariants } from "../../../hooks/animationVariant";
+import useCustomInView from "../../hooks/useCustomInView";
+import { fadeInItemVariants } from "../../hooks/animationVariant";
 import axios from "axios";
-import { useProject } from "../../../helpers/ProjectContext";
+import { useProject } from "../../helpers/ProjectContext";
+import CloseButton from "../Buttons/CloseButton";
 
 interface InviteMenuProps {
   projectName: string;
@@ -144,10 +145,9 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
       ref={ref}
       className={`opacity-transition ${showBackDrop ? "show" : ""} absolute w-full h-full p-10 z-10 bg-[#e8e8e8] flex flex-col left-0 md:left-1/2 md:top-1/2 transform-center md:h-[600px] md:w-[500px] rounded-xl`}
     >
-      <button
-        onClick={() => toggleInviteMenu(false)}
-        className="item-3 ml-auto p-2"
-      ></button>
+      <span className="ml-auto">
+        <CloseButton onClick={() => toggleInviteMenu(false)} />
+      </span>
       <h1 className="text-2xl mb-3 text-center w-full font-bold text-primary">
         Invite to {projectName}
       </h1>
@@ -180,7 +180,7 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
           <h1 className="text-xl mb-1 text-primary">Enter Name</h1>
           <input
             type="text"
-            className="w-full h-10 p-6 rounded-xl mb-5 text-primary"
+            className="w-full h-10 p-6 rounded border-2 border-gray-300 mb-5 text-primary"
             placeholder="Enter member's name"
             value={nameInput}
             onChange={handleNameChange}
@@ -189,7 +189,7 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
           <span className="mb-5">
             <input
               type="text"
-              className="w-full h-10 p-6 rounded-xl text-primary"
+              className="w-full h-10 p-6 rounded border-2 border-gray-300 text-primary"
               placeholder="Enter member's email"
               value={emailInput}
               onChange={handleEmailInput}
@@ -225,7 +225,7 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
           </span>
           <h1 className="text-xl mb-1 text-primary">Select Role</h1>
           <select
-            className="w-full text-lg p-2 h-10 rounded-xl mb-5 text-primary"
+            className="w-full text-lg pl-6 h-10 rounded border-2 border-gray-300  mb-5 text-primary hover:cursor-pointer"
             value={role}
             name="role"
             id="role"
@@ -236,7 +236,7 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
             </option>
             {roleOptions.map((option) => (
               <option
-                className="text-primary"
+                className="text-primary hover:cursor-pointer"
                 key={option.value}
                 value={option.value}
               >
@@ -246,7 +246,7 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
           </select>
           <button
             onClick={handleInvite}
-            className="w-full p-3 rounded-xl text-white bg-primary shadow-lg font-bold"
+            className="w-full p-3 rounded text-white bg-primary shadow-lg font-bold"
           >
             Invite Member
           </button>
@@ -266,7 +266,7 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
           <h1 className="text-xl mb-1 text-primary">Enter Name</h1>
           <input
             type="text"
-            className="w-full h-10 p-6 rounded-xl mb-5 text-primary"
+            className="w-full h-10 p-6 rounded mb-5 text-primary border-2 border-gray-300"
             placeholder="Enter member's name"
             value={tempUserNameInput}
             onChange={handleTempUserNameChange}
@@ -274,7 +274,7 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
           <h1 className="text-xl mb-1 text-primary">Enter Email</h1>
           <input
             type="text"
-            className="w-full h-10 p-6 rounded-xl text-primary"
+            className="w-full h-10 p-6 rounded text-primary border-2 border-gray-300"
             placeholder="Enter member's email"
             value={tempUserEmailInput}
             onChange={handleTempUserEmailInput}
@@ -310,7 +310,7 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
           )}
           <button
             onClick={handleTempUserInvite}
-            className="w-full p-3 rounded-xl text-white bg-primary shadow-lg font-bold mt-5"
+            className="w-full p-3 rounded text-white bg-primary shadow-lg font-bold mt-5"
           >
             Invite Participant
           </button>

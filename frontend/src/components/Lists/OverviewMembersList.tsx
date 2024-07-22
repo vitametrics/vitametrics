@@ -1,7 +1,9 @@
 import { Fragment } from "react";
-import { MembersListProps } from "../../../types/Member";
+import { OverviewMembersListProps } from "../../types/Member";
 
-const MembersList: React.FC<MembersListProps> = ({ members, onClick }) => {
+const OverviewMembersList: React.FC<OverviewMembersListProps> = ({
+  members,
+}) => {
   return (
     <Fragment>
       <div
@@ -12,14 +14,12 @@ const MembersList: React.FC<MembersListProps> = ({ members, onClick }) => {
         <button className="py-2 text-left">EMAIL</button>
         <button className="py-2 text-left">ROLE</button>
       </div>
-
       {members.map((member) => (
         <Fragment>
           <span className="h-[0.5px] bg-[#d3d7df] w-full"></span>
           <div
             key={member.id}
-            className="grid grid-cols-3 w-full items-center text-left py-2 hover:cursor-pointer"
-            onClick={() => onClick(true, member.userId)}
+            className="grid grid-cols-3 w-full items-center text-left py-2"
           >
             <span className="text-primary">{member.name}</span>
             <span className="text-primary">{member.email}</span>
@@ -35,11 +35,8 @@ const MembersList: React.FC<MembersListProps> = ({ members, onClick }) => {
           </div>
         </Fragment>
       ))}
-      {members && members.length === 0 && (
-        <div className="text-primary">No results found</div>
-      )}
     </Fragment>
   );
 };
 
-export default MembersList;
+export default OverviewMembersList;

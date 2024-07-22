@@ -21,7 +21,7 @@ export interface MembersListProps{
 }
 
 export interface MemberInfoProps {
-    member: Member;
+    member?: Member;
     memberUserId: string;
     confirmDelete: { id: string; confirm: boolean };
     handleRemoveMember: (memberId: string) => void;

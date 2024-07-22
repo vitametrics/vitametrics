@@ -1,9 +1,9 @@
 import { Fragment } from "react";
 import { useProject } from "../../../helpers/ProjectContext";
-import Pagination from "../../Pagination";
+import Pagination from "../../Pagination/Pagination";
 import usePagination from "../../../hooks/usePagination";
-import PaginationControls from "../PaginationControls";
-import OverviewDevicesList from "./OverviewDevicesList";
+import PaginationControls from "../../Pagination/PaginationControls";
+import OverviewDevicesList from "../../Lists/OverviewDevicesList";
 import useSearch from "../../../hooks/useDeviceSearch"; // Ensure correct path
 
 const OverviewDevices = () => {

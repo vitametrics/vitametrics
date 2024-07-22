@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import useCustomInView from "../../../hooks/useCustomInView";
-import { fadeInItemVariants } from "../../../hooks/animationVariant";
+import useCustomInView from "../../hooks/useCustomInView";
+import { fadeInItemVariants } from "../../hooks/animationVariant";
 import { motion } from "framer-motion";
-import AccountsContainer from "./AccountsContainer";
+import AccountsContainer from "../Containers/AccountsContainer";
 
 const Accounts = () => {
   const { ref, inView } = useCustomInView();

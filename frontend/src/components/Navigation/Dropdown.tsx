@@ -1,4 +1,4 @@
-import { useAuth } from "../helpers/AuthContext";
+import { useAuth } from "../../helpers/AuthContext";
 
 const Dropdown = () => {
   const { logout, isOwner } = useAuth();

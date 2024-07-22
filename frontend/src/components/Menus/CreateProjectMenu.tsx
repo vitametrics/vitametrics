@@ -1,6 +1,7 @@
 // CreateProjectMenu.tsx
 import { motion } from "framer-motion";
 import { fadeInItemVariants } from "../../hooks/animationVariant";
+import CloseButton from "../Buttons/CloseButton";
 
 interface CreateProjectMenuProps {
   show: boolean;
@@ -30,10 +31,15 @@ const CreateProjectMenu: React.FC<CreateProjectMenuProps> = ({
       animate="show"
       className="opacity-transition absolute w-full p-10 z-20 bg-[#e8e8e8] flex flex-col left-0 md:left-1/2 md:top-1/2 transform-center md:w-[500px] rounded-xl text-primary shadow-lg font-neueHassUnica"
     >
-      <button
-        onClick={() => toggleMenu(false)}
-        className="item-3 ml-auto"
-      ></button>
+      <span className="ml-auto">
+        <CloseButton
+          onClick={() => {
+            toggleMenu(false);
+            setProjectName("");
+            setProjectDescription("");
+          }}
+        />
+      </span>
       <h1 className="text-3xl mb-3 text-center w-full text-primary font-bold">
         Create New Project
       </h1>
@@ -41,7 +47,7 @@ const CreateProjectMenu: React.FC<CreateProjectMenuProps> = ({
       <p className="text-primary font-bold">Enter New Project Name</p>
       <input
         type="text"
-        className="p-3 mb-3 rounded-lg border-b-1 text-primary"
+        className="p-3 mb-3 rounded border-2 border-gray-300 text-primary"
         value={projectName}
         placeholder="Enter your project name"
         onChange={(e) => setProjectName(e.target.value)}
@@ -49,12 +55,12 @@ const CreateProjectMenu: React.FC<CreateProjectMenuProps> = ({
       <p className="text-primary font-bold">Enter Project Description</p>
       <textarea
         placeholder="Enter your project description"
-        className="p-3 mb-3 rounded-lg border-b-1 text-primary max-h-[300px] border"
+        className="p-3 mb-3 rounded border-2 border-gray-300 text-primary max-h-[300px]"
         rows={5}
         onChange={(e) => setProjectDescription(e.target.value)}
       ></textarea>
       <button
-        className="bg-tertiary hover:bg-hoverTertiary p-4 text-xl w-full rounded-lg text-white font-bold"
+        className="bg-secondary hover:bg-hoverSecondary p-4 text-xl w-full rounded shadow-md text-white font-bold"
         onClick={handleCreateProject}
       >
         Create

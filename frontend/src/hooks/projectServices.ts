@@ -45,7 +45,6 @@ export const fetchProject = async (projectId: string) => {
   }
 };
 
-
 export const fetchProjectDevices = async (projectId: string) => {
   try {
     const response = await axios.post(

@@ -6,7 +6,7 @@ import { useAuth } from "../../helpers/AuthContext";
 import ChangeNameField from "../Dashboard/DashboardSettings/ChangeNameField";
 import ChangeDescriptionField from "../Dashboard/DashboardSettings/ChangeDescription";
 import ChangeOwnerEmailField from "../Dashboard/DashboardSettings/ChangeEmailField";
-import DeleteProjectMenu from "../Dashboard/DeleteProjectMenu";
+import DeleteProjectMenu from "../Menus/DeleteProjectMenu";
 import { Fragment } from "react";
 import { deleteProjectService } from "../../services/projectService";
 import { useState } from "react";

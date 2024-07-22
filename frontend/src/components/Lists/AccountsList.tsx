@@ -4,12 +4,12 @@ import { Fragment } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClipboard } from "@fortawesome/free-solid-svg-icons";
 import { useSearchParams } from "react-router-dom";
-import FullBatteryLevel from "../../../assets/FullBatteryLevel";
-import LowBatteryLevel from "../../../assets/LowBatteryLevel";
-import MediumBatteryLevel from "../../../assets/MediumBatteryLevel";
-import { unlinkFitbitAccount } from "../../../helpers/fitbit";
-import { truncate } from "../../../hooks/truncate";
-import { fetchFBAccounts } from "../../../helpers/projectServices";
+import FullBatteryLevel from "../../assets/FullBatteryLevel";
+import LowBatteryLevel from "../../assets/LowBatteryLevel";
+import MediumBatteryLevel from "../../assets/MediumBatteryLevel";
+import { unlinkFitbitAccount } from "../../hooks/fitbit";
+import { truncate } from "../../hooks/truncate";
+import { fetchFBAccounts } from "../../hooks/projectServices";
 interface AccountsListProps {
   accounts: any;
   onClick: (arg0: string) => void;

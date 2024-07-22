@@ -1,5 +1,5 @@
-import logo from "../assets/images/logo.webp";
-import ProfileIcon from "../assets/ProfileIcon";
+import logo from "../../assets/images/logo.webp";
+import ProfileIcon from "../../assets/ProfileIcon";
 import Dropdown from "./Dropdown";
 import { useState } from "react";
 

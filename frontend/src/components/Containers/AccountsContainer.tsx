@@ -1,11 +1,11 @@
-import { useProject } from "../../../helpers/ProjectContext";
-import Pagination from "../../Pagination";
-import usePagination from "../../../hooks/usePagination";
-import PaginationControls from "../../../components/Dashboard/PaginationControls";
-import useSearch from "../../../hooks/useAccountSearch";
+import { useProject } from "../../helpers/ProjectContext";
+import Pagination from "../Pagination/Pagination";
+import usePagination from "../../hooks/usePagination";
+import PaginationControls from "../Pagination/PaginationControls";
+import useSearch from "../../hooks/useAccountSearch";
 import { Fragment, useState } from "react";
-import AccountsList from "./AccountsList";
-import { oAuthLogin } from "../../../services/projectService";
+import AccountsList from "../Lists/AccountsList";
+import { oAuthLogin } from "../../services/projectService";
 
 const AccountsContainer = () => {
   const { project, projectId, fitbitAccounts } = useProject();

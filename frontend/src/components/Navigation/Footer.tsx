@@ -1,6 +1,6 @@
-import DiscordIcon from "../assets/DiscordIcon";
-import logo from "../assets/images/vitamix.webp";
-import LinkedInIcon from "../assets/LinkedInIcon";
+import DiscordIcon from "../../assets/DiscordIcon";
+import logo from "../../assets/images/vitamix.webp";
+import LinkedInIcon from "../../assets/LinkedInIcon";
 const Footer = () => {
   return (
     <footer className="bg-container text-black font-bold border-">

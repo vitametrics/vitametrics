@@ -5,11 +5,11 @@ import { motion } from "framer-motion";
 import { useProject } from "../../helpers/ProjectContext";
 import { fadeInItemVariants } from "../../hooks/animationVariant";
 import useCustomInView from "../../hooks/useCustomInView";
-import DevicesList from "../Dashboard/Devices/DevicesList";
+import DevicesList from "../Lists/DevicesList";
 import usePagination from "../../hooks/usePagination";
 import useSearch from "../../hooks/useDeviceSearch";
-import PaginationControls from "../Dashboard/PaginationControls";
-import Pagination from "../../components/Pagination";
+import PaginationControls from "../Pagination/PaginationControls";
+import Pagination from "../Pagination/Pagination";
 import { useSearchParams } from "react-router-dom";
 
 const Devices = () => {

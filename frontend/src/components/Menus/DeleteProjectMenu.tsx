@@ -1,6 +1,7 @@
 // DeleteProjectMenu.tsx
 import { motion } from "framer-motion";
 import { fadeInItemVariants } from "../../hooks/animationVariant";
+import CloseButton from "../Buttons/CloseButton";
 
 interface DeleteProjectMenuProps {
   show: boolean;
@@ -22,10 +23,10 @@ const DeleteProjectMenu: React.FC<DeleteProjectMenuProps> = ({
       animate="show"
       className="opacity-transition fixed w-full p-10 z-20 bg-[#e8e8e8] flex flex-col left-0 md:left-1/2 md:top-1/2 transform-center md:w-[500px] rounded-xl text-primary shadow-lg"
     >
-      <span
-        onClick={() => toggleMenu(false, "")}
-        className="ml-auto item-3 hover:cursor-pointer"
-      ></span>
+      <span className="ml-auto">
+        <CloseButton onClick={() => toggleMenu(false, "")} />
+      </span>
+
       <h1 className="text-3xl mb-10 text-center w-full text-primary font-bold">
         Delete Project
       </h1>
@@ -34,7 +35,7 @@ const DeleteProjectMenu: React.FC<DeleteProjectMenuProps> = ({
       </p>
       <div className="flex flex-row justify-around items-center gap-2">
         <button
-          className="text-white p-3 bg-red-400 hover:bg-red-300 rounded-lg w-full"
+          className="text-white p-3 bg-red-400 hover:bg-red-300 rounded w-full"
           onClick={() => {
             handleDelete();
             toggleMenu(false, "");
@@ -43,7 +44,7 @@ const DeleteProjectMenu: React.FC<DeleteProjectMenuProps> = ({
           Yes, Delete it
         </button>
         <button
-          className="text-white p-3 bg-secondary hover:bg-hoverSecondary rounded-xl w-full"
+          className="text-white p-3 bg-secondary hover:bg-hoverSecondary rounded w-full"
           onClick={() => toggleMenu(false, "")}
         >
           Cancel
