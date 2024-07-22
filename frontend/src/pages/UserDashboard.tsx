@@ -9,8 +9,10 @@ import DeleteProjectMenu from "../components/Dashboard/DeleteProjectMenu";
 import useDebounce from "../helpers/useDebounce";
 import axios from "axios";
 import { deleteProjectService } from "../services/projectService";
+import useSearch from "../hooks/useProjectSearch";
 import DeleteIcon from "../assets/DeleteIcon";
 import { DashboardProject } from "../types/Project";
+import PaginationControls from "../components/Dashboard/PaginationControls";
 
 const CREATE_PROJECT_ENDPOINT = `${process.env.API_URL}/admin/create-project`;
 
@@ -47,14 +49,21 @@ const UserDashboard = () => {
     setCurrentPage(1);
   };
 
-  const indexOfLastProject = Math.min(
-    currentPage * itemsPerPage,
-    projects.length
+  const { searchTerm, handleSearchChange, filteredItems } = useSearch(
+    projects,
+    setCurrentPage
   );
-  const indexOfFirstProject = (currentPage - 1) * itemsPerPage;
-  const currentProjects = projects.slice(
-    indexOfFirstProject,
-    indexOfLastProject
+
+  console.log(filteredItems);
+
+  const indexOfLastMember = Math.min(
+    currentPage * itemsPerPage,
+    filteredItems.length
+  );
+  const indexOfFirstMember = (currentPage - 1) * itemsPerPage;
+  const currentProjects = filteredItems.slice(
+    indexOfFirstMember,
+    indexOfLastMember
   );
 
   const createProject = searchParams.get("createProject") === "true";
@@ -200,28 +209,19 @@ const UserDashboard = () => {
                 <input
                   type="text"
                   placeholder="Search"
+                  value={searchTerm}
+                  onChange={handleSearchChange}
                   className="p-2 w-[300px] mr-auto border-2 border-gray-200 rounded-lg mb-2"
                 />
                 <div className="flex flex-row mr-auto gap-2 text-primary mb-3">
-                  <Fragment>
-                    {indexOfFirstProject + 1} - {indexOfLastProject} /{" "}
-                    {projects.length} Results
-                  </Fragment>
-                  <span>|</span>
-                  <span>
-                    Display
-                    <select
-                      value={itemsPerPage}
-                      onChange={handleItemsPerPageChange}
-                      className=""
-                    >
-                      {itemsPerPageOptions.map((option) => (
-                        <option key={option} value={option}>
-                          {option} results
-                        </option>
-                      ))}
-                    </select>
-                  </span>
+                  <PaginationControls
+                    itemsPerPage={itemsPerPage}
+                    handleItemsPerPageChange={handleItemsPerPageChange}
+                    itemsPerPageOptions={itemsPerPageOptions}
+                    totalItems={filteredItems.length}
+                    currentPage={currentPage}
+                    indexOfLastItem={indexOfLastMember}
+                  />
                 </div>
               </div>
               <span className="h-[1px] rounded-xl bg-[#d3d7df] w-full"></span>{" "}
