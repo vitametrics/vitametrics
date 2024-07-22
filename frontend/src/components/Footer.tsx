@@ -1,7 +1,9 @@
+import DiscordIcon from "../assets/DiscordIcon";
 import logo from "../assets/images/vitamix.webp";
+import LinkedInIcon from "../assets/LinkedInIcon";
 const Footer = () => {
   return (
-    <footer className="bg-container text-black font-bold">
+    <footer className="bg-container text-black font-bold border-">
       <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
         <div className="sm:flex flex sm:items-center sm:justify-between">
           <a className="flex items-center  sm:mb-0 space-x-3 rtl:space-x-reverse">
@@ -9,7 +11,7 @@ const Footer = () => {
               <img
                 src={logo}
                 alt="footer-logo"
-                className="w-[150px] rounded-lg"
+                className="w-[150px] rounded-lg border-2 border-gray-300"
               />
               <span className="text-base text-primary sm:hidden font-semibold">
                 {" "}
@@ -50,13 +52,28 @@ const Footer = () => {
           </ul>
         </div>
         <hr className="my-3 border-[#45496a] sm:mx-auto " />
-        <span className="block text-sm text-primary text-center sm:text-center ">
-          © 2024{" "}
-          <a href="/" className=" gap-10">
-            Vitametrics™
-          </a>
-          All Rights Reserved.
-        </span>
+        <div className="grid-cols-3 grid items-center">
+          <span className="text-sm text-primary text-left">
+            Made with ❤️ by{" "}
+            <a
+              href="https://www.vitametrics.org"
+              className="hover:text-hoverPrimary"
+            >
+              Vitametrics
+            </a>
+          </span>
+          <span className="block text-sm text-primary text-center ">
+            © 2024{" "}
+            <a href="/" className=" gap-10">
+              Vitametrics™
+            </a>
+            All Rights Reserved.
+          </span>
+          <span className="flex flex-row items-center ml-auto gap-2">
+            <LinkedInIcon />
+            <DiscordIcon />
+          </span>
+        </div>
       </div>
     </footer>
   );
