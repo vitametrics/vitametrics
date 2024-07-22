@@ -4,9 +4,9 @@ const Banner = () => {
   return (
     <section
       id="#home"
-      className="w-full h-[700px] flex flex-row box-border p-20 mb-28 mt-24 items-center justify-center sm:flex-col bg-transparent font-bold"
+      className="w-full h-screen flex flex-row box-border p-20  items-center justify-center sm:flex-col bg-transparent font-bold"
     >
-      <div className="h-full flex flex-col p-[100px] lg:p-10 items-center justify-center">
+      <div className="h-full flex flex-col p-[11rem] lg:p-10 items-center justify-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="505"

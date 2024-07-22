@@ -754,6 +754,10 @@ video {
   margin-top: auto;
 }
 
+.mb-24 {
+  margin-bottom: 6rem;
+}
+
 .box-border {
   box-sizing: border-box;
 }
@@ -1377,6 +1381,18 @@ video {
 
 .p-\[88px\] {
   padding: 88px;
+}
+
+.p-32 {
+  padding: 8rem;
+}
+
+.p-\[10\.5rem\] {
+  padding: 10.5rem;
+}
+
+.p-\[11rem\] {
+  padding: 11rem;
 }
 
 .px-10 {

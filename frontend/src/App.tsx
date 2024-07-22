@@ -11,7 +11,6 @@ const Dashboard = lazy(() => import("./pages/UserDashboard"));
 const ProjectDashboard = lazy(() => import("./pages/ProjectDashboard"));
 const Login = lazy(() => import("./pages/Login"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
-const FAQs = lazy(() => import("./pages/FAQs"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TOS = lazy(() => import("./pages/TOS"));
 const SetPassword = lazy(() => import("./pages/SetPassword"));
@@ -133,14 +132,6 @@ function App() {
                   <ForgotPassword />
                 </Suspense>
               </UnauthenticatedRoute>
-            }
-          />
-          <Route
-            path="/FAQs"
-            element={
-              <Suspense fallback={<LoadingFallback />}>
-                <FAQs />
-              </Suspense>
             }
           />
 

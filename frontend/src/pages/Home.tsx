@@ -1,7 +1,6 @@
-import { lazy, Suspense } from "react";
+import { lazy } from "react";
 const Navbar = lazy(() => import("../components/Navbar"));
 const Banner = lazy(() => import("../components/Banner"));
-//const SignUpBanner = lazy(() => import("../components/SignUpBanner"));
 const Footer = lazy(() => import("../components/Footer"));
 
 const Home = () => {
@@ -9,9 +8,7 @@ const Home = () => {
     <div className="h-full w-full bg-fixed flex flex-col font-neueHassUnica">
       <Navbar />
       <Banner />
-      <Suspense fallback={<div>Loading...</div>}>
-        <Footer />
-      </Suspense>
+      <Footer />
     </div>
   );
 };
