@@ -16,6 +16,7 @@ import Device from '../models/Device';
 import FitbitAccount from '../models/FitbitAccount';
 import Project, { IProject } from '../models/Project';
 import User, { IUser } from '../models/User';
+import generateCSV from '../middleware/generateCSV';
 
 const VALID_INTRADAY_INTERVALS = ['1sec', '1min', '5min', '15min'];
 class ProjectController {

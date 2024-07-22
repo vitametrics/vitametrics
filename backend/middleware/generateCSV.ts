@@ -25,3 +25,5 @@ function generateCSV(data: { [date: string]: { [dataType: string]: any[] } }, da
   
     return rows.join('\n');
   }
+
+  export default generateCSV;
