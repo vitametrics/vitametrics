@@ -1,22 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 export interface Project {
-    admins: [],
-    areNotificationsEnabled: boolean,
-    createdAt: string,
-    creationDate: string,
-    devices: [],
-    lastTokenRefresh: string,
-    members: [],
-    ownerEmail: string,
-    ownerId: string,
-    projectDescription: string,
-    projectId: string,
-    projectName: string,
-    updatedAt: string,
-    _id: string
-    membersCount: number,
-    devicesCount: number,
+  admins: [],
+  areNotificationsEnabled: boolean,
+  isOwner: boolean,
+  isAdmin: boolean,
+  createdAt: string,
+  creationDate: string,
+  devices: [],
+  lastTokenRefresh: string,
+  members: [],
+  ownerEmail: string,
+  ownerId: string,
+  projectDescription: string,
+  projectId: string,
+  projectName: string,
+  updatedAt: string,
+  _id: string
+  membersCount: number,
+  devicesCount: number,
 }
 
 

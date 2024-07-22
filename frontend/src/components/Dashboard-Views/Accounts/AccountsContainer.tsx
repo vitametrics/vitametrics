@@ -61,21 +61,7 @@ const AccountsContainer = () => {
         <span className="text-primary text-lg">No accounts found</span>
       ) : (
         <Fragment>
-          <div className="flex flex-row text-primary items-center mb-3">
-            {/*
-            <span>Filter by Role:</span>
-            <select
-              value={selectedRole}
-              onChange={(e) => setSelectedRole(e.target.value)}
-              className=" w-[100px] ml-2 border-2 border-gray-200 rounded-lg"
-            >
-              <option value="">All</option>
-              <option value="owner">Owner</option>
-              <option value="admin">Admin</option>
-              <option value="user">User</option>
-              <option value="guest">Participant</option>
-            </select>*/}
-          </div>
+          <div className="flex flex-row text-primary items-center mb-3"></div>
           <input
             type="text"
             placeholder="Search For Name"
