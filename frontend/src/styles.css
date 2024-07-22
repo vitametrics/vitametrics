@@ -432,3 +432,7 @@ h6 {
   max-height: 1000px; /* Large enough to accommodate the expanded content */
   opacity: 1;
 }
+
+.icon-cog {
+  color: #45496a;
+}
