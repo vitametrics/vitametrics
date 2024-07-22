@@ -4,6 +4,8 @@ import Navbar from "../components/Navbar";
 import axios from "axios";
 import { useAuth } from "../helpers/AuthContext";
 import logo from "../assets/images/vitamix.webp";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const SetPassword = () => {
   const SET_PASSWORD_ENDPOINT = `${process.env.API_URL}/user/set-password`;
@@ -21,6 +23,8 @@ const SetPassword = () => {
   const [debouncedPassword, setDebouncedPassword] = useState("");
   const [debouncedConfirmPassword, setDebouncedConfirmPassword] = useState("");
   const [isTokenValid, setIsTokenValid] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const check_password = async () => {
     try {
@@ -114,21 +118,45 @@ const SetPassword = () => {
                 {" "}
                 Set Password{" "}
               </h2>
-              <input
-                className="p-[10px] mt-5 w-72 bg-[#d2d1d1] text-black  rounded-lg border-[#6d6c6c]"
-                type="password"
-                placeholder="Enter new password"
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <input
-                className="p-[10px] mt-5 w-72 bg-[#d2d1d1] text-black  rounded-lg border-[#6d6c6c]"
-                type="password"
-                placeholder="Confirm new password"
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
+              <div className="relative mt-5 w-72">
+                <input
+                  className="p-[10px] bg-[#d2d1d1] text-black rounded-lg border-[#6d6c6c] w-full"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter new password"
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-700"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                >
+                  <FontAwesomeIcon
+                    icon={showPassword ? faEyeSlash : faEye}
+                    className="icon-cog"
+                  />
+                </button>
+              </div>
+              <div className="relative mt-5 w-72">
+                <input
+                  className="p-[10px] bg-[#d2d1d1] text-black rounded-lg border-[#6d6c6c] w-full"
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="Confirm new password"
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-700"
+                  onClick={() => setShowConfirmPassword((prev) => !prev)}
+                >
+                  <FontAwesomeIcon
+                    icon={showConfirmPassword ? faEyeSlash : faEye}
+                    className="icon-cog"
+                  />
+                </button>
+              </div>
               <button
                 onClick={handleSubmit}
-                className="p-[10px] mt-5 bg-secondary w-72 rounded-lg cursor-pointer font-bold text-white"
+                className="p-[10px] mt-5 bg-secondary w-72 rounded-lg cursor-pointer font-bold text-white hover:bg-hoverSecondary"
               >
                 {" "}
                 Login{" "}

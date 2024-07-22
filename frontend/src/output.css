@@ -578,12 +578,25 @@ video {
   position: absolute;
 }
 
+.relative {
+  position: relative;
+}
+
 .sticky {
   position: sticky;
 }
 
+.inset-y-0 {
+  top: 0px;
+  bottom: 0px;
+}
+
 .left-0 {
   left: 0px;
+}
+
+.right-0 {
+  right: 0px;
 }
 
 .right-\[1rem\] {
@@ -1115,21 +1128,6 @@ video {
   border-top-color: rgb(242 141 89 / var(--tw-border-opacity));
 }
 
-.border-t-\[\#45496a\] {
-  --tw-border-opacity: 1;
-  border-top-color: rgb(69 73 106 / var(--tw-border-opacity));
-}
-
-.border-t-gray-300 {
-  --tw-border-opacity: 1;
-  border-top-color: rgb(209 213 219 / var(--tw-border-opacity));
-}
-
-.border-t-black {
-  --tw-border-opacity: 1;
-  border-top-color: rgb(0 0 0 / var(--tw-border-opacity));
-}
-
 .bg-\[\#373737\] {
   --tw-bg-opacity: 1;
   background-color: rgb(55 55 55 / var(--tw-bg-opacity));
@@ -1350,6 +1348,10 @@ video {
   padding-bottom: 0px;
 }
 
+.pr-3 {
+  padding-right: 0.75rem;
+}
+
 .pt-0 {
   padding-top: 0px;
 }
@@ -1368,10 +1370,6 @@ video {
 
 .text-center {
   text-align: center;
-}
-
-.text-right {
-  text-align: right;
 }
 
 .font-neueHassUnica {
@@ -2026,6 +2024,10 @@ h6 {
   max-height: 1000px;
   /* Large enough to accommodate the expanded content */
   opacity: 1;
+}
+
+.icon-cog {
+  color: #45496a;
 }
 
 .hover\:cursor-pointer:hover {

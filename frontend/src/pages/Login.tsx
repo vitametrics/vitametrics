@@ -8,6 +8,8 @@ import useDebounce from "../helpers/useDebounce";
 import { useNavigate } from "react-router-dom";
 import LockIcon from "../assets/LockIcon";
 import MailIcon from "../assets/MailIcon";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Login = () => {
   const LOGIN_ENDPOINT = `${process.env.API_URL}/login`;
@@ -17,6 +19,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const debouncedEmail = useDebounce(email, 100);
   const debouncedPassword = useDebounce(password, 100);
+  const [showPassword, setShowPassword] = useState(false);
   const [msg, setMsg] = useState("");
   const { login } = useAuth();
 
@@ -84,10 +87,15 @@ const Login = () => {
               <LockIcon />
               <input
                 className="p-[10px] w-full text-black"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
                 onChange={(e) => setPassword(e.target.value)}
                 onKeyDown={handleKeyDown}
+              />
+              <FontAwesomeIcon
+                icon={showPassword ? faEye : faEyeSlash}
+                className="mr-2 cursor-pointer icon-cog"
+                onClick={() => setShowPassword(!showPassword)}
               />
             </div>
             <a
