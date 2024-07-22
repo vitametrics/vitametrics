@@ -50,29 +50,29 @@ const ViewDevice = () => {
       ref={ref}
       initial="hidden"
       animate={inView ? "show" : "hidden"}
-      className="w-full h-full flex flex-col p-10 font-neueHassUnica text-primary border-2 border-gray-300"
+      className="w-full h-full flex flex-col p-10 font-neueHassUnica text-primary"
     >
-      <span id="options" className="flex flex-row">
+      <span id="options" className="flex flex-row ">
         <span
-          className={`p-5 rounded-tl-lg ${tab === "overview" ? "shadow-lg bg-white font-bold" : "bg-[#f7f7f7]"} hover:cursor-pointer`}
+          className={`p-5 rounded-tl-lg ${tab === "overview" ? "shadow-lg bg-white font-bold border-2 border-gray-300 border-b-0" : "bg-[#f7f7f7] border-2"} hover:cursor-pointer`}
           onClick={() => handleTabChange("overview")}
         >
           Device Details
         </span>
         <span
-          className={`p-5 ${tab === "download-data" ? "shadow-lg bg-white font-bold" : "bg-[#f7f7f7]"} hover:cursor-pointer`}
+          className={`p-5 ${tab === "download-data" ? "shadow-lg bg-white font-bold border-2 border-gray-300 border-b-0" : "bg-[#f7f7f7] border-2"} hover:cursor-pointer`}
           onClick={() => handleTabChange("download-data")}
         >
           Download Data
         </span>
         <span
-          className={`p-5 rounded-tr-lg ${tab === "download-cache" ? "shadow-lg bg-white font-bold" : "bg-[#f7f7f7]"} hover:cursor-pointer`}
+          className={`p-5 rounded-tr-lg ${tab === "download-cache" ? "shadow-lg bg-white font-bold border-2 border-gray-300 border-b-0" : "bg-[#f7f7f7] border-2"} hover:cursor-pointer`}
           onClick={() => handleTabChange("download-cache")}
         >
           Download Cache
         </span>
       </span>
-      <div className="p-10 bg-white rounded-lg rounded-tl-none shadow-lg">
+      <div className="p-10 bg-white rounded-lg rounded-tl-none shadow-lg border-2 border-gray-300">
         {renderTab()}
       </div>
     </motion.div>
