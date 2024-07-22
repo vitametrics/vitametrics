@@ -191,19 +191,13 @@ router.get('/callback', async (req: Request, res: Response) => {
           }
         );
 
-        const fitbitUserID = profileResponse.data.user.encodedId;
+        extAcc.accessToken = accessToken;
+        extAcc.refreshToken = refreshToken;
+        extAcc.lastTokenRefresh = new Date();
+        extAcc.idToken = '';
 
-        if (extAcc.userId === fitbitUserID) {
-          extAcc.accessToken = accessToken;
-          extAcc.refreshToken = refreshToken;
-          extAcc.lastTokenRefresh = new Date();
-          extAcc.idToken = '';
-
-          await extAcc.save();
-          return res.redirect('/');
-        } else {
-          return res.status(404).json({ msg: 'User or account not found' });
-        }
+        await extAcc.save();
+        return res.redirect('/');
       } else {
         return res.status(404).json({ msg: 'User or account not found' });
       }
