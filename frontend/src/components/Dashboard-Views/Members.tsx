@@ -288,7 +288,7 @@ const Members = () => {
       />
       <MemberInfo
         member={project.members.find((m) => m.userId === member)}
-        userId={userId}
+        memberUserId={userId}
         confirmDelete={confirmDelete}
         handleRemoveMember={handleRemoveMember}
         handleClose={handleClose}

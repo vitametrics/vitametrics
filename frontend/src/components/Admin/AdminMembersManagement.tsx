@@ -150,7 +150,7 @@ const AdminMembersManagement = () => {
 
       <MemberInfo
         member={siteMembers.find((m) => m.userId === member)}
-        userId={member}
+        memberUserId={member}
         confirmDelete={confirmDelete}
         handleRemoveMember={handleRemoveMember}
         handleClose={handleClose}

@@ -13,7 +13,7 @@ type EditableFields = "name" | "email" | "role";
 
 const MemberInfo: React.FC<MemberInfoProps> = ({
   member,
-  userId,
+  memberUserId,
   confirmDelete,
   handleRemoveMember,
   handleClose,
@@ -27,8 +27,10 @@ const MemberInfo: React.FC<MemberInfoProps> = ({
     role: false,
   });
 
-  const { siteMembers, setSiteMembers } = useAuth();
-  const siteMember = siteMembers.find((member) => member.userId === userId);
+  const { siteMembers, setSiteMembers, userId } = useAuth();
+  const siteMember = siteMembers.find(
+    (member) => member.userId === memberUserId
+  );
   const [msg, setMsg] = useState("");
   const [flag, setFlag] = useState(false);
 
@@ -39,7 +41,7 @@ const MemberInfo: React.FC<MemberInfoProps> = ({
   });
 
   useEffect(() => {
-    const siteMember = siteMembers.find((m) => m.userId === userId);
+    const siteMember = siteMembers.find((m) => m.userId === memberUserId);
     if (siteMember) {
       setEditedMember({
         name: siteMember.name,
@@ -47,7 +49,7 @@ const MemberInfo: React.FC<MemberInfoProps> = ({
         role: siteMember.role,
       });
     }
-  }, [siteMembers, userId]);
+  }, [siteMembers, memberUserId]);
 
   if (!member) return null;
 
@@ -58,6 +60,8 @@ const MemberInfo: React.FC<MemberInfoProps> = ({
   const toggleEditMode = (field: EditableFields) => {
     setEditMode((prev) => ({ ...prev, [field]: !prev[field] }));
   };
+
+  const isSelf = siteMember.userId === userId;
 
   const handleEdits = async (type: EditableFields) => {
     toggleEditMode(type);
@@ -138,7 +142,7 @@ const MemberInfo: React.FC<MemberInfoProps> = ({
       </div>
       <div className="text-xl mb-1 text-left flex items-center">
         <strong className="mr-2">UID:</strong>
-        {userId}
+        {memberUserId}
       </div>
       <div className="text-xl mb-1 text-left flex items-center">
         <strong className="mr-2">Email:</strong>
@@ -202,20 +206,23 @@ const MemberInfo: React.FC<MemberInfoProps> = ({
           </Fragment>
         )}
       </div>
-      <button
-        onClick={() => {
-          handleRemoveMember(member._id);
-        }}
-        className={`w-full mt-auto ${
-          confirmDelete.id === member._id && confirmDelete.confirm
-            ? "bg-yellow-500"
-            : "bg-red-400"
-        } text-white p-3 rounded-lg`}
-      >
-        {confirmDelete.id === member._id && confirmDelete.confirm
-          ? "Confirm Remove"
-          : "Remove"}
-      </button>
+
+      {!isSelf && (
+        <button
+          onClick={() => {
+            handleRemoveMember(member._id);
+          }}
+          className={`w-full mt-auto ${
+            confirmDelete.id === member._id && confirmDelete.confirm
+              ? "bg-yellow-500"
+              : "bg-red-400"
+          } text-white p-3 rounded-lg`}
+        >
+          {confirmDelete.id === member._id && confirmDelete.confirm
+            ? "Confirm Remove"
+            : "Remove"}
+        </button>
+      )}
     </motion.div>
   );
 };
