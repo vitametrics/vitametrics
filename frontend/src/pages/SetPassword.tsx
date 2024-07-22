@@ -1,6 +1,6 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/Navigation/Navbar";
 import axios from "axios";
 import { useAuth } from "../helpers/AuthContext";
 import logo from "../assets/images/vitamix.webp";

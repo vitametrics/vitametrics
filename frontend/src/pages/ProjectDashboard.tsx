@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DashboardNavbar } from "../components/DashboardNavbar";
-import StickySidebar from "../components/StickySidebar";
+import { DashboardNavbar } from "../components/Navigation/DashboardNavbar";
+import StickySidebar from "../components/Navigation/StickySidebar";
 import { useCallback, useEffect } from "react";
 import Devices from "../components/Dashboard-Views/Devices";
 import Overview from "../components/Dashboard-Views/Overview";
@@ -9,7 +9,7 @@ import DashboardSettings from "../components/Dashboard-Views/DashboardSettings";
 import ViewDevice from "../components/Dashboard-Views/ViewDevice";
 import { useSearchParams } from "react-router-dom";
 import { useProject } from "../helpers/ProjectContext";
-import Accounts from "../components/Dashboard-Views/Accounts/Accounts";
+import Accounts from "../components/Dashboard-Views/Accounts";
 
 const ProjectDashboard = () => {
   const { showBackDrop } = useProject();

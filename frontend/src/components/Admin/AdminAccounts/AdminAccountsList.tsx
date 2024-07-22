@@ -7,7 +7,7 @@ import { faClipboard } from "@fortawesome/free-solid-svg-icons";
 import FullBatteryLevel from "../../../assets/FullBatteryLevel";
 import LowBatteryLevel from "../../../assets/LowBatteryLevel";
 import MediumBatteryLevel from "../../../assets/MediumBatteryLevel";
-import { unlinkFitbitAccountFromSite } from "../../../helpers/fitbit";
+import { unlinkFitbitAccountFromSite } from "../../../hooks/fitbit";
 import { useNavigate } from "react-router-dom";
 import { getUniqueAccounts } from "./AdminAccounts";
 import { aggregateUniqueDevices } from "./AdminAccounts";

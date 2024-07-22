@@ -9,8 +9,8 @@ import axios from "axios";
 import { useState } from "react";
 import useDebounce from "../../helpers/useDebounce";
 import { useSearchParams } from "react-router-dom";
-import CreateProjectMenu from "../Dashboard/CreateProjectMenu";
-import DeleteProjectMenu from "../Dashboard/DeleteProjectMenu";
+import CreateProjectMenu from "../Menus/CreateProjectMenu";
+import DeleteProjectMenu from "../Menus/DeleteProjectMenu";
 import { deleteSiteProject } from "../../services/projectService";
 import ProjectsInfo from "./AdminProjects/ProjectsInfo";
 

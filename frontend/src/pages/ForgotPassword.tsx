@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/Navigation/Navbar";
 import logo from "../assets/images/vitamix.webp";
-import Footer from "../components/Footer";
+import Footer from "../components/Navigation/Footer";
 import useDebounce from "../helpers/useDebounce";
 import { useNavigate } from "react-router-dom";
 import MailIcon from "../assets/MailIcon";

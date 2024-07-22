@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import useDebounce from "../helpers/useDebounce";
 import axios from "axios";
 import { useSearchParams } from "react-router-dom";
-import { DashboardNavbar } from "../components/DashboardNavbar";
+import { DashboardNavbar } from "../components/Navigation/DashboardNavbar";
 import useCustomInView from "../hooks/useCustomInView";
 
 const Settings = () => {

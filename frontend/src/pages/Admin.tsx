@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DashboardNavbar } from "../components/DashboardNavbar";
+import { DashboardNavbar } from "../components/Navigation/DashboardNavbar";
 import { useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import AdminMembersManagement from "../components/Admin/AdminMembersManagement";

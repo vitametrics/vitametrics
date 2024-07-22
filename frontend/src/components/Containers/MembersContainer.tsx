@@ -1,17 +1,17 @@
-import Pagination from "../../Pagination/Pagination";
-import usePagination from "../../../hooks/usePagination";
-import PaginationControls from "../../Pagination/PaginationControls";
-import MembersList from "./MembersList";
-import useSearch from "../../../hooks/useSearch";
+import { useProject } from "../../helpers/ProjectContext";
+import Pagination from "../Pagination/Pagination";
+import usePagination from "../../hooks/usePagination";
+import PaginationControls from "../Pagination/PaginationControls";
+import MembersList from "../Lists/MembersList";
+import useSearch from "../../hooks/useSearch";
 import { Fragment, useState } from "react";
-import { MembersContainerProps } from "../../../types/Member";
-import { useAuth } from "../../../helpers/AuthContext";
+import { MembersContainerProps } from "../../types/Member";
 
 const MembersContainer: React.FC<MembersContainerProps> = ({
   onClick,
   toggleInviteMenu,
 }) => {
-  const { siteMembers, isOwner } = useAuth();
+  const { project } = useProject();
   const itemsPerPageOptions = [5, 10, 15, 20];
   const {
     currentPage,
@@ -22,7 +22,7 @@ const MembersContainer: React.FC<MembersContainerProps> = ({
   const [selectedRole, setSelectedRole] = useState(""); // State to track the selected role
 
   const { searchTerm, handleSearchChange, filteredItems } = useSearch(
-    siteMembers.filter((member) =>
+    project.members.filter((member) =>
       selectedRole === ""
         ? member
         : selectedRole === "admin"
@@ -49,18 +49,17 @@ const MembersContainer: React.FC<MembersContainerProps> = ({
   return (
     <div className="flex flex-col bg-white rounded-xl shadow-lg p-10 mb-12 border-2 border-gray-300">
       <h2 className="text-2xl text-primary font-bold mb-3">
-        Your Instance's Members
+        {project.projectName} Members
       </h2>
-      {isOwner && (
+      {(project.isOwner || project.isAdmin) && (
         <button
           onClick={() => toggleInviteMenu(true)}
-          className="p-2 bg-primary hover:bg-hoverPrimary text-white rounded mb-5 text-lg w-[150px] mr-auto font-bold"
+          className="p-2 text-lg flex flex-row gap-2 mb-5 justify-center items-center rounded w-[150px] bg-primary font-bold text-white shadow-lg hover:bg-hoverPrimary"
         >
-          Invite Admin
+          Invite
         </button>
       )}
-
-      {siteMembers && siteMembers.length === 0 ? (
+      {project.members && project.members.length === 0 ? (
         <span className="text-primary text-lg">No members found</span>
       ) : (
         <Fragment>

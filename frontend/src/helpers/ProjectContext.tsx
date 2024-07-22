@@ -8,7 +8,8 @@ import {
   fetchProject,
   fetchProjectDevices,
   fetchDeviceDetails,
-} from "./projectServices";
+} from "../hooks/projectServices";
+import { Member } from "../types/Member";
 
 interface ProjectContextProps {
   projectId: string;
@@ -52,7 +53,7 @@ interface Project {
   projectDescription: string;
   ownerId: string;
   ownerEmail: string;
-  members: any[];
+  members: Member[];
   devices: Device[];
   isAdmin: boolean;
   isOwner: boolean;

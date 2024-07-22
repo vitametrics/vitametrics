@@ -1,5 +1,5 @@
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
+import Footer from "../components/Navigation/Footer";
+import Navbar from "../components/Navigation/Navbar";
 
 const TOS = () => {
   return (

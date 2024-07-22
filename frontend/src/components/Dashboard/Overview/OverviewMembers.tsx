@@ -1,8 +1,8 @@
 import { useProject } from "../../../helpers/ProjectContext";
-import Pagination from "../../Pagination";
+import Pagination from "../../Pagination/Pagination";
 import usePagination from "../../../hooks/usePagination";
-import PaginationControls from "../PaginationControls";
-import OverviewMembersList from "./OverviewMembersList";
+import PaginationControls from "../../Pagination/PaginationControls";
+import OverviewMembersList from "../../Lists/OverviewMembersList";
 import useSearch from "../../../hooks/useSearch";
 import { Fragment } from "react";
 

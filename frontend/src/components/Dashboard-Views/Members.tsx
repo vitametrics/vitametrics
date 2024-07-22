@@ -7,11 +7,11 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import useDebounce from "../../helpers/useDebounce";
-import MemberInfo from "../../components/Dashboard/Members/MemberInfo";
-import InviteMenu from "../../components/Dashboard/Members/InviteMenu";
+import MemberInfo from "../Menus/MemberInfo";
+import InviteMenu from "../Menus/InviteMenu";
 import { fadeInItemVariants } from "../../hooks/animationVariant";
 import useCustomInView from "../../hooks/useCustomInView";
-import MembersContainer from "../Dashboard/Members/MembersContainer";
+import MembersContainer from "../Containers/MembersContainer";
 
 const Members = () => {
   const ADD_MEMBER_ENDPOINT = `${process.env.API_URL}/admin/add-member`;
@@ -184,6 +184,7 @@ const Members = () => {
   };
 
   const handleInvite = async () => {
+    console.log("inviting a user!");
     if (!validInput()) return;
     try {
       await axios.post(
@@ -204,7 +205,7 @@ const Members = () => {
         return prev;
       });
       handleClose();
-      setMsg("User invited!");
+      await fetchProject();
     } catch (error: any) {
       setMsg(error.response.data.msg);
       setSearchParams((prev) => {

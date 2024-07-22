@@ -879,6 +879,10 @@ video {
   width: 300px;
 }
 
+.w-\[32px\] {
+  width: 32px;
+}
+
 .w-\[35px\] {
   width: 35px;
 }
@@ -1348,6 +1352,10 @@ video {
   padding-bottom: 0px;
 }
 
+.pl-6 {
+  padding-left: 1.5rem;
+}
+
 .pr-3 {
   padding-right: 0.75rem;
 }
@@ -1374,10 +1382,6 @@ video {
 
 .font-neueHassUnica {
   font-family: neue-haas-unica, sans-serif;
-}
-
-.font-ralewayBold {
-  font-family: Raleway-Bold, sans-serif;
 }
 
 .text-2xl {
@@ -1622,32 +1626,11 @@ html {
 }
 
 @font-face {
-  font-family: "Raleway-Bold";
-
-  src:
-    url("./assets/fonts/Raleway-Bold.woff2") format("woff2"),
-    url("./assets/fonts/Raleway-Bold.woff") format("woff");
-}
-
-@font-face {
   font-family: "neue-haas-unica", sans-serif;
 
   font-weight: 400;
 
   font-style: normal;
-}
-
-@font-face {
-  font-family: "LeagueSpartan-Bold";
-
-  src: url("./assets/fonts/LeagueSpartan-Bold.woff"),
-    url("./assets/fonts/LeagueSpartan-Bold.woff2");
-
-  font-optical-sizing: auto;
-
-  font-display: swap;
-
-  /* This will use fallback font until the font is fully loaded */
 }
 
 .font-libreFranklinBold {
@@ -1670,20 +1653,6 @@ html {
   font-weight: 400;
 
   font-style: normal;
-}
-
-@font-face {
-  font-family: "LeagueSpartan-Regular";
-
-  src:
-    url("./assets/fonts/LeagueSpartan-Regular.woff2") format("woff2"),
-    url("./assets/fonts/LeagueSpartan-Regular.woff") format("woff");
-
-  font-optical-sizing: auto;
-
-  font-display: swap;
-
-  /* This will use fallback font until the font is fully loaded */
 }
 
 .check {
@@ -2032,6 +2001,12 @@ h6 {
   color: #45496a;
 }
 
+.icon-close:hover {
+  path {
+    fill: #7d8bae;
+  }
+}
+
 .hover\:cursor-pointer:hover {
   cursor: pointer;
 }
@@ -2100,11 +2075,6 @@ h6 {
   fill: #5B5F7F;
 }
 
-.hover\:text-gray-300:hover {
-  --tw-text-opacity: 1;
-  color: rgb(209 213 219 / var(--tw-text-opacity));
-}
-
 .hover\:text-hoverPrimary:hover {
   --tw-text-opacity: 1;
   color: rgb(158 162 188 / var(--tw-text-opacity));
@@ -2141,11 +2111,6 @@ h6 {
 .dark\:text-white:is(.dark *) {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
-}
-
-.dark\:hover\:bg-gray-700:hover:is(.dark *) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(55 65 81 / var(--tw-bg-opacity));
 }
 
 @media (min-width: 640px) {
@@ -2204,8 +2169,8 @@ h6 {
     display: none;
   }
 
-  .md\:h-\[35\%\] {
-    height: 35%;
+  .md\:h-\[40\%\] {
+    height: 40%;
   }
 
   .md\:h-\[500px\] {
@@ -2286,16 +2251,7 @@ h6 {
     background-color: transparent;
   }
 
-  .md\:hover\:text-gray-300:hover {
-    --tw-text-opacity: 1;
-    color: rgb(209 213 219 / var(--tw-text-opacity));
-  }
-
   .md\:dark\:bg-transparent:is(.dark *) {
-    background-color: transparent;
-  }
-
-  .md\:dark\:hover\:bg-transparent:hover:is(.dark *) {
     background-color: transparent;
   }
 }
