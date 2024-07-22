@@ -13,7 +13,7 @@ const CHANGE_ROLE_ENDPOINT = `${process.env.API_URL}/admin/change-user-role`;
 
 const MemberInfo: React.FC<MemberInfoProps> = ({
   member,
-  userId,
+  memberUserId,
   confirmDelete,
   handleRemoveMember,
   handleClose,
@@ -124,7 +124,7 @@ const MemberInfo: React.FC<MemberInfoProps> = ({
           </div>
         )}
       </div>
-      {project.isOwner && userId !== member.userId ? (
+      {project.isOwner && memberUserId !== member.userId ? (
         <button
           onClick={() => handleRemoveMember(member.userId)}
           className={`w-full mt-auto ${
