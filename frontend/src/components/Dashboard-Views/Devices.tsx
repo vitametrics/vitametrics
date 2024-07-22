@@ -13,7 +13,8 @@ import Pagination from "../Pagination/Pagination";
 import { useSearchParams } from "react-router-dom";
 
 const Devices = () => {
-  const { projectDevices, project, fetchProjectDevices } = useProject();
+  const { projectDevices, project, fetchProjectDevices, fetchProject } =
+    useProject();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const projectId = searchParams.get("id") || "";
@@ -52,9 +53,10 @@ const Devices = () => {
   console.log(projectDevices);
   const { ref, inView } = useCustomInView();
 
-  const handleFetchDevices = useCallback(() => {
-    fetchProjectDevices();
-  }, [fetchProjectDevices]);
+  const handleFetchDevices = async () => {
+    await fetchProjectDevices();
+    await fetchProject();
+  };
 
   return (
     <motion.div
