@@ -1990,7 +1990,9 @@ h4,
 h5,
 h6,
 li,
-button {
+button,
+svg,
+path {
   transition: all 0.3s ease;
 }
 

@@ -9,13 +9,12 @@ const Footer = () => {
           <a className="flex items-center  sm:mb-0 space-x-3 rtl:space-x-reverse">
             <div className="flex flex-col">
               <img
+                onClick={() => (window.location.href = "/")}
                 src={logo}
                 alt="footer-logo"
-                className="w-[150px] rounded-lg border-2 border-gray-300"
+                className="w-[150px] rounded-lg border-2 border-gray-300 hover:cursor-pointer"
               />
-              <span className="text-base text-primary sm:hidden font-semibold">
-                {" "}
-              </span>
+              <span className="text-base text-primary sm:hidden font-semibold"></span>
             </div>
           </a>
           <ul className="flex flex-wrap items-center ml-auto text-sm font-medium text-primary sm:mb-0">
