@@ -754,8 +754,8 @@ video {
   margin-top: auto;
 }
 
-.mb-24 {
-  margin-bottom: 6rem;
+.mr-3 {
+  margin-right: 0.75rem;
 }
 
 .box-border {
@@ -846,6 +846,18 @@ video {
   height: 100vh;
 }
 
+.h-\[400px\] {
+  height: 400px;
+}
+
+.h-\[44px\] {
+  height: 44px;
+}
+
+.h-\[70px\] {
+  height: 70px;
+}
+
 .max-h-\[300px\] {
   max-height: 300px;
 }
@@ -924,6 +936,10 @@ video {
 
 .w-screen {
   width: 100vw;
+}
+
+.w-9 {
+  width: 2.25rem;
 }
 
 .min-w-\[500px\] {
@@ -1135,6 +1151,10 @@ video {
   border-style: solid;
 }
 
+.border-none {
+  border-style: none;
+}
+
 .border-\[\#45496a\] {
   --tw-border-opacity: 1;
   border-color: rgb(69 73 106 / var(--tw-border-opacity));
@@ -1314,6 +1334,41 @@ video {
   background-color: rgb(234 179 8 / var(--tw-bg-opacity));
 }
 
+.bg-\[\#1E1D20\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(30 29 32 / var(--tw-bg-opacity));
+}
+
+.bg-\[\#2F2D2D\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(47 45 45 / var(--tw-bg-opacity));
+}
+
+.bg-\[\#434040\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(67 64 64 / var(--tw-bg-opacity));
+}
+
+.bg-\[\#606060\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(96 96 96 / var(--tw-bg-opacity));
+}
+
+.bg-gray-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+}
+
+.bg-\[\#2E2E2E\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(46 46 46 / var(--tw-bg-opacity));
+}
+
+.bg-\[\#585858\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(88 88 88 / var(--tw-bg-opacity));
+}
+
 .bg-cover {
   background-size: cover;
 }
@@ -1381,14 +1436,6 @@ video {
 
 .p-\[88px\] {
   padding: 88px;
-}
-
-.p-32 {
-  padding: 8rem;
-}
-
-.p-\[10\.5rem\] {
-  padding: 10.5rem;
 }
 
 .p-\[11rem\] {
@@ -1635,6 +1682,10 @@ video {
 
 .underline {
   text-decoration-line: underline;
+}
+
+.accent-\[\#606060\] {
+  accent-color: #606060;
 }
 
 .opacity-60 {
@@ -2209,6 +2260,11 @@ h6 {
   background-color: rgb(248 250 252 / var(--tw-bg-opacity));
 }
 
+.hover\:bg-slate-200:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(226 232 240 / var(--tw-bg-opacity));
+}
+
 .hover\:text-gray-300:hover {
   --tw-text-opacity: 1;
   color: rgb(209 213 219 / var(--tw-text-opacity));
@@ -2239,12 +2295,20 @@ h6 {
   --tw-ring-color: rgb(229 231 235 / var(--tw-ring-opacity));
 }
 
+.focus\:ring-transparent:focus {
+  --tw-ring-color: transparent;
+}
+
 .dark\:bg-transparent:is(.dark *) {
   background-color: transparent;
 }
 
 .dark\:bg-opacity-10:is(.dark *) {
   --tw-bg-opacity: 0.1;
+}
+
+.dark\:bg-hero-texture:is(.dark *) {
+  background-image: url('/src/assets/images/hero-texture.png');
 }
 
 .dark\:text-white:is(.dark *) {
