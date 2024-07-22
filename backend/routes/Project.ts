@@ -140,8 +140,9 @@ router.get(
       .not()
       .isEmpty()
       .withMessage('Detail level is required'),
+    query('archiveName').optional(),
+    query('useDailyData').optional().isBoolean().withMessage('useDailyData must be a boolean')
   ]),
-  query('archiveName').optional(),
   checkProjectMembership,
   refreshFitbitToken,
   asyncHandler(ProjectController.downloadDataHandler)
