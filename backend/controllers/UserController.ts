@@ -129,14 +129,6 @@ class UserController {
         return;
       }
 
-      if (user.isTempUser) {
-        logger.error(`Cannot reset password for temporary user: ${email}`);
-        res
-          .status(400)
-          .json({ msg: 'Cannot reset password for temporary user' });
-        return;
-      }
-
       const token = crypto.randomBytes(32).toString('hex');
       user.setPasswordToken = token;
       user.passwordTokenExpiry = new Date(Date.now() + 3600000); // 1 hour expiry

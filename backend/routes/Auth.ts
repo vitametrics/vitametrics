@@ -55,9 +55,10 @@ function verifyState(state: string): {
 router.get('/auth', async (req: Request, res: Response) => {
   const projectId = req.query.projectId as string;
   const userId = (req.query.userId as string) || (req.user?.userId as string);
+  const token = req.query.token as string;
 
-  if (!projectId || !userId) {
-    return res.status(400).json({ msg: 'projectId or userId is missing' });
+  if ((!projectId || !userId) && !token) {
+    return res.status(400).json({ msg: 'Missing fields' });
   }
 
   try {
@@ -72,7 +73,7 @@ router.get('/auth', async (req: Request, res: Response) => {
     }
 
     const isMember = project.isMember(user._id as Types.ObjectId);
-    if (!isMember && !user.isTempUser) {
+    if (!isMember) {
       return res
         .status(403)
         .json({ msg: 'User is not a member of this project' });
@@ -81,14 +82,28 @@ router.get('/auth', async (req: Request, res: Response) => {
     const codeVerifier = crypto.randomBytes(32).toString('hex');
     const codeChallenge = createCodeChallenge(codeVerifier);
 
-    const state = generateState(projectId, userId);
+    let state;
 
-    await new CodeVerifier({
-      value: codeVerifier,
-      projectId,
-      userId,
-      state,
-    }).save();
+    if (token) {
+      state = generateState(projectId, token);
+
+      await new CodeVerifier({
+        value: codeVerifier,
+        projectId,
+        userId: token,
+        state,
+      }).save();
+    } else {
+      state = generateState(projectId, userId);
+
+      await new CodeVerifier({
+        value: codeVerifier,
+        projectId,
+        userId,
+        state,
+      }).save();
+    }
+
     const queryParams = new URLSearchParams({
       client_id: process.env.FITBIT_CLIENT_ID as string,
       response_type: 'code',
@@ -144,7 +159,53 @@ router.get('/callback', async (req: Request, res: Response) => {
 
     const user = await User.findOne({ userId });
     if (!user) {
-      return res.status(404).json({ msg: 'User not found' });
+      const extAcc = await FitbitAccount.findOne({ token: userId });
+      if (extAcc) {
+        const params = new URLSearchParams({
+          client_id: process.env.FITBIT_CLIENT_ID as string,
+          grant_type: 'authorization_code',
+          code,
+          redirect_uri: process.env.REDIRECT_URI as string,
+          code_verifier: codeVerifier,
+        });
+
+        const tokenResponse = await axios.post(
+          'https://api.fitbit.com/oauth2/token',
+          params.toString(),
+          {
+            headers: {
+              Authorization: `Basic ${Buffer.from(`${process.env.FITBIT_CLIENT_ID}:${process.env.FITBIT_CLIENT_SECRET}`).toString('base64')}`,
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+          }
+        );
+
+        const accessToken = tokenResponse.data.access_token;
+        const refreshToken = tokenResponse.data.refresh_token;
+
+        const profileResponse = await axios.get(
+          'https://api.fitbit.com/1/user/-/profile.json',
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          }
+        );
+
+        const fitbitUserID = profileResponse.data.user.encodedId;
+
+        if (extAcc.userId === fitbitUserID) {
+          extAcc.accessToken = accessToken;
+          extAcc.refreshToken = refreshToken;
+          extAcc.lastTokenRefresh = new Date();
+          extAcc.idToken = '';
+
+          await extAcc.save();
+          return res.redirect('/');
+        } else {
+          return res.status(404).json({ msg: 'User or account not found' });
+        }
+      } else {
+        return res.status(404).json({ msg: 'User or account not found' });
+      }
     }
 
     const isMember = project.isMember(user._id as Types.ObjectId);
@@ -185,46 +246,34 @@ router.get('/callback', async (req: Request, res: Response) => {
 
     const fitbitUserID = profileResponse.data.user.encodedId;
 
-    if (user.isTempUser) {
-      user.fitbitUserId = fitbitUserID;
-      user.fitbitAccessToken = accessToken;
-      user.fitbitRefreshToken = refreshToken;
-      user.lastTokenRefresh = new Date();
+    let fitbitAccount = await FitbitAccount.findOne({
+      userId: fitbitUserID,
+      project_id: project._id,
+    });
 
-      await user.save();
-      return res.redirect('/');
+    if (fitbitAccount) {
+      fitbitAccount.accessToken = accessToken;
+      fitbitAccount.refreshToken = refreshToken;
+      fitbitAccount.lastTokenRefresh = new Date();
     } else {
-      let fitbitAccount = await FitbitAccount.findOne({
+      fitbitAccount = new FitbitAccount({
         userId: fitbitUserID,
+        accessToken,
+        refreshToken,
+        lastTokenRefresh: new Date(),
         project_id: project._id,
       });
-
-      if (fitbitAccount) {
-        fitbitAccount.accessToken = accessToken;
-        fitbitAccount.refreshToken = refreshToken;
-        fitbitAccount.lastTokenRefresh = new Date();
-      } else {
-        fitbitAccount = new FitbitAccount({
-          userId: fitbitUserID,
-          accessToken,
-          refreshToken,
-          lastTokenRefresh: new Date(),
-          project_id: project._id,
-        });
-      }
-
-      await fitbitAccount.save();
-
-      if (
-        !project.fitbitAccounts.includes(fitbitAccount._id as Types.ObjectId)
-      ) {
-        project.fitbitAccounts.push(fitbitAccount._id as Types.ObjectId);
-        await project.save();
-      }
-
-      // this should not handle redirects. fine for now i guess.
-      return res.redirect(`/dashboard/project?id=${projectId}&view=overview`);
     }
+
+    await fitbitAccount.save();
+
+    if (!project.fitbitAccounts.includes(fitbitAccount._id as Types.ObjectId)) {
+      project.fitbitAccounts.push(fitbitAccount._id as Types.ObjectId);
+      await project.save();
+    }
+
+    // this should not handle redirects. fine for now i guess.
+    return res.redirect(`/dashboard/project?id=${projectId}&view=overview`);
   } catch (err) {
     console.error('Error handling OAuth callback:', err);
     res.status(500).json({ success: false, msg: 'Internal Server Error' });

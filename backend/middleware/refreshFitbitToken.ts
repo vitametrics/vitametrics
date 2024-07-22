@@ -5,7 +5,7 @@ import axios from 'axios';
 import logger from './logger';
 import FitbitAccount, { IFitbitAccount } from '../models/FitbitAccount';
 import Project, { IProject } from '../models/Project';
-import User, { IUser } from '../models/User';
+import { IUser } from '../models/User';
 
 async function refreshToken(req: Request, res: Response, next: NextFunction) {
   const user = req.user as IUser;
@@ -34,7 +34,6 @@ async function refreshToken(req: Request, res: Response, next: NextFunction) {
     }
 
     await refreshProjectFitbitAccounts(project);
-    await refreshTempUserTokens(project);
 
     next();
   } catch (error) {
@@ -83,63 +82,6 @@ async function refreshFitbitAccount(account: IFitbitAccount) {
         await FitbitAccount.findByIdAndUpdate(account._id, {
           accessToken: newAccessToken,
           refreshToken: newRefreshToken,
-          lastTokenRefresh: new Date(),
-        });
-      }
-    }
-  }
-}
-
-async function refreshTempUserTokens(project: IProject) {
-  const tempUsers = await User.find({
-    _id: { $in: project.members },
-    isTempUser: true,
-    fitbitAccessToken: { $exists: true, $ne: null },
-  });
-
-  for (const tempUser of tempUsers) {
-    await refreshTempUserToken(tempUser);
-  }
-}
-
-async function refreshTempUserToken(user: IUser) {
-  if (
-    !user.fitbitAccessToken ||
-    !user.fitbitRefreshToken ||
-    !user.lastTokenRefresh
-  ) {
-    return;
-  }
-
-  const tokenAgeHours =
-    (new Date().getTime() - user.lastTokenRefresh.getTime()) / 3600000;
-
-  if (tokenAgeHours >= 8) {
-    try {
-      const response = await axios.get(
-        'https://api.fitbit.com/1/user/-/profile.json',
-        {
-          headers: { Authorization: `Bearer ${user.fitbitAccessToken}` },
-        }
-      );
-
-      if (response.status === 200) {
-        logger.info(
-          `[refreshTempUserToken] Token valid for user: ${user.userId}`
-        );
-        return;
-      }
-    } catch (error: any) {
-      if (
-        error.response &&
-        error.response.data?.errors[0].errorType === 'expired_token'
-      ) {
-        const { access_token: newAccessToken, refresh_token: newRefreshToken } =
-          await refreshFitbitToken(user.fitbitRefreshToken);
-
-        await User.findByIdAndUpdate(user._id, {
-          fitbitAccessToken: newAccessToken,
-          fitbitRefreshToken: newRefreshToken,
           lastTokenRefresh: new Date(),
         });
       }
