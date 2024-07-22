@@ -127,6 +127,14 @@ const DeviceDownloadPanel: React.FC<DeviceDownloadPanelProps> = ({
     }
   };
 
+  const equalDates = (date1: Date, date2: Date) => {
+    return (
+      date1.getUTCDate() === date2.getUTCDate() &&
+      date1.getUTCMonth() === date2.getUTCMonth() &&
+      date1.getUTCFullYear() === date2.getUTCFullYear()
+    );
+  };
+
   return (
     <div className="">
       <h2 className="w-full text-2xl font-bold pb-0 text-primary my-3">
@@ -147,9 +155,7 @@ const DeviceDownloadPanel: React.FC<DeviceDownloadPanelProps> = ({
           className=" bg-white text-primary rounded-tr-lg rounded-br-lg p-2 border-gray-300 border"
           onClick={() => setFileNameInput("")}
         >
-          {selectedDataTypes.length > 1 || downloadStartDate === downloadEndDate
-            ? ".zip"
-            : ".csv"}
+          {equalDates(downloadStartDate, downloadEndDate) ? ".csv" : ".zip"}
         </span>
       </span>
 
