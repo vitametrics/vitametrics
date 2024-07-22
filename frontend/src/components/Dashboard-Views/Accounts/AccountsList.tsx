@@ -9,7 +9,7 @@ import LowBatteryLevel from "../../../assets/LowBatteryLevel";
 import MediumBatteryLevel from "../../../assets/MediumBatteryLevel";
 import { unlinkFitbitAccount } from "../../../helpers/fitbit";
 import { truncate } from "../../../hooks/truncate";
-
+import { fetchFBAccounts } from "../../../helpers/projectServices";
 interface AccountsListProps {
   accounts: any;
   onClick: (arg0: string) => void;
@@ -37,6 +37,15 @@ const AccountsList: React.FC<AccountsListProps> = ({
       { id: projectId, view: "device", device: deviceId },
       { replace: true }
     );
+  };
+
+  const handleUnlinkFitbitAccount = async (userId: string) => {
+    try {
+      await unlinkFitbitAccount(userId);
+      await fetchFBAccounts(projectId);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -130,7 +139,7 @@ const AccountsList: React.FC<AccountsListProps> = ({
                   </div>
                 ))}
                 <button
-                  onClick={() => unlinkFitbitAccount(account.userId)}
+                  onClick={() => handleUnlinkFitbitAccount(account.userId)}
                   className="p-2 font-bold w-[100px] bg-red-400 mt-2 text-white rounded-lg"
                 >
                   Unlink
