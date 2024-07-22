@@ -1,7 +1,7 @@
 {
   "name": "vitametrics",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.0.2-beta",
   "scripts": {
     "install-all": "yarn install && yarn workspace frontend install && yarn workspace backend install",
     "build": "yarn workspace frontend build && yarn workspace backend build",
