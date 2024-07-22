@@ -690,10 +690,6 @@ video {
   margin-right: 0.5rem;
 }
 
-.mr-3 {
-  margin-right: 0.75rem;
-}
-
 .mr-5 {
   margin-right: 1.25rem;
 }
@@ -818,14 +814,6 @@ video {
   height: 35px;
 }
 
-.h-\[400px\] {
-  height: 400px;
-}
-
-.h-\[44px\] {
-  height: 44px;
-}
-
 .h-\[500px\] {
   height: 500px;
 }
@@ -836,10 +824,6 @@ video {
 
 .h-\[700px\] {
   height: 700px;
-}
-
-.h-\[70px\] {
-  height: 70px;
 }
 
 .h-full {
@@ -874,16 +858,8 @@ video {
   width: 18rem;
 }
 
-.w-9 {
-  width: 2.25rem;
-}
-
 .w-\[100px\] {
   width: 100px;
-}
-
-.w-\[125px\] {
-  width: 125px;
 }
 
 .w-\[145px\] {
@@ -1191,29 +1167,9 @@ video {
   border-top-color: rgb(242 141 89 / var(--tw-border-opacity));
 }
 
-.bg-\[\#1E1D20\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(30 29 32 / var(--tw-bg-opacity));
-}
-
-.bg-\[\#2E2E2E\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(46 46 46 / var(--tw-bg-opacity));
-}
-
-.bg-\[\#2F2D2D\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(47 45 45 / var(--tw-bg-opacity));
-}
-
 .bg-\[\#373737\] {
   --tw-bg-opacity: 1;
   background-color: rgb(55 55 55 / var(--tw-bg-opacity));
-}
-
-.bg-\[\#434040\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(67 64 64 / var(--tw-bg-opacity));
 }
 
 .bg-\[\#4C4C4C\] {
@@ -1224,11 +1180,6 @@ video {
 .bg-\[\#585858\] {
   --tw-bg-opacity: 1;
   background-color: rgb(88 88 88 / var(--tw-bg-opacity));
-}
-
-.bg-\[\#606060\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(96 96 96 / var(--tw-bg-opacity));
 }
 
 .bg-\[\#F2F2F2\] {
@@ -1259,11 +1210,6 @@ video {
 .bg-\[\#f7f7f7\] {
   --tw-bg-opacity: 1;
   background-color: rgb(247 247 247 / var(--tw-bg-opacity));
-}
-
-.bg-gray-100 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(243 244 246 / var(--tw-bg-opacity));
 }
 
 .bg-gray-200 {
@@ -1363,10 +1309,6 @@ video {
 .bg-yellow-500 {
   --tw-bg-opacity: 1;
   background-color: rgb(234 179 8 / var(--tw-bg-opacity));
-}
-
-.bg-hero-texture {
-  background-image: url('/src/assets/images/hero-texture.png');
 }
 
 .bg-cover {
@@ -1678,10 +1620,6 @@ video {
 
 .underline {
   text-decoration-line: underline;
-}
-
-.accent-\[\#606060\] {
-  accent-color: #606060;
 }
 
 .opacity-60 {
@@ -2286,20 +2224,12 @@ h6 {
   --tw-ring-color: rgb(229 231 235 / var(--tw-ring-opacity));
 }
 
-.focus\:ring-transparent:focus {
-  --tw-ring-color: transparent;
-}
-
 .dark\:bg-transparent:is(.dark *) {
   background-color: transparent;
 }
 
 .dark\:bg-opacity-10:is(.dark *) {
   --tw-bg-opacity: 0.1;
-}
-
-.dark\:bg-hero-texture:is(.dark *) {
-  background-image: url('/src/assets/images/hero-texture.png');
 }
 
 .dark\:text-white:is(.dark *) {
