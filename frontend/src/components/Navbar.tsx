@@ -27,7 +27,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="bg-transparent px-32 py-5 nav fixed top-0 w-full z-50 animated-parent font-leagueSpartanBold">
+    <nav className="bg-transparent px-10 md:px-32 py-5 nav fixed top-0 w-full z-50 animated-parent font-neueHassUnica">
       <div className="flex flex-row w-full bg-glass rounded-xl top-0 flex-wrap items-center justify-between mx-auto p-3 animated-container">
         <a
           href="/"
@@ -46,7 +46,7 @@ const Navbar = () => {
               onClick={toggleDropdown}
               data-collapse-toggle="navbar-dropdown"
               type="button"
-              className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+              className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
               aria-controls="navbar-dropdown"
               aria-expanded={isDropdownOpen}
             >
@@ -70,23 +70,22 @@ const Navbar = () => {
             <div
               className={`${
                 isDropdownOpen ? "block" : "hidden"
-              } w-full md:hidden mt-4 border border-gray-100  rounded-lg bg-[#1F1C23] md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-[#1F1C23] md:dark:bg-[#1F1C23] dark:border-[#1F1C23]`}
+              } w-full md:hidden mt-4 border border-gray-100  rounded-lg bg-transparent md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white `}
               id="navbar-dropdown"
             >
               <ul className="flex flex-col font-medium p-4 md:p-0">
                 <li>
-                  <a href="/" className="block py-2 px-3">
+                  <button
+                    onClick={() => navigate("/")}
+                    className="block py-2 px-3 text-xl"
+                  >
                     Home
-                  </a>
+                  </button>
                 </li>
-                <li>
-                  <a href="/FAQs" className="block py-2 px-3">
-                    FAQs
-                  </a>
-                </li>
+
                 {isAuthenticated ? (
                   <li>
-                    <a href="/dashboard" className="block py-2 px-3">
+                    <a href="/dashboard" className="block py-2 px-3  text-xl">
                       Dashboard
                     </a>
                   </li>
@@ -94,7 +93,7 @@ const Navbar = () => {
                   <li>
                     <button
                       onClick={() => navigate("/login")}
-                      className="block py-2 px-3"
+                      className="block py-2 px-3 text-xl font-bold"
                     >
                       Login
                     </button>
@@ -109,20 +108,10 @@ const Navbar = () => {
             id="navbar-default"
           >
             <ul className="font-medium flex flex-col justify-center items-center p-4 md:p-0 mt-4 border border-gray-100 rounded-lg  md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 dark:bg-transparent md:dark:bg-transparent">
-              <li>
-                <a
-                  href="/demo?view=data"
-                  className="block py-2 px-3 text-2xl  hover:text-gray-300 bg-transparent rounded md:bg-transparent  md:p-0  "
-                  aria-current="page"
-                >
-                  Demo
-                </a>
-              </li>
-
               {isAuthenticated ? (
                 <li>
                   <a
-                    href="/dashboard?view=data"
+                    href="/dashboard"
                     className="block py-2 px-3 text-2xl  rounded hover:text-gray-300 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0  md:dark:hover:text-grey-200 dark:hover:bg-gray-700 dark:hover: md:dark:hover:bg-transparent"
                   >
                     <svg
@@ -143,7 +132,7 @@ const Navbar = () => {
                   <li>
                     <a
                       href="/login"
-                      className="block py-2 px-3 text-2xl  rounded hover:text-gray-300 md:hover:bg-transparent md:border-0 md:hover:text-gray-300 md:p-0  md:dark:hover:text-grey-200 dark:hover:bg-gray-700 dark:hover: md:dark:hover:bg-transparent"
+                      className="block py-2 px-3 text-2xl  rounded hover:text-hoverPrimary md:hover:bg-transparent md:border-0  md:p-0   font-bold"
                     >
                       Login
                     </a>

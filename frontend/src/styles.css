@@ -6,15 +6,9 @@
 
 html {
   min-height: 100%;
-  background-color: #faf9f6;
+  background-color: #f7faff;
   overflow-x: hidden;
   scroll-behavior: smooth;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    background-color: #1e1d20;
-  }
 }
 
 #root {
@@ -26,12 +20,18 @@ html {
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: cover;
+  /*edit bg image opacity*/
   /*background-size: contain 100%;*/
   background-position: center;
 }
 
 .border-primary {
   border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.custom-grid {
+  display: grid;
+  grid-template-columns: 0.5fr 3fr 3fr 3fr 3fr;
 }
 
 .bg-glass {
@@ -73,11 +73,36 @@ html {
 }
 
 @font-face {
+  font-family: "neue-haas-unica", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
   font-family: "LeagueSpartan-Bold";
   src: url("./assets/fonts/LeagueSpartan-Bold.woff"),
     url("./assets/fonts/LeagueSpartan-Bold.woff2");
   font-optical-sizing: auto;
   font-display: swap; /* This will use fallback font until the font is fully loaded */
+}
+
+.font-libreFranklinBold {
+  font-family: "Libre Franklin", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.selected-tab {
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+@font-face {
+  font-family: "Libre Franklin", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
 }
 
 @font-face {
@@ -139,54 +164,6 @@ html {
   background-image: linear-gradient(to right, #c471f5 0%, #fa71cd 100%);
 }
 
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 30px;
-  margin: 0 10px;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: 0.4s;
-  border-radius: 34px;
-}
-
-.switch input {
-  display: none;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 20px;
-  width: 20px;
-  left: 5px;
-  bottom: 5px;
-  background-color: white;
-  transition: 0.4s;
-  border-radius: 50px;
-}
-
-input:checked + .slider {
-  background-color: #1b1b1b;
-}
-
-input:checked + .slider:hover {
-  background-color: #2b2a2a;
-}
-
-input:checked + .slider:before {
-  transform: translateX(30px);
-}
-
 .slick-slide > div {
   margin: 0 10px;
 }
@@ -215,7 +192,7 @@ input:checked + .slider:before {
     position: absolute;
     height: 2px;
     width: 40px;
-    background-color: #000;
+    background-color: #32354f;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%) rotate(-45deg);
@@ -226,7 +203,7 @@ input:checked + .slider:before {
     position: absolute;
     height: 2px;
     width: 40px;
-    background-color: #000;
+    background-color: #32354f;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%) rotate(45deg);
@@ -327,4 +304,131 @@ nav.animated-parent {
     padding-right: 0;
     padding-top: 0;
   }
+}
+
+.switch {
+  width: 80px;
+  height: 40px;
+}
+
+/* Button */
+.toggle {
+  position: absolute;
+  visibility: hidden;
+}
+
+.toggle + label {
+  display: block;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  padding: 2px;
+  width: 80px;
+  height: 30px;
+  background-color: #dddddd;
+  border-radius: 30px;
+}
+
+.toggle + label:before,
+.toggle + label:after {
+  display: block;
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  bottom: 1px;
+  content: "";
+}
+.toggle + label:before {
+  right: 1px;
+  background-color: #f1f1f1;
+  border-radius: 30px;
+  transition: background 0.4s;
+}
+.toggle + label:after {
+  width: 30px;
+  background-color: #fff;
+  border-radius: 100%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  transition: margin 0.4s;
+}
+.toggle:checked + label:before {
+  background-color: #8ce196;
+}
+.toggle:checked + label:after {
+  margin-left: 48px;
+}
+
+.input-underline {
+  border: none;
+  border-bottom: 2px solid #6d6c6c;
+  outline: none;
+  padding: 10px;
+  width: 100%;
+  transition: border-bottom-color 0.3s ease;
+}
+
+.input-underline:focus {
+  border-bottom: 2px solid #45496a;
+}
+
+.bg-inputBg {
+  background-color: #f0f0f0; /* Replace with your desired background color */
+  border: 1px solid #ccc; /* Optional: border styling */
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+}
+
+.bg-container {
+  background-color: #f7faff;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Horizontal offset, vertical offset, blur radius, color */
+}
+
+/*make hover effect on text transition smoothly*/
+a,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+li,
+button {
+  transition: all 0.3s ease;
+}
+
+a,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-decoration: none;
+}
+
+/*make dropdowns smoothly expand and collapse*/
+.dropdown {
+  transition: all 0.3s ease;
+}
+
+.collapsible-content {
+  max-height: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.2s ease-out,
+    opacity 0.2s ease-out;
+  opacity: 0;
+}
+
+.collapsible-content.expanded {
+  max-height: 1000px; /* Large enough to accommodate the expanded content */
+  opacity: 1;
 }

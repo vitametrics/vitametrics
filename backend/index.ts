@@ -1,49 +1,76 @@
 import express, { Request, Response } from 'express';
-import dotenv from 'dotenv';
-dotenv.config({ path: '../.env' });
-import { commonMiddlewares } from './middleware/common';
-import passport from 'passport';
-import userRoute from './routes/User';
-import logoutRoute from './routes/Logout';
-import devRoute from './routes/Dev';
-import passportConfig from './util/passport-config';
-import authRoute from './routes/Auth';
-import loginRoute from './routes/Login';
-import orgRoute from './routes/Organization';
-import { connectDB } from './middleware/config';
+
 import sgMail from '@sendgrid/mail';
-import mongoSanitize from 'express-mongo-sanitize';
+import axios from 'axios';
+import dotenv from 'dotenv';
+import fs from 'fs';
 import helmet from 'helmet';
+import passport from 'passport';
+import path from 'path';
+
+import { commonMiddlewares } from './middleware/common';
+import { connectDB } from './middleware/config';
+import logger from './middleware/logger';
+import passportConfig from './middleware/util/passport-config';
+import configureRoutes from './routes';
+
+dotenv.config({ path: '../.env' });
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
 
 const app = express();
-app.use(helmet({
+
+app.use(
+  helmet({
     contentSecurityPolicy: {
-        directives: {
-            "default-src": ["'self'", `'${process.env.BASE_URL}'`],
-        }
-    }
-}));
-app.use(mongoSanitize());
+      directives: {
+        'default-src': ["'self'", `'${process.env.BASE_URL}'`],
+      },
+    },
+  })
+);
+
 commonMiddlewares(app);
 passportConfig(passport);
 app.use(passport.initialize());
 app.use(passport.session());
-// TODO: Change to /auth
-app.use('/', authRoute);
-app.use('/dev', devRoute);
-app.use('/org', orgRoute);
-app.use('/user', userRoute);
-app.use('/login', loginRoute(passport));
-app.use('/logout', logoutRoute);
+configureRoutes(app, passport);
 
 connectDB();
 
-app.get('/health', (_req: Request, res: Response) => {
-    res.status(200).json({ status: 'success', message: 'Backend is healthy'});
+app.get('/version', async (req: Request, res: Response) => {
+  const versionPackagePath = path.join(__dirname, '..', 'package.json');
+
+  const packageJson = JSON.parse(fs.readFileSync(versionPackagePath, 'utf8'));
+
+  const siteVersion = packageJson.version;
+
+  try {
+    const response = await axios.get(
+      'https://api.github.com/repos/vitametrics/vitametrics/releases/latest'
+    );
+    const latestRelease = response.data;
+    const latestVersion = latestRelease.tag_name;
+
+    const isUpToDate = siteVersion === latestVersion;
+
+    return res.json({
+      siteVersion,
+      latestVersion,
+      isUpToDate,
+    });
+  } catch (error) {
+    logger.error(`Error fetching latest release: ${error}`);
+    return res.status(500).json({ msg: 'Error fetching latest release' });
+  }
+});
+
+app.get('/health', (req: Request, res: Response) => {
+  return res
+    .status(200)
+    .json({ status: 'success', message: 'Backend is healthy' });
 });
 
 app.listen(7970, () => {
-    console.log('Listening on port', 7970);
-})
+  logger.info('Listening on port 7970');
+});

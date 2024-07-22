@@ -6,27 +6,21 @@ import { useAuth } from "../helpers/AuthContext";
 import logo from "../assets/images/vitamix.webp";
 
 const SetPassword = () => {
+  const SET_PASSWORD_ENDPOINT = `${process.env.API_URL}/user/set-password`;
+  const CHECK_PASSWORD_TOKEN_ENDPOINT = `${process.env.API_URL}/user/check-password-token`;
+
   const [searchParams] = useSearchParams({
     token: "",
+    projectId: "",
   });
 
   const navigate = useNavigate();
-
   const { login_from_set_password } = useAuth();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [debouncedPassword, setDebouncedPassword] = useState("");
   const [debouncedConfirmPassword, setDebouncedConfirmPassword] = useState("");
   const [isTokenValid, setIsTokenValid] = useState(false);
-  const SET_PASSWORD_ENDPOINT =
-    import.meta.env.VITE_APP_NODE_ENV === "production"
-      ? import.meta.env.VITE_APP_SET_PASSWORD_ENDPOINT
-      : import.meta.env.VITE_APP_SET_PASSWORD_DEV_ENDPOINT;
-
-  const CHECK_PASSWORD_TOKEN_ENDPOINT =
-    import.meta.env.VITE_APP_NODE_ENV === "production"
-      ? import.meta.env.VITE_APP_CHECK_PASSWORD_TOKEN_ENDPOINT
-      : import.meta.env.VITE_APP_CHECK_PASSWORD_TOKEN_DEV_ENDPOINT;
 
   const check_password = async () => {
     try {
@@ -80,10 +74,18 @@ const SetPassword = () => {
     }
 
     try {
-      const response = await axios.post(SET_PASSWORD_ENDPOINT, {
-        password: debouncedPassword,
-        token: searchParams.get("token"),
-      });
+      const response = await axios.post(
+        SET_PASSWORD_ENDPOINT,
+        {
+          password: debouncedPassword,
+          token: searchParams.get("token"),
+        },
+        {
+          params: {
+            projectId: searchParams.get("projectId"),
+          },
+        }
+      );
 
       if (response.data) {
         login_from_set_password(response.data.email, debouncedPassword);
@@ -94,7 +96,7 @@ const SetPassword = () => {
   };
 
   return (
-    <div className="h-full w-full bg-fixed overflow-y-hidden font-leagueSpartanBold ">
+    <div className="h-full w-full bg-fixed overflow-y-hidden font-neueHassUnica ">
       <Navbar />
       <div className="flex flex-col justify-center items-center p-0 md:p-10">
         <div className="flex flex-row h-screen items-center justify-center">

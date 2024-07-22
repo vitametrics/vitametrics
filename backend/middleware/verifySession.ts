@@ -1,11 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
 
-const verifySession = (req: Request, res: Response, next: NextFunction) => {
-    if (req.isAuthenticated()) {
-        return next();
-    }
+import logger from './logger';
 
-    return res.status(401).json({ message: 'Unauthorized: Please log in.' });
+const verifySession = (req: Request, res: Response, next: NextFunction) => {
+  if (req.isAuthenticated && req.isAuthenticated()) {
+    return next();
+  }
+
+  logger.info('[verifySession] User not logged in');
+  res.status(401).json({ msg: 'Unauthorized - User not logged in' });
 };
 
 export default verifySession;

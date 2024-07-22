@@ -1,12 +1,6 @@
-import { useNavigate } from "react-router-dom";
-import fitbitlogo from "../assets/images/fitbit.webp";
+import fitbitlogo from "../assets/fitbit.webp";
 
 const Banner = () => {
-  const history = useNavigate();
-  function navigate(url: string) {
-    history(url);
-  }
-
   return (
     <section
       id="#home"
@@ -108,17 +102,14 @@ const Banner = () => {
           </g>
         </svg>
         <div className="flex flex-row items-center justify-evenly w-full mb-10">
-          <button
-            onClick={() => navigate("/demo")}
-            className="bg-secondary hover:bg-hoverSecondary text-white w-[150px] lg:text-3xl text-2xl mt-5 py-2 px-5 lg:w-[175px] rounded-lg"
-          >
-            Demo
-          </button>
-          <button className="bg-tertiary hover:bg-hoverTertiary text-white w-[150px] lg:text-3xl text-2xl mt-5 py-2 px-5 lg:w-[175px] rounded-lg">
-            <a href="https://github.com/brandontranle/vitametrics">Download</a>
+          <button className="bg-tertiary hover:bg-hoverTertiary text-white w-[150px] lg:text-2xl text-lg mt-5 py-2 px-5 lg:w-[175px] rounded-lg shadow-lg">
+            <a href="https://github.com/vitametrics/vitametrics">Download</a>
           </button>
         </div>
-        <span className="text-[#b0b0b0] text-2xl mt-5"> SUPPORTS </span>
+        <span className="text-[#b0b0b0] text-xl mb-5 font-thin">
+          {" "}
+          SUPPORTS{" "}
+        </span>
         <div className="flex flex-row justify-center gap-5 items-center w-full ">
           <img src={fitbitlogo} alt="Fitbit Logo" className="h-8" />
         </div>
