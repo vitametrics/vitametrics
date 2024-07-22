@@ -61,24 +61,12 @@ router.get('/auth', async (req: Request, res: Response) => {
     return res.status(400).json({ msg: 'Missing fields' });
   }
 
+  const project = await Project.findOne({ projectId });
+  if (!project) {
+    return res.status(404).json({ msg: 'Project not found' });
+  }
+
   try {
-    const project = await Project.findOne({ projectId });
-    if (!project) {
-      return res.status(404).json({ msg: 'Project not found' });
-    }
-
-    const user = await User.findOne({ userId });
-    if (!user) {
-      return res.status(404).json({ msg: 'User not found' });
-    }
-
-    const isMember = project.isMember(user._id as Types.ObjectId);
-    if (!isMember) {
-      return res
-        .status(403)
-        .json({ msg: 'User is not a member of this project' });
-    }
-
     const codeVerifier = crypto.randomBytes(32).toString('hex');
     const codeChallenge = createCodeChallenge(codeVerifier);
 
@@ -102,6 +90,18 @@ router.get('/auth', async (req: Request, res: Response) => {
         userId,
         state,
       }).save();
+    }
+
+    const user = await User.findOne({ userId });
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found' });
+    }
+
+    const isMember = project.isMember(user._id as Types.ObjectId);
+    if (!isMember) {
+      return res
+        .status(403)
+        .json({ msg: 'User is not a member of this project' });
     }
 
     const queryParams = new URLSearchParams({

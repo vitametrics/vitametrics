@@ -15,10 +15,10 @@ export interface IFitbitAccount extends Document {
 
 const fitbitAccountSchema = new Schema(
   {
-    userId: { type: String, required: true },
-    accessToken: { type: String, required: true },
-    refreshToken: { type: String, required: true },
-    lastTokenRefresh: { type: Date, required: true },
+    userId: { type: String },
+    accessToken: { type: String },
+    refreshToken: { type: String },
+    lastTokenRefresh: { type: Date },
     project_id: {
       type: mongoose.Types.ObjectId,
       ref: 'Project',
