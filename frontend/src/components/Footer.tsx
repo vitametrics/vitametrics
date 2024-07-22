@@ -33,10 +33,10 @@ const Footer = () => {
             </li>
             <li>
               <a
-                href="/FAQs"
+                href="https://docs.vitametrics.org/getting-started/introduction/"
                 className="font-bold me-4 md:me-6 text-xl hover:text-hoverPrimary"
               >
-                FAQs
+                Docs
               </a>
             </li>
             <li>
