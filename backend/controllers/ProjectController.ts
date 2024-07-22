@@ -612,14 +612,39 @@ class ProjectController {
   
         for (const date of dateRange) {
           for (const dataType of dataTypes) {
-            let data;
-            if (useDailyData) {
-              data = await fetchData(userId, accessToken, date, date, dataType);
-            } else {
-              data = await fetchIntradayData(userId, accessToken, dataType, date, detailLevel);
+            const cacheKey = `${currentProject.projectId}-${deviceId}-${dataType}-${date}-${useDailyData ? 'daily' : detailLevel}`;
+            let cachedData = await Cache.findOne({
+              key: cacheKey,
+              projectId: currentProject.projectId,
+              deviceId
+            });
+
+            if (!cachedData) {
+              let data;
+              if (useDailyData) {
+                data = await fetchData(userId, accessToken, date, date, dataType);
+              } else {
+                data = await fetchIntradayData(userId, accessToken, dataType, date, detailLevel);
+              }
+              const csvData = data.map((d: any) => `${d.dateTime || d.timestamp},${d.value}`);
+
+              const newCache = new Cache({
+                key: cacheKey,
+                projectId: currentProject.projectId,
+                deviceId,
+                data: csvData,
+                createdAt: new Date(),
+              });
+
+              await newCache.save();
+              cachedData = newCache;
             }
+
             if (!deviceData[date]) deviceData[date] = {};
-            deviceData[date][dataType] = data;
+            deviceData[date][dataType] = cachedData.data.split('\n').map(line => {
+              const [timestamp, value] = line.split(',');
+              return { timestamp, value };
+            }).filter(item => item.timestamp && item.value);
           }
         }
   
