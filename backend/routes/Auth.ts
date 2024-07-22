@@ -82,6 +82,9 @@ router.get('/auth', async (req: Request, res: Response) => {
         state,
       }).save();
     } else {
+      
+      state = generateState(projectId, userId);
+
       const user = await User.findOne({ userId });
       if (!user) {
         return res.status(404).json({ msg: 'User not found' });
@@ -93,8 +96,6 @@ router.get('/auth', async (req: Request, res: Response) => {
           .status(403)
           .json({ msg: 'User is not a member of this project' });
       }
-      
-      state = generateState(projectId, userId);
 
       await new CodeVerifier({
         value: codeVerifier,
