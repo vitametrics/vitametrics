@@ -635,7 +635,12 @@ class ProjectController {
   
       if (dataToZip.length === 1) {
         const singleFile = dataToZip[0];
-        const singleFileName = `${archiveName || singleFile.fileName}`;
+        let singleFileName = archiveName || singleFile.fileName;
+
+        if (!singleFileName.toLowerCase().endsWith('.csv')) {
+          singleFileName += '.csv';
+        }
+
         res.setHeader('Content-Disposition', `attachment; filename=${singleFileName}`);
         res.set('Content-Type', 'text/csv');
         res.send(singleFile.data);
