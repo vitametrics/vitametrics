@@ -18,11 +18,7 @@ interface ProjectContextProps {
   devices: DeviceData[];
   setDevices: (arg0: DeviceData[]) => void;
   startDate: Date;
-  rangeStartDate: Date;
-  rangeEndDate: Date;
   setStartDate: (arg0: Date) => void;
-  setRangeStartDate: (arg0: Date) => void;
-  setRangeEndDate: (arg0: Date) => void;
   downloadStartDate: Date;
   setDownloadStartDate: (arg0: Date) => void;
   downloadEndDate: Date;
@@ -83,15 +79,8 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   const [projectId, setProjectId] = useState<string>("");
   const [ownerName, setOwnerName] = useState<string>("");
   const [startDate, setStartDate] = useState(new Date("2024-02-09"));
-  const [rangeStartDate, setRangeStartDate] = useState(new Date("2024-02-10"));
-  const [rangeEndDate, setRangeEndDate] = useState(new Date("2024-02-11"));
-
-  const [downloadStartDate, setDownloadStartDate] = useState(
-    new Date("2024-02-10")
-  );
-  const [downloadEndDate, setDownloadEndDate] = useState(
-    new Date("2024-02-11")
-  );
+  const [downloadStartDate, setDownloadStartDate] = useState(new Date());
+  const [downloadEndDate, setDownloadEndDate] = useState(new Date());
   const [detailLevel, setDetailLevel] = useState<string>("1min");
   const [selectedDevices, setSelectedDevices] = useState<string[]>([]);
   const [showBackDrop, setShowBackDrop] = useState(false);
@@ -170,11 +159,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
           fetchDeviceDetails(project.devices, deviceId),
         project,
         startDate,
-        rangeStartDate,
-        rangeEndDate,
-        setRangeStartDate,
         setStartDate,
-        setRangeEndDate,
         downloadStartDate,
         setDownloadStartDate,
         downloadEndDate,
