@@ -133,9 +133,7 @@ const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
           setProject(data);
           updateProject({ devices: data.devices });
           if (fitbitAccounts.length === 0) {
-            console.log("fetching fitbit accounts");
             fetchFBAccounts(projectId).then(setFitbitAccounts);
-            console.log("fitbit accounts fetched");
           }
         }
       });

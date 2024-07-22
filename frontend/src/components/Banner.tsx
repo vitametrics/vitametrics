@@ -1,11 +1,6 @@
-import { useNavigate } from "react-router-dom";
 import fitbitlogo from "../assets/fitbit.webp";
 
 const Banner = () => {
-  const history = useNavigate();
-  function navigate(url: string) {
-    history(url);
-  }
   return (
     <section
       id="#home"
@@ -107,12 +102,6 @@ const Banner = () => {
           </g>
         </svg>
         <div className="flex flex-row items-center justify-evenly w-full mb-10">
-          <button
-            onClick={() => navigate("/demo")}
-            className="bg-secondary hover:bg-hoverSecondary text-white w-[150px] lg:text-2xl text-2xl mt-5 py-2 px-5 lg:w-[175px] rounded-lg shadow-lg"
-          >
-            Demo
-          </button>
           <button className="bg-tertiary hover:bg-hoverTertiary text-white w-[150px] lg:text-2xl text-lg mt-5 py-2 px-5 lg:w-[175px] rounded-lg shadow-lg">
             <a href="https://github.com/vitametrics/vitametrics">Download</a>
           </button>

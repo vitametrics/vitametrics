@@ -14,7 +14,6 @@ const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const FAQs = lazy(() => import("./pages/FAQs"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TOS = lazy(() => import("./pages/TOS"));
-const Demo = lazy(() => import("./pages/Demo"));
 const SetPassword = lazy(() => import("./pages/SetPassword"));
 const PageNotFound = lazy(() => import("./pages/PageNotFound"));
 const Settings = lazy(() => import("./pages/Settings"));
@@ -40,7 +39,7 @@ function App() {
   }) => {
     const { isAuthenticated, isLoadingAuth } = useAuth();
     if (isLoadingAuth) {
-      return null; // Or a minimal placeholder that doesn't change layout dramatically
+      return null;
     }
     return isAuthenticated ? children : <Navigate to={redirectTo} />;
   };
@@ -161,14 +160,7 @@ function App() {
               </Suspense>
             }
           />
-          <Route
-            path="/demo"
-            element={
-              <Suspense fallback={<LoadingFallback />}>
-                <Demo />
-              </Suspense>
-            }
-          />
+
           <Route path="*" element={<PageNotFound />} />
 
           <Route
