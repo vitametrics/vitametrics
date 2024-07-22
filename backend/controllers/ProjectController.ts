@@ -206,7 +206,7 @@ class ProjectController {
 
       const fitbitAccounts = await FitbitAccount.find({
         project_id: currentProject._id,
-      }).select('userId lastTokenRefresh');
+      }).select('userId lastTokenRefresh accessToken refreshToken');
 
       const accountsWithDevices = await Promise.all(
         fitbitAccounts.map(async (account) => {
@@ -221,6 +221,8 @@ class ProjectController {
             _id: account._id,
             userId: account.userId,
             lastTokenRefresh: account.lastTokenRefresh,
+            accessToken: account.accessToken,
+            refreshToken: account.refreshToken,
             devices: devices,
           };
         })
