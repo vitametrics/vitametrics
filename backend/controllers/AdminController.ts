@@ -247,8 +247,10 @@ class AdminController {
 
           if (role === 'admin') {
             project.admins.push(newUser._id as Types.ObjectId);
-            await project.save();
           }
+
+          project.members.push(newUser._id as Types.ObjectId);
+          await project.save();
 
           if (process.env.NODE_ENV === 'production') {
             await sendEmail({

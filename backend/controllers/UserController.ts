@@ -169,17 +169,11 @@ class UserController {
         res.status(400).json({ msg: 'Invalid or expired token' });
         return;
       }
-      const project = await Project.findOne({ projectId });
 
       user.password = await argon2.hash(password);
       user.emailVerified = true;
       user.setPasswordToken = null;
       user.passwordTokenExpiry = null;
-
-      if (project) {
-        project.members.push(user._id as Types.ObjectId);
-        await project.save();
-      }
 
       await user.save();
       logger.info(`Password set successfully for user: ${user.email}`);
