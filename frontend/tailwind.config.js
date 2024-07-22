@@ -49,12 +49,6 @@ export default {
       },
     },
     fontFamily: {
-      raleway: ["Raleway-Regular", "sans-serif"],
-      ralewayBold: ["Raleway-Bold", "sans-serif"],
-      ralewaySemibold: ["Raleway-Semibold", "sans-serif"],
-      leagueSpartanBold: ["LeagueSpartan-Bold", "sans-serif"],
-      leagueSpartan: ["LeagueSpartan-Regular", "sans-serif"],
-      leagueSpartanLight: ["LeagueSpartan-Light", "sans-serif"],
       libreFranklinBold: ["Libre Franklin", "sans-serif"],
       libreFranklin: ["Libre Franklin", "sans-serif"],
       neueHassUnica: ["neue-haas-unica", "sans-serif"],

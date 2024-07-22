@@ -66,24 +66,9 @@ html {
 }
 
 @font-face {
-  font-family: "Raleway-Bold";
-  src:
-    url("./assets/fonts/Raleway-Bold.woff2") format("woff2"),
-    url("./assets/fonts/Raleway-Bold.woff") format("woff");
-}
-
-@font-face {
   font-family: "neue-haas-unica", sans-serif;
   font-weight: 400;
   font-style: normal;
-}
-
-@font-face {
-  font-family: "LeagueSpartan-Bold";
-  src: url("./assets/fonts/LeagueSpartan-Bold.woff"),
-    url("./assets/fonts/LeagueSpartan-Bold.woff2");
-  font-optical-sizing: auto;
-  font-display: swap; /* This will use fallback font until the font is fully loaded */
 }
 
 .font-libreFranklinBold {
@@ -103,15 +88,6 @@ html {
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-}
-
-@font-face {
-  font-family: "LeagueSpartan-Regular";
-  src:
-    url("./assets/fonts/LeagueSpartan-Regular.woff2") format("woff2"),
-    url("./assets/fonts/LeagueSpartan-Regular.woff") format("woff");
-  font-optical-sizing: auto;
-  font-display: swap; /* This will use fallback font until the font is fully loaded */
 }
 
 .check {
@@ -437,4 +413,10 @@ h6 {
 
 .icon-cog {
   color: #45496a;
+}
+
+.icon-close:hover {
+  path {
+    fill: #7d8bae;
+  }
 }
