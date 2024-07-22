@@ -159,7 +159,7 @@ router.get('/callback', async (req: Request, res: Response) => {
 
     const user = await User.findOne({ userId });
     if (!user) {
-      const extAcc = await FitbitAccount.findOne({ token: userId });
+      const extAcc = await FitbitAccount.findOne({ idToken: userId });
       if (extAcc) {
         const params = new URLSearchParams({
           client_id: process.env.FITBIT_CLIENT_ID as string,
