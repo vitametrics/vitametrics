@@ -54,19 +54,19 @@ const ViewDevice = () => {
     >
       <span id="options" className="flex flex-row ">
         <span
-          className={`p-5 rounded-tl-lg ${tab === "overview" ? "shadow-lg bg-white font-bold border-2 border-gray-300 border-b-0" : "bg-[#f7f7f7] border-2"} hover:cursor-pointer`}
+          className={`p-5 rounded-tl-lg ${tab === "overview" ? " bg-white font-bold border-2 border-gray-300 border-b-0 -mb-0.5 z-10" : "bg-[#f7f7f7] border-2 border-b-0"} hover:cursor-pointer`}
           onClick={() => handleTabChange("overview")}
         >
           Device Details
         </span>
         <span
-          className={`p-5 ${tab === "download-data" ? "shadow-lg bg-white font-bold border-2 border-gray-300 border-b-0" : "bg-[#f7f7f7] border-2"} hover:cursor-pointer`}
+          className={`p-5 ${tab === "download-data" ? " bg-white font-bold border-2 border-gray-300 border-b-0 -mb-0.5 z-10" : "bg-[#f7f7f7] border-2 border-b-0"} hover:cursor-pointer`}
           onClick={() => handleTabChange("download-data")}
         >
           Download Data
         </span>
         <span
-          className={`p-5 rounded-tr-lg ${tab === "download-cache" ? "shadow-lg bg-white font-bold border-2 border-gray-300 border-b-0" : "bg-[#f7f7f7] border-2"} hover:cursor-pointer`}
+          className={`p-5 rounded-tr-lg ${tab === "download-cache" ? "bg-white font-bold border-2 border-gray-300 border-b-0 -mb-0.5 z-10" : "bg-[#f7f7f7] border-2 border-b-0"} hover:cursor-pointer`}
           onClick={() => handleTabChange("download-cache")}
         >
           Download Cache

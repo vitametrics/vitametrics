@@ -746,6 +746,22 @@ video {
   margin-top: auto;
 }
 
+.-mb-1 {
+  margin-bottom: -0.25rem;
+}
+
+.-mb-3 {
+  margin-bottom: -0.75rem;
+}
+
+.-mb-0 {
+  margin-bottom: -0px;
+}
+
+.-mb-0\.5 {
+  margin-bottom: -0.125rem;
+}
+
 .box-border {
   box-sizing: border-box;
 }
@@ -1117,6 +1133,10 @@ video {
 
 .border-b-0 {
   border-bottom-width: 0px;
+}
+
+.border-t-0 {
+  border-top-width: 0px;
 }
 
 .border-solid {
