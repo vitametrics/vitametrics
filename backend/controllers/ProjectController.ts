@@ -160,42 +160,6 @@ class ProjectController {
   //   }
   // }
 
-  static async removeDevice(req: Request, res: Response) {
-    const currentProject = req.project as IProject;
-    const { deviceId } = req.body;
-
-    try {
-      logger.info(
-        `Removing device: ${deviceId} from project: ${currentProject.projectId}`
-      );
-
-      const device = await Device.findOne({ deviceId: deviceId });
-      if (!device) {
-        throw new Error('Device not found');
-      }
-
-      if (!currentProject.hasDevice(device._id as Types.ObjectId)) {
-        throw new Error('Device not associated with project');
-      }
-
-      await currentProject.removeDevice(device._id as Types.ObjectId);
-      await Device.findByIdAndDelete(device._id as Types.ObjectId);
-      Cache.deleteMany({ projectId: currentProject.projectId, deviceId });
-
-      logger.info(
-        `Device: ${deviceId} removed successfully from project: ${currentProject.projectId}`
-      );
-      res.status(200).json({ msg: 'Device removed successfully' });
-      return;
-    } catch (error: any) {
-      logger.error(`Error removing device: ${error}`);
-      res
-        .status(error.message === 'Device not found' ? 404 : 400)
-        .json({ msg: error.message });
-      return;
-    }
-  }
-
   static async getProjectFitbitAccounts(req: Request, res: Response) {
     const currentProject = req.project as IProject;
 
@@ -262,20 +226,31 @@ class ProjectController {
         return;
       }
 
+      const devicesToDelete = await Device.find({
+        projectId: currentProject.projectId,
+        fitbitUserId: fitbitAccount.userId
+      });
+
+      const deviceIdsToDelete = devicesToDelete.map(device => device._id);
+
       await Device.deleteMany({
         projectId: currentProject.projectId,
         fitbitUserId: fitbitAccount.userId,
       });
+
+      currentProject.devices = currentProject.devices.filter(
+        deviceId => !deviceIdsToDelete.includes(deviceId)
+      );
+
       await Cache.deleteMany({
         projectId: currentProject.projectId,
         fitbitUserId: fitbitAccount.userId,
       });
 
-      await fitbitAccount.deleteOne();
+      currentProject.unlinkFitbitAccount(fitbitAccount._id as Types.ObjectId);
 
-      currentProject.fitbitAccounts = currentProject.fitbitAccounts.filter(
-        (id) => !id.equals(fitbitAccount._id as Types.ObjectId)
-      );
+      await fitbitAccount.deleteOne();
+      
       await currentProject.save();
 
       logger.info(

@@ -270,7 +270,9 @@ class OwnerController {
                 return;
             }
 
-            project.unlinkFitbitAccount(id);
+            // TODO: add check for if fitbit account is linked to project before unlinking
+
+            project.unlinkFitbitAccount(id as unknown as Types.ObjectId);
             await Cache.deleteMany({ fitbitUserId: id, projectId });
             await Device.deleteMany({ fitbitUserId: id, projectId });
 
