@@ -121,8 +121,7 @@ class AdminController {
       if (
         currentUser.role !== 'siteAdmin' &&
         currentUser.role !== 'siteOwner' &&
-        project.ownerId !== currentUser.userId &&
-        !project.admins.includes(currentUser._id as Types.ObjectId)
+        project.ownerId !== currentUser.userId
       ) {
         logger.error(
           `User: ${currentUser.email} does not have permission to delete project: ${projectId}`
@@ -133,7 +132,7 @@ class AdminController {
         return;
       }
 
-      const members = project.members;
+      const members = project.members.map((member) => member._id);
       const deviceIds = project.devices.map((device) => device._id);
 
       if (deviceIds && deviceIds.length > 0) {
@@ -141,9 +140,9 @@ class AdminController {
       }
 
       if (members && members.length > 0) {
-        for (const member of members) {
+        for (const objId of members) {
           await User.updateOne(
-            { _id: member._id },
+            { _id: objId },
             { $pull: { projects: project._id } }
           );
         }

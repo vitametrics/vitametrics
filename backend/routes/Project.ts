@@ -34,17 +34,6 @@ router.post(
   asyncHandler(ProjectController.changeDeviceName)
 );
 
-router.post(
-  '/remove-device',
-  verifySession,
-  validationHandler([
-    body('deviceId').not().isEmpty().withMessage('Device ID is required'),
-  ]),
-  checkProjectMembership,
-  verifyRole('admin'),
-  asyncHandler(ProjectController.removeDevice)
-);
-
 router.get(
   '/fitbit-accounts',
   verifySession,
