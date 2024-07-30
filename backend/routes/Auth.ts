@@ -82,7 +82,6 @@ router.get('/auth', async (req: Request, res: Response) => {
         state,
       }).save();
     } else {
-
       state = generateState(projectId, userId);
 
       const user = await User.findOne({ userId });
@@ -216,7 +215,7 @@ router.get('/callback', async (req: Request, res: Response) => {
         redirect_uri: process.env.REDIRECT_URI as string,
         code_verifier: codeVerifier,
       });
-  
+
       const tokenResponse = await axios.post(
         'https://api.fitbit.com/oauth2/token',
         params.toString(),
@@ -227,24 +226,24 @@ router.get('/callback', async (req: Request, res: Response) => {
           },
         }
       );
-  
+
       const accessToken = tokenResponse.data.access_token;
       const refreshToken = tokenResponse.data.refresh_token;
-  
+
       const profileResponse = await axios.get(
         'https://api.fitbit.com/1/user/-/profile.json',
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
-  
+
       const fitbitUserID = profileResponse.data.user.encodedId;
-  
+
       let fitbitAccount = await FitbitAccount.findOne({
         userId: fitbitUserID,
         project_id: project._id,
       });
-  
+
       if (fitbitAccount) {
         fitbitAccount.accessToken = accessToken;
         fitbitAccount.refreshToken = refreshToken;
@@ -258,14 +257,16 @@ router.get('/callback', async (req: Request, res: Response) => {
           project_id: project._id,
         });
       }
-  
+
       await fitbitAccount.save();
-  
-      if (!project.fitbitAccounts.includes(fitbitAccount._id as Types.ObjectId)) {
+
+      if (
+        !project.fitbitAccounts.includes(fitbitAccount._id as Types.ObjectId)
+      ) {
         project.fitbitAccounts.push(fitbitAccount._id as Types.ObjectId);
         await project.save();
       }
-  
+
       // this should not handle redirects. fine for now i guess.
       return res.redirect(`/dashboard/project?id=${projectId}&view=overview`);
     }

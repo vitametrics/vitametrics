@@ -228,10 +228,10 @@ class ProjectController {
 
       const devicesToDelete = await Device.find({
         projectId: currentProject.projectId,
-        fitbitUserId: fitbitAccount.userId
+        fitbitUserId: fitbitAccount.userId,
       });
 
-      const deviceIdsToDelete = devicesToDelete.map(device => device._id);
+      const deviceIdsToDelete = devicesToDelete.map((device) => device._id);
 
       await Device.deleteMany({
         projectId: currentProject.projectId,
@@ -239,7 +239,7 @@ class ProjectController {
       });
 
       currentProject.devices = currentProject.devices.filter(
-        deviceId => !deviceIdsToDelete.includes(deviceId)
+        (deviceId) => !deviceIdsToDelete.includes(deviceId)
       );
 
       await Cache.deleteMany({
@@ -250,7 +250,7 @@ class ProjectController {
       currentProject.unlinkFitbitAccount(fitbitAccount._id as Types.ObjectId);
 
       await fitbitAccount.deleteOne();
-      
+
       await currentProject.save();
 
       logger.info(

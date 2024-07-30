@@ -268,33 +268,33 @@ class OwnerController {
       res.status(500).json({ msg: 'Internal Server Error' });
       return;
     }
+  }
 
-    static async unlinkFitbitAccountFromProject(req: Request, res: Response) {
-        const { id } = req.params;
-        const projectId = req.body.projectId;
+  static async unlinkFitbitAccountFromProject(req: Request, res: Response) {
+    const { id } = req.params;
+    const projectId = req.body.projectId;
 
-        try {
-            logger.info(`Unlinking fitbit account: ${id} from project: ${projectId}`);
+    try {
+      logger.info(`Unlinking fitbit account: ${id} from project: ${projectId}`);
 
-            const project = await Project.findOne({ projectId });
-            if (!project) {
-                res.status(404).json({ msg: 'Project not found' });
-                return;
-            }
+      const project = await Project.findOne({ projectId });
+      if (!project) {
+        res.status(404).json({ msg: 'Project not found' });
+        return;
+      }
 
-            // TODO: add check for if fitbit account is linked to project before unlinking
+      // TODO: add check for if fitbit account is linked to project before unlinking
 
-            project.unlinkFitbitAccount(id as unknown as Types.ObjectId);
-            await Cache.deleteMany({ fitbitUserId: id, projectId });
-            await Device.deleteMany({ fitbitUserId: id, projectId });
+      project.unlinkFitbitAccount(id as unknown as Types.ObjectId);
+      await Cache.deleteMany({ fitbitUserId: id, projectId });
+      await Device.deleteMany({ fitbitUserId: id, projectId });
 
-            res.status(200).json({ msg: 'Fitbit account unlinked successfully' });
-            return;
-        } catch (error) {
-            logger.error(`Error unlinking fitbit account: ${error}`);
-            res.status(500).json({ msg: 'Internal Server Error' });
-            return;
-        }
+      res.status(200).json({ msg: 'Fitbit account unlinked successfully' });
+      return;
+    } catch (error) {
+      logger.error(`Error unlinking fitbit account: ${error}`);
+      res.status(500).json({ msg: 'Internal Server Error' });
+      return;
     }
   }
 }
