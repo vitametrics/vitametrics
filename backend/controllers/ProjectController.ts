@@ -39,9 +39,7 @@ class ProjectController {
         return;
       }
 
-      const isAdmin = project.isAdmin(
-        currentUser._id as Types.ObjectId
-      );
+      const isAdmin = project.isAdmin(currentUser._id as Types.ObjectId);
       const isOwner = project.isOwner(currentUser.userId);
 
       const membersWithRole = await Promise.all(
@@ -53,9 +51,7 @@ class ProjectController {
             return {
               ...member.toObject(),
               isOwner: project.isOwner(member.userId),
-              isAdmin: project.isAdmin(
-                member._id as Types.ObjectId
-              ),
+              isAdmin: project.isAdmin(member._id as Types.ObjectId),
             };
           }
         })
@@ -211,7 +207,7 @@ class ProjectController {
       );
 
       const fitbitAccount = await FitbitAccount.findOne({
-        userId: fitbitUserId
+        userId: fitbitUserId,
       });
 
       if (!fitbitAccount) {
@@ -219,7 +215,11 @@ class ProjectController {
           .status(404)
           .json({ msg: 'Fitbit account not found in this project' });
         return;
-      } else if (!currentProject.fitbitAccounts.includes(fitbitAccount._id as Types.ObjectId)) {
+      } else if (
+        !currentProject.fitbitAccounts.includes(
+          fitbitAccount._id as Types.ObjectId
+        )
+      ) {
         res
           .status(400)
           .json({ msg: 'Fitbit account not found in this project' });
@@ -320,23 +320,6 @@ class ProjectController {
         devicesForProject.push(...projectDevices);
       }
 
-      const tempUsers = await User.find({
-        _id: { $in: currentProject.members },
-        isTempUser: true,
-        fitbitUserId: { $exists: true, $ne: null },
-        fitbitAccessToken: { $exists: true, $ne: null },
-      });
-
-      for (const tempUser of tempUsers) {
-        const userDevice = await fetchDevices(
-          tempUser.fitbitUserId!,
-          tempUser.fitbitAccessToken!,
-          currentProject.projectId,
-          { id: tempUser.userId, name: tempUser.name }
-        );
-        devicesForProject.push(...userDevice);
-      }
-
       logger.info(
         `Devices fetched successfully for project: ${currentProject.projectId}`
       );
@@ -385,31 +368,8 @@ class ProjectController {
         })
       );
 
-      const tempUsers = await User.find({
-        projects: currentProject._id,
-        isTempUser: true,
-        fitbitUserId: { $exists: true, $ne: null },
-        fitbitAccessToken: { $exists: true, $ne: null },
-      });
-
-      const tempUserData = await Promise.all(
-        tempUsers.map(async (tempUser) => {
-          return {
-            userId: tempUser.userId,
-            data: await fetchIntradayData(
-              tempUser.fitbitUserId!,
-              tempUser.fitbitAccessToken!,
-              dataType as string,
-              date as string,
-              detailLevel as string
-            ),
-          };
-        })
-      );
-
       const allData = {
         projectData,
-        tempUserData,
       };
 
       logger.info(
@@ -580,24 +540,10 @@ class ProjectController {
           accessToken = fitbitAccount.accessToken;
           userId = fitbitAccount.userId;
         } else {
-          const user = await User.findOne({
-            userId: device.owner,
-            isTempUser: true,
-          });
-          if (
-            user &&
-            user.isTempUser &&
-            user.fitbitAccessToken &&
-            user.fitbitUserId
-          ) {
-            accessToken = user.fitbitAccessToken;
-            userId = user.fitbitUserId;
-          } else {
-            logger.error(
-              `Fitbit credentials not found for device: ${deviceId}`
-            );
-            continue;
-          }
+          logger.error(
+            `Fitbit account not found for device: ${deviceId} in project: ${currentProject.projectId}`
+          );
+          continue;
         }
 
         const aggregatedData: {
@@ -715,7 +661,12 @@ class ProjectController {
 
       if (dataToZip.length === 1) {
         const singleFile = dataToZip[0];
-        const singleFileName = `${archiveName || singleFile.fileName}`;
+        let singleFileName = archiveName || singleFile.fileName;
+
+        if (!singleFileName.toLowerCase().endsWith('.csv')) {
+          singleFileName += '.csv';
+        }
+
         res.setHeader(
           'Content-Disposition',
           `attachment: filename=${singleFileName}`

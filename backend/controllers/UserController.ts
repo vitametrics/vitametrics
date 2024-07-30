@@ -129,14 +129,6 @@ class UserController {
         return;
       }
 
-      if (user.isTempUser) {
-        logger.error(`Cannot reset password for temporary user: ${email}`);
-        res
-          .status(400)
-          .json({ msg: 'Cannot reset password for temporary user' });
-        return;
-      }
-
       const token = crypto.randomBytes(32).toString('hex');
       user.setPasswordToken = token;
       user.passwordTokenExpiry = new Date(Date.now() + 3600000); // 1 hour expiry
@@ -169,17 +161,11 @@ class UserController {
         res.status(400).json({ msg: 'Invalid or expired token' });
         return;
       }
-      const project = await Project.findOne({ projectId });
 
       user.password = await argon2.hash(password);
       user.emailVerified = true;
       user.setPasswordToken = null;
       user.passwordTokenExpiry = null;
-
-      if (project) {
-        project.members.push(user._id as Types.ObjectId);
-        await project.save();
-      }
 
       await user.save();
       logger.info(`Password set successfully for user: ${user.email}`);

@@ -46,7 +46,9 @@ const verifyRole = (role: string) => {
       }
 
       const isAdmin = currentProject.isAdmin(currentUser._id as Types.ObjectId);
-      const isMember = currentProject.isMember(currentUser._id as Types.ObjectId);
+      const isMember = currentProject.isMember(
+        currentUser._id as Types.ObjectId
+      );
 
       if (isAdmin && role === 'admin') {
         return next();
@@ -54,7 +56,7 @@ const verifyRole = (role: string) => {
         if (isMember && role === 'member') {
           return next();
         }
-      
+
         logger.error('[verifyRole] User does not have the required role');
         return res
           .status(403)
