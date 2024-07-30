@@ -21,38 +21,30 @@ const Footer = () => {
             <li>
               <a
                 href="/PrivacyPolicy"
-                className=" me-4 md:me-6 text-xl font-bold hover:text-hoverPrimary"
+                className=" me-4 md:me-6 lg:text-xl font-bold hover:text-hoverPrimary"
               >
                 Privacy Policy
               </a>
               <a
                 href="/TOS"
-                className=" me-4 md:me-6 text-xl font-bold hover:text-hoverPrimary"
+                className=" me-4 md:me-6 lg:text-xl font-bold hover:text-hoverPrimary"
               >
-                Terms and Service
+                Terms of Service
               </a>
             </li>
             <li>
               <a
                 href="https://docs.vitametrics.org/getting-started/introduction/"
-                className="font-bold me-4 md:me-6 text-xl hover:text-hoverPrimary"
+                className="font-bold  lg:text-xl hover:text-hoverPrimary"
               >
                 Docs
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className=" text-xl font-bold hover:text-hoverPrimary"
-              >
-                Credits
               </a>
             </li>
           </ul>
         </div>
         <hr className="my-3 border-[#45496a] sm:mx-auto " />
         <div className="grid-cols-3 grid items-center">
-          <span className="text-sm text-primary text-left">
+          <span className="text-xs md:text-sm text-primary text-left">
             Made with ❤️ by{" "}
             <a
               href="https://www.vitametrics.org"
@@ -61,7 +53,7 @@ const Footer = () => {
               Vitametrics
             </a>
           </span>
-          <span className="block text-sm text-primary text-center ">
+          <span className="block text-xs md:text-sm text-primary text-center ">
             © 2024{" "}
             <a href="/" className=" gap-10">
               Vitametrics™
