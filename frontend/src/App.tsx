@@ -20,6 +20,7 @@ const Admin = lazy(() => import("./pages/Admin"));
 import { useAuth } from "./helpers/AuthContext";
 import { ProjectProvider } from "./helpers/ProjectContext";
 import { GridLoader } from "react-spinners";
+import Notification from "./components/Notification/Notification";
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center h-screen">
@@ -64,6 +65,7 @@ function App() {
 
   return (
     <div className="bg-white">
+      <Notification />
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />

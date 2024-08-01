@@ -9,11 +9,13 @@ import useDebounce from "../helpers/useDebounce";
 import axios from "axios";
 import { deleteProjectService } from "../services/projectService";
 import ProjectsList from "../components/Lists/ProjectsList";
+import { useNotification } from "../helpers/NotificationContext";
 
 const CREATE_PROJECT_ENDPOINT = `${process.env.API_URL}/admin/create-project`;
 
 const UserDashboard = () => {
   const { projects, setProjects, userRole, fetchUserProjects } = useAuth();
+  const { setMessage, setSuccess } = useNotification();
   const navigate = useNavigate();
   const [showBackDrop, setShowBackDrop] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams({
@@ -74,6 +76,8 @@ const UserDashboard = () => {
   const handleCreateProject = async () => {
     if (!debouncedProjectName) {
       setMsg("Project name cannot be empty.");
+      setMessage("Project name cannot be empty.");
+      setSuccess(false);
       return;
     }
     try {
@@ -89,6 +93,8 @@ const UserDashboard = () => {
       const project = response.data.project;
       handleClose();
       await fetchUserProjects();
+      setMessage("Project created successfully.");
+      setSuccess(true);
       navigate(`/dashboard/project?id=${project.projectId}&view=overview`);
     } catch (error) {
       const errorMessage = getErrorMessage(error);
@@ -105,8 +111,12 @@ const UserDashboard = () => {
       setProjects(
         projects.filter((project) => project.projectId !== projectIdToDelete)
       );
+      setMessage("Project deleted successfully.");
+      setSuccess(true);
       handleClose();
     } catch (error) {
+      setMessage("Failed to delete project. Please try again.");
+      setSuccess(false);
       console.error(error);
     }
   };

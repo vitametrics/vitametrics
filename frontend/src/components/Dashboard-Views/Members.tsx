@@ -12,12 +12,13 @@ import InviteMenu from "../Menus/InviteMenu";
 import { fadeInItemVariants } from "../../hooks/animationVariant";
 import useCustomInView from "../../hooks/useCustomInView";
 import MembersContainer from "../Containers/MembersContainer";
+import { useNotification } from "../../helpers/NotificationContext";
 
 const Members = () => {
   const ADD_MEMBER_ENDPOINT = `${process.env.API_URL}/admin/add-member`;
   const REMOVE_MEMBER_ENDPOINT = `${process.env.API_URL}/admin/remove-member`;
   const { ref, inView } = useCustomInView();
-
+  const { setMessage, setSuccess } = useNotification();
   const { project, setShowBackDrop, fetchProject, showBackDrop } = useProject();
   const { userRole, userId } = useAuth();
 
@@ -134,8 +135,12 @@ const Members = () => {
           }
         );
         fetchProject();
+        setMessage("Participant removed!");
+        setSuccess(true);
         handleClose();
       } catch (error) {
+        setMessage("Error removing participant.");
+        setSuccess(false);
         console.log(error);
       }
     } else {
@@ -205,6 +210,8 @@ const Members = () => {
         return prev;
       });
       handleClose();
+      setMessage("Participant invited!");
+      setSuccess(true);
       await fetchProject();
     } catch (error: any) {
       setMsg(error.response.data.msg);
@@ -212,6 +219,8 @@ const Members = () => {
         prev.set("invited", "false");
         return prev;
       });
+      setMessage("Error inviting participant.");
+      setSuccess(false);
       console.log(error);
     }
   };
@@ -245,13 +254,16 @@ const Members = () => {
         return prev;
       });
       handleClose();
-      setMsg("Participant invited!");
+      setMessage("Participant invited!");
+      setSuccess(true);
     } catch (error: any) {
       setMsg(error.response.data.msg);
       setSearchParams((prev) => {
         prev.set("invited", "false");
         return prev;
       });
+      setMessage("Error inviting participant.");
+      setSuccess(false);
       console.log(error);
     }
   };

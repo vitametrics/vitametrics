@@ -10,6 +10,7 @@ import LockIcon from "../assets/LockIcon";
 import MailIcon from "../assets/MailIcon";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useNotification } from "../helpers/NotificationContext";
 
 const Login = () => {
   const LOGIN_ENDPOINT = `${process.env.API_URL}/login`;
@@ -22,6 +23,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [msg, setMsg] = useState("");
   const { login } = useAuth();
+  const { setMessage, setSuccess } = useNotification();
 
   const handleKeyDown = (event: any) => {
     if (event.key === "Enter") {
@@ -32,6 +34,8 @@ const Login = () => {
   const handleLogin = async () => {
     if (!debouncedEmail || !debouncedPassword) {
       setMsg("Please enter both email and password");
+      setMessage("Please enter both email and password");
+      setSuccess(false);
       return;
     }
 
@@ -43,7 +47,11 @@ const Login = () => {
       );
 
       login();
+      setMessage("Logged in successfully");
+      setSuccess(true);
     } catch (error: any) {
+      setMessage("Error logging in");
+      setSuccess(false);
       const errorMessage =
         error.response && error.response.data
           ? error.response.data.message

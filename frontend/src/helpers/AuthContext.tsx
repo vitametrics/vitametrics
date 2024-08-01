@@ -95,6 +95,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           await fetchSiteMembers();
           await fetchSiteAccounts();
         }
+
         setProjects(response.data.user.projects);
         await fetchInstanceProjects();
       } catch (error) {
@@ -128,6 +129,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         withCredentials: true,
       });
       localStorage.setItem("devices", JSON.stringify([]));
+
       setIsAuthenticated(false);
     } catch (error) {
       console.log(error);
@@ -156,7 +158,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       await axios.get(FETCH_HEALTH_ENDPOINT, {
         withCredentials: true,
       });
-      setHealth(true);
     } catch (error) {
       setHealth(false);
       console.error("Error fetching health:", error);

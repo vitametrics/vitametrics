@@ -11,10 +11,11 @@ import useSearch from "../../hooks/useDeviceSearch";
 import PaginationControls from "../Pagination/PaginationControls";
 import Pagination from "../Pagination/Pagination";
 import { useSearchParams } from "react-router-dom";
+import { useNotification } from "../../helpers/NotificationContext";
 
 const Devices = () => {
-  const { projectDevices, project, fetchProjectDevices, fetchProject } =
-    useProject();
+  const { project, fetchProjectDevices, fetchProject } = useProject();
+  const { setMessage, setSuccess } = useNotification();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const projectId = searchParams.get("id") || "";
@@ -33,10 +34,8 @@ const Devices = () => {
     handleItemsPerPageChange,
   } = usePagination();
 
-  const devices = project.devices || [];
-
   const { searchTerm, handleSearchChange, filteredItems } = useSearch(
-    devices,
+    project.devices,
     setCurrentPage
   );
 
@@ -50,12 +49,19 @@ const Devices = () => {
     indexOfLastMember
   );
 
-  console.log(projectDevices);
   const { ref, inView } = useCustomInView();
 
   const handleFetchDevices = async () => {
-    await fetchProjectDevices();
-    await fetchProject();
+    try {
+      await fetchProjectDevices();
+      await fetchProject();
+      setMessage("Devices fetched successfully");
+      setSuccess(true);
+    } catch (error) {
+      setMessage("Error fetching devices");
+      setSuccess(false);
+      console.log(error);
+    }
   };
 
   return (
@@ -77,7 +83,7 @@ const Devices = () => {
           >
             Fetch
           </button>
-          {devices.length === 0 ? (
+          {project.devices && project.devices.length === 0 ? (
             <span className="text-primary text-lg">No devices found</span>
           ) : (
             <Fragment>

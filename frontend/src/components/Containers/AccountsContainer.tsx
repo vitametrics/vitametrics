@@ -17,9 +17,6 @@ const AccountsContainer = () => {
     handleItemsPerPageChange,
   } = usePagination();
 
-  console.log("from AccountsContainer");
-  console.log(fitbitAccounts);
-
   const [activeAccountId, setActiveAccountId] = useState("");
   const enableDropdown = (userId: string) => {
     if (activeAccountId === userId) {
