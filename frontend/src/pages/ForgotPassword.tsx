@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Navbar from "../components/Navigation/Navbar";
 import logo from "../assets/images/vitamix.webp";
 import Footer from "../components/Navigation/Footer";
@@ -20,6 +20,11 @@ const ForgotPassword = () => {
       handleForgotPassword();
     }
   };
+
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    emailInputRef.current?.focus();
+  }, []);
 
   const handleForgotPassword = async () => {
     try {
@@ -63,10 +68,11 @@ const ForgotPassword = () => {
               {msg}{" "}
             </a>
             <p className="text-primary mr-auto">Email</p>
-            <div className="flex items-center w-full bg-inputBg p-1 rounded-lg">
+            <div className="flex items-center w-full bg-inputBg p-1 rounded">
               <MailIcon />
               <input
                 className="p-[10px] w-full text-black"
+                ref={emailInputRef}
                 type="text"
                 placeholder="Enter your email"
                 onChange={(e) => setEmail(e.target.value)}
@@ -83,7 +89,7 @@ const ForgotPassword = () => {
             <button
               onKeyDown={handleKeyDown}
               onClick={() => handleForgotPassword()}
-              className="p-3 mt-5 bg-secondary hover:bg-hoverSecondary w-full rounded-lg cursor-pointer font-bold text-white"
+              className="p-3 mt-5 bg-secondary hover:bg-hoverSecondary w-full rounded cursor-pointer font-bold text-white"
             >
               Send Verification Link
             </button>

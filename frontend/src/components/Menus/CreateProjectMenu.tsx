@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import { fadeInItemVariants } from "../../hooks/animationVariant";
 import CloseButton from "../Buttons/CloseButton";
+import { useRef, useEffect } from "react";
 
 interface CreateProjectMenuProps {
   show: boolean;
@@ -22,6 +23,10 @@ const CreateProjectMenu: React.FC<CreateProjectMenuProps> = ({
   setProjectDescription,
   handleCreateProject,
 }) => {
+  const projectNameInputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    projectNameInputRef.current?.focus();
+  }, []);
   if (!show) return null;
 
   return (
@@ -46,6 +51,7 @@ const CreateProjectMenu: React.FC<CreateProjectMenuProps> = ({
       <p className="text-red-500 text-center">{msg}</p>
       <p className="text-primary font-bold">Enter New Project Name</p>
       <input
+        ref={projectNameInputRef}
         type="text"
         className="p-3 mb-3 rounded border-2 border-gray-300 text-primary"
         value={projectName}

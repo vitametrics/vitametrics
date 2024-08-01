@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Navbar from "../components/Navigation/Navbar";
 import logo from "../assets/images/vitamix.webp";
@@ -30,6 +30,11 @@ const Login = () => {
       handleLogin();
     }
   };
+
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    emailInputRef.current?.focus();
+  }, []);
 
   const handleLogin = async () => {
     if (!debouncedEmail || !debouncedPassword) {
@@ -80,10 +85,11 @@ const Login = () => {
             </h2>
             <a className="text-red-500 mb-3"> {msg} </a>
             <p className="text-primary mr-auto">Email</p>
-            <div className="flex items-center w-full bg-inputBg p-1 rounded-lg">
+            <div className="flex items-center w-full bg-inputBg p-1 rounded">
               <MailIcon />
               <input
                 className="p-[10px] w-full text-black"
+                ref={emailInputRef}
                 type="text"
                 placeholder="Enter your email"
                 onChange={(e) => setEmail(e.target.value)}
@@ -91,7 +97,7 @@ const Login = () => {
               />
             </div>
             <p className="text-primary mr-auto mt-3">Password</p>
-            <div className="flex items-center w-full bg-inputBg p-1 rounded-lg">
+            <div className="flex items-center w-full bg-inputBg p-1 rounded">
               <LockIcon />
               <input
                 className="p-[10px] w-full text-black"
@@ -115,7 +121,7 @@ const Login = () => {
             <button
               onKeyDown={handleLogin}
               onClick={handleLogin}
-              className="p-3 mt-5 bg-secondary hover:bg-hoverSecondary w-full rounded-lg cursor-pointer font-bold text-white"
+              className="p-3 mt-5 bg-secondary hover:bg-hoverSecondary w-full rounded cursor-pointer font-bold text-white"
             >
               Login
             </button>

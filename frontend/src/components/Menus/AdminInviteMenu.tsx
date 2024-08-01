@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // components/InviteMenu.tsx
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import useCustomInView from "../../hooks/useCustomInView";
 import { fadeInItemVariants } from "../../hooks/animationVariant";
@@ -34,11 +34,15 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
   toggleInviteMenu,
 }) => {
   const { ref, inView } = useCustomInView();
-
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (showInviteMenu && nameInputRef.current) {
+      nameInputRef.current.focus();
+    }
+  }, [showInviteMenu]);
   const handleEmailInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     handleEmailChange(event);
   };
-
   if (!showInviteMenu || userRole === "user") return null;
 
   return (
@@ -66,6 +70,7 @@ const InviteMenu: React.FC<InviteMenuProps> = ({
         <input
           type="text"
           className="w-full h-10 p-6 mb-5 text-primary rounded border-2 border-gray-300"
+          ref={nameInputRef}
           placeholder="Enter member's name"
           value={nameInput}
           onChange={handleNameChange}
