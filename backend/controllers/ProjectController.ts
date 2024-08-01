@@ -39,9 +39,7 @@ class ProjectController {
         return;
       }
 
-      const isAdmin = project.isAdmin(
-        currentUser._id as Types.ObjectId
-      );
+      const isAdmin = project.isAdmin(currentUser._id as Types.ObjectId);
       const isOwner = project.isOwner(currentUser.userId);
 
       const membersWithRole = await Promise.all(
@@ -53,9 +51,7 @@ class ProjectController {
             return {
               ...member.toObject(),
               isOwner: project.isOwner(member.userId),
-              isAdmin: project.isAdmin(
-                member._id as Types.ObjectId
-              ),
+              isAdmin: project.isAdmin(member._id as Types.ObjectId),
             };
           }
         })
@@ -160,42 +156,6 @@ class ProjectController {
   //   }
   // }
 
-  static async removeDevice(req: Request, res: Response) {
-    const currentProject = req.project as IProject;
-    const { deviceId } = req.body;
-
-    try {
-      logger.info(
-        `Removing device: ${deviceId} from project: ${currentProject.projectId}`
-      );
-
-      const device = await Device.findOne({ deviceId: deviceId });
-      if (!device) {
-        throw new Error('Device not found');
-      }
-
-      if (!currentProject.hasDevice(device._id as Types.ObjectId)) {
-        throw new Error('Device not associated with project');
-      }
-
-      await currentProject.removeDevice(device._id as Types.ObjectId);
-      await Device.findByIdAndDelete(device._id as Types.ObjectId);
-      Cache.deleteMany({ projectId: currentProject.projectId, deviceId });
-
-      logger.info(
-        `Device: ${deviceId} removed successfully from project: ${currentProject.projectId}`
-      );
-      res.status(200).json({ msg: 'Device removed successfully' });
-      return;
-    } catch (error: any) {
-      logger.error(`Error removing device: ${error}`);
-      res
-        .status(error.message === 'Device not found' ? 404 : 400)
-        .json({ msg: error.message });
-      return;
-    }
-  }
-
   static async getProjectFitbitAccounts(req: Request, res: Response) {
     const currentProject = req.project as IProject;
 
@@ -247,7 +207,7 @@ class ProjectController {
       );
 
       const fitbitAccount = await FitbitAccount.findOne({
-        userId: fitbitUserId
+        userId: fitbitUserId,
       });
 
       if (!fitbitAccount) {
@@ -255,27 +215,42 @@ class ProjectController {
           .status(404)
           .json({ msg: 'Fitbit account not found in this project' });
         return;
-      } else if (!currentProject.fitbitAccounts.includes(fitbitAccount._id as Types.ObjectId)) {
+      } else if (
+        !currentProject.fitbitAccounts.includes(
+          fitbitAccount._id as Types.ObjectId
+        )
+      ) {
         res
           .status(400)
           .json({ msg: 'Fitbit account not found in this project' });
         return;
       }
 
+      const devicesToDelete = await Device.find({
+        projectId: currentProject.projectId,
+        fitbitUserId: fitbitAccount.userId
+      });
+
+      const deviceIdsToDelete = devicesToDelete.map(device => device._id);
+
       await Device.deleteMany({
         projectId: currentProject.projectId,
         fitbitUserId: fitbitAccount.userId,
       });
+
+      currentProject.devices = currentProject.devices.filter(
+        deviceId => !deviceIdsToDelete.includes(deviceId)
+      );
+
       await Cache.deleteMany({
         projectId: currentProject.projectId,
         fitbitUserId: fitbitAccount.userId,
       });
 
-      await fitbitAccount.deleteOne();
+      currentProject.unlinkFitbitAccount(fitbitAccount._id as Types.ObjectId);
 
-      currentProject.fitbitAccounts = currentProject.fitbitAccounts.filter(
-        (id) => !id.equals(fitbitAccount._id as Types.ObjectId)
-      );
+      await fitbitAccount.deleteOne();
+      
       await currentProject.save();
 
       logger.info(
@@ -345,23 +320,6 @@ class ProjectController {
         devicesForProject.push(...projectDevices);
       }
 
-      const tempUsers = await User.find({
-        _id: { $in: currentProject.members },
-        isTempUser: true,
-        fitbitUserId: { $exists: true, $ne: null },
-        fitbitAccessToken: { $exists: true, $ne: null },
-      });
-
-      for (const tempUser of tempUsers) {
-        const userDevice = await fetchDevices(
-          tempUser.fitbitUserId!,
-          tempUser.fitbitAccessToken!,
-          currentProject.projectId,
-          { id: tempUser.userId, name: tempUser.name }
-        );
-        devicesForProject.push(...userDevice);
-      }
-
       logger.info(
         `Devices fetched successfully for project: ${currentProject.projectId}`
       );
@@ -410,31 +368,8 @@ class ProjectController {
         })
       );
 
-      const tempUsers = await User.find({
-        projects: currentProject._id,
-        isTempUser: true,
-        fitbitUserId: { $exists: true, $ne: null },
-        fitbitAccessToken: { $exists: true, $ne: null },
-      });
-
-      const tempUserData = await Promise.all(
-        tempUsers.map(async (tempUser) => {
-          return {
-            userId: tempUser.userId,
-            data: await fetchIntradayData(
-              tempUser.fitbitUserId!,
-              tempUser.fitbitAccessToken!,
-              dataType as string,
-              date as string,
-              detailLevel as string
-            ),
-          };
-        })
-      );
-
       const allData = {
         projectData,
-        tempUserData,
       };
 
       logger.info(
@@ -605,24 +540,10 @@ class ProjectController {
           accessToken = fitbitAccount.accessToken;
           userId = fitbitAccount.userId;
         } else {
-          const user = await User.findOne({
-            userId: device.owner,
-            isTempUser: true,
-          });
-          if (
-            user &&
-            user.isTempUser &&
-            user.fitbitAccessToken &&
-            user.fitbitUserId
-          ) {
-            accessToken = user.fitbitAccessToken;
-            userId = user.fitbitUserId;
-          } else {
-            logger.error(
-              `Fitbit credentials not found for device: ${deviceId}`
-            );
-            continue;
-          }
+          logger.error(
+            `Fitbit account not found for device: ${deviceId} in project: ${currentProject.projectId}`
+          );
+          continue;
         }
 
         const aggregatedData: {
@@ -740,7 +661,12 @@ class ProjectController {
 
       if (dataToZip.length === 1) {
         const singleFile = dataToZip[0];
-        const singleFileName = `${archiveName || singleFile.fileName}`;
+        let singleFileName = archiveName || singleFile.fileName;
+
+        if (!singleFileName.toLowerCase().endsWith('.csv')) {
+          singleFileName += '.csv';
+        }
+
         res.setHeader(
           'Content-Disposition',
           `attachment: filename=${singleFileName}`

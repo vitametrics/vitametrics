@@ -121,8 +121,7 @@ class AdminController {
       if (
         currentUser.role !== 'siteAdmin' &&
         currentUser.role !== 'siteOwner' &&
-        project.ownerId !== currentUser.userId &&
-        !project.admins.includes(currentUser._id as Types.ObjectId)
+        project.ownerId !== currentUser.userId
       ) {
         logger.error(
           `User: ${currentUser.email} does not have permission to delete project: ${projectId}`
@@ -133,7 +132,7 @@ class AdminController {
         return;
       }
 
-      const members = project.members;
+      const members = project.members.map((member) => member._id);
       const deviceIds = project.devices.map((device) => device._id);
 
       if (deviceIds && deviceIds.length > 0) {
@@ -141,9 +140,9 @@ class AdminController {
       }
 
       if (members && members.length > 0) {
-        for (const member of members) {
+        for (const objId of members) {
           await User.updateOne(
-            { _id: member._id },
+            { _id: objId },
             { $pull: { projects: project._id } }
           );
         }
@@ -170,7 +169,9 @@ class AdminController {
     const currentProject = req.project as IProject;
 
     try {
-      logger.info(`Getting available users for project: ${currentProject.projectId}`);
+      logger.info(
+        `Getting available users for project: ${currentProject.projectId}`
+      );
 
       const existingMemberIds = currentProject.members.map((member) =>
         member.toString()
@@ -190,8 +191,7 @@ class AdminController {
   }
 
   static async addMember(req: Request, res: Response) {
-    const { email, name, role } = req.body;
-    const projectId = req.body.projectId as string;
+    const { email, name, role, projectId } = req.body;
 
     try {
       logger.info(`Adding member: ${email} to project: ${projectId}`);
@@ -206,36 +206,37 @@ class AdminController {
       const user = await User.findOne({ email });
 
       if (!user) {
-        const newUserId = crypto.randomBytes(16).toString('hex');
-        const passwordToken = crypto.randomBytes(32).toString('hex');
-        const tokenExpiry = new Date(Date.now() + 3600000);
-
-        const newUser = new User({
-          userId: newUserId,
-          email,
-          name,
-          role: role === 'tempUser' ? 'tempUser': 'user',
-          isTempUser: role === 'tempUser',
-          projects: [project._id],
-          setPasswordToken: role !== 'tempUser' ? passwordToken : undefined,
-          passwordTokenExpiry: role !== 'tempUser' ? tokenExpiry : undefined,
-        });
-
-        await newUser.save();
-
         if (role === 'tempUser') {
-          const fitbitAuthLink = `${process.env.API_URL}/auth?userId=${newUserId}&projectId=${project.projectId}`;
+          const idToken = crypto.randomBytes(16).toString('hex');
+
+          const fitbitAccount = new FitbitAccount({
+            userId: '',
+            accessToken: '',
+            refreshToken: '',
+            lastTokenRefresh: new Date(),
+            project_id: project._id,
+            isTemporaryUser: true,
+            name,
+            email,
+            idToken,
+          });
+
+          await fitbitAccount.save();
+
+          project.fitbitAccounts.push(fitbitAccount._id as Types.ObjectId);
+          await project.save();
           if (process.env.NODE_ENV === 'production') {
+            const fitbitAuthLink = `${process.env.API_URL}/auth?projectId=${projectId}&token=${idToken}`;
             await sendEmail({
               to: email,
               subject: `Vitametrics: Invitation to Participate`,
-              text: `Please associate your account with Fitbit by following this link: ${fitbitAuthLink}`,
+              text: `You have been invited to ${project.projectName}. Please associate your account with Fitbit account by following this link: ${fitbitAuthLink}`,
             });
             if (project.areNotificationsEnabled) {
               await sendEmail({
                 to: project.ownerEmail,
-                subject: `[INFO] Vitametrics: ${project.projectName} - New Participant Added`,
-                text: `A new participant has been added to your project by ${req.user?.name}.\nThe users role is set to 'tempUser'.\n\nYou can manage your project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}`,
+                subject: `[INFO] Vitametrics: ${project.projectName} - New Fitbit Account Added`,
+                text: `A new Fitbit account has been added to your project by ${req.user?.name}.\nThe users role is set to 'tempUser'.\n\nYou can manage your project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}`,
               });
             }
             res
@@ -244,11 +245,21 @@ class AdminController {
             return;
           }
         } else {
+          const newUserId = crypto.randomBytes(16).toString('hex');
+          const passwordToken = crypto.randomBytes(32).toString('hex');
+          const tokenExpiry = new Date(Date.now() + 3600000);
 
-          if (role === 'admin') {
-            project.admins.push(newUser._id as Types.ObjectId);
-            await project.save();
-          }
+          const newUser = new User({
+            userId: newUserId,
+            email,
+            name,
+            role: role,
+            projects: [project._id],
+            setPasswordToken: passwordToken,
+            passwordTokenExpiry: tokenExpiry,
+          });
+
+          await newUser.save();
 
           if (process.env.NODE_ENV === 'production') {
             await sendEmail({
@@ -283,12 +294,6 @@ class AdminController {
             .json({ msg: 'User is already a member of the project' });
           return;
         } else {
-          if (user.isTempUser && role !== 'tempUser') {
-            logger.error('Cannot change temp user role');
-            res.status(400).json({ msg: 'User already exists as Participant' });
-            return;
-          }
-
           user.projects.push(project._id as Types.ObjectId);
 
           await user.save();
@@ -321,13 +326,11 @@ class AdminController {
             await project.save();
 
             if (process.env.NODE_ENV === 'production') {
-              if (role !== 'tempUser') {
-                await sendEmail({
-                  to: user.email,
-                  subject: `Vitametrics: Invitation to ${project.projectName}`,
-                  text: `You have been added to the project: ${project.projectName} with the role ${role as string | 'user'}. You can access the project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}&view=overview`,
-                });
-              }
+              await sendEmail({
+                to: user.email,
+                subject: `Vitametrics: Invitation to ${project.projectName}`,
+                text: `You have been added to the project: ${project.projectName} with the role ${role as string | 'user'}. You can access the project using this link: ${process.env.BASE_URL}/dashboard/project?id=${project.projectId}&view=overview`,
+              });
               if (project.areNotificationsEnabled) {
                 await sendEmail({
                   to: project.ownerEmail,
@@ -396,28 +399,6 @@ class AdminController {
         return;
       }
 
-      if (user.isTempUser) {
-        const userDevices = project.devices.filter(
-          (device: any) => device.owner === user.userId
-        );
-        const deviceIdsToRemove = userDevices.map((device: any) => device._id);
-        const deviceIds = userDevices.map((device: any) => device.deviceId);
-
-        project.devices = project.devices.filter(
-          (device: any) => !deviceIdsToRemove.includes(device._id)
-        );
-        await Device.deleteMany({ _id: { $in: deviceIdsToRemove } });
-
-        const cacheDeleteResult = await Cache.deleteMany({
-          projectId: project.projectId,
-          deviceId: { $in: deviceIds },
-        });
-
-        logger.info(
-          `Deleted ${cacheDeleteResult.deletedCount} cache entries for devices removed from project: ${project.projectId}`
-        );
-      }
-
       project.members = updatedMembers;
       project.admins = updatedAdmins;
 
@@ -434,13 +415,11 @@ class AdminController {
       await user.save();
 
       if (process.env.NODE_ENV === 'production') {
-        if (!user.isTempUser) {
-          await sendEmail({
-            to: user.email,
-            subject: 'Removal from project',
-            text: `You have been removed from the project: ${project.projectName}.`,
-          });
-        }
+        await sendEmail({
+          to: user.email,
+          subject: 'Removal from project',
+          text: `You have been removed from the project: ${project.projectName}.`,
+        });
         if (project.areNotificationsEnabled) {
           await sendEmail({
             to: project.ownerEmail,
@@ -563,7 +542,6 @@ class AdminController {
       logger.info(
         `[${currentUser.name}, ${currentUser.id}] Changing project name to: ${newProjectName} for project: ${currentProject.projectId}`
       );
-
 
       const existingProject = await Project.findOne({
         projectName: newProjectName,

@@ -19,7 +19,7 @@ export interface IProject extends Document {
   isOwner(userId: string): boolean;
   hasDevice(deviceId: Types.ObjectId): boolean;
   removeDevice(deviceId: Types.ObjectId): Promise<void>;
-  unlinkFitbitAccount(fitbitUserId: string): Promise<void>;
+  unlinkFitbitAccount(fitbitUserId: Types.ObjectId): Promise<void>;
   addMember(userId: Types.ObjectId, role: string): Promise<void>;
   addFitbitAccount(account: Types.ObjectId): Promise<void>;
 }
@@ -68,35 +68,35 @@ projectSchema.methods.isOwner = function (
 
 projectSchema.methods.hasDevice = function (
   this: IProject,
-  deviceId: Types.ObjectId
+  device_id: Types.ObjectId
 ): boolean {
-  return this.devices.some((device) => device.equals(deviceId));
+  return this.devices.some((device) => device.equals(device_id));
 };
 
 projectSchema.methods.removeDevice = async function (
   this: IProject,
-  deviceId: Types.ObjectId
+  device_id: Types.ObjectId
 ): Promise<void> {
-  this.devices = this.devices.filter((device) => !device.equals(deviceId));
+  this.devices = this.devices.filter((device) => !device.equals(device_id));
   await this.save();
 };
 
 projectSchema.methods.unlinkFitbitAccount = async function (
   this: IProject,
-  fitbitAccountId: Types.ObjectId
+  fitbitAccount_id: Types.ObjectId
 ): Promise<void> {
   this.fitbitAccounts = this.fitbitAccounts.filter(
-    (accountId) => !accountId.equals(fitbitAccountId)
+    (accountId) => !accountId.equals(fitbitAccount_id)
   );
   await this.save();
 };
 
 projectSchema.methods.addFitbitAccount = async function (
   this: IProject,
-  accountId: Types.ObjectId
+  account_id: Types.ObjectId
 ): Promise<void> {
-  if (!this.fitbitAccounts.some((id) => id.equals(accountId))) {
-    this.fitbitAccounts.push(accountId);
+  if (!this.fitbitAccounts.some((id) => id.equals(account_id))) {
+    this.fitbitAccounts.push(account_id);
     await this.save();
   }
 };
@@ -111,12 +111,12 @@ projectSchema.methods.memberCount = function (this: IProject) {
 
 projectSchema.methods.addMember = async function (
   this: IProject,
-  userId: Types.ObjectId,
+  user_id: Types.ObjectId,
   role: string
 ): Promise<void> {
-  this.members.push(userId);
+  this.members.push(user_id);
   if (role === 'admin') {
-    this.admins.push(userId);
+    this.admins.push(user_id);
   }
   await this.save();
 };

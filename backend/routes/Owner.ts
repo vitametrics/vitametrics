@@ -1,13 +1,12 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 
-import { body } from 'express-validator';
+import { body, param } from 'express-validator';
 
+import OwnerController from '../controllers/OwnerController';
+import { asyncHandler } from '../handlers/asyncHandler';
 import { validationHandler } from '../handlers/validationHandler';
-import { param } from 'express-validator';
 import verifyRole from '../middleware/verifyRole';
 import verifySession from '../middleware/verifySession';
-import { asyncHandler } from '../handlers/asyncHandler';
-import OwnerController from '../controllers/OwnerController';
 
 const router = express.Router();
 
@@ -34,7 +33,7 @@ router.get(
   verifySession,
   verifyRole('siteAdmin'),
   asyncHandler(OwnerController.getSiteFitbitAccounts)
-)
+);
 
 router.delete(
   '/fitbit/:id',
@@ -44,7 +43,7 @@ router.delete(
   ]),
   verifyRole('siteAdmin'),
   asyncHandler(OwnerController.deleteFitbitAccount)
-)
+);
 
 // get all instance projects
 router.get(

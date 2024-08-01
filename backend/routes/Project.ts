@@ -34,17 +34,6 @@ router.post(
   asyncHandler(ProjectController.changeDeviceName)
 );
 
-router.post(
-  '/remove-device',
-  verifySession,
-  validationHandler([
-    body('deviceId').not().isEmpty().withMessage('Device ID is required'),
-  ]),
-  checkProjectMembership,
-  verifyRole('admin'),
-  asyncHandler(ProjectController.removeDevice)
-);
-
 router.get(
   '/fitbit-accounts',
   verifySession,
@@ -140,8 +129,12 @@ router.get(
       .not()
       .isEmpty()
       .withMessage('Detail level is required'),
+    query('archiveName').optional(),
+    query('useDailyData')
+      .optional()
+      .isBoolean()
+      .withMessage('useDailyData must be a boolean'),
   ]),
-  query('archiveName').optional(),
   checkProjectMembership,
   refreshFitbitToken,
   asyncHandler(ProjectController.downloadDataHandler)

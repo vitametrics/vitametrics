@@ -1,10 +1,16 @@
 import express from 'express';
 
-import { body, cookie } from 'express-validator';
+import { body } from 'express-validator';
 
 import AdminController from '../controllers/AdminController';
 import { asyncHandler } from '../handlers/asyncHandler';
-import { validationHandler, createProjectValidation, projectIdValidation, memberInfoValidations, memberIdValidation } from '../handlers/validationHandler';
+import {
+  validationHandler,
+  createProjectValidation,
+  projectIdValidation,
+  memberInfoValidations,
+  memberIdValidation,
+} from '../handlers/validationHandler';
 import checkProjectMembership from '../middleware/checkProjectMembership';
 import verifyRole from '../middleware/verifyRole';
 import verifySession from '../middleware/verifySession';
